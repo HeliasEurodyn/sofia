@@ -37,4 +37,14 @@ public class CustomComponentField extends BaseEntity {
     @JoinColumn(name = "custom_component_id", referencedColumnName = "id")
     private CustomComponent customComponent;
 
+
+    @Column
+    private Integer linecounter;
+
+    @Column
+    private Boolean autoIncrement;
+
+    @Column
+    private Boolean primaryKey;
+
 }

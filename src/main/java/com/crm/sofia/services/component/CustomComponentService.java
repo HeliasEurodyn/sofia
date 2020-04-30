@@ -78,6 +78,14 @@ public class CustomComponentService {
         return this.componentMapper.map(customComponents);
     }
 
+    public CustomComponentDTO getObject(Long id) {
+        Optional<CustomComponent> optionalComponent = this.componentRepository.findById(id);
+        if (!optionalComponent.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
+        }
+        return this.componentMapper.map(optionalComponent.get());
+    }
+
     public void deleteObject(Long id) {
         Optional<CustomComponent> optionalComponent = this.componentRepository.findById(id);
         if (!optionalComponent.isPresent()) {
@@ -87,21 +95,79 @@ public class CustomComponentService {
     }
 
     @Transactional
-    public void createDatabaseTable(CustomComponentDTO customComponentDTO) {
+    public List<String> getTables() {
+        Query query = entityManager.createNativeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='sofia';");
+        List<String> tableNames = query.getResultList();
+        return tableNames;
+    }
 
+
+    @Transactional
+    public List<String> getTableFields(String tableName) {
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM sofia;");
+        List<Object[]> fields = query.getResultList();
+        List<String> fieldNames = fields.stream().map(f -> f[0].toString()).collect(Collectors.toList());
+
+        return fieldNames;
+    }
+
+    @Transactional
+    public void deteleDatabaseTable(String tableName) {
+        Query query = entityManager.createNativeQuery("DROP TABLE "+tableName.replace(" ","")+";");
+        query.executeUpdate();
+    }
+
+    @Transactional
+    public void updateDatabaseTable(CustomComponentDTO customComponentDTO) {
+
+        List<String> existingTableFields = this.getTableFields(customComponentDTO.getName().replace(" ", ""));
+        int fieldCounter = 0;
+        String sql = "";
+        sql += "ALTER TABLE " + customComponentDTO.getName().replace(" ", "");
+        sql += " \n";
+        for (CustomComponentFieldDTO customComponentFieldDTO : customComponentDTO.getCustomComponentFieldList()) {
+
+            if (existingTableFields.contains(customComponentFieldDTO.getName().replace(" ", ""))) {
+                continue;
+            }
+
+            if (fieldCounter > 0) {
+                sql += ",";
+            }
+            sql += " ADD COLUMN ";
+            sql += customComponentFieldDTO.getName().replace(" ", "") + " ";
+            sql += " " + customComponentFieldDTO.getType().replace(" ", "");
+            if (customComponentFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
+                sql += " (" + customComponentFieldDTO.getSize().toString().replace(" ", "") + ") ";
+            }
+            sql += "\n";
+
+            fieldCounter++;
+        }
+        sql += " ; ";
+
+        if(fieldCounter == 0) return;
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
+
+    @Transactional
+    public void createDatabaseTable(CustomComponentDTO customComponentDTO) {
+        if(customComponentDTO.getCustomComponentFieldList().size() == 0) return;
 
         int fieldCounter = 0;
         String sql = "";
-        sql += "CREATE TABLE " + customComponentDTO.getName().replace(" ","");
+        sql += "CREATE TABLE IF NOT EXISTS " + customComponentDTO.getName().replace(" ", "");
         sql += " ( ";
         for (CustomComponentFieldDTO customComponentFieldDTO : customComponentDTO.getCustomComponentFieldList()) {
             if (fieldCounter > 0) {
                 sql += ",";
             }
-            sql += customComponentFieldDTO.getName().replace(" ","") +  " ";
-            sql += " " + customComponentFieldDTO.getType().replace(" ","") ;
-            if (customComponentFieldDTO.getType().equals("VARCHAR")) {
-                sql += " ("+ customComponentFieldDTO.getSize().toString().replace(" ","") +") ";
+            sql += customComponentFieldDTO.getName().replace(" ", "") + " ";
+            sql += " " + customComponentFieldDTO.getType().replace(" ", "");
+            if (customComponentFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
+                sql += " (" + customComponentFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
             sql += "\n";
 
@@ -110,51 +176,11 @@ public class CustomComponentService {
         sql += " ); ";
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
-//        Query query = entityManager.createNativeQuery(sql);
-//        fieldCounter = 0;
-//        query.setParameter("name", customComponentDTO.getName());
-//        for (CustomComponentFieldDTO customComponentFieldDTO : customComponentDTO.getCustomComponentFieldList()) {
-//            query.setParameter("fieldname" + fieldCounter, customComponentFieldDTO.getName());
-//            query.setParameter("fieldtype" + fieldCounter, customComponentFieldDTO.getType());
-//            if (customComponentFieldDTO.getType().equals("VARCHAR")) {
-//                query.setParameter("fieldsize" + fieldCounter, customComponentFieldDTO.getSize());
-//            }
-//            fieldCounter++;
-//        }
-//        query.executeUpdate();
+    }
 
-
-
-//        int fieldCounter = 0;
-//        String sql = "";
-//        sql += "CREATE TABLE :name ";
-//        sql += " ( ";
-//        for (CustomComponentFieldDTO customComponentFieldDTO : customComponentDTO.getCustomComponentFieldList()) {
-//            if (fieldCounter > 0) {
-//                sql += ",";
-//            }
-//            sql += " :fieldname" + fieldCounter + " ";
-//            sql += " :fieldtype" + fieldCounter;
-//            if (customComponentFieldDTO.getType().equals("VARCHAR")) {
-//                sql += " (:fieldsize" + fieldCounter + ") ";
-//            }
-//            fieldCounter++;
-//        }
-//        sql += " ); ";
-//
-//
-//        Query query = entityManager.createNativeQuery(sql);
-//        fieldCounter = 0;
-//        query.setParameter("name", customComponentDTO.getName());
-//        for (CustomComponentFieldDTO customComponentFieldDTO : customComponentDTO.getCustomComponentFieldList()) {
-//            query.setParameter("fieldname" + fieldCounter, customComponentFieldDTO.getName());
-//            query.setParameter("fieldtype" + fieldCounter, customComponentFieldDTO.getType());
-//            if (customComponentFieldDTO.getType().equals("VARCHAR")) {
-//                query.setParameter("fieldsize" + fieldCounter, customComponentFieldDTO.getSize());
-//            }
-//            fieldCounter++;
-//        }
-//        query.executeUpdate();
-
+    public Boolean tableOnDatabase(String tableName) {
+        List<String> tables = this.getTables();
+        if (tables.contains(tableName)) return true;
+        else return false;
     }
 }

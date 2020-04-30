@@ -1,10 +1,13 @@
-package com.crm.sofia.dto.component;
+package com.crm.sofia.dto.menu;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.model.menu.MenuItemComponent;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,22 +17,11 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CustomComponentFieldDTO extends BaseDTO {
+public class MenuComponentDTO extends BaseDTO {
 
     private String name;
 
-    private String description;
-
-    private String type;
-
-    private Integer size;
-
-    private String relatedComponentName;
-
     private Integer linecounter;
 
-    private Boolean autoIncrement;
-
-    private Boolean primaryKey;
-
+    private List<MenuItemComponentDTO> menuItemComponentList;
 }
