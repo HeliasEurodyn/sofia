@@ -31,7 +31,7 @@ public class MenuComponent extends BaseEntity {
             fetch = FetchType.LAZY,
             cascade = { CascadeType.MERGE,CascadeType.REMOVE }
     )
-    private List<MenuItemComponent> menuItemComponentList;
+    private List<MenuItemComponent> menuFieldList;
 
 
 }

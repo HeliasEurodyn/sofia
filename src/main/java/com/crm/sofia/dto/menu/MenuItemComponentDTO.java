@@ -1,11 +1,13 @@
 package com.crm.sofia.dto.menu;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.model.menu.MenuItemComponent;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +27,5 @@ public class MenuItemComponentDTO extends BaseDTO {
 
     private Integer linecounter;
 
+    private List<MenuItemComponentDTO> menuFieldList;
 }

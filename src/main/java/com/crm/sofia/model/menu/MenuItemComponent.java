@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Getter
@@ -31,9 +32,14 @@ public class MenuItemComponent extends BaseEntity {
     @Column
     private Integer linecounter;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CustomComponent.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = MenuComponent.class)
     @JoinColumn(name = "menu_component_id", referencedColumnName = "id")
     private MenuComponent menuComponent;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL})
+    @JoinColumn(name = "parent_id")
+    private List<MenuItemComponent> menuFieldList;
 
 }

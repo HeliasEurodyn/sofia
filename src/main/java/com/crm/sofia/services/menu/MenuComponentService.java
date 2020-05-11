@@ -1,6 +1,5 @@
 package com.crm.sofia.services.menu;
 
-import com.crm.sofia.dto.component.CustomComponentFieldDTO;
 import com.crm.sofia.dto.menu.MenuComponentDTO;
 import com.crm.sofia.dto.menu.MenuItemComponentDTO;
 import com.crm.sofia.mapper.menu.MenuComponentMapper;
@@ -31,17 +30,27 @@ public class MenuComponentService {
         this.menuItemComponentService = menuItemComponentService;
     }
 
-    List<MenuComponentDTO> getObject() {
+    public List<MenuComponentDTO> getObject() {
         List<MenuComponent> entites = this.menuComponentRepository.findAll();
+        entites = entites.stream().sorted((o1, o2) -> o1.getCreatedOn().compareTo(o2.getCreatedOn()))
+                .collect(Collectors.toList());
         return this.menuComponentMapper.map(entites);
     }
 
     public MenuComponentDTO getObject(Long id) {
-        Optional<MenuComponent> optionalEntity = this.menuComponentRepository.findById(id);
+        Optional<MenuComponent> optionalEntity = this.menuComponentRepository.findTreeById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
-        return this.menuComponentMapper.map(optionalEntity.get());
+        MenuComponent entity = optionalEntity.get();
+        MenuComponentDTO dto = this.menuComponentMapper.map(entity);
+
+        for (MenuItemComponentDTO menuFieldDTO : dto.getMenuFieldList()) {
+            List<MenuItemComponentDTO> childrenDTOs = this.menuItemComponentService.getObjectTree(menuFieldDTO.getId());
+            menuFieldDTO.setMenuFieldList(childrenDTOs);
+        }
+
+        return dto;
     }
 
     public void deleteObject(Long id) {
@@ -80,7 +89,7 @@ public class MenuComponentService {
     public List<MenuItemComponentDTO> putNewObjectFields(MenuComponentDTO dto) {
 
         List<MenuItemComponentDTO> createdMenuItemConponentDTOs = new ArrayList<>();
-        for (MenuItemComponentDTO menuItemConponentDTO : dto.getMenuItemComponentList()) {
+        for (MenuItemComponentDTO menuItemConponentDTO : dto.getMenuFieldList()) {
             MenuItemComponentDTO createdMenuItemConponentDTO = this.menuItemComponentService.save(menuItemConponentDTO, dto.getId());
             createdMenuItemConponentDTOs.add(createdMenuItemConponentDTO);
         }
@@ -90,7 +99,6 @@ public class MenuComponentService {
 
         return createdMenuItemConponentDTOs;
     }
-
 
 
 //    @PostMapping

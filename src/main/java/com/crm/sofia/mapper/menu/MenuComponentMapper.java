@@ -20,8 +20,8 @@ public abstract class MenuComponentMapper extends BaseMapper<MenuComponentDTO, M
     public MenuComponent mapDTO(MenuComponentDTO dto) {
         MenuComponent entity = this.map(dto);
         entity.setVersion(0L);
-        entity.getMenuItemComponentList().stream().forEach(u -> u.setMenuComponent(entity));
-        entity.getMenuItemComponentList().stream().forEach(u -> u.setVersion(0L));
+        entity.getMenuFieldList().stream().forEach(u -> u.setMenuComponent(entity));
+        entity.getMenuFieldList().stream().forEach(u -> u.setVersion(0L));
         return entity;
     }
 

@@ -23,5 +23,5 @@ public class MenuComponentDTO extends BaseDTO {
 
     private Integer linecounter;
 
-    private List<MenuItemComponentDTO> menuItemComponentList;
+    private List<MenuItemComponentDTO> menuFieldList;
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MenuItemComponentRepository extends BaseRepository<MenuItemComponent> {
@@ -18,6 +19,5 @@ public interface MenuItemComponentRepository extends BaseRepository<MenuItemComp
             " WHERE id NOT IN (:ids) " +
             " AND menuComponent.id = :id ")
     void deleteObjectsNotInListForParentId(@Param("ids") List<Long> ids, @Param("id") Long id);
-
 
 }

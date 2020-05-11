@@ -2,8 +2,6 @@ package com.crm.sofia.services.menu;
 
 import com.crm.sofia.dto.menu.MenuItemComponentDTO;
 import com.crm.sofia.mapper.menu.MenuItemComponentMapper;
-import com.crm.sofia.model.component.CustomComponent;
-import com.crm.sofia.model.component.CustomComponentField;
 import com.crm.sofia.model.menu.MenuComponent;
 import com.crm.sofia.model.menu.MenuItemComponent;
 import com.crm.sofia.repository.menu.MenuComponentRepository;
@@ -56,7 +54,26 @@ public class MenuItemComponentService {
     }
 
     public void deleteNotInListForParent(List<Long> ids, Long id) {
-        menuItemComponentRepository.deleteObjectsNotInListForParentId(ids,id);
+        menuItemComponentRepository.deleteObjectsNotInListForParentId(ids, id);
 
     }
+
+    public List<MenuItemComponentDTO> getObjectTree(Long id) {
+        Optional<MenuItemComponent> optionalMenuItemComponent = this.menuItemComponentRepository.findById(id);
+        if (!optionalMenuItemComponent.isPresent()) {
+            return null;
+        }
+        MenuItemComponent menuItemComponent = optionalMenuItemComponent.get();
+        List<MenuItemComponentDTO> menuItemComponentDTOS = menuItemComponentMapper.map(menuItemComponent.getMenuFieldList());
+
+        if (menuItemComponentDTOS == null) return null;
+
+        for (MenuItemComponentDTO entityDTO : menuItemComponentDTOS) {
+            List<MenuItemComponentDTO> childrenEntities = this.getObjectTree(entityDTO.getId());
+            entityDTO.setMenuFieldList(childrenEntities);
+        }
+
+        return menuItemComponentDTOS;
+    }
+
 }
