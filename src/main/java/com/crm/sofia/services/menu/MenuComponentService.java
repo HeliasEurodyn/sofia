@@ -4,6 +4,7 @@ import com.crm.sofia.dto.menu.MenuComponentDTO;
 import com.crm.sofia.dto.menu.MenuItemComponentDTO;
 import com.crm.sofia.mapper.menu.MenuComponentMapper;
 import com.crm.sofia.model.menu.MenuComponent;
+import com.crm.sofia.model.menu.MenuItemComponent;
 import com.crm.sofia.repository.menu.MenuComponentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class MenuComponentService {
 
     private final MenuComponentRepository menuComponentRepository;
+
     private final MenuComponentMapper menuComponentMapper;
     private final MenuItemComponentService menuItemComponentService;
 
@@ -78,7 +80,8 @@ public class MenuComponentService {
         }
         MenuComponent entity = optionalComponent.get();
 
-        menuComponentMapper.mapUpdateDtoToEntity(componentDTO, entity);
+        menuComponentMapper.mapDtoToEntity(componentDTO, entity);
+
         MenuComponent createdEntity = this.menuComponentRepository.save(entity);
         MenuComponentDTO createdDto = this.menuComponentMapper.map(createdEntity);
 

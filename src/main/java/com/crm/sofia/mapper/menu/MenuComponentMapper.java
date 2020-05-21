@@ -19,17 +19,25 @@ public abstract class MenuComponentMapper extends BaseMapper<MenuComponentDTO, M
 
     public MenuComponent mapDTO(MenuComponentDTO dto) {
         MenuComponent entity = this.map(dto);
-        entity.setVersion(0L);
+    //    entity.setVersion(0L);
         entity.getMenuFieldList().stream().forEach(u -> u.setMenuComponent(entity));
-        entity.getMenuFieldList().stream().forEach(u -> u.setVersion(0L));
+  //      entity.getMenuFieldList().stream().forEach(u -> u.setVersion(0L));
         return entity;
     }
+
+
+    public void mapDtoToEntity(MenuComponentDTO dto, @MappingTarget MenuComponent entity){
+        this.dtoToEntity(dto,entity);
+        entity.getMenuFieldList().stream().forEach(u -> u.setMenuComponent(entity));
+    }
+
 
 
     @Mapping(ignore = true, target = "modifiedBy")
     @Mapping(ignore = true, target = "modifiedOn")
     @Mapping(ignore = true, target = "createdBy")
     @Mapping(ignore = true, target = "version")
-    public abstract void mapUpdateDtoToEntity(MenuComponentDTO dto, @MappingTarget MenuComponent entity);
+  //  @Mapping(ignore = true, target = "menuFieldList")
+    public abstract void dtoToEntity(MenuComponentDTO dto, @MappingTarget MenuComponent entity);
 
 }

@@ -29,7 +29,8 @@ public class MenuComponent extends BaseEntity {
     @OneToMany(
             mappedBy = "menuComponent",
             fetch = FetchType.LAZY,
-            cascade = { CascadeType.MERGE,CascadeType.REMOVE }
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
     )
     private List<MenuItemComponent> menuFieldList;
 

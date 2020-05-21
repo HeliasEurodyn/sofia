@@ -23,9 +23,6 @@ public abstract class CustomComponentMapper extends BaseMapper<CustomComponentDT
 
     public void setDtoToEntity(CustomComponentDTO dto,  CustomComponent entity){
       this.mapUpdateDtoToEntity(dto,entity);
-     //   entity.setVersion(0L);
-    //  entity.getCustomComponentFieldList().stream().forEach(u -> u.setCustomComponent(entity));
-    //  entity.getCustomComponentFieldList().stream().forEach(u -> u.setVersion(0L));
     }
 
    // @Mapping(ignore = true, target = "id")

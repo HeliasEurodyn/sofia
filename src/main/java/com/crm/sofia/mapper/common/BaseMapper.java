@@ -21,7 +21,7 @@ public abstract class BaseMapper<D extends BaseDTO, E extends BaseEntity> {
     @Mapping(ignore = true, target = "modifiedBy")
     @Mapping(ignore = true, target = "modifiedOn")
     @Mapping(ignore = true, target = "createdBy")
-    @Mapping(ignore = true, target = "version")
+ //   @Mapping(ignore = true, target = "version")
     public abstract E map(D dto);
 
     public abstract D map(E entity);
@@ -29,7 +29,7 @@ public abstract class BaseMapper<D extends BaseDTO, E extends BaseEntity> {
     @Mapping(ignore = true, target = "modifiedBy")
     @Mapping(ignore = true, target = "modifiedOn")
     @Mapping(ignore = true, target = "createdBy")
-    @Mapping(ignore = true, target = "version")
+ //   @Mapping(ignore = true, target = "version")
     public abstract void map(D dto, @MappingTarget E entity);
 
     public Page<D> map(Page<E> all) {

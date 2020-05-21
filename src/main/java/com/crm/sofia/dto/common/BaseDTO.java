@@ -3,6 +3,7 @@ package com.crm.sofia.dto.common;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -15,4 +16,6 @@ public abstract class BaseDTO implements Serializable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdBy;
+
+    private Long version;
 }
