@@ -1,7 +1,6 @@
 package com.crm.sofia.model.menu;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.component.CustomComponent;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +13,11 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@Entity(name = "MenuItemComponent")
-@Table(name = "menu_item_component")
+@Entity(name = "MenuField")
+@Table(name = "menu_field")
 @Accessors(chain = true)
 @DynamicUpdate
-public class MenuItemComponent extends BaseEntity {
+public class MenuField extends BaseEntity {
 
     @Column
     private String name;
@@ -30,16 +29,16 @@ public class MenuItemComponent extends BaseEntity {
     private String command;
 
     @Column
-    private Integer linecounter;
+    private Long shortOrder;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = MenuComponent.class)
-    @JoinColumn(name = "menu_component_id", referencedColumnName = "id")
-    private MenuComponent menuComponent;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
+    @JoinColumn(name = "menu_id", referencedColumnName = "id")
+    private Menu menu;
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL})
-    @JoinColumn(name = "parent_id")
-    private List<MenuItemComponent> menuFieldList;
+    @JoinColumn(name = "menu_field_id")
+    private List<MenuField> menuFieldList;
 
 }

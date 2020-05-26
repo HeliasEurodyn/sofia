@@ -1,4 +1,4 @@
-package com.crm.sofia.model.component;
+package com.crm.sofia.model.table;
 
 import com.crm.sofia.model.common.BaseEntity;
 import lombok.*;
@@ -12,11 +12,11 @@ import javax.persistence.*;
 @Data
 @Getter
 @Setter
-@Entity(name = "CustomComponentField")
-@Table(name = "custom_component_field")
+@Entity(name = "TableField")
+@javax.persistence.Table(name = "custom_table_field")
 @Accessors(chain = true)
 @DynamicUpdate
-public class CustomComponentField extends BaseEntity {
+public class TableField extends BaseEntity {
 
     @Column
     private String name;
@@ -30,16 +30,12 @@ public class CustomComponentField extends BaseEntity {
     @Column
     private Integer size;
 
-    @Column
-    private String relatedComponentName;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CustomComponent.class)
-    @JoinColumn(name = "custom_component_id", referencedColumnName = "id")
-    private CustomComponent customComponent;
-
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Table.class)
+    @JoinColumn(name = "table_id", referencedColumnName = "id")
+    private Table table;
 
     @Column
-    private Integer linecounter;
+    private Long shortOrder;
 
     @Column
     private Boolean autoIncrement;

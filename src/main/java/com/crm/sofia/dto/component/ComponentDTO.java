@@ -1,10 +1,13 @@
 package com.crm.sofia.dto.component;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.table.TableDTO;
+import com.crm.sofia.model.component.ComponentField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.*;
 import java.util.List;
 
 @Getter
@@ -15,12 +18,14 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CustomComponentDTO extends BaseDTO {
+public class ComponentDTO extends BaseDTO {
 
     private String name;
-    private Integer creationVersion;
-    private String indexes;
+
     private String description;
-    private List<CustomComponentFieldDTO> customComponentFieldList;
+
+    private List<ComponentFieldDTO> componentFieldList;
+
+    private TableDTO table;
 
 }

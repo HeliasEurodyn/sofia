@@ -1,4 +1,4 @@
-package com.crm.sofia.model.component;
+package com.crm.sofia.model.table;
 
 import com.crm.sofia.model.common.BaseEntity;
 import lombok.*;
@@ -11,11 +11,11 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@Entity(name = "CustomComponent")
-@Table(name = "custom_component")
+@Entity(name = "Table")
+@javax.persistence.Table(name = "custom_table")
 @Accessors(chain = true)
 @DynamicUpdate
-public class CustomComponent extends BaseEntity {
+public class Table extends BaseEntity {
 
     @Column
     private String name;
@@ -30,11 +30,11 @@ public class CustomComponent extends BaseEntity {
     private String description;
 
     @OneToMany(
-            mappedBy = "customComponent",
+            mappedBy = "table",
             fetch = FetchType.LAZY,
             cascade = { CascadeType.MERGE,CascadeType.REMOVE }
            // orphanRemoval = true
     )
-    private List<CustomComponentField> customComponentFieldList;
+    private List<TableField> tableFieldList;
 
 }

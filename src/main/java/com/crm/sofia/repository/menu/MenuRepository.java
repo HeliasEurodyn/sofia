@@ -1,7 +1,6 @@
 package com.crm.sofia.repository.menu;
 
-import com.crm.sofia.model.component.CustomComponentField;
-import com.crm.sofia.model.menu.MenuComponent;
+import com.crm.sofia.model.menu.Menu;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,13 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MenuComponentRepository extends BaseRepository<MenuComponent> {
+public interface MenuRepository extends BaseRepository<Menu> {
 
-    List<MenuComponent> findAll();
+    List<Menu> findAll();
 
     @Query(" SELECT DISTINCT c " +
-            " FROM MenuComponent c " +
+            " FROM Menu c " +
             " LEFT JOIN FETCH c.menuFieldList  " +
             " WHERE c.id =:id ")
-    Optional<MenuComponent> findTreeById(@Param("id") Long id);
+    Optional<Menu> findTreeById(@Param("id") Long id);
 }
