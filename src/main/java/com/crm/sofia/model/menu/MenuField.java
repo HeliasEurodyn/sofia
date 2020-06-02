@@ -28,8 +28,8 @@ public class MenuField extends BaseEntity {
     @Column
     private String command;
 
-    @Column
-    private Long shortOrder;
+//    @Column
+//    private Long shortOrder;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
