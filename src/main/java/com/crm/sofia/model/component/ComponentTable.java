@@ -13,17 +13,22 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@Entity(name = "Component")
-@Table(name = "component")
+@Entity(name = "ComponentTable")
+@Table(name = "component_table")
 @Accessors(chain = true)
 @DynamicUpdate
-public class Component extends BaseEntity {
+public class ComponentTable extends BaseEntity {
+
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.table.Table.class)
+    @JoinColumn(name = "table_id", referencedColumnName = "id")
+    private com.crm.sofia.model.table.Table table;
 
     @Column
-    private String name;
+    private String code;
 
     @Column
-    private String description;
+    private String selector;
 
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -31,8 +36,6 @@ public class Component extends BaseEntity {
             orphanRemoval = true
     )
     @JoinColumn(name = "component_table_id")
-    private List<ComponentTable> componentTableList;
-
-
+    private List<ComponentTableField> componentTableFieldList;
 
 }

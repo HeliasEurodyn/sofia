@@ -2,7 +2,6 @@ package com.crm.sofia.services.component;
 
 
 import com.crm.sofia.dto.component.ComponentDTO;
-import com.crm.sofia.dto.component.ComponentFieldDTO;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.model.component.Component;
 import com.crm.sofia.repository.component.ComponentRepository;
@@ -20,15 +19,12 @@ public class ComponentService {
 
     private final ComponentMapper componentMapper;
     private final ComponentRepository componentRepository;
-    private final ComponentFieldService componentFieldService;
-
 
     public ComponentService(ComponentMapper menuMapper,
                             ComponentRepository componentRepository,
                             ComponentFieldService componentFieldService) {
         this.componentMapper = menuMapper;
         this.componentRepository = componentRepository;
-        this.componentFieldService = componentFieldService;
     }
 
     public List<ComponentDTO> getObject() {
@@ -68,16 +64,22 @@ public class ComponentService {
     @Transactional
     public ComponentDTO putObject(ComponentDTO dto) {
 
-        Optional<Component> optionalComponent = this.componentRepository.findById(dto.getId());
-        if (!optionalComponent.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-        }
-//        Component entity = optionalComponent.get();
-//        componentMapper.mapDtoToEntity(dto, entity);
-//        Component createdEntity = this.componentRepository.save(entity);
-//        ComponentDTO createdDto = this.componentMapper.map(createdEntity);
-//        return createdDto;
-        return null;
+
+        Component entity = this.componentMapper.map(dto);
+
+        Component createdEntity = this.componentRepository.save(entity);
+        return this.componentMapper.map(createdEntity);
+
+//        Optional<Component> optionalComponent = this.componentRepository.findById(dto.getId());
+//        if (!optionalComponent.isPresent()) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
+//        }
+////        Component entity = optionalComponent.get();
+////        componentMapper.mapDtoToEntity(dto, entity);
+////        Component createdEntity = this.componentRepository.save(entity);
+////        ComponentDTO createdDto = this.componentMapper.map(createdEntity);
+////        return createdDto;
+//        return null;
     }
 
     public void deleteObject(Long id) {

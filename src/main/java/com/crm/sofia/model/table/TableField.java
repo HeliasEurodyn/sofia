@@ -35,12 +35,21 @@ public class TableField extends BaseEntity {
     private Table table;
 
     @Column
-    private Long shortOrder;
-
-    @Column
     private Boolean autoIncrement;
 
     @Column
     private Boolean primaryKey;
+
+    @Column
+    private Boolean hasDefault;
+
+    @Column
+    private String defaultValue;
+
+    @Column
+    private Boolean isUnsigned;
+
+    @Column
+    private Boolean hasNotNull;
 
 }

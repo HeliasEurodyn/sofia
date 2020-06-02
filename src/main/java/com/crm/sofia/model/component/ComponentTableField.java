@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.List;
 
 
 @Data
@@ -20,7 +19,7 @@ import java.util.List;
 @javax.persistence.Table(name = "component_field")
 @Accessors(chain = true)
 @DynamicUpdate
-public class ComponentField extends BaseEntity {
+public class ComponentTableField extends BaseEntity {
 
     @Column
     private String description;
@@ -41,17 +40,15 @@ public class ComponentField extends BaseEntity {
     @JoinColumn(name = "table_field_id", referencedColumnName = "id")
     private TableField tableField;
 
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL})
-    @JoinColumn(name = "component_field_id")
-    private List<ComponentField> componentFieldList;
+//    @OneToMany(
+//            fetch = FetchType.LAZY,
+//            cascade = {CascadeType.ALL})
+//    @JoinColumn(name = "component_field_id")
+//    private List<ComponentTableField> componentTableFieldList;
 
-    @Column
-    private Long shortOrder;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.table.Table.class)
-    @JoinColumn(name = "table_id", referencedColumnName = "id")
-    private com.crm.sofia.model.table.Table table;
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.table.Table.class)
+//    @JoinColumn(name = "table_id", referencedColumnName = "id")
+//    private com.crm.sofia.model.table.Table table;
 
 }

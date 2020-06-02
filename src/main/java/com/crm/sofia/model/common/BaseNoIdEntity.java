@@ -37,4 +37,8 @@ public abstract class BaseNoIdEntity {
 
   @Version
   private Long version;
+
+  @Column(name = "short_order", updatable = false)
+  private Long shortOrder;
+
 }

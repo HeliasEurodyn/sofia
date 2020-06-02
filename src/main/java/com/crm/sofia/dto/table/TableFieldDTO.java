@@ -32,4 +32,14 @@ public class TableFieldDTO extends BaseDTO {
 
     private Boolean primaryKey;
 
+    private Boolean hasDefault;
+
+    private String defaultValue;
+
+    private Boolean isUnsigned;
+
+    private Boolean hasNotNull;
+
+
+
 }

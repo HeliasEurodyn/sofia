@@ -140,6 +140,27 @@ public class TableService {
             if (tableFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
+
+            if (tableFieldDTO.getIsUnsigned()) {
+                sql += " UNSIGNED ";
+            }
+
+            if (tableFieldDTO.getHasNotNull()) {
+                sql += " NOT NULL ";
+            }
+
+            if (tableFieldDTO.getHasDefault()) {
+                sql += " DEFAULT " + tableFieldDTO.getDefaultValue();
+            }
+
+            if (tableFieldDTO.getAutoIncrement()) {
+                sql += " AUTO_INCREMENT " ;
+            }
+
+            if (tableFieldDTO.getPrimaryKey()) {
+                sql += " PRIMARY KEY " ;
+            }
+
             sql += "\n";
 
             fieldCounter++;
@@ -169,6 +190,27 @@ public class TableService {
             if (tableFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
+
+            if (tableFieldDTO.getIsUnsigned()) {
+                sql += " UNSIGNED ";
+            }
+
+            if (tableFieldDTO.getHasNotNull()) {
+                sql += " NOT NULL ";
+            }
+
+            if (tableFieldDTO.getHasDefault()) {
+                sql += " DEFAULT " + tableFieldDTO.getDefaultValue();
+            }
+
+            if (tableFieldDTO.getAutoIncrement()) {
+                sql += " AUTO_INCREMENT " ;
+            }
+
+            if (tableFieldDTO.getPrimaryKey()) {
+                sql += " PRIMARY KEY " ;
+            }
+
             sql += "\n";
 
             fieldCounter++;
