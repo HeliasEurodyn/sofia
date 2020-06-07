@@ -1,11 +1,12 @@
-package com.crm.sofia.dto.view;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -14,9 +15,7 @@ import javax.persistence.Column;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ViewFieldDTO extends BaseDTO {
+public class ListDTO extends BaseDTO {
     private String name;
-    private String description;
-    private String type;
-    private Integer size;
+    private List<ListComponentDTO> listComponentList;
 }

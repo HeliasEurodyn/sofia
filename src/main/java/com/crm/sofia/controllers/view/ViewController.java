@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.view;
 import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.dto.view.ViewDTO;
+import com.crm.sofia.dto.view.ViewFieldDTO;
 import com.crm.sofia.services.table.TableService;
 import com.crm.sofia.services.view.ViewService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,14 @@ public class ViewController {
     }
 
 
+    @GetMapping(path="/generate-view-fields")
+    List<ViewFieldDTO> generateViewFields(@RequestParam("query") String query) {
+        return this.viewService.generateViewFields(query);
+    }
+
+
+
+
     @PostMapping
     public ViewDTO postObject(@RequestBody ViewDTO dto) {
         ViewDTO customComponentDTO = this.viewService.postObject(dto);
@@ -38,8 +47,8 @@ public class ViewController {
 
     @PutMapping
     public ViewDTO putObject(@RequestBody ViewDTO viewDTO) {
-        ViewDTO customComponentDTO = this.viewService.putObject(viewDTO);
-        return null;
+        ViewDTO customComponentDTO = this.viewService.postObject(viewDTO);
+        return customComponentDTO;
     }
 
     @DeleteMapping

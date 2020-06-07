@@ -15,7 +15,10 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 public class ViewService {
@@ -202,5 +205,52 @@ public class ViewService {
     }
 
 
+    @Transactional
+    public List<ViewFieldDTO> generateViewFields(String sql) {
 
+        List<ViewFieldDTO> dtos = new ArrayList<>();
+       String uuid = UUID.randomUUID().toString().replace("-","_");
+       this.createView(uuid, sql);
+
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + uuid + " FROM sofia;");
+        List<Object[]> fields = query.getResultList();
+
+        for(Object[] field : fields){
+            ViewFieldDTO dto = new ViewFieldDTO();
+            dto.setName(field[0].toString());
+            dto.setDescription("");
+            dto.setType(field[1].toString());
+
+            Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(field[1].toString());
+            while(m.find()) {
+             dto.setSize(Integer.valueOf(m.group(1)));
+            }
+
+            dtos.add(dto);
+        }
+
+        this.dropView(uuid);
+
+        return dtos;
+    }
+
+
+    public void dropView(String name) {
+        String sql = "DROP VIEW IF EXISTS sofia."+name ;
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
+
+    public void alterView(String name, String queryStr) {
+        String sql = "ALTER VIEW IF EXISTS sofia."+name + " AS " + queryStr;
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
+
+
+    public void createView(String name, String queryStr) {
+        String sql = "CREATE VIEW IF NOT EXISTS sofia."+name + " AS " + queryStr;
+        Query query = entityManager.createNativeQuery(sql);
+        query.executeUpdate();
+    }
 }
