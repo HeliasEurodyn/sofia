@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
+
 @Getter
 @Setter
 @Data
@@ -30,4 +32,8 @@ public class ComponentTableFieldDTO extends BaseDTO {
 
 //    private TableDTO table;
 
+    private String defaultValue;
+
+    @Column
+    private String saveStatement;
 }

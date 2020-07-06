@@ -27,6 +27,12 @@ public class ComponentTableField extends BaseEntity {
     @Column
     private String editor;
 
+    @Column
+    private String defaultValue;
+
+    @Column
+    private String saveStatement;
+
 
 //    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
 //    @JoinColumn(name = "component_id", referencedColumnName = "id")
