@@ -1,6 +1,7 @@
 package com.crm.sofia.model.table;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicUpdate;
@@ -15,19 +16,13 @@ import java.util.List;
 @javax.persistence.Table(name = "custom_table")
 @Accessors(chain = true)
 @DynamicUpdate
-public class Table extends BaseEntity {
-
-    @Column
-    private String name;
+public class Table extends PersistEntity {
 
     @Column
     private Integer creationVersion;
 
     @Column
     private String indexes;
-
-    @Column
-    private String description;
 
     @OneToMany(
             mappedBy = "table",

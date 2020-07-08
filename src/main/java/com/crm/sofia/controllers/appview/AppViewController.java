@@ -37,7 +37,6 @@ public class AppViewController {
     @PostMapping
     public AppViewDTO postObject(@RequestBody AppViewDTO dto) {
         AppViewDTO customComponentDTO = this.appViewService.postObject(dto);
-        this.appViewService.createDatabaseView(customComponentDTO);
         return customComponentDTO;
     }
 

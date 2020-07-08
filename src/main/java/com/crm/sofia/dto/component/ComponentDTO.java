@@ -1,8 +1,7 @@
 package com.crm.sofia.dto.component;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.table.TableDTO;
-import com.crm.sofia.model.component.ComponentTable;
+import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ public class ComponentDTO extends BaseDTO {
 
     private String description;
 
-    private List<ComponentTableDTO> componentTableList;
+    private List<ComponentPersistEntityDTO> componentPersistEntityList;
 
  //   private List<ComponentFieldDTO> componentFieldList;
 

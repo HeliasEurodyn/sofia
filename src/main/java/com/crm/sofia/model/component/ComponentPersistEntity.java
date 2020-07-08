@@ -1,6 +1,7 @@
 package com.crm.sofia.model.component;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,16 +14,16 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@Entity(name = "ComponentTable")
-@Table(name = "component_table")
+@Entity(name = "ComponentPersistEntity")
+@Table(name = "component_persist_entity")
 @Accessors(chain = true)
 @DynamicUpdate
-public class ComponentTable extends BaseEntity {
+public class ComponentPersistEntity extends BaseEntity {
 
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.table.Table.class)
-    @JoinColumn(name = "table_id", referencedColumnName = "id")
-    private com.crm.sofia.model.table.Table table;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.persistEntity.PersistEntity.class)
+    @JoinColumn(name = "persist_entity_id", referencedColumnName = "id")
+    private PersistEntity persistEntity;
 
     @Column
     private String code;
@@ -35,7 +36,7 @@ public class ComponentTable extends BaseEntity {
             cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
-    @JoinColumn(name = "component_table_id")
-    private List<ComponentTableField> componentTableFieldList;
+    @JoinColumn(name = "component_persist_entity_id")
+    private List<ComponentPersistEntityField> componentPersistEntityFieldList;
 
 }

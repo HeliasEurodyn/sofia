@@ -1,9 +1,16 @@
 package com.crm.sofia.controllers.component;
 
+import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.menu.MenuDTO;
+import com.crm.sofia.dto.table.TableDTO;
+import com.crm.sofia.dto.view.ViewDTO;
+import com.crm.sofia.model.table.Table;
 import com.crm.sofia.services.component.ComponentService;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Type;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +37,7 @@ public class ComponentController {
     ComponentDTO getObject(@RequestParam("id") Long id) {
         return this.componentService.getObject(id);
     }
+
 
     @PostMapping
     public ComponentDTO postObject(@RequestBody ComponentDTO dto) {

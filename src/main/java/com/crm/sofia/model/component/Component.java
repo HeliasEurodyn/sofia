@@ -1,6 +1,7 @@
 package com.crm.sofia.model.component;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,9 +31,8 @@ public class Component extends BaseEntity {
             cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
-    @JoinColumn(name = "component_table_id")
-    private List<ComponentTable> componentTableList;
-
+    @JoinColumn(name = "component_id")
+    private List<ComponentPersistEntity> componentPersistEntityList;
 
 
 }

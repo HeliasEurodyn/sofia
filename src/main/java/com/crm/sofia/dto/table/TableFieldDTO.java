@@ -1,6 +1,6 @@
 package com.crm.sofia.dto.table;
 
-import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.persistEntity.PersistEntityFieldDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -14,17 +14,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class TableFieldDTO extends BaseDTO {
-
-    private String name;
-
-    private String description;
-
-    private String type;
-
-    private Integer size;
-
-//    private String relatedComponentName;
+public class TableFieldDTO extends PersistEntityFieldDTO {
 
     private Integer shortOrder;
 
@@ -39,7 +29,5 @@ public class TableFieldDTO extends BaseDTO {
     private Boolean isUnsigned;
 
     private Boolean hasNotNull;
-
-
 
 }

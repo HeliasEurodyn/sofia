@@ -1,6 +1,7 @@
 package com.crm.sofia.model.appview;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.model.view.ViewField;
 import lombok.Data;
 import lombok.Getter;
@@ -17,14 +18,7 @@ import java.util.List;
 @javax.persistence.Table(name = "app_view")
 @Accessors(chain = true)
 @DynamicUpdate
-public class AppView extends BaseEntity {
-
-
-    @Column
-    private String name;
-
-    @Column
-    private String description;
+public class AppView extends PersistEntity {
 
     @Column(columnDefinition = "TEXT")
     private String query;

@@ -1,12 +1,8 @@
 package com.crm.sofia.model.list;
 
-import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.component.ComponentTableDTO;
-import com.crm.sofia.dto.component.ComponentTableFieldDTO;
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.component.ComponentTable;
-import com.crm.sofia.model.component.ComponentTableField;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.crm.sofia.model.component.ComponentPersistEntity;
+import com.crm.sofia.model.component.ComponentPersistEntityField;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicUpdate;
@@ -31,13 +27,13 @@ public class ListComponentField extends BaseEntity {
     @Column
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.component.ComponentTable.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntity.class)
     @JoinColumn(name = "component_table_id", referencedColumnName = "id")
-    private ComponentTable componentTable;
+    private ComponentPersistEntity componentPersistEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.component.ComponentTableField.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntityField.class)
     @JoinColumn(name = "component_table_field_id", referencedColumnName = "id")
-    private ComponentTableField componentTableField;
+    private ComponentPersistEntityField componentPersistEntityField;
 
     @Column
     private Boolean visible;

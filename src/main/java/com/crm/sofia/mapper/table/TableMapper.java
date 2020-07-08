@@ -2,6 +2,7 @@ package com.crm.sofia.mapper.table;
 
 import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
+import com.crm.sofia.mapper.persistEntity.PersistEntityMapper;
 import com.crm.sofia.model.table.Table;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +11,7 @@ import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {TableFieldMapper.class})
-public abstract class TableMapper extends BaseMapper<TableDTO, Table> {
+public abstract class TableMapper extends PersistEntityMapper<TableDTO, Table> {
 
     public Table mapDTO(TableDTO dto) {
         Table table = this.map(dto);

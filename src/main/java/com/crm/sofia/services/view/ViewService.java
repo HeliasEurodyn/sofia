@@ -5,6 +5,7 @@ import com.crm.sofia.dto.view.ViewFieldDTO;
 import com.crm.sofia.mapper.view.ViewMapper;
 import com.crm.sofia.model.view.View;
 import com.crm.sofia.repository.view.ViewRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,6 @@ public class ViewService {
     private final ViewRepository viewRepository;
     private final ViewMapper viewMapper;
     private final EntityManager entityManager;
-
-
 
     public ViewService(ViewRepository viewRepository,
                        ViewMapper viewMapper,
@@ -95,115 +94,11 @@ public class ViewService {
         query.executeUpdate();
     }
 
-    @Transactional
-    public void updateDatabaseView(ViewDTO customComponentDTO) {
-
-//        List<String> existingViewFields = this.getViewFields(customComponentDTO.getName().replace(" ", ""));
-//        int fieldCounter = 0;
-//        String sql = "";
-//        sql += "ALTER TABLE " + customComponentDTO.getName().replace(" ", "");
-//        sql += " \n";
-//        for (ViewFieldDTO viewFieldDTO : customComponentDTO.getViewFieldList()) {
-//
-//            if (existingViewFields.contains(viewFieldDTO.getName().replace(" ", ""))) {
-//                continue;
-//            }
-//
-//            if (fieldCounter > 0) {
-//                sql += ",";
-//            }
-//            sql += " ADD COLUMN ";
-//            sql += viewFieldDTO.getName().replace(" ", "") + " ";
-//            sql += " " + viewFieldDTO.getType().replace(" ", "");
-//            if (viewFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
-//                sql += " (" + viewFieldDTO.getSize().toString().replace(" ", "") + ") ";
-//            }
-//
-//            if (viewFieldDTO.getIsUnsigned()) {
-//                sql += " UNSIGNED ";
-//            }
-//
-//            if (viewFieldDTO.getHasNotNull()) {
-//                sql += " NOT NULL ";
-//            }
-//
-//            if (viewFieldDTO.getHasDefault()) {
-//                sql += " DEFAULT " + viewFieldDTO.getDefaultValue();
-//            }
-//
-//            if (viewFieldDTO.getAutoIncrement()) {
-//                sql += " AUTO_INCREMENT " ;
-//            }
-//
-//            if (viewFieldDTO.getPrimaryKey()) {
-//                sql += " PRIMARY KEY " ;
-//            }
-//
-//            sql += "\n";
-//
-//            fieldCounter++;
-//        }
-//        sql += " ; ";
-//
-//        if(fieldCounter == 0) return;
-//
-//        Query query = entityManager.createNativeQuery(sql);
-//        query.executeUpdate();
-    }
-
-    @Transactional
-    public void createDatabaseView(ViewDTO customComponentDTO) {
-//        if(customComponentDTO.getViewFieldList().size() == 0) return;
-//
-//        int fieldCounter = 0;
-//        String sql = "";
-//        sql += "CREATE TABLE IF NOT EXISTS " + customComponentDTO.getName().replace(" ", "");
-//        sql += " ( ";
-//        for (ViewFieldDTO viewFieldDTO : customComponentDTO.getViewFieldList()) {
-//            if (fieldCounter > 0) {
-//                sql += ",";
-//            }
-//            sql += viewFieldDTO.getName().replace(" ", "") + " ";
-//            sql += " " + viewFieldDTO.getType().replace(" ", "");
-//            if (viewFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
-//                sql += " (" + viewFieldDTO.getSize().toString().replace(" ", "") + ") ";
-//            }
-//
-//            if (viewFieldDTO.getIsUnsigned()) {
-//                sql += " UNSIGNED ";
-//            }
-//
-//            if (viewFieldDTO.getHasNotNull()) {
-//                sql += " NOT NULL ";
-//            }
-//
-//            if (viewFieldDTO.getHasDefault()) {
-//                sql += " DEFAULT " + viewFieldDTO.getDefaultValue();
-//            }
-//
-//            if (viewFieldDTO.getAutoIncrement()) {
-//                sql += " AUTO_INCREMENT " ;
-//            }
-//
-//            if (viewFieldDTO.getPrimaryKey()) {
-//                sql += " PRIMARY KEY " ;
-//            }
-//
-//            sql += "\n";
-//
-//            fieldCounter++;
-//        }
-//        sql += " ); ";
-//        Query query = entityManager.createNativeQuery(sql);
-//        query.executeUpdate();
-    }
-
     public Boolean viewOnDatabase(String viewName) {
         List<String> views = this.getViews();
         if (views.contains(viewName)) return true;
         else return false;
     }
-
 
     @Transactional
     public List<ViewFieldDTO> generateViewFields(String sql) {
@@ -228,26 +123,28 @@ public class ViewService {
 
             dtos.add(dto);
         }
-
         this.dropView(uuid);
-
         return dtos;
     }
 
-
+    @Transactional
+    @Modifying
     public void dropView(String name) {
         String sql = "DROP VIEW IF EXISTS sofia."+name ;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
 
+    @Transactional
+    @Modifying
     public void alterView(String name, String queryStr) {
         String sql = "ALTER VIEW IF EXISTS sofia."+name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
 
-
+    @Transactional
+    @Modifying
     public void createView(String name, String queryStr) {
         String sql = "CREATE VIEW IF NOT EXISTS sofia."+name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);

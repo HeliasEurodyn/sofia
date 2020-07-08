@@ -2,6 +2,7 @@ package com.crm.sofia.repository.table;
 
         import com.crm.sofia.model.table.TableField;
         import com.crm.sofia.repository.common.BaseRepository;
+        import com.crm.sofia.repository.persistEntity.PersistEntityFieldRepository;
         import org.springframework.data.jpa.repository.Modifying;
         import org.springframework.data.jpa.repository.Query;
         import org.springframework.data.repository.query.Param;
@@ -10,7 +11,7 @@ package com.crm.sofia.repository.table;
         import java.util.List;
 
 @Repository
-public interface TableFieldRepository extends BaseRepository<TableField> {
+public interface TableFieldRepository extends PersistEntityFieldRepository<TableField> {
 
     @Modifying
     @Query(" DELETE FROM TableField " +

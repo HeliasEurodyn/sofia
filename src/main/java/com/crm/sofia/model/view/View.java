@@ -1,6 +1,7 @@
 package com.crm.sofia.model.view;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.model.table.TableField;
 import lombok.Data;
 import lombok.Getter;
@@ -18,13 +19,7 @@ import java.util.List;
 @javax.persistence.Table(name = "custom_view")
 @Accessors(chain = true)
 @DynamicUpdate
-public class View extends BaseEntity {
-
-    @Column
-    private String name;
-
-    @Column
-    private String description;
+public class View extends PersistEntity {
 
     @Column(columnDefinition = "TEXT")
     private String query;
@@ -34,7 +29,7 @@ public class View extends BaseEntity {
             cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
-    @JoinColumn(name = "view_id")
+    @JoinColumn(name = "View_id")
     private List<ViewField> viewFieldList;
 
 
