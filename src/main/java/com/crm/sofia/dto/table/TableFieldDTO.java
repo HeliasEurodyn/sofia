@@ -16,7 +16,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TableFieldDTO extends PersistEntityFieldDTO {
 
-    private Integer shortOrder;
 
     private Boolean autoIncrement;
 

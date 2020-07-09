@@ -19,7 +19,5 @@ public class MenuDTO extends BaseDTO {
 
     private String name;
 
-    private Integer shortOrder;
-
     private List<MenuFieldDTO> menuFieldList;
 }

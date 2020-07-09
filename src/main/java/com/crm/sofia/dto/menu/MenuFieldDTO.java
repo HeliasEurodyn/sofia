@@ -23,7 +23,5 @@ public class MenuFieldDTO extends BaseDTO {
 
     private String command;
 
-    private Integer shortOrder;
-
     private List<MenuFieldDTO> menuFieldList;
 }
