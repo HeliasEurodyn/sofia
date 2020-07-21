@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ListRepository extends BaseRepository<ListEntity> {
     List<ListEntity> findAll();
+
+    ListEntity findFirstByName(String name);
+
 }

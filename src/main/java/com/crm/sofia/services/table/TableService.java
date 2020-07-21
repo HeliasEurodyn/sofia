@@ -5,6 +5,7 @@ import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.mapper.table.TableMapper;
 import com.crm.sofia.model.table.Table;
 import com.crm.sofia.repository.table.TableRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class TableService {
         this.entityManager = entityManager;
     }
 
-    @Transactional
+
     public TableDTO postObject(TableDTO componentDTO) {
         Table component = this.componentMapper.mapDTO(componentDTO);
 
@@ -42,7 +43,7 @@ public class TableService {
         return this.componentMapper.map(table);
     }
 
-    @Transactional
+
     public TableDTO putObject(TableDTO componentDTO) {
 
         Optional<Table> optionalComponent = this.tableRepository.findById(componentDTO.getId());
@@ -58,19 +59,19 @@ public class TableService {
         return createdCustomComponentDTO;
     }
 
-    @Transactional
-    public List<TableFieldDTO> putNewObjectFields(TableDTO componentDTO) {
-        List<TableFieldDTO> createdTableFieldDTOS = new ArrayList<>();
-        for (TableFieldDTO tableFieldDTO : componentDTO.getTableFieldList()) {
-            TableFieldDTO createdTableFieldDTO = this.customComponentFieldService.saveCustomComponentField(tableFieldDTO, componentDTO.getId());
-            createdTableFieldDTOS.add(createdTableFieldDTO);
-        }
 
-        List<Long> ids = createdTableFieldDTOS.stream().map(TableFieldDTO::getId).collect(Collectors.toList());
-        this.customComponentFieldService.deleteObjectsNotInListForCustomComponent(ids, componentDTO.getId());
-
-        return createdTableFieldDTOS;
-    }
+//    public List<TableFieldDTO> putNewObjectFields(TableDTO componentDTO) {
+//        List<TableFieldDTO> createdTableFieldDTOS = new ArrayList<>();
+//        for (TableFieldDTO tableFieldDTO : componentDTO.getTableFieldList()) {
+//            TableFieldDTO createdTableFieldDTO = this.customComponentFieldService.saveCustomComponentField(tableFieldDTO, componentDTO.getId());
+//            createdTableFieldDTOS.add(createdTableFieldDTO);
+//        }
+//
+//        List<Long> ids = createdTableFieldDTOS.stream().map(TableFieldDTO::getId).collect(Collectors.toList());
+//        this.customComponentFieldService.deleteObjectsNotInListForCustomComponent(ids, componentDTO.getId());
+//
+//        return createdTableFieldDTOS;
+//    }
 
 
     public List<TableDTO> getObject() {
@@ -173,7 +174,7 @@ public class TableService {
         query.executeUpdate();
     }
 
-    @Transactional
+
     public void createDatabaseTable(TableDTO customComponentDTO) {
         if(customComponentDTO.getTableFieldList().size() == 0) return;
 
@@ -224,5 +225,22 @@ public class TableService {
         List<String> tables = this.getTables();
         if (tables.contains(tableName)) return true;
         else return false;
+    }
+
+    @Transactional
+    public TableDTO save(TableDTO dto) {
+        TableDTO customComponentDTO = this.postObject(dto);
+        this.createDatabaseTable(customComponentDTO);
+        return customComponentDTO;
+
+    }
+
+    @Transactional
+    @Modifying
+    public TableDTO update(TableDTO dto) {
+        TableDTO createdDTO = this.postObject(dto);
+        this.updateDatabaseTable(createdDTO);
+        return createdDTO;
+
     }
 }

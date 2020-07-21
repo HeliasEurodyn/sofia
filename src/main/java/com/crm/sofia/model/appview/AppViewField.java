@@ -6,16 +6,18 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Data
-@Getter
-@Setter
-@Entity(name = "AppViewField")
-@javax.persistence.Table(name = "app_view_field")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "AppViewField")
+@javax.persistence.Table(name = "app_view_field")
+@DiscriminatorValue("AppViewField")
 public class AppViewField extends PersistEntityField {
 }

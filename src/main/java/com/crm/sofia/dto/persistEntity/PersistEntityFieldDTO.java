@@ -15,32 +15,26 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY, property = "entitytype") @JsonSubTypes({
-        @JsonSubTypes.Type(value = TableFieldDTO.class, name = "tablefield"),
-        @JsonSubTypes.Type(value = ViewFieldDTO.class, name = "viewfield"),
-        @JsonSubTypes.Type(value = AppViewFieldDTO.class, name = "appviewfield")
+        @JsonSubTypes.Type(value = TableFieldDTO.class, name = "TableField"),
+        @JsonSubTypes.Type(value = ViewFieldDTO.class, name = "ViewField"),
+        @JsonSubTypes.Type(value = AppViewFieldDTO.class, name = "AppViewField")
 })
 public class PersistEntityFieldDTO extends BaseDTO {
 
-    @Column
     private String name;
 
-    @Column
     private String description;
 
-    @Column
     private String type;
 
-    @Column
     private Integer size;
 
+    private String entitytype;
 }

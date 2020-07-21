@@ -5,18 +5,18 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
-@Entity(name = "MenuField")
-@Table(name = "menu_field")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "MenuField")
+@Table(name = "menu_field")
 public class MenuField extends BaseEntity {
 
     @Column

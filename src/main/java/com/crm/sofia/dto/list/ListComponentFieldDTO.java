@@ -19,8 +19,8 @@ public class ListComponentFieldDTO extends BaseDTO {
     private String editor;
     private String description;
     private String type;
-    private ComponentPersistEntityDTO componentTable;
-    private ComponentPersistEntityFieldDTO componentTableField;
+    private ComponentPersistEntityDTO componentPersistEntity;
+    private ComponentPersistEntityFieldDTO componentPersistEntityField;
     private Boolean visible;
     private Boolean editable;
 }

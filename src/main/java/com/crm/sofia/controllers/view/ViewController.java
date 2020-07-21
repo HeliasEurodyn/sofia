@@ -35,11 +35,7 @@ public class ViewController {
 
     @PostMapping
     public ViewDTO postObject(@RequestBody ViewDTO dto) {
-        ViewDTO customComponentDTO = this.viewService.postObject(dto);
-        this.viewService.dropView(customComponentDTO.getName());
-        this.viewService.createView(
-                customComponentDTO.getName(),
-                customComponentDTO.getQuery());
+        ViewDTO customComponentDTO = this.viewService.saveDTOAndCreate(dto);
         return customComponentDTO;
     }
 

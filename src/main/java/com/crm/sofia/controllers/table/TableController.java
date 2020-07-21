@@ -1,7 +1,6 @@
 package com.crm.sofia.controllers.table;
 
 import com.crm.sofia.dto.table.TableDTO;
-import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.services.table.TableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -16,64 +15,60 @@ import java.util.List;
 @RequestMapping("/table")
 public class TableController {
 
-    private final TableService componentService;
+    private final TableService tableService;
 
-    public TableController(TableService componentService) {
-        this.componentService = componentService;
+    public TableController(TableService tableService) {
+        this.tableService = tableService;
     }
 
     @GetMapping
     List<TableDTO> getObject() {
-        return this.componentService.getObject();
+        return this.tableService.getObject();
     }
 
 
     @PostMapping
     public TableDTO postObject(@RequestBody TableDTO dto) {
-        TableDTO customComponentDTO = this.componentService.postObject(dto);
-        this.componentService.createDatabaseTable(customComponentDTO);
+        TableDTO customComponentDTO = this.tableService.save(dto);
         return customComponentDTO;
+
     }
 
     @PutMapping
-    public TableDTO putObject(@RequestBody TableDTO componentDTO) {
-        TableDTO customComponentDTO = this.componentService.putObject(componentDTO);
-        List<TableFieldDTO> fields = this.componentService.putNewObjectFields(componentDTO);
-
-        customComponentDTO.setTableFieldList(fields);
-        this.componentService.updateDatabaseTable(customComponentDTO);
-
+    public TableDTO putObject(@RequestBody TableDTO dto) {
+        TableDTO customComponentDTO = this.tableService.update(dto);
         return customComponentDTO;
+
     }
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
-        TableDTO customComponentDTO=  this.componentService.getObject(id);
-        this.componentService.deleteObject(id);
-        this.componentService.deteleDatabaseTable(customComponentDTO.getName());
+        TableDTO dto =  this.tableService.getObject(id);
+        this.tableService.deleteObject(id);
+        this.tableService.deteleDatabaseTable(dto.getName());
     }
 
     @GetMapping(path="/by-id")
     TableDTO getObject(@RequestParam("id") Long id) {
-        return this.componentService.getObject(id);
+        return this.tableService.getObject(id);
     }
 
 
     @GetMapping(path = "/table-exists")
     public Boolean tableExists(@RequestParam("name") String tableName) {
-        return componentService.tableOnDatabase(tableName);
+        return tableService.tableOnDatabase(tableName);
     }
 
     @GetMapping(path = "/tables")
     public List<String> tables() {
 
-        return componentService.getTables();
+        return tableService.getTables();
     }
 
     @GetMapping(path = "/fields")
     public List<String> fields() {
 
-        return componentService.getTableFields("testtable");
+        return tableService.getTableFields("testtable");
     }
 
 

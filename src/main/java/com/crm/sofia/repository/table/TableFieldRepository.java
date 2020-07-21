@@ -13,10 +13,10 @@ package com.crm.sofia.repository.table;
 @Repository
 public interface TableFieldRepository extends PersistEntityFieldRepository<TableField> {
 
-    @Modifying
-    @Query(" DELETE FROM TableField " +
-            " WHERE id NOT IN (:ids) " +
-            " AND table.id = :id ")
-    void deleteObjectsNotInListForCustomComponent(@Param("ids") List<Long> ids, @Param("id") Long id);
+//    @Modifying
+//    @Query(" DELETE FROM TableField " +
+//            " WHERE id NOT IN (:ids) " +
+//            " AND table.id = :id ")
+//    void deleteObjectsNotInListForCustomComponent(@Param("ids") List<Long> ids, @Param("id") Long id);
 
 }

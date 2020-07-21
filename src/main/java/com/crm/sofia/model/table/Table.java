@@ -4,18 +4,19 @@ import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
-@Entity(name = "Table")
-@javax.persistence.Table(name = "custom_table")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "Table")
+@javax.persistence.Table(name = "custom_table")
+@DiscriminatorValue("Table")
 public class Table extends PersistEntity {
 
     @Column
@@ -25,11 +26,11 @@ public class Table extends PersistEntity {
     private String indexes;
 
     @OneToMany(
-            mappedBy = "table",
             fetch = FetchType.LAZY,
-            cascade = { CascadeType.MERGE,CascadeType.REMOVE }
-           // orphanRemoval = true
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
+    @JoinColumn(name = "persist_entity_id")
     private List<TableField> tableFieldList;
 
 }

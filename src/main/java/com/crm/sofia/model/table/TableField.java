@@ -5,22 +5,23 @@ import com.crm.sofia.model.common.BaseNoIdEntity;
 import com.crm.sofia.model.persistEntity.PersistEntityField;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Data
-@Getter
-@Setter
-@Entity(name = "TableField")
-@javax.persistence.Table(name = "custom_table_field")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "TableField")
+@javax.persistence.Table(name = "custom_table_field")
+@DiscriminatorValue("TableField")
 public class TableField extends PersistEntityField {
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Table.class)
-    @JoinColumn(name = "table_id", referencedColumnName = "id")
-    private Table table;
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Table.class)
+//    @JoinColumn(name = "table_id", referencedColumnName = "id")
+//    private Table table;
 
     @Column
     private Boolean autoIncrement;

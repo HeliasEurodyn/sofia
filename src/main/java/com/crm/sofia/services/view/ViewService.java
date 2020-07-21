@@ -36,7 +36,7 @@ public class ViewService {
         this.entityManager = entityManager;
     }
 
-    @Transactional
+
     public ViewDTO postObject(ViewDTO viewDTO) {
         View view = this.viewMapper.map(viewDTO);
 
@@ -149,5 +149,17 @@ public class ViewService {
         String sql = "CREATE VIEW IF NOT EXISTS sofia."+name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
+    }
+
+    @Transactional
+    @Modifying
+    public ViewDTO saveDTOAndCreate(ViewDTO dto) {
+        ViewDTO customComponentDTO = this.postObject(dto);
+        this.dropView(customComponentDTO.getName());
+        this.createView(
+                customComponentDTO.getName(),
+                customComponentDTO.getQuery());
+
+        return customComponentDTO;
     }
 }

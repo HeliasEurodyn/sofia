@@ -7,18 +7,19 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
-@Entity(name = "View")
-@javax.persistence.Table(name = "custom_view")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "View")
+@javax.persistence.Table(name = "custom_view")
+@DiscriminatorValue("View")
 public class View extends PersistEntity {
 
     @Column(columnDefinition = "TEXT")
@@ -29,7 +30,7 @@ public class View extends PersistEntity {
             cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
-    @JoinColumn(name = "View_id")
+    @JoinColumn(name = "persist_entity_id")
     private List<ViewField> viewFieldList;
 
 

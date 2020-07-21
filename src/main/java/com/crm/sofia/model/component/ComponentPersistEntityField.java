@@ -7,19 +7,18 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 
 @Data
-@Getter
-@Setter
-@Entity(name = "ComponentPersistEntityField")
-
-@javax.persistence.Table(name = "component_persist_entity_field")
 @Accessors(chain = true)
 @DynamicUpdate
+@DynamicInsert
+@Entity(name = "ComponentPersistEntityField")
+@javax.persistence.Table(name = "component_persist_entity_field")
 public class ComponentPersistEntityField extends BaseEntity {
 
     @Column

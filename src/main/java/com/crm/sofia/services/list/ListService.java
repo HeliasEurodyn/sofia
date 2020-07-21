@@ -50,6 +50,14 @@ public class ListService {
         return this.listMapper.map(optionalListEntity.get());
     }
 
+    public ListDTO getObjectByName(String name) {
+        ListEntity listEntity = this.listRepository.findFirstByName(name);
+        if (listEntity == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
+        }
+        return this.listMapper.map(listEntity);
+    }
+
     public void deleteObject(Long id) {
         Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
         if (!optionalListEntity.isPresent()) {

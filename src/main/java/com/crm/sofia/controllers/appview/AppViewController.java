@@ -50,7 +50,6 @@ public class AppViewController {
     public void deleteObject(@RequestParam("id") Long id) {
         AppViewDTO customComponentDTO = this.appViewService.getObject(id);
         this.appViewService.deleteObject(id);
-        this.appViewService.deteleDatabaseView(customComponentDTO.getName());
     }
 
     @GetMapping(path = "/by-id")

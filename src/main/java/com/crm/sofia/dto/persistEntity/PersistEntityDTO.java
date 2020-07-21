@@ -7,30 +7,30 @@ import com.crm.sofia.dto.view.ViewDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY, property = "entitytype") @JsonSubTypes({
-        @JsonSubTypes.Type(value = TableDTO.class, name = "table"),
-        @JsonSubTypes.Type(value = ViewDTO.class, name = "view"),
-        @JsonSubTypes.Type(value = AppViewDTO.class, name = "appview")
+        include = JsonTypeInfo.As.PROPERTY, property = "entitytype")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TableDTO.class, name = "Table"),
+        @JsonSubTypes.Type(value = ViewDTO.class, name = "View"),
+        @JsonSubTypes.Type(value = AppViewDTO.class, name = "AppView")
 })
-public class PersistEntityDTO extends BaseDTO{
+public class PersistEntityDTO extends BaseDTO {
 
     private String name;
 
     private String description;
+
+    private String entitytype;
+
 }
 
 

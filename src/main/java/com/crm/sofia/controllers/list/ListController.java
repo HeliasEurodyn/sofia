@@ -30,6 +30,11 @@ public class ListController {
         return this.listService.getObject(id);
     }
 
+    @GetMapping(path="/by-name")
+    ListDTO getObject(@RequestParam("name") String name) {
+        return this.listService.getObjectByName(name);
+    }
+
     @PostMapping
     public ListDTO postObject(@RequestBody ListDTO dto) {
         ListDTO createdDTO = this.listService.postObject(dto);
