@@ -13,13 +13,13 @@ import org.mapstruct.NullValueCheckStrategy;
         uses = {TableFieldMapper.class})
 public abstract class TableMapper extends PersistEntityMapper<TableDTO, Table> {
 
-    public Table mapDTO(TableDTO dto) {
-        Table table = this.map(dto);
-        table.setVersion(0L);
-//        table.getTableFieldList().stream().forEach(u -> u.setTable(table));
-        table.getTableFieldList().stream().forEach(u -> u.setVersion(0L));
-        return table;
-    }
+//    public Table mapDTO(TableDTO dto) {
+//        Table table = this.map(dto);
+////        table.setVersion(0L);
+////        table.getTableFieldList().stream().forEach(u -> u.setTable(table));
+////        table.getTableFieldList().stream().forEach(u -> u.setVersion(0L));
+//        return table;
+//    }
 
 
     public void setDtoToEntity(TableDTO dto, Table entity){

@@ -19,6 +19,9 @@ import javax.persistence.*;
 public class ListComponentField extends BaseEntity {
 
     @Column
+    private String code;
+
+    @Column(columnDefinition = "TEXT")
     private String editor;
 
     @Column
@@ -43,5 +46,30 @@ public class ListComponentField extends BaseEntity {
 
     @Column
     private Boolean editable;
+
+    @Column
+    private Boolean required;
+
+    @Column
+    private String defaultValue;
+
+    @Column
+    private Integer decimals;
+
+
+    @Column
+    private String fieldtype;
+
+    @Column
+    private String shortLocation;
+
+    @Column (columnDefinition = "TEXT")
+    private String operator;
+
+    @Column
+    private String bclass;
+
+    @Column(columnDefinition = "TEXT")
+    private String css;
 
 }

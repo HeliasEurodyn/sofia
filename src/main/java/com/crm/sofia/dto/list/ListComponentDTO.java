@@ -24,4 +24,9 @@ public class ListComponentDTO extends BaseDTO {
     private List<ListComponentFieldDTO> listComponentFilterFieldList;
     private List<ListComponentFieldDTO> listComponentLeftGroupFieldList;
     private List<ListComponentFieldDTO> listComponentTopGroupFieldList;
+    private List<ListComponentFieldDTO> listComponentOrderByFieldList;
+    private List<ListComponentFieldDTO> listComponentActionFieldList;
+    private String filterFieldStructure;
+    private Boolean customFilterFieldStructure;
+
 }

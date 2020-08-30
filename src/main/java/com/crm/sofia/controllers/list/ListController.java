@@ -1,8 +1,11 @@
 package com.crm.sofia.controllers.list;
 
+import com.crm.sofia.dto.list.GroupEntryDTO;
 import com.crm.sofia.dto.list.ListDTO;
+import com.crm.sofia.dto.list.ListResultsDataDTO;
 import com.crm.sofia.services.list.ListService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +28,23 @@ public class ListController {
         return this.listService.getObject();
     }
 
-    @GetMapping(path="/by-id")
+    @GetMapping(path = "/by-id")
     ListDTO getObject(@RequestParam("id") Long id) {
         return this.listService.getObject(id);
     }
 
-    @GetMapping(path="/by-name")
+    @PostMapping(path = "/data")
+    ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
+        return this.listService.getObjectData(dto);
+    }
+
+    @PostMapping(path = "/left-grouping-data")
+    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
+        return this.listService.getObjectLeftGroupingData(dto);
+    }
+
+;
+    @GetMapping(path = "/by-name")
     ListDTO getObject(@RequestParam("name") String name) {
         return this.listService.getObjectByName(name);
     }
@@ -40,7 +54,6 @@ public class ListController {
         ListDTO createdDTO = this.listService.postObject(dto);
         return createdDTO;
     }
-
 
     @PutMapping
     public ListDTO putObject(@RequestBody ListDTO dto) {

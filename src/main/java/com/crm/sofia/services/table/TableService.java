@@ -37,27 +37,27 @@ public class TableService {
 
 
     public TableDTO postObject(TableDTO componentDTO) {
-        Table component = this.componentMapper.mapDTO(componentDTO);
+        Table component = this.componentMapper.map(componentDTO);
 
         Table table = this.tableRepository.save(component);
         return this.componentMapper.map(table);
     }
 
 
-    public TableDTO putObject(TableDTO componentDTO) {
-
-        Optional<Table> optionalComponent = this.tableRepository.findById(componentDTO.getId());
-        if (!optionalComponent.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
-        }
-        Table table = optionalComponent.get();
-
-        componentMapper.setDtoToEntity(componentDTO, table);
-        Table createdTable = this.tableRepository.save(table);
-        TableDTO createdCustomComponentDTO = this.componentMapper.map(createdTable);
-
-        return createdCustomComponentDTO;
-    }
+//    public TableDTO putObject(TableDTO componentDTO) {
+//
+//        Optional<Table> optionalComponent = this.tableRepository.findById(componentDTO.getId());
+//        if (!optionalComponent.isPresent()) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
+//        }
+//        Table table = optionalComponent.get();
+//
+//        componentMapper.setDtoToEntity(componentDTO, table);
+//        Table createdTable = this.tableRepository.save(table);
+//        TableDTO createdCustomComponentDTO = this.componentMapper.map(createdTable);
+//
+//        return createdCustomComponentDTO;
+//    }
 
 
 //    public List<TableFieldDTO> putNewObjectFields(TableDTO componentDTO) {
@@ -229,9 +229,9 @@ public class TableService {
 
     @Transactional
     public TableDTO save(TableDTO dto) {
-        TableDTO customComponentDTO = this.postObject(dto);
-        this.createDatabaseTable(customComponentDTO);
-        return customComponentDTO;
+        TableDTO createdDTO = this.postObject(dto);
+        this.createDatabaseTable(createdDTO);
+        return createdDTO;
 
     }
 

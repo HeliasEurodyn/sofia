@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,48 +64,48 @@ public class ComponentService {
         }
         Component entity = optionalEntity.get();
         ComponentDTO dto = this.componentMapper.map(entity);
+        List<ComponentPersistEntityDTO> sorted = dto.getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+        dto.setComponentPersistEntityList(sorted);
 
-        for (ComponentPersistEntityDTO componentPersistEntityDTO : dto.getComponentPersistEntityList()) {
-            String entitytype = componentPersistEntityDTO.getPersistEntity().getEntitytype();
-            if (entitytype.equals("Table")) {
-                TableDTO tableDto = tableService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
-                componentPersistEntityDTO.setPersistEntity(tableDto);
-
-                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
-                    for (TableFieldDTO tableFieldDTO : tableDto.getTableFieldList()) {
-                        if (tableFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
-                            componentPersistEntityFieldDTO.setPersistEntityField(tableFieldDTO);
-                        }
-                    }
-                }
-
-            } else if (entitytype.equals("View")) {
-                ViewDTO viewDTO = viewService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
-                componentPersistEntityDTO.setPersistEntity(viewDTO);
-
-                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
-                    for (ViewFieldDTO viewFieldDTO : viewDTO.getViewFieldList()) {
-                        if (viewFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
-                            componentPersistEntityFieldDTO.setPersistEntityField(viewFieldDTO);
-                        }
-                    }
-                }
-
-            } else if (entitytype.equals("AppView")) {
-                AppViewDTO appViewDTO = appViewService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
-                componentPersistEntityDTO.setPersistEntity(appViewDTO);
-
-                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
-                    for (AppViewFieldDTO appViewFieldDTO : appViewDTO.getAppViewFieldList()) {
-                        if (appViewFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
-                            componentPersistEntityFieldDTO.setPersistEntityField(appViewFieldDTO);
-                        }
-                    }
-                }
-
-            }
-
-        }
+//        for (ComponentPersistEntityDTO componentPersistEntityDTO : dto.getComponentPersistEntityList()) {
+//            String entitytype = componentPersistEntityDTO.getPersistEntity().getEntitytype();
+//            if (entitytype.equals("Table")) {
+//                TableDTO tableDto = tableService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
+//                componentPersistEntityDTO.setPersistEntity(tableDto);
+//
+//                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
+//                    for (TableFieldDTO tableFieldDTO : tableDto.getTableFieldList()) {
+//                        if (tableFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
+//                            componentPersistEntityFieldDTO.setPersistEntityField(tableFieldDTO);
+//                        }
+//                    }
+//                }
+//
+//            } else if (entitytype.equals("View")) {
+//                ViewDTO viewDTO = viewService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
+//                componentPersistEntityDTO.setPersistEntity(viewDTO);
+//
+//                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
+//                    for (ViewFieldDTO viewFieldDTO : viewDTO.getViewFieldList()) {
+//                        if (viewFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
+//                            componentPersistEntityFieldDTO.setPersistEntityField(viewFieldDTO);
+//                        }
+//                    }
+//                }
+//
+//            } else if (entitytype.equals("AppView")) {
+//                AppViewDTO appViewDTO = appViewService.getObject(componentPersistEntityDTO.getPersistEntity().getId());
+//                componentPersistEntityDTO.setPersistEntity(appViewDTO);
+//
+//                for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityDTO.getComponentPersistEntityFieldList()) {
+//                    for (AppViewFieldDTO appViewFieldDTO : appViewDTO.getAppViewFieldList()) {
+//                        if (appViewFieldDTO.getId().equals(componentPersistEntityFieldDTO.getPersistEntityField().getId())) {
+//                            componentPersistEntityFieldDTO.setPersistEntityField(appViewFieldDTO);
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return dto;
     }
