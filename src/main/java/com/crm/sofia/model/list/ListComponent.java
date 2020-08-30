@@ -1,5 +1,6 @@
 package com.crm.sofia.model.list;
 
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.component.Component;
 import lombok.*;
@@ -62,4 +63,25 @@ public class ListComponent extends BaseEntity {
     @JoinColumn(name = "top_group_list_component_id")
     private List<ListComponentField> listComponentTopGroupFieldList;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "order_by_list_component_id")
+    private List<ListComponentField> listComponentOrderByFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "action_list_component_id")
+    private List<ListComponentField> listComponentActionFieldList;
+
+    @Column(columnDefinition = "TEXT")
+    private String filterFieldStructure;
+
+    @Column
+    private Boolean customFilterFieldStructure;
 }
