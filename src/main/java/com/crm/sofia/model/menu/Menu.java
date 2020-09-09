@@ -22,9 +22,6 @@ public class Menu extends BaseEntity {
     @Column
     private String name;
 
-//    @Column
-//    private Integer shortOrder;
-
     @OneToMany(
             mappedBy = "menu",
             fetch = FetchType.LAZY,

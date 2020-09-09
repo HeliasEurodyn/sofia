@@ -3,16 +3,28 @@ package com.crm.sofia.services.list;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.*;
 import com.crm.sofia.mapper.list.ListMapper;
+import com.crm.sofia.model.jasperTest.JasperModelClass;
 import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.list.ListRepository;
-import org.mapstruct.Mapping;
+import com.crm.sofia.utils.ExcelGenerator;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -90,9 +102,9 @@ public class ListService {
     public ListResultsDataDTO getObjectData(ListDTO dto) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
         List<Map<String, Object>> listContent = this.generateListContent(dto);
-      //  List<GroupEntryDTO> groupContent = this.generateGroupContent(dto);
+        //  List<GroupEntryDTO> groupContent = this.generateGroupContent(dto);
         listResultsDataDTO.setListContent(listContent);
-      //  listResultsDataDTO.setGroupContent(groupContent);
+        //  listResultsDataDTO.setGroupContent(groupContent);
         return listResultsDataDTO;
     }
 
@@ -240,9 +252,9 @@ public class ListService {
 //                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + listComponentFieldDTO.getCode();
 
             if (firstItteration) {
-                queryString += listComponentFieldDTO.getCode() + " ASC " ;
+                queryString += listComponentFieldDTO.getCode() + " ASC ";
             } else {
-                queryString += "," + listComponentFieldDTO.getCode() + " ASC " ;
+                queryString += "," + listComponentFieldDTO.getCode() + " ASC ";
             }
 
             firstItteration = false;
@@ -267,7 +279,7 @@ public class ListService {
 
             for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentLeftGroupFieldList()) {
 
-                String currentValue =  dataRow[i].toString();
+                String currentValue = dataRow[i].toString();
                 GroupEntryDTO entry = currentGroupEntries.stream()
                         .filter(storedEntry -> currentValue.equals(storedEntry.getValue()))
                         .findAny()
@@ -348,7 +360,7 @@ public class ListService {
          */
 
 
-        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentLeftGroupFieldList()){
+        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentLeftGroupFieldList()) {
             listComponentFieldDTO.setOperator("=");
             listComponentFieldDTO.setRequired(false);
         }
@@ -423,9 +435,9 @@ public class ListService {
                     listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
                             listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName();
 
-            if(listComponentFieldDTO.getEditor().equals("ASC")|| listComponentFieldDTO.getEditor().equals("DESC")){
+            if (listComponentFieldDTO.getEditor().equals("ASC") || listComponentFieldDTO.getEditor().equals("DESC")) {
                 field += " " + listComponentFieldDTO.getEditor();
-            }  else {
+            } else {
                 field += " ASC ";
             }
 
@@ -460,6 +472,124 @@ public class ListService {
 
         return listContent;
     }
+
+
+    public void doJasperPdfTest() throws FileNotFoundException, JRException {
+
+        List<JasperModelClass> entities = new ArrayList<>();
+        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
+        entities.add(entity);
+        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
+        entities.add(entity);
+        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
+        entities.add(entity);
+
+        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Helias");
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\helias\\Desktop\\cv new\\test.pdf");
+
+    }
+
+    public void doJasperExcelTestExcel() throws FileNotFoundException, JRException {
+
+
+        List<JasperModelClass> entities = new ArrayList<>();
+        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
+        entities.add(entity);
+        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
+        entities.add(entity);
+        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
+        entities.add(entity);
+
+        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Helias");
+
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        JRXlsxExporter exporter = new JRXlsxExporter();
+
+        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:\\Users\\helias\\Desktop\\cv new\\testexcel.xlsx"));
+
+        SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
+        reportConfig.setSheetNames(new String[]{"Sofia output data"});
+        reportConfig.setRemoveEmptySpaceBetweenRows(true);
+        reportConfig.setWhitePageBackground(false);
+        reportConfig.setDetectCellType(true);
+        reportConfig.setOnePagePerSheet(true);
+        exporter.setConfiguration(reportConfig);
+
+
+        try {
+            exporter.exportReport();
+        } catch (JRException ex) {
+//            Logger.getLogger(SimpleReportFiller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+        //JasperExportManager.exportReportToPdfFile(jasperPrint,);
+    }
+
+//    public ByteArrayInputStream doPoiTestExcel() throws IOException {
+//        List<TestCustomer> testCustomers = new ArrayList<>();
+//        TestCustomer testCustomer = new TestCustomer(1L,"Ilias","25hs martiou", 35);
+//        testCustomers.add(testCustomer);
+//        testCustomer = new TestCustomer(2L,"Kostas","Stavroupoleos 49", 45);
+//        testCustomers.add(testCustomer);
+//
+//        ByteArrayInputStream in =   ExcelGenerator.customersToExcel(testCustomers);
+//        return in;
+//
+//    }
+
+
+//    public Resource exportXls() throws IOException {
+//        StringBuilder filename = new StringBuilder("Foo Export").append(" - ")
+//                .append("Test 1.xlsx");
+//        return export(filename);
+//    }
+//
+//    public ByteArrayResource export(String filename, HttpServletResponse response) throws IOException {
+//        ServletOutputStream sfos = response.getOutputStream();
+//
+//
+//
+//        byte[] bytes = new byte[1024];
+//        try (Workbook workbook = generateExcel()) {
+//            FileOutputStream fos = new FileOutputStream(sfos);
+////            FileOutputStream fos = write(workbook, filename);
+//            sfos.write(workbook);
+//            fos.write(bytes);
+//            fos.flush();
+//            fos.close();
+//        }
+//
+//        return new ByteArrayResource(bytes);
+//    }
+
+//    private Workbook generateExcel() {
+//        Workbook workbook = new XSSFWorkbook();
+//        Sheet sheet = workbook.createSheet();
+//
+//        //create columns and rows
+//
+//        return workbook;
+//    }
+//
+//    private FileOutputStream write(final Workbook workbook, final String filename) throws IOException {
+//        FileOutputStream fos = new FileOutputStream(filename);
+//        workbook.write(fos);
+//        fos.close();
+//        return fos;
+//    }
 
 
 }
