@@ -25,7 +25,7 @@ public abstract class BaseNoIdEntity {
   @CreatedBy
   //@Column(name = "created_by", updatable = false, nullable = false)
   @Column(name = "created_by", updatable = false)
-  private String createdBy;
+  private Long createdBy;
 
   @LastModifiedDate
   @Column(name = "modified_on", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -33,7 +33,7 @@ public abstract class BaseNoIdEntity {
 
   @LastModifiedBy
   @Column(name = "modified_by")
-  private String modifiedBy;
+  private Long modifiedBy;
 
   @Version
   private Long version;

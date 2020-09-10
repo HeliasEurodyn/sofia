@@ -47,13 +47,14 @@ public class JWTService {
         }
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         if (areCredentialsSet()) {
-            return (int) getClaimValue(
+            Object userId = getClaimValue(
                     String.valueOf(SecurityContextHolder.getContext().getAuthentication().getCredentials()),
                     AppConstants.Jwt.JWT_CLAIM_USER_ID);
+            return ((Number) userId).longValue();
         } else {
-            return 0;
+            return 0L;
         }
     }
 
@@ -100,7 +101,7 @@ public class JWTService {
         }
 
         // Add userId into claims.
-        builder.claim(AppConstants.Jwt.JWT_CLAIM_USER_ID, userId);
+        builder.claim(AppConstants.Jwt.JWT_CLAIM_USER_ID,userId);
 
         // Build the JWT and serialize it to a compact, URL-safe string.
         return builder.compact();
