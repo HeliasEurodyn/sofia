@@ -31,9 +31,9 @@ public class MenuField extends BaseEntity {
 //    @Column
 //    private Long shortOrder;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
-    @JoinColumn(name = "menu_id", referencedColumnName = "id")
-    private Menu menu;
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
+//    @JoinColumn(name = "menu_id", referencedColumnName = "id")
+//    private Menu menu;
 
     @OneToMany(
             fetch = FetchType.LAZY,

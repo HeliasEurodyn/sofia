@@ -23,11 +23,11 @@ public class Menu extends BaseEntity {
     private String name;
 
     @OneToMany(
-            mappedBy = "menu",
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },
             orphanRemoval=true
     )
+    @JoinColumn(name = "menu_id")
     private List<MenuField> menuFieldList;
 
 

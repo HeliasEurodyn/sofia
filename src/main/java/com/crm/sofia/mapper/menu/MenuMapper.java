@@ -17,13 +17,13 @@ public abstract class MenuMapper extends BaseMapper<MenuDTO, Menu>  {
 
     public Menu mapDTO(MenuDTO dto) {
         Menu entity = this.map(dto);
-        entity.getMenuFieldList().stream().forEach(u -> u.setMenu(entity));
+      //  entity.getMenuFieldList().stream().forEach(u -> u.setMenu(entity));
         return entity;
     }
 
     public void mapDtoToEntity(MenuDTO dto, @MappingTarget Menu entity){
         this.dtoToEntity(dto,entity);
-        entity.getMenuFieldList().stream().forEach(u -> u.setMenu(entity));
+      //  entity.getMenuFieldList().stream().forEach(u -> u.setMenu(entity));
     }
 
 

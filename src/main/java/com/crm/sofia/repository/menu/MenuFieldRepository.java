@@ -12,10 +12,10 @@ import java.util.List;
 @Repository
 public interface MenuFieldRepository extends BaseRepository<MenuField> {
 
-    @Modifying
-    @Query(" DELETE FROM MenuField " +
-            " WHERE id NOT IN (:ids) " +
-            " AND menu.id = :id ")
-    void deleteObjectsNotInListForParentId(@Param("ids") List<Long> ids, @Param("id") Long id);
+//    @Modifying
+//    @Query(" DELETE FROM MenuField " +
+//            " WHERE id NOT IN (:ids) " +
+//            " AND menu.id = :id ")
+//    void deleteObjectsNotInListForParentId(@Param("ids") List<Long> ids, @Param("id") Long id);
 
 }

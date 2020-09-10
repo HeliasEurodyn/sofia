@@ -5,12 +5,13 @@ import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.mapper.menu.MenuMapper;
 import com.crm.sofia.model.menu.Menu;
 import com.crm.sofia.repository.menu.MenuRepository;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,13 +23,17 @@ public class MenuService {
 
     private final MenuMapper menuMapper;
     private final MenuFieldService menuFieldService;
+    private final JWTService jwtService;
 
     public MenuService(MenuRepository menuRepository,
-                       MenuMapper menuMapper, MenuFieldService menuFieldService) {
+                       MenuMapper menuMapper,
+                       MenuFieldService menuFieldService,
+                       JWTService jwtService) {
 
         this.menuRepository = menuRepository;
         this.menuMapper = menuMapper;
         this.menuFieldService = menuFieldService;
+        this.jwtService = jwtService;
     }
 
     public List<MenuDTO> getObject() {
@@ -65,6 +70,10 @@ public class MenuService {
     @Transactional
     public MenuDTO postObject(MenuDTO menuDTO) {
         Menu component = this.menuMapper.mapDTO(menuDTO);
+        component.setCreatedOn(Instant.now());
+        component.setModifiedOn(Instant.now());
+        component.setCreatedBy(jwtService.getUserId());
+        component.setModifiedBy(jwtService.getUserId());
 
         Menu createdComponent = this.menuRepository.save(component);
         return this.menuMapper.map(createdComponent);
@@ -80,6 +89,10 @@ public class MenuService {
         Menu entity = optionalComponent.get();
 
         menuMapper.mapDtoToEntity(componentDTO, entity);
+        entity.setCreatedOn(Instant.now());
+        entity.setModifiedOn(Instant.now());
+        entity.setCreatedBy(jwtService.getUserId());
+        entity.setModifiedBy(jwtService.getUserId());
 
         Menu createdEntity = this.menuRepository.save(entity);
         MenuDTO createdDto = this.menuMapper.map(createdEntity);
@@ -87,20 +100,20 @@ public class MenuService {
         return createdDto;
     }
 
-    @Transactional
-    public List<MenuFieldDTO> putNewObjectFields(MenuDTO dto) {
-
-        List<MenuFieldDTO> createdMenuItemConponentDTOs = new ArrayList<>();
-        for (MenuFieldDTO menuItemConponentDTO : dto.getMenuFieldList()) {
-            MenuFieldDTO createdMenuItemConponentDTO = this.menuFieldService.save(menuItemConponentDTO, dto.getId());
-            createdMenuItemConponentDTOs.add(createdMenuItemConponentDTO);
-        }
-
-        List<Long> ids = createdMenuItemConponentDTOs.stream().map(MenuFieldDTO::getId).collect(Collectors.toList());
-        this.menuFieldService.deleteNotInListForParent(ids, dto.getId());
-
-        return createdMenuItemConponentDTOs;
-    }
+//    @Transactional
+//    public List<MenuFieldDTO> putNewObjectFields(MenuDTO dto) {
+//
+//        List<MenuFieldDTO> createdMenuItemConponentDTOs = new ArrayList<>();
+//        for (MenuFieldDTO menuItemConponentDTO : dto.getMenuFieldList()) {
+//            MenuFieldDTO createdMenuItemConponentDTO = this.menuFieldService.save(menuItemConponentDTO, dto.getId());
+//            createdMenuItemConponentDTOs.add(createdMenuItemConponentDTO);
+//        }
+//
+//        List<Long> ids = createdMenuItemConponentDTOs.stream().map(MenuFieldDTO::getId).collect(Collectors.toList());
+//        this.menuFieldService.deleteNotInListForParent(ids, dto.getId());
+//
+//        return createdMenuItemConponentDTOs;
+//    }
 
 
 //    @PostMapping

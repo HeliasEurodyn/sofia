@@ -69,9 +69,9 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User already exists!!");
         }
 
-        user.setCreatedBy(this.getLoggedInUser().getUsername());
+        user.setCreatedBy(this.jwtService.getUserId());
         user.setCreatedOn(Instant.now());
-        user.setModifiedBy(this.getLoggedInUser().getUsername());
+        user.setModifiedBy(this.jwtService.getUserId());
         user.setModifiedOn(Instant.now());
 
         User createdUser = userRepository.save(user);
@@ -101,9 +101,9 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
-        user.setCreatedBy("");
+        user.setCreatedBy(this.jwtService.getUserId());
         user.setCreatedOn(Instant.now());
-        user.setModifiedBy("");
+        user.setModifiedBy(this.jwtService.getUserId());
         user.setModifiedOn(Instant.now());
 
         User createdUser = userRepository.save(user);
