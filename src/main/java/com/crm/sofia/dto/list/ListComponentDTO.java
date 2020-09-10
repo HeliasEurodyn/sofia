@@ -29,4 +29,14 @@ public class ListComponentDTO extends BaseDTO {
     private String filterFieldStructure;
     private Boolean customFilterFieldStructure;
 
+    private Boolean exportExcel;
+    private String defaultPage;
+
+    private Boolean hasPagination;
+    private Long totalPages;
+
+    private Long rowsLimit;
+
+    private Boolean HeaderFilters;
+    private String rowNavigation;
 }
