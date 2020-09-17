@@ -3,10 +3,11 @@ package com.crm.sofia.services.list;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.*;
 import com.crm.sofia.mapper.list.ListMapper;
+import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.jasperTest.JasperModelClass;
 import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.list.ListRepository;
-import com.crm.sofia.utils.ExcelGenerator;
+import com.crm.sofia.services.expression.ExpressionService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
@@ -21,14 +22,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,13 +38,16 @@ public class ListService {
     private final ListRepository listRepository;
     private final ListMapper listMapper;
     private final EntityManager entityManager;
+    private final ExpressionService expressionService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
-                       EntityManager entityManager) {
+                       EntityManager entityManager,
+                       ExpressionService expressionService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.entityManager = entityManager;
+        this.expressionService = expressionService;
     }
 
     @Transactional
@@ -83,6 +86,36 @@ public class ListService {
         return listDTO;
     }
 
+    public ListDTO getObjectData(Long id) {
+        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
+        if (!optionalListEntity.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
+        }
+        ListDTO listDTO = this.listMapper.map(optionalListEntity.get());
+        for (ListComponentDTO dto : listDTO.getListComponentList()) {
+            List<ComponentPersistEntityDTO> sorted = dto.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+            dto.getComponent().setComponentPersistEntityList(sorted);
+        }
+
+        for (ListComponentDTO dto : listDTO.getListComponentList()) {
+            for (ListComponentFieldDTO filterDto : dto.getListComponentFilterFieldList()) {
+
+                if(filterDto.getDefaultValue() == null ) continue;
+                if(filterDto.getDefaultValue().equals("")) continue;
+
+                ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
+                if(!exprResponce.getError()){
+                   Object fieldValue = exprResponce.getExprUnit().getResult();
+                    filterDto.setFieldValue(fieldValue);
+                }
+            }
+        }
+
+        return listDTO;
+    }
+
+
+
     public ListDTO getObjectByName(String name) {
         ListEntity listEntity = this.listRepository.findFirstByName(name);
         if (listEntity == null) {
@@ -105,6 +138,7 @@ public class ListService {
         //  List<GroupEntryDTO> groupContent = this.generateGroupContent(dto);
         listResultsDataDTO.setListContent(listContent);
         //  listResultsDataDTO.setGroupContent(groupContent);
+
         return listResultsDataDTO;
     }
 
@@ -317,7 +351,14 @@ public class ListService {
          */
         String queryString = "SELECT ";
         Boolean firstItteration = true;
-        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentColumnFieldList()) {
+
+
+        List<ListComponentFieldDTO> fieldColumns = dto.getListComponentList().get(0).getListComponentColumnFieldList()
+                .stream().filter(
+                        fieldColumn -> fieldColumn.getComponentPersistEntityField() != null).collect(Collectors.toList());
+
+
+        for (ListComponentFieldDTO listComponentFieldDTO : fieldColumns) {
             String field =
                     listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
                             listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + listComponentFieldDTO.getCode();
@@ -328,6 +369,24 @@ public class ListService {
             }
             firstItteration = false;
         }
+
+        Pattern pattern = Pattern.compile("^SqlField\\('.+'\\)$");
+        List<ListComponentFieldDTO> sqlFieldColumns = dto.getListComponentList().get(0).getListComponentColumnFieldList()
+                .stream().filter(
+                        fieldColumn ->pattern.matcher(fieldColumn.getEditor()).matches()).collect(Collectors.toList());
+
+        for (ListComponentFieldDTO listComponentFieldDTO : sqlFieldColumns) {
+            String field = "( " +
+                    listComponentFieldDTO.getEditor().substring(10,listComponentFieldDTO.getEditor().length()-2) +
+                    ") as " + listComponentFieldDTO.getCode();
+         if (firstItteration) {
+                queryString += field;
+            } else {
+                queryString += "," + field;
+            }
+            firstItteration = false;
+        }
+
 
         /*
          * Iterate to Generate FROM Tables & Relashionships part
@@ -358,8 +417,6 @@ public class ListService {
         /*
          * Iterate to Generate WHERE Fields part
          */
-
-
         for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentLeftGroupFieldList()) {
             listComponentFieldDTO.setOperator("=");
             listComponentFieldDTO.setRequired(false);
@@ -461,11 +518,17 @@ public class ListService {
 
             Map<String, Object> dataMapRow = new HashMap<>();
             int i = 0;
-            for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentList().get(0).getListComponentColumnFieldList()) {
-                dataMapRow.put(listComponentFieldDTO.getCode(), dataRow[i]);
 
+            for (ListComponentFieldDTO listComponentFieldDTO : fieldColumns) {
+                dataMapRow.put(listComponentFieldDTO.getCode(), dataRow[i]);
                 i++;
             }
+
+            for (ListComponentFieldDTO listComponentFieldDTO : sqlFieldColumns) {
+                dataMapRow.put(listComponentFieldDTO.getCode(), dataRow[i]);
+                i++;
+            }
+
             listContent.add(dataMapRow);
 
         }

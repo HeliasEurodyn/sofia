@@ -40,12 +40,17 @@ public class ListController {
         return this.listService.getObject(id);
     }
 
-    @PostMapping(path = "/data")
+    @GetMapping(path = "data/by-id")
+    ListDTO getObjectData(@RequestParam("id") Long id) {
+        return this.listService.getObjectData(id);
+    }
+
+    @PostMapping(path = "/data/results")
     ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
         return this.listService.getObjectData(dto);
     }
 
-    @PostMapping(path = "/left-grouping-data")
+    @PostMapping(path = "/data/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
         return this.listService.getObjectLeftGroupingData(dto);
     }
