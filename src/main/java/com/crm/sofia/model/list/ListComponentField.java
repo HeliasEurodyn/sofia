@@ -72,4 +72,7 @@ public class ListComponentField extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String css;
 
+    @Column
+    private String formulaType;
+
 }

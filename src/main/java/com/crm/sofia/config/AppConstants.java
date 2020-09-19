@@ -19,6 +19,14 @@ public class AppConstants {
             disabled,
             deleted
         }
+
+
+        public enum FormulaTypes  {
+            column,
+            sql,
+            command
+        }
+
     }
 
 }
