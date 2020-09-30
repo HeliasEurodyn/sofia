@@ -17,7 +17,6 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "entity_type")
 public class PersistEntity extends BaseEntity {
 
-
     @Column
     private String name;
 
@@ -26,5 +25,8 @@ public class PersistEntity extends BaseEntity {
 
     @Column(name = "entity_type", insertable = false, updatable = false)
     private String entitytype;
+
+    @Column(columnDefinition = "TEXT")
+    private String query;
 
 }

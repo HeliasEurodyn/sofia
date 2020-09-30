@@ -1,6 +1,7 @@
 package com.crm.sofia.controllers.table;
 
 import com.crm.sofia.dto.table.TableDTO;
+import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.services.table.TableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -26,12 +27,10 @@ public class TableController {
         return this.tableService.getObject();
     }
 
-
     @PostMapping
     public TableDTO postObject(@RequestBody TableDTO dto) {
         TableDTO customComponentDTO = this.tableService.save(dto);
         return customComponentDTO;
-
     }
 
     @PutMapping
@@ -43,12 +42,12 @@ public class TableController {
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
-        TableDTO dto =  this.tableService.getObject(id);
+        TableDTO dto = this.tableService.getObject(id);
         this.tableService.deleteObject(id);
-        this.tableService.deteleDatabaseTable(dto.getName());
+        // this.tableService.deteleDatabaseTable(dto.getName());
     }
 
-    @GetMapping(path="/by-id")
+    @GetMapping(path = "/by-id")
     TableDTO getObject(@RequestParam("id") Long id) {
         return this.tableService.getObject(id);
     }
@@ -69,6 +68,12 @@ public class TableController {
     public List<String> fields() {
 
         return tableService.getTableFields("testtable");
+    }
+
+
+    @GetMapping(path = "/generate-table-fields")
+    List<TableFieldDTO> generateTableFields(@RequestParam("name") String name) {
+        return this.tableService.generateTableFields(name);
     }
 
 

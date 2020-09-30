@@ -14,12 +14,9 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "AppView")
-@javax.persistence.Table(name = "app_view")
 @DiscriminatorValue("AppView")
 public class AppView extends PersistEntity {
 
-    @Column(columnDefinition = "TEXT")
-    private String query;
 
     @OneToMany(
             fetch = FetchType.LAZY,

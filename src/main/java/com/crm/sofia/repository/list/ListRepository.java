@@ -1,6 +1,5 @@
 package com.crm.sofia.repository.list;
 
-import com.crm.sofia.model.component.Component;
 import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.common.BaseRepository;
 

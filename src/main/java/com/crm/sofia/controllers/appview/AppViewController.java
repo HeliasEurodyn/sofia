@@ -48,7 +48,7 @@ public class AppViewController {
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
-        AppViewDTO customComponentDTO = this.appViewService.getObject(id);
+       // AppViewDTO customComponentDTO = this.appViewService.getObject(id);
         this.appViewService.deleteObject(id);
     }
 

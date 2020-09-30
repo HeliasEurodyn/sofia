@@ -16,21 +16,23 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 public class TableService {
-    private final TableFieldService customComponentFieldService;
+    //    private final TableFieldService customComponentFieldService;
     private final TableRepository tableRepository;
     private final TableMapper componentMapper;
     private final EntityManager entityManager;
 
     public TableService(TableRepository tableRepository,
                         TableMapper componentMapper,
-                        TableFieldService customComponentFieldService,
+//                        TableFieldService customComponentFieldService,
                         EntityManager entityManager) {
         this.tableRepository = tableRepository;
-        this.customComponentFieldService = customComponentFieldService;
+//        this.customComponentFieldService = customComponentFieldService;
         this.componentMapper = componentMapper;
         this.entityManager = entityManager;
     }
@@ -114,7 +116,7 @@ public class TableService {
 
     @Transactional
     public void deteleDatabaseTable(String tableName) {
-        Query query = entityManager.createNativeQuery("DROP TABLE "+tableName.replace(" ","")+";");
+        Query query = entityManager.createNativeQuery("DROP TABLE " + tableName.replace(" ", "") + ";");
         query.executeUpdate();
     }
 
@@ -155,11 +157,11 @@ public class TableService {
             }
 
             if (tableFieldDTO.getAutoIncrement()) {
-                sql += " AUTO_INCREMENT " ;
+                sql += " AUTO_INCREMENT ";
             }
 
             if (tableFieldDTO.getPrimaryKey()) {
-                sql += " PRIMARY KEY " ;
+                sql += " PRIMARY KEY ";
             }
 
             sql += "\n";
@@ -168,7 +170,7 @@ public class TableService {
         }
         sql += " ; ";
 
-        if(fieldCounter == 0) return;
+        if (fieldCounter == 0) return;
 
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
@@ -176,7 +178,7 @@ public class TableService {
 
 
     public void createDatabaseTable(TableDTO customComponentDTO) {
-        if(customComponentDTO.getTableFieldList().size() == 0) return;
+        if (customComponentDTO.getTableFieldList().size() == 0) return;
 
         int fieldCounter = 0;
         String sql = "";
@@ -205,11 +207,11 @@ public class TableService {
             }
 
             if (tableFieldDTO.getAutoIncrement()) {
-                sql += " AUTO_INCREMENT " ;
+                sql += " AUTO_INCREMENT ";
             }
 
             if (tableFieldDTO.getPrimaryKey()) {
-                sql += " PRIMARY KEY " ;
+                sql += " PRIMARY KEY ";
             }
 
             sql += "\n";
@@ -242,5 +244,60 @@ public class TableService {
         this.updateDatabaseTable(createdDTO);
         return createdDTO;
 
+    }
+
+    public List<TableFieldDTO> generateTableFields(String name) {
+        List<TableFieldDTO> dtos = new ArrayList<>();
+
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + name + " FROM sofia;");
+        List<Object[]> fields = query.getResultList();
+
+        for (Object[] field : fields) {
+            TableFieldDTO dto = new TableFieldDTO();
+            dto.setName(field[0].toString());
+            dto.setDescription("");
+            dto.setType(field[1].toString());
+            dto.setEntitytype("TableField");
+
+            Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(field[1].toString());
+            while (m.find()) {
+                dto.setSize(Integer.valueOf(m.group(1)));
+            }
+
+            int index = field[1].toString().indexOf("(");
+            if (index > 0) {
+                String type = field[1].toString().substring(0, index);
+                dto.setType(type);
+            } else {
+                String type = field[1].toString();
+                if (type.equals("timestamp")) type = "datetime";
+                dto.setType(type);
+            }
+
+            String isNullField = field[2].toString();
+            if (isNullField.equals("NO")) dto.setHasNotNull(true);
+            else dto.setHasNotNull(false);
+
+            String keyField = field[3].toString();
+            if (keyField.equals("PRI")) dto.setPrimaryKey(true);
+            else dto.setPrimaryKey(false);
+
+            if (field[4] != null) {
+                dto.setDefaultValue(field[4].toString());
+                dto.setHasDefault(true);
+            } else {
+                dto.setHasDefault(false);
+            }
+            String extraField = field[5].toString();
+
+            if (extraField.equals("auto_increment")) dto.setAutoIncrement(true);
+            else dto.setAutoIncrement(false);
+
+            dto.setIsUnsigned(false);
+
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 }

@@ -15,7 +15,6 @@ import javax.persistence.*;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "TableField")
-@javax.persistence.Table(name = "custom_table_field")
 @DiscriminatorValue("TableField")
 public class TableField extends PersistEntityField {
 

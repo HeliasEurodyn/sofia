@@ -103,7 +103,7 @@ public class ViewService {
     @Transactional
     public List<ViewFieldDTO> generateViewFields(String sql) {
 
-        List<ViewFieldDTO> dtos = new ArrayList<>();
+       List<ViewFieldDTO> dtos = new ArrayList<>();
        String uuid = UUID.randomUUID().toString().replace("-","_");
        this.createView(uuid, sql);
 
@@ -115,10 +115,16 @@ public class ViewService {
             dto.setName(field[0].toString());
             dto.setDescription("");
             dto.setType(field[1].toString());
+            dto.setEntitytype("ViewField");
 
             Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(field[1].toString());
             while(m.find()) {
              dto.setSize(Integer.valueOf(m.group(1)));
+            }
+
+            int index = field[1].toString().indexOf("(");
+            if(index > 0){
+                dto.setType(field[1].toString().substring(0,index));
             }
 
             dtos.add(dto);

@@ -15,7 +15,6 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "Table")
-@javax.persistence.Table(name = "custom_table")
 @DiscriminatorValue("Table")
 public class Table extends PersistEntity {
 

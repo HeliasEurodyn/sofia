@@ -17,8 +17,6 @@ import java.util.List;
 @Accessors(chain = true)
 public class AppViewDTO extends PersistEntityDTO {
 
-    private String query;
-
     private List<AppViewFieldDTO> appViewFieldList;
 
 }

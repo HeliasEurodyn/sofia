@@ -31,6 +31,7 @@ public class PersistEntityDTO extends BaseDTO {
 
     private String entitytype;
 
+    private String query;
 }
 
 

@@ -17,7 +17,6 @@ import javax.persistence.Entity;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "AppViewField")
-@javax.persistence.Table(name = "app_view_field")
 @DiscriminatorValue("AppViewField")
 public class AppViewField extends PersistEntityField {
 }

@@ -2,7 +2,6 @@ package com.crm.sofia.services.appview;
 
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.appview.AppViewFieldDTO;
-import com.crm.sofia.dto.view.ViewFieldDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
 import com.crm.sofia.model.appview.AppView;
 import com.crm.sofia.repository.appview.AppViewRepository;
@@ -126,10 +125,16 @@ public class AppViewService {
             dto.setName(field[0].toString());
             dto.setDescription("");
             dto.setType(field[1].toString());
+            dto.setEntitytype("AppViewField");
 
             Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(field[1].toString());
             while (m.find()) {
                 dto.setSize(Integer.valueOf(m.group(1)));
+            }
+
+            int index = field[1].toString().indexOf("(");
+            if(index > 0){
+                dto.setType(field[1].toString().substring(0,index));
             }
 
             dtos.add(dto);

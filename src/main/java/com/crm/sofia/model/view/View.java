@@ -18,12 +18,10 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "View")
-@javax.persistence.Table(name = "custom_view")
+//@javax.persistence.Table(name = "custom_view")
 @DiscriminatorValue("View")
 public class View extends PersistEntity {
 
-    @Column(columnDefinition = "TEXT")
-    private String query;
 
     @OneToMany(
             fetch = FetchType.LAZY,
