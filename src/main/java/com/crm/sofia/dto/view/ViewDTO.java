@@ -17,8 +17,6 @@ import java.util.List;
 @Accessors(chain = true)
 public class ViewDTO extends PersistEntityDTO {
 
-    private String query;
-
     private List<ViewFieldDTO> viewFieldList;
 
 }
