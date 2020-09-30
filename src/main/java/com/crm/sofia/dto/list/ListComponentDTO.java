@@ -31,12 +31,22 @@ public class ListComponentDTO extends BaseDTO {
 
     private Boolean exportExcel;
     private String defaultPage;
+    private Boolean autoRun;
+    private Boolean listVisible;
+    private Boolean filterVisible;
 
     private Boolean hasPagination;
+    private Long pageSize;
     private Long totalPages;
+    private Long currentPage;
+    private Long totalRows;
 
-    private Long rowsLimit;
+    private Boolean hasMaxSize;
+    private Long maxSize;
 
     private Boolean HeaderFilters;
     private String rowNavigation;
+
+
+
 }

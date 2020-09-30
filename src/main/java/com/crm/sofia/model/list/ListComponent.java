@@ -85,6 +85,8 @@ public class ListComponent extends BaseEntity {
     @Column
     private Boolean customFilterFieldStructure;
 
+
+
     @Column
     private Boolean exportExcel;
 
@@ -92,18 +94,44 @@ public class ListComponent extends BaseEntity {
     private String defaultPage;
 
     @Column
+    private Boolean listVisible;
+
+    @Column
+    private Boolean filterVisible;
+
+
+
+    @Column
     private Boolean hasPagination;
+
+    @Column
+    private Long pageSize;
 
     @Column
     private Long totalPages;
 
     @Column
-    private Long rowsLimit;
+    private Long currentPage;
+
+    @Column
+    private Long totalRows;
+
+
+
+    @Column
+    private Boolean hasMaxSize;
+
+    @Column
+    private Long maxSize;
+
+
 
     @Column
     private Boolean HeaderFilters;
 
     @Column
     private String rowNavigation;
+
+
 
 }
