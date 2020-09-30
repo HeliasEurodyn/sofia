@@ -94,6 +94,9 @@ public class ListComponent extends BaseEntity {
     private String defaultPage;
 
     @Column
+    private Boolean autoRun;
+
+    @Column
     private Boolean listVisible;
 
     @Column
