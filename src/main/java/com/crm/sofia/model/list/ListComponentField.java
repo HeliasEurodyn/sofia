@@ -14,8 +14,8 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "ListComponentColumn")
-@Table(name = "list_component_column")
+@Entity(name = "ListComponentField")
+@Table(name = "list_component_field")
 public class ListComponentField extends BaseEntity {
 
     @Column

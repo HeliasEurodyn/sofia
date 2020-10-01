@@ -81,10 +81,8 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
         }
         ListDTO listDTO = this.listMapper.map(optionalListEntity.get());
-        for (ListComponentDTO dto : listDTO.getListComponentList()) {
-            List<ComponentPersistEntityDTO> sorted = dto.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
-            dto.getComponent().setComponentPersistEntityList(sorted);
-        }
+        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+        listDTO.getComponent().setComponentPersistEntityList(sorted);
 
         return listDTO;
     }
@@ -95,24 +93,21 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
         }
         ListEntity listEntity = optionalListEntity.get();
-     //   PersistEntity persistEntity = (PersistEntity) listEntity.getListComponentList().get(0).getComponent().getComponentPersistEntityList().get(0).getPersistEntity();
+        //   PersistEntity persistEntity = (PersistEntity) listEntity.getListComponentList().get(0).getComponent().getComponentPersistEntityList().get(0).getPersistEntity();
         ListDTO listDTO = this.listMapper.map(listEntity);
-        for (ListComponentDTO dto : listDTO.getListComponentList()) {
-            List<ComponentPersistEntityDTO> sorted = dto.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
-            dto.getComponent().setComponentPersistEntityList(sorted);
-        }
 
-        for (ListComponentDTO dto : listDTO.getListComponentList()) {
-            for (ListComponentFieldDTO filterDto : dto.getListComponentFilterFieldList()) {
+        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+        listDTO.getComponent().setComponentPersistEntityList(sorted);
 
-                if (filterDto.getDefaultValue() == null) continue;
-                if (filterDto.getDefaultValue().equals("")) continue;
+        for (ListComponentFieldDTO filterDto : listDTO.getListComponentFilterFieldList()) {
 
-                ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
-                if (!exprResponce.getError()) {
-                    Object fieldValue = exprResponce.getExprUnit().getResult();
-                    filterDto.setFieldValue(fieldValue);
-                }
+            if (filterDto.getDefaultValue() == null) continue;
+            if (filterDto.getDefaultValue().equals("")) continue;
+
+            ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
+            if (!exprResponce.getError()) {
+                Object fieldValue = exprResponce.getExprUnit().getResult();
+                filterDto.setFieldValue(fieldValue);
             }
         }
 
@@ -142,10 +137,10 @@ public class ListService {
         List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(dto);
         listResultsDataDTO.setListContent(listContent);
 
-        if (dto.getListComponentList().get(0).getHasPagination()) {
+        if (dto.getHasPagination()) {
 
             // Current Page
-            Long currentPage = dto.getListComponentList().get(0).getCurrentPage();
+            Long currentPage = dto.getCurrentPage();
             if (currentPage == null) currentPage = 0L;
             listResultsDataDTO.setCurrentPage(currentPage);
 
@@ -154,7 +149,7 @@ public class ListService {
             listResultsDataDTO.setTotalRows(totalRows);
 
             // Page Size & Total Pages
-            Long pageSize = dto.getListComponentList().get(0).getPageSize();
+            Long pageSize = dto.getPageSize();
             Long totalPages = totalRows / pageSize;
             Long pageSizeOffset = totalRows % pageSize;
             if (pageSizeOffset > 0) totalPages += 1;

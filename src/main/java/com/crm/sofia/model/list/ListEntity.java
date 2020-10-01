@@ -2,6 +2,7 @@ package com.crm.sofia.model.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.component.Component;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -19,15 +20,124 @@ import java.util.List;
 @Table(name = "list")
 public class ListEntity extends BaseEntity {
 
+
+    @Column
+    private String code;
+
     @Column
     private String name;
+
+    @Column
+    private String selector;
+
+    @Column(columnDefinition = "TEXT")
+    private String filterFieldStructure;
+
+    @Column
+    private Boolean customFilterFieldStructure;
+
+
+
+    @Column
+    private Boolean exportExcel;
+
+    @Column
+    private String defaultPage;
+
+    @Column
+    private Boolean autoRun;
+
+    @Column
+    private Boolean listVisible;
+
+    @Column
+    private Boolean filterVisible;
+
+
+
+    @Column
+    private Boolean hasPagination;
+
+    @Column
+    private Long pageSize;
+
+    @Column
+    private Long totalPages;
+
+    @Column
+    private Long currentPage;
+
+    @Column
+    private Long totalRows;
+
+
+
+    @Column
+    private Boolean hasMaxSize;
+
+    @Column
+    private Long maxSize;
+
+
+
+    @Column
+    private Boolean HeaderFilters;
+
+    @Column
+    private String rowNavigation;
+
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.component.Component.class)
+    @JoinColumn(name = "component_id", referencedColumnName = "id")
+    private Component component;
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
-    @JoinColumn(name = "list_id")
-    private java.util.List<ListComponent> listComponentList;
+    @JoinColumn(name = "column_list_component_id")
+    private List<ListComponentField> listComponentColumnFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "filter_list_component_id")
+    private List<ListComponentField> listComponentFilterFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "side_group_list_component_id")
+    private List<ListComponentField> listComponentLeftGroupFieldList;
+
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "top_group_list_component_id")
+    private List<ListComponentField> listComponentTopGroupFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "order_by_list_component_id")
+    private List<ListComponentField> listComponentOrderByFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "action_list_component_id")
+    private List<ListComponentField> listComponentActionFieldList;
 
 }

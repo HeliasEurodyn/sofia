@@ -3,7 +3,6 @@ package com.crm.sofia.services.list;
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.GroupEntryDTO;
-import com.crm.sofia.dto.list.ListComponentDTO;
 import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.model.expression.expressionUnits.ExprComma;
@@ -35,13 +34,13 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate SELECT Columns part
      */
-    private String generateSelectColumnsPart(ListComponentDTO listComponentDTO) {
+    private String generateSelectColumnsPart(ListDTO listDTO) {
 
         String queryString = "SELECT ";
         Boolean firstItteration = true;
 
 
-        List<ListComponentFieldDTO> fieldColumns = listComponentDTO.getListComponentColumnFieldList()
+        List<ListComponentFieldDTO> fieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream().filter(
                         fieldColumn -> fieldColumn.getComponentPersistEntityField() != null).collect(Collectors.toList());
 
@@ -59,7 +58,7 @@ public class ListDynamicQueryService {
         }
 
         Pattern pattern = Pattern.compile("^SqlField\\('.+'\\)$");
-        List<ListComponentFieldDTO> sqlFieldColumns = listComponentDTO.getListComponentColumnFieldList()
+        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream().filter(
                         fieldColumn -> pattern.matcher(fieldColumn.getEditor()).matches()).collect(Collectors.toList());
 
@@ -82,11 +81,11 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate SELECT Columns part
      */
-    private String generateSelectLeftGroupPart(ListComponentDTO listComponentDTO) {
+    private String generateSelectLeftGroupPart(ListDTO listDTO) {
 
         String queryString = "SELECT ";
         Boolean firstItteration = true;
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
             String field =
                     listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
                             listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + listComponentFieldDTO.getCode();
@@ -108,11 +107,11 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate FROM Tables & Relashionships part
      */
-    private String generateFromColumnsPart(ListComponentDTO listComponentDTO) {
+    private String generateFromColumnsPart(ListDTO listDTO) {
 
         String queryString = " FROM";
 
-        List<ComponentPersistEntityDTO> sortedComponentPersistEntityList = listComponentDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+        List<ComponentPersistEntityDTO> sortedComponentPersistEntityList = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
 
         for (ComponentPersistEntityDTO componentPersistEntityDTO : sortedComponentPersistEntityList) {
 
@@ -239,10 +238,10 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate Group By Columns part
      */
-    private String generateGroupByColumnsPart(ListComponentDTO listComponentDTO) {
+    private String generateGroupByColumnsPart(ListDTO listDTO) {
         String queryString = "GROUP BY ";
         Boolean firstItteration = true;
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
             if (firstItteration) {
                 queryString += listComponentFieldDTO.getCode();
@@ -259,10 +258,10 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate Order By Columns part
      */
-    private String generateOrderByColumnsPart(ListComponentDTO listComponentDTO) {
+    private String generateOrderByColumnsPart(ListDTO listDTO) {
         String queryString = "";
         Boolean firstItteration = true;
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentOrderByFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentOrderByFieldList()) {
 
             if (firstItteration) {
                 queryString += " ORDER BY ";
@@ -293,10 +292,10 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate Order By Columns part
      */
-    private String generateOrderByLeftGroupPart(ListComponentDTO listComponentDTO) {
+    private String generateOrderByLeftGroupPart(ListDTO listDTO) {
         String queryString = " ORDER BY ";
         Boolean firstItteration = true;
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
             if (firstItteration) {
                 queryString += listComponentFieldDTO.getCode() + " ASC ";
@@ -313,16 +312,16 @@ public class ListDynamicQueryService {
     /*
      * Iterate to Generate Limit part
      */
-    private String generateLimitPart(ListComponentDTO listComponentDTO) {
+    private String generateLimitPart(ListDTO listDTO) {
 
         String queryString = "";
-        if (listComponentDTO.getHasPagination()) {
-            Long currentPage = listComponentDTO.getCurrentPage();
+        if (listDTO.getHasPagination()) {
+            Long currentPage = listDTO.getCurrentPage();
             if (currentPage == null) currentPage = 0L;
-            Long offset = listComponentDTO.getPageSize() * currentPage;
-            queryString += "LIMIT " + listComponentDTO.getPageSize() + " OFFSET  " + offset;
-        } else if (listComponentDTO.getHasMaxSize()) {
-            queryString += "LIMIT " + listComponentDTO.getMaxSize();
+            Long offset = listDTO.getPageSize() * currentPage;
+            queryString += "LIMIT " + listDTO.getPageSize() + " OFFSET  " + offset;
+        } else if (listDTO.getHasMaxSize()) {
+            queryString += "LIMIT " + listDTO.getMaxSize();
         }
         return queryString;
     }
@@ -333,7 +332,7 @@ public class ListDynamicQueryService {
      * Set results in a HashMap Array
      * return HashMap Array results
      */
-    private Long executeCountQuery(ListComponentDTO listComponentDTO, String queryString) {
+    private Long executeCountQuery(ListDTO listDTO, String queryString) {
 
         Query query = entityManager.createNativeQuery(queryString);
         List<Object> dataList = query.getResultList();
@@ -350,16 +349,16 @@ public class ListDynamicQueryService {
      * Set results in a HashMap Array
      * return HashMap Array results
      */
-    private List<Map<String, Object>> executeListQuery(ListComponentDTO listComponentDTO, String queryString) {
+    private List<Map<String, Object>> executeListQuery(ListDTO listDTO, String queryString) {
 
         List<Map<String, Object>> listContent = new ArrayList<>();
 
-        List<ListComponentFieldDTO> fieldColumns = listComponentDTO.getListComponentColumnFieldList()
+        List<ListComponentFieldDTO> fieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream().filter(
                         fieldColumn -> fieldColumn.getComponentPersistEntityField() != null).collect(Collectors.toList());
 
         Pattern pattern = Pattern.compile("^SqlField\\('.+'\\)$");
-        List<ListComponentFieldDTO> sqlFieldColumns = listComponentDTO.getListComponentColumnFieldList()
+        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream().filter(
                         fieldColumn -> pattern.matcher(fieldColumn.getEditor()).matches()).collect(Collectors.toList());
 
@@ -393,12 +392,12 @@ public class ListDynamicQueryService {
      * Set results in a HashMap Array
      * return HashMap Array results
      */
-    private List<GroupEntryDTO> executeGroupQuery(ListComponentDTO listComponentDTO, String queryString) {
+    private List<GroupEntryDTO> executeGroupQuery(ListDTO listDTO, String queryString) {
 
         Query query = entityManager.createNativeQuery(queryString);
         List<Object[]> dataList = query.getResultList();
 
-        int countIndex = listComponentDTO.getListComponentLeftGroupFieldList().size();
+        int countIndex = listDTO.getListComponentLeftGroupFieldList().size();
         List<GroupEntryDTO> groupEntries = new ArrayList<>();
         int i = 0;
 
@@ -406,7 +405,7 @@ public class ListDynamicQueryService {
 
             List<GroupEntryDTO> currentGroupEntries = groupEntries;
 
-            for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+            for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
                 String currentValue = dataRow[i].toString();
                 GroupEntryDTO entry = currentGroupEntries.stream()
@@ -435,112 +434,112 @@ public class ListDynamicQueryService {
 
     public List<Map<String, Object>> executeListAndGetData(ListDTO dto) {
         List<Map<String, Object>> listContent = new ArrayList<>();
-        ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
+       // ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
 
-        if (listComponentDTO.getListComponentColumnFieldList().size() == 0) {
+        if (dto.getListComponentColumnFieldList().size() == 0) {
             return listContent;
         }
 
         /*
          * Select clause
          */
-        String queryString = this.generateSelectColumnsPart(listComponentDTO);
+        String queryString = this.generateSelectColumnsPart(dto);
 
         /*
          * From clause
          */
-        queryString += this.generateFromColumnsPart(listComponentDTO);
+        queryString += this.generateFromColumnsPart(dto);
 
 
         /*
          * Where clause
          */
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentLeftGroupFieldList()) {
             listComponentFieldDTO.setOperator("=");
             listComponentFieldDTO.setRequired(false);
         }
 
-        List<ListComponentFieldDTO> filtersList = Stream.concat(listComponentDTO.getListComponentFilterFieldList().stream(),
-                listComponentDTO.getListComponentLeftGroupFieldList().stream())
+        List<ListComponentFieldDTO> filtersList = Stream.concat(dto.getListComponentFilterFieldList().stream(),
+                dto.getListComponentLeftGroupFieldList().stream())
                 .collect(Collectors.toList());
         filtersList = filtersList.stream()
                 .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
 
-        if (!listComponentDTO.getCustomFilterFieldStructure())
+        if (!dto.getCustomFilterFieldStructure())
             queryString += this.generateWhereColumnsPart(filtersList);
-        if (listComponentDTO.getCustomFilterFieldStructure())
-            queryString += this.generateCustomWhereColumnsPart(filtersList, listComponentDTO.getFilterFieldStructure());
+        if (dto.getCustomFilterFieldStructure())
+            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
 
         /*
          * Order By clause
          */
-        queryString += this.generateOrderByColumnsPart(listComponentDTO);
+        queryString += this.generateOrderByColumnsPart(dto);
 
         /*
          * Limit clause
          */
-        queryString += this.generateLimitPart(listComponentDTO);
+        queryString += this.generateLimitPart(dto);
 
         /*
          * Execute
          */
-        listContent = this.executeListQuery(listComponentDTO, queryString);
+        listContent = this.executeListQuery(dto, queryString);
 
         return listContent;
     }
 
     public List<GroupEntryDTO> executeListAndGetGroupingData(ListDTO dto) {
         List<GroupEntryDTO> groupContent = new ArrayList<>();
-        ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
+       // ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
 
-        if (listComponentDTO.getListComponentLeftGroupFieldList().size() == 0) {
+        if (dto.getListComponentLeftGroupFieldList().size() == 0) {
             return groupContent;
         }
 
         /*
          * Select clause
          */
-        String queryString = this.generateSelectLeftGroupPart(listComponentDTO);
+        String queryString = this.generateSelectLeftGroupPart(dto);
 
         /*
          * From clause
          */
-        queryString += this.generateFromColumnsPart(listComponentDTO);
+        queryString += this.generateFromColumnsPart(dto);
 
         /*
          * Where clause
          */
-        List<ListComponentFieldDTO> filtersList = listComponentDTO.getListComponentFilterFieldList().stream()
+        List<ListComponentFieldDTO> filtersList = dto.getListComponentFilterFieldList().stream()
                 .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
 
-        if (!listComponentDTO.getCustomFilterFieldStructure())
+        if (!dto.getCustomFilterFieldStructure())
             queryString += this.generateWhereColumnsPart(filtersList);
-        if (listComponentDTO.getCustomFilterFieldStructure())
-            queryString += this.generateCustomWhereColumnsPart(filtersList, listComponentDTO.getFilterFieldStructure());
+        if (dto.getCustomFilterFieldStructure())
+            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
 
         /*
          * Group By clause
          */
-        queryString += this.generateGroupByColumnsPart(listComponentDTO);
+        queryString += this.generateGroupByColumnsPart(dto);
 
         /*
          * Order By clause
          */
-        queryString += this.generateOrderByLeftGroupPart(listComponentDTO);
+        queryString += this.generateOrderByLeftGroupPart(dto);
 
         /*
          * Execute
          */
-        groupContent = this.executeGroupQuery(listComponentDTO, queryString);
+        groupContent = this.executeGroupQuery(dto, queryString);
 
         return groupContent;
     }
 
     public Long executeListAndCountTotalRows(ListDTO dto) {
 
-        ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
+    //    ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
 
-        if (listComponentDTO.getListComponentColumnFieldList().size() == 0) {
+        if (dto.getListComponentColumnFieldList().size() == 0) {
             return 0L;
         }
 
@@ -552,34 +551,34 @@ public class ListDynamicQueryService {
         /*
          * From clause
          */
-        queryString += this.generateFromColumnsPart(listComponentDTO);
+        queryString += this.generateFromColumnsPart(dto);
 
 
         /*
          * Where clause
          */
-        for (ListComponentFieldDTO listComponentFieldDTO : listComponentDTO.getListComponentLeftGroupFieldList()) {
+        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentLeftGroupFieldList()) {
             listComponentFieldDTO.setOperator("=");
             listComponentFieldDTO.setRequired(false);
         }
 
-        List<ListComponentFieldDTO> filtersList = Stream.concat(listComponentDTO.getListComponentFilterFieldList().stream(),
-                listComponentDTO.getListComponentLeftGroupFieldList().stream())
+        List<ListComponentFieldDTO> filtersList = Stream.concat(dto.getListComponentFilterFieldList().stream(),
+                dto.getListComponentLeftGroupFieldList().stream())
                 .collect(Collectors.toList());
         filtersList = filtersList.stream()
                 .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
 
-        if (!listComponentDTO.getCustomFilterFieldStructure())
+        if (!dto.getCustomFilterFieldStructure())
             queryString += this.generateWhereColumnsPart(filtersList);
-        if (listComponentDTO.getCustomFilterFieldStructure())
-            queryString += this.generateCustomWhereColumnsPart(filtersList, listComponentDTO.getFilterFieldStructure());
+        if (dto.getCustomFilterFieldStructure())
+            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
 
 
 
         /*
          * Execute
          */
-        Long totalRows = this.executeCountQuery(listComponentDTO, queryString);
+        Long totalRows = this.executeCountQuery(dto, queryString);
 
         return totalRows;
     }

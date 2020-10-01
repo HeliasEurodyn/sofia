@@ -40,7 +40,7 @@ public class ExcelGenerator {
 
             // Header
             int col = 0;
-            for (ListComponentFieldDTO column : dto.getListComponentList().get(0).getListComponentColumnFieldList()) {
+            for (ListComponentFieldDTO column : dto.getListComponentColumnFieldList()) {
                 Cell cell = headerRow.createCell(col);
                 cell.setCellValue(column.getDescription());
                 cell.setCellStyle(headerCellStyle);
@@ -52,7 +52,7 @@ public class ExcelGenerator {
 
                 Row row = sheet.createRow(rowIdx++);
                 col = 0;
-                for (ListComponentFieldDTO column : dto.getListComponentList().get(0).getListComponentColumnFieldList()) {
+                for (ListComponentFieldDTO column : dto.getListComponentColumnFieldList()) {
 
                     if (column.getType().equals("date") || column.getType().equals("datetime")) {
                         Timestamp timestampValue = (Timestamp) dataRow.get(column.getCode());
