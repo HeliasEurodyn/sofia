@@ -30,5 +30,4 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "menu_id")
     private List<MenuField> menuFieldList;
 
-
 }

@@ -7,6 +7,7 @@ import com.crm.sofia.services.list.ListService;
 import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,12 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
+
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
 import org.springframework.core.io.InputStreamResource;
 
 @Slf4j
@@ -45,15 +51,28 @@ public class ListController {
         return this.listService.getObjectData(id);
     }
 
-    @PostMapping(path = "/data/results")
-    ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
-        return this.listService.getObjectData(dto);
+//    @PostMapping(path = "/data/results")
+//    ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
+//        return this.listService.getObjectData(dto);
+//    }
+
+    @GetMapping(path = "/data/results")
+    ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+        return this.listService.getObjectDataByParameters(parameters,id);
     }
 
-    @PostMapping(path = "/data/left-grouping/results")
-    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
-        return this.listService.getObjectLeftGroupingData(dto);
+
+//    @PostMapping(path = "/data/left-grouping/results")
+//    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
+//        return this.listService.getObjectLeftGroupingData(dto);
+//    }
+
+
+    @GetMapping(path = "/data/left-grouping/results")
+    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+        return this.listService.getObjectLeftGroupingDataByParameters(parameters,id);
     }
+
 
     @GetMapping(path = "/by-name")
     ListDTO getObject(@RequestParam("name") String name) {
@@ -100,6 +119,16 @@ public class ListController {
                 .body(new InputStreamResource(in));
 
     }
+
+
+//    @RequestMapping("/test")
+//    public String example(@RequestParam Map<String, Object> map, TimeZone timezone){
+//        String apple = (String) map.get("AAA");//apple
+//        String banana = (String) map.get("BBB");//banana
+//        Instant date = (Instant) map.get("CCC");//banana
+//
+//        return apple + banana + date.toString();
+//    }
 
 
 //    @GetMapping(path = "/poi-test-excel")

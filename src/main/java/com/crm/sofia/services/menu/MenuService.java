@@ -88,10 +88,11 @@ public class MenuService {
         }
         Menu entity = optionalComponent.get();
 
-        menuMapper.mapDtoToEntity(componentDTO, entity);
-        entity.setCreatedOn(Instant.now());
+        //menuMapper.mapDtoToEntity(componentDTO, entity);
+
+      //  entity.setCreatedOn(Instant.now());
         entity.setModifiedOn(Instant.now());
-        entity.setCreatedBy(jwtService.getUserId());
+      //  entity.setCreatedBy(jwtService.getUserId());
         entity.setModifiedBy(jwtService.getUserId());
 
         Menu createdEntity = this.menuRepository.save(entity);

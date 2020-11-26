@@ -1,15 +1,15 @@
 package com.crm.sofia.services.list;
 
-import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.list.*;
+import com.crm.sofia.dto.list.GroupEntryDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListDTO;
+import com.crm.sofia.dto.list.ListResultsDataDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
 import com.crm.sofia.mapper.list.ListMapper;
-import com.crm.sofia.model.appview.AppView;
 import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.jasperTest.JasperModelClass;
 import com.crm.sofia.model.list.ListEntity;
-import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.expression.ExpressionService;
 import net.sf.jasperreports.engine.*;
@@ -26,15 +26,19 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ListService {
 
     private final ListRepository listRepository;
     private final ListMapper listMapper;
-    //    private final EntityManager entityManager;
     private final ExpressionService expressionService;
     private final ListDynamicQueryService listDynamicQueryService;
     private final AppViewMapper appViewMapper;
@@ -159,6 +163,36 @@ public class ListService {
         }
 
         return listResultsDataDTO;
+    }
+
+    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long id) {
+        ListDTO listDTO = this.getObjectData(id);
+
+        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
+                listDTO.getListComponentLeftGroupFieldList().stream())
+                .collect(Collectors.toList());
+
+        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
+            if (listComponentFieldDTO.getEditable() && listComponentFieldDTO.getVisible()) {
+                if (parameters.containsKey(listComponentFieldDTO.getCode())) {
+                    String fieldValue = parameters.get(listComponentFieldDTO.getCode());
+
+
+                    if (listComponentFieldDTO.getType().equals("datetime")) {
+                        Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
+                                DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
+                                .atZone(ZoneOffset.UTC)
+                                .toInstant();
+                        listComponentFieldDTO.setFieldValue(fieldValueInstant);
+                    } else {
+                        listComponentFieldDTO.setFieldValue(fieldValue);
+                    }
+
+                }
+            }
+        }
+
+        return this.getObjectData(listDTO);
     }
 
     public List<GroupEntryDTO> getObjectLeftGroupingData(ListDTO dto) {
@@ -699,6 +733,37 @@ public class ListService {
 
         //JasperExportManager.exportReportToPdfFile(jasperPrint,);
     }
+
+    public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, Long id) {
+        ListDTO listDTO = this.getObjectData(id);
+
+        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
+                listDTO.getListComponentLeftGroupFieldList().stream())
+                .collect(Collectors.toList());
+
+        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
+            if (listComponentFieldDTO.getEditable() && listComponentFieldDTO.getVisible()) {
+                if (parameters.containsKey(listComponentFieldDTO.getCode())) {
+                    String fieldValue = parameters.get(listComponentFieldDTO.getCode());
+
+
+                    if (listComponentFieldDTO.getType().equals("datetime")) {
+                        Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
+                                DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
+                                .atZone(ZoneOffset.UTC)
+                                .toInstant();
+                        listComponentFieldDTO.setFieldValue(fieldValueInstant);
+                    } else {
+                        listComponentFieldDTO.setFieldValue(fieldValue);
+                    }
+
+                }
+            }
+        }
+
+        return this.getObjectLeftGroupingData(listDTO);
+    }
+
 
 //    public ByteArrayInputStream doPoiTestExcel() throws IOException {
 //        List<TestCustomer> testCustomers = new ArrayList<>();

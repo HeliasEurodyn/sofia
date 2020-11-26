@@ -1,11 +1,10 @@
 package com.crm.sofia.services.list;
 
-import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.GroupEntryDTO;
 import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.ListDTO;
-import com.crm.sofia.model.expression.expressionUnits.ExprComma;
+import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -121,8 +120,8 @@ public class ListDynamicQueryService {
                 queryString += " " + join;
             }
 
-            if (componentPersistEntityDTO.getPersistEntity().getClass() == AppViewDTO.class) {
-                AppViewDTO appViewDTO = (AppViewDTO) componentPersistEntityDTO.getPersistEntity();
+            if (componentPersistEntityDTO.getPersistEntity().getEntitytype().equals("AppView")) {
+                PersistEntityDTO appViewDTO = componentPersistEntityDTO.getPersistEntity();
                 queryString += " ( " +
                         appViewDTO.getQuery() + " ) " + componentPersistEntityDTO.getCode();
             } else {
@@ -404,6 +403,7 @@ public class ListDynamicQueryService {
         for (Object[] dataRow : dataList) {
 
             List<GroupEntryDTO> currentGroupEntries = groupEntries;
+            GroupEntryDTO parrentEntry  = null;
 
             for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
@@ -419,10 +419,20 @@ public class ListDynamicQueryService {
                     entry.setValue(dataRow[i]);
                     entry.setCount(Integer.parseInt(dataRow[countIndex].toString()));
                     entry.setChildren(new ArrayList<>());
+
+                    if(parrentEntry != null){
+                        GroupEntryDTO abstructParrent = new GroupEntryDTO();
+                        abstructParrent.setCode(parrentEntry.getCode());
+                        abstructParrent.setValue(parrentEntry.getValue());
+                        abstructParrent.setParrent(parrentEntry.getParrent());
+                        entry.setParrent(abstructParrent);
+                    }
+
                     currentGroupEntries.add(entry);
                 }
 
                 currentGroupEntries = entry.getChildren();
+                parrentEntry = entry;
                 i++;
             }
             i = 0;

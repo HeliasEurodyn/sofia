@@ -5,9 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -19,14 +17,15 @@ import java.util.Map;
 @Accessors(chain = true)
 public class GroupEntryDTO {
 
+    String id;
+
     String code;
 
     Object value;
 
     int count;
 
-    /*
-     * The key is the value
-     */
+    GroupEntryDTO parrent;
+
     List<GroupEntryDTO> children = new ArrayList<>();
 }
