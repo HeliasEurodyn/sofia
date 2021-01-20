@@ -97,13 +97,19 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
         }
         ListEntity listEntity = optionalListEntity.get();
-        //   PersistEntity persistEntity = (PersistEntity) listEntity.getListComponentList().get(0).getComponent().getComponentPersistEntityList().get(0).getPersistEntity();
         ListDTO listDTO = this.listMapper.map(listEntity);
 
-        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList()
+                .stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder))
+                .collect(Collectors.toList());
+
         listDTO.getComponent().setComponentPersistEntityList(sorted);
 
-        for (ListComponentFieldDTO filterDto : listDTO.getListComponentFilterFieldList()) {
+        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
+                listDTO.getListComponentColumnFieldList().stream())
+                .collect(Collectors.toList());
+
+        for (ListComponentFieldDTO filterDto : filtersList) {
 
             if (filterDto.getDefaultValue() == null) continue;
             if (filterDto.getDefaultValue().equals("")) continue;
@@ -117,7 +123,6 @@ public class ListService {
 
         return listDTO;
     }
-
 
     public ListDTO getObjectByName(String name) {
         ListEntity listEntity = this.listRepository.findFirstByName(name);
@@ -172,11 +177,14 @@ public class ListService {
                 listDTO.getListComponentLeftGroupFieldList().stream())
                 .collect(Collectors.toList());
 
+         filtersList = Stream.concat(filtersList.stream(),
+                 listDTO.getListComponentColumnFieldList().stream())
+                .collect(Collectors.toList());
+
         for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
             if (listComponentFieldDTO.getEditable() && listComponentFieldDTO.getVisible()) {
                 if (parameters.containsKey(listComponentFieldDTO.getCode())) {
                     String fieldValue = parameters.get(listComponentFieldDTO.getCode());
-
 
                     if (listComponentFieldDTO.getType().equals("datetime")) {
                         Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
@@ -187,7 +195,6 @@ public class ListService {
                     } else {
                         listComponentFieldDTO.setFieldValue(fieldValue);
                     }
-
                 }
             }
         }

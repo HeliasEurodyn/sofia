@@ -444,7 +444,6 @@ public class ListDynamicQueryService {
 
     public List<Map<String, Object>> executeListAndGetData(ListDTO dto) {
         List<Map<String, Object>> listContent = new ArrayList<>();
-       // ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
 
         if (dto.getListComponentColumnFieldList().size() == 0) {
             return listContent;
@@ -460,7 +459,6 @@ public class ListDynamicQueryService {
          */
         queryString += this.generateFromColumnsPart(dto);
 
-
         /*
          * Where clause
          */
@@ -472,6 +470,11 @@ public class ListDynamicQueryService {
         List<ListComponentFieldDTO> filtersList = Stream.concat(dto.getListComponentFilterFieldList().stream(),
                 dto.getListComponentLeftGroupFieldList().stream())
                 .collect(Collectors.toList());
+
+        filtersList = Stream.concat(filtersList.stream(),
+                dto.getListComponentColumnFieldList().stream())
+                .collect(Collectors.toList());
+
         filtersList = filtersList.stream()
                 .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
 

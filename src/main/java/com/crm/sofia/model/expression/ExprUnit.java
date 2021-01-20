@@ -10,12 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public abstract class ExprUnit {
 
-    //    private String expression;
     private Integer expressionPosition;
-
-    //    static private Integer exprUnitLength;
-    //    static private String exprUnitString;
-    //    protected String expressionPart;
 
     protected Integer priority;
     protected Boolean isOnTree = false;
@@ -33,13 +28,7 @@ public abstract class ExprUnit {
         } else {
             return this.parentExprUnit.getTopParrent();
         }
-
     }
 
     public abstract Object getResult();
-
-//    public abstract String checkBranchTypes();
-//    public abstract AppConstants.Types.ExprUnitReturningType getReturningType();
-
-//    public abstract void joinTree(List<ExprUnit> exprUnits, int listPosition, int priority);
 }

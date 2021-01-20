@@ -10,7 +10,6 @@ public class ExprDateNowPlus extends ExprUnit {
 
     static private Integer exprUnitLength = 11;
     static private String exprUnitString = "dateNowPlus";
-//    private AppConstants.Types.ExprUnitReturningType exprUnitReturningType = AppConstants.Types.ExprUnitReturningType.Instant ;
 
     public static ExprDateNowPlus exrtactExprUnit(String expression, Integer expressionPosition) {
 

@@ -7,18 +7,13 @@ import lombok.Data;
 @Data
 public class ExprStringValue extends ExprUnit {
 
-//    static private Integer exprUnitLength = 0;
-//    static private String exprUnitString = "";
-
     private Integer currentExprUnitLength = 0;
     private String currentExprUnitString = "";
-//    private AppConstants.Types.ExprUnitReturningType exprUnitReturningType = AppConstants.Types.ExprUnitReturningType.String ;
 
     public static ExprStringValue exrtactExprUnit(String expression, Integer expressionPosition) {
 
         String expressionPart = "'";
         String expressionPositionString = "";
-        String prevExpressionPositionString = "";
         Boolean expressionClosedNormally = false;
 
         if (expression.length() < expressionPosition ) {
@@ -33,19 +28,18 @@ public class ExprStringValue extends ExprUnit {
             expressionPositionString = expression.substring(i, i + 1);
             expressionPart += expressionPositionString;
 
-            if(expressionPositionString.equals("'") && !prevExpressionPositionString.equals("/") )
+            if(expressionPositionString.equals("'"))
             {
                 expressionClosedNormally = true;
                 break;
             }
-            prevExpressionPositionString = expression.substring(i, i + 1);
+
         }
 
         if(expressionClosedNormally){
             ExprStringValue exprUnit = new ExprStringValue();
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setCurrentExprUnitLength(expressionPart.length());
-
             exprUnit.setCurrentExprUnitString(expressionPart);
             return exprUnit;
         }

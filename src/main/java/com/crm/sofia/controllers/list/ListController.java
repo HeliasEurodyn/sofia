@@ -61,7 +61,6 @@ public class ListController {
         return this.listService.getObjectDataByParameters(parameters,id);
     }
 
-
 //    @PostMapping(path = "/data/left-grouping/results")
 //    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
 //        return this.listService.getObjectLeftGroupingData(dto);

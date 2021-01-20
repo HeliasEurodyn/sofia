@@ -48,6 +48,9 @@ public class ListComponentField extends BaseEntity {
     private Boolean editable;
 
     @Column
+    private Boolean headerFilter;
+
+    @Column
     private Boolean required;
 
     @Column
@@ -55,7 +58,6 @@ public class ListComponentField extends BaseEntity {
 
     @Column
     private Integer decimals;
-
 
     @Column
     private String fieldtype;

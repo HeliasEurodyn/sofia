@@ -24,6 +24,7 @@ public class ListComponentFieldDTO extends BaseDTO {
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
     private Boolean visible;
     private Boolean editable;
+    private Boolean headerFilter;
     private Boolean required ;
     private String defaultValue;
     private Integer decimals;

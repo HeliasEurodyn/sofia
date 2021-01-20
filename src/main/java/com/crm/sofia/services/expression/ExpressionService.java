@@ -36,6 +36,10 @@ public class ExpressionService {
             return new ExprResponce("Could not read parameter",false,expression,null);
         }
 
+        if (exprUnits.size() == 0) {
+            return new ExprResponce("Could not read parameter",false,expression,null);
+        }
+
         this.createBracketPriorities(exprUnits);
         exprUnits = this.removeBracketsFromList(exprUnits);
         Boolean treeCreated = this.createTree(exprUnits, exprUnits.get(0).getPriority());
@@ -283,7 +287,6 @@ public class ExpressionService {
 
             ExprUnit exprUnit = null;
 
-            if (exprUnit == null) exprUnit = ExprOpenBracket.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprOpenBracket.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprCloseBracket.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDateNowPlus.exrtactExprUnit(expression, i);
