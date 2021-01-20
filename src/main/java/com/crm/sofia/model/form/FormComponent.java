@@ -17,11 +17,13 @@ import javax.persistence.*;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "FormComponent")
-@Table(name = "formcomponent")
+@Table(name = "form_component")
 public class FormComponent extends BaseEntity {
 
+    @Column
     private String type;
 
+    @Column
     private String cssclass;
 
     @ManyToOne(fetch = FetchType.LAZY,

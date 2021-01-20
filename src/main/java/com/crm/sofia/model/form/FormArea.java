@@ -18,13 +18,16 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "FormArea")
-@Table(name = "formarea")
+@Table(name = "form_area")
 public class FormArea extends BaseEntity {
 
+    @Column
     private String description;
 
+    @Column
     private String icon;
 
+    @Column
     private String cssclass;
 
     @OneToMany(

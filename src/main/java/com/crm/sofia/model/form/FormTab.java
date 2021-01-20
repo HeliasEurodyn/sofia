@@ -18,7 +18,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Entity(name = "FormTab")
-@Table(name = "formtab")
+@Table(name = "form_tab")
 public class FormTab extends BaseEntity {
 
     @Column
