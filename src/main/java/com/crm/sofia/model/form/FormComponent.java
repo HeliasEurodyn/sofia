@@ -26,9 +26,13 @@ public class FormComponent extends BaseEntity {
     @Column
     private String cssclass;
 
-    @ManyToOne(fetch = FetchType.LAZY,
-            targetEntity = com.crm.sofia.model.form.FormComponentField.class)
-    @JoinColumn(name = "form_component_field_id", referencedColumnName = "id")
+
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_component_id")
     private FormComponentField formComponentField;
 
 }

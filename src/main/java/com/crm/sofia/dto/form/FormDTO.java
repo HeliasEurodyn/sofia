@@ -18,6 +18,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class FormDTO extends BaseDTO {
 
+    private String name;
+
     private ComponentDTO component;
 
     private List<FormTabDTO> formTabs;

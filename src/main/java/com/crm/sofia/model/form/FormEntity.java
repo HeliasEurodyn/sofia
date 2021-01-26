@@ -23,6 +23,9 @@ import java.util.List;
 @Table(name = "form")
 public class FormEntity extends BaseEntity {
 
+    @Column
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = com.crm.sofia.model.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
