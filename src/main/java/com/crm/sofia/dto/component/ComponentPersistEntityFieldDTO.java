@@ -25,7 +25,11 @@ public class ComponentPersistEntityFieldDTO extends BaseDTO {
 
     private String defaultValue;
 
+    private Object value;
+
     private String saveStatement;
+
+    private String locateStatement;
 
     private PersistEntityFieldDTO persistEntityField;
 

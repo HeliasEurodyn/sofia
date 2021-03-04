@@ -26,6 +26,10 @@ public class ComponentPersistEntityDTO extends BaseDTO {
 
     private String selector;
 
+    Boolean allowRetrieve;
+
+    Boolean allowSave;
+
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
 
 }

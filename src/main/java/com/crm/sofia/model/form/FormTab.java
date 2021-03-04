@@ -1,6 +1,7 @@
 package com.crm.sofia.model.form;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.form.FormScriptDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

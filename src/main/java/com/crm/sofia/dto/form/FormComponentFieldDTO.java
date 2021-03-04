@@ -19,6 +19,7 @@ public class FormComponentFieldDTO extends BaseDTO {
     private String description;
     private Boolean visible;
     private Boolean editable;
+    private Boolean required;
     private String defaultValue;
     private Integer decimals;
     private String fieldtype;

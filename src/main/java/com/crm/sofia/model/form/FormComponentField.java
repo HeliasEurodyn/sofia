@@ -37,6 +37,9 @@ public class FormComponentField extends BaseEntity {
     private Boolean editable;
 
     @Column
+    private Boolean required;
+
+    @Column
     private String defaultValue;
 
     @Column

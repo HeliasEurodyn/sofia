@@ -32,5 +32,6 @@ public class PersistEntityField extends BaseEntity {
     @Column(name = "entity_type" , insertable = false, updatable = false)
     private String entitytype;
 
-
+    @Column
+    private Boolean autoIncrement;
 }

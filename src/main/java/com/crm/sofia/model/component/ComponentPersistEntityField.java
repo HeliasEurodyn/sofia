@@ -11,6 +11,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Data
@@ -33,8 +34,14 @@ public class ComponentPersistEntityField extends BaseEntity {
     @Column
     private String saveStatement;
 
+    @Column
+    private String locateStatement;
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersistEntityField.class)
     @JoinColumn(name = "persist_entity_field_id", referencedColumnName = "id")
     private PersistEntityField persistEntityField;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntity.class)
+    private ComponentPersistEntity componentPersistEntity;
 
 }

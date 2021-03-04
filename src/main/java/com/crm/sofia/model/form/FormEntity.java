@@ -1,16 +1,11 @@
 package com.crm.sofia.model.form;
 
-import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.model.common.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
+import com.crm.sofia.model.component.Component;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import com.crm.sofia.model.component.Component;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,11 +28,17 @@ public class FormEntity extends BaseEntity {
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = { CascadeType.ALL },
-            orphanRemoval=true
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JoinColumn(name = "form_id")
     private List<FormTab> formTabs;
 
-
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<FormScript> formScripts;
 }

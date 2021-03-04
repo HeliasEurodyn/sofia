@@ -37,4 +37,6 @@ public class PersistEntityFieldDTO extends BaseDTO {
     private Integer size;
 
     private String entitytype;
+
+    private Boolean autoIncrement;
 }

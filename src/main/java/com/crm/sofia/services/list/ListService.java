@@ -234,7 +234,6 @@ public class ListService {
 
     public void doJasperExcelTestExcel() throws FileNotFoundException, JRException {
 
-
         List<JasperModelClass> entities = new ArrayList<>();
         JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
         entities.add(entity);

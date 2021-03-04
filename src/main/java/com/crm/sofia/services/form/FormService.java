@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class FormService {
@@ -19,11 +21,16 @@ public class FormService {
     private final FormRepository formRepository;
     private final FormMapper formMapper;
     private final JWTService jwtService;
+    private final FormDynamicQueryService formDynamicQueryService;
 
-    public FormService(FormRepository formRepository, FormMapper formMapper, JWTService jwtService) {
+    public FormService(FormRepository formRepository,
+                       FormMapper formMapper,
+                       JWTService jwtService,
+                       FormDynamicQueryService formDynamicQueryService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.jwtService = jwtService;
+        this.formDynamicQueryService = formDynamicQueryService;
     }
 
     @Transactional
@@ -69,6 +76,15 @@ public class FormService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FormEntity does not exist");
         }
         this.formRepository.deleteById(optionalFormEntity.get().getId());
+    }
+
+    public void save(Long id, Map<String, Map<String, Object>> parameters) throws Exception {
+
+        /*Retrieve formObject from Database*/
+        FormDTO formDTO = this.getObject(id);
+
+        /*Send to formDynamicQueryService to generate the queries & Save*/
+        this.formDynamicQueryService.generateQueriesAndSave(formDTO.getComponent(), parameters);
     }
 
 }
