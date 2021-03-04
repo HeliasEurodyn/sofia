@@ -31,6 +31,10 @@ public class ComponentPersistEntity extends BaseEntity {
     @Column
     private String selector;
 
+    Boolean allowRetrieve;
+
+    Boolean allowSave;
+
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL},
@@ -39,4 +43,6 @@ public class ComponentPersistEntity extends BaseEntity {
     @JoinColumn(name = "component_persist_entity_id")
     private List<ComponentPersistEntityField> componentPersistEntityFieldList;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
+    private Component component;
 }
