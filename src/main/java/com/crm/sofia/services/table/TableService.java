@@ -105,7 +105,6 @@ public class TableService {
     }
 
 
-    @Transactional
     public List<String> getTableFields(String tableName) {
         Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM sofia;");
         List<Object[]> fields = query.getResultList();
@@ -120,7 +119,6 @@ public class TableService {
         query.executeUpdate();
     }
 
-    @Transactional
     public void updateDatabaseTable(TableDTO customComponentDTO) {
 
         List<String> existingTableFields = this.getTableFields(customComponentDTO.getName().replace(" ", ""));
@@ -238,12 +236,10 @@ public class TableService {
     }
 
     @Transactional
-    @Modifying
     public TableDTO update(TableDTO dto) {
         TableDTO createdDTO = this.postObject(dto);
         this.updateDatabaseTable(createdDTO);
         return createdDTO;
-
     }
 
     public List<TableFieldDTO> generateTableFields(String name) {

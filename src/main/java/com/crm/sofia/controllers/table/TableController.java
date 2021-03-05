@@ -37,7 +37,6 @@ public class TableController {
     public TableDTO putObject(@RequestBody TableDTO dto) {
         TableDTO customComponentDTO = this.tableService.update(dto);
         return customComponentDTO;
-
     }
 
     @DeleteMapping
@@ -60,7 +59,6 @@ public class TableController {
 
     @GetMapping(path = "/tables")
     public List<String> tables() {
-
         return tableService.getTables();
     }
 
