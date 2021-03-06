@@ -42,15 +42,13 @@ public class TableController {
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
         TableDTO dto = this.tableService.getObject(id);
-        this.tableService.deleteObject(id);
-        // this.tableService.deteleDatabaseTable(dto.getName());
+        this.tableService.deleteObject(dto.getId());
     }
 
     @GetMapping(path = "/by-id")
     TableDTO getObject(@RequestParam("id") Long id) {
         return this.tableService.getObject(id);
     }
-
 
     @GetMapping(path = "/table-exists")
     public Boolean tableExists(@RequestParam("name") String tableName) {
@@ -68,11 +66,9 @@ public class TableController {
         return tableService.getTableFields("testtable");
     }
 
-
     @GetMapping(path = "/generate-table-fields")
     List<TableFieldDTO> generateTableFields(@RequestParam("name") String name) {
         return this.tableService.generateTableFields(name);
     }
-
 
 }

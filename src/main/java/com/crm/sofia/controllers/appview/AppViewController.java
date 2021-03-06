@@ -2,6 +2,8 @@ package com.crm.sofia.controllers.appview;
 
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.appview.AppViewFieldDTO;
+import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
+import com.crm.sofia.dto.persistEntity.PersistEntityFieldDTO;
 import com.crm.sofia.services.appview.AppViewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -33,17 +35,14 @@ public class AppViewController {
         return this.appViewService.generateViewFields(query);
     }
 
-
     @PostMapping
     public AppViewDTO postObject(@RequestBody AppViewDTO dto) {
-        AppViewDTO customComponentDTO = this.appViewService.postObject(dto);
-        return customComponentDTO;
+        return this.appViewService.postObject(dto);
     }
 
     @PutMapping
     public AppViewDTO putObject(@RequestBody AppViewDTO viewDTO) {
-        AppViewDTO customComponentDTO = this.appViewService.postObject(viewDTO);
-        return customComponentDTO;
+        return this.appViewService.postObject(viewDTO);
     }
 
     @DeleteMapping
@@ -57,10 +56,8 @@ public class AppViewController {
         return this.appViewService.getObject(id);
     }
 
-
     @GetMapping(path = "/view-exists")
     public Boolean tableExists(@RequestParam("name") String tableName) {
         return appViewService.viewOnDatabase(tableName);
     }
-
 }

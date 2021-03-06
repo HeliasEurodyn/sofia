@@ -3,8 +3,8 @@ package com.crm.sofia.services.view;
 import com.crm.sofia.dto.view.ViewDTO;
 import com.crm.sofia.dto.view.ViewFieldDTO;
 import com.crm.sofia.mapper.view.ViewMapper;
-import com.crm.sofia.model.view.View;
-import com.crm.sofia.repository.view.ViewRepository;
+import com.crm.sofia.model.persistEntity.PersistEntity;
+import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,23 +24,22 @@ import java.util.UUID;
 @Service
 public class ViewService {
 
-    private final ViewRepository viewRepository;
+    private final PersistEntityRepository persistEntityRepository;
     private final ViewMapper viewMapper;
     private final EntityManager entityManager;
 
-    public ViewService(ViewRepository viewRepository,
+    public ViewService(PersistEntityRepository persistEntityRepository,
                        ViewMapper viewMapper,
                        EntityManager entityManager) {
-        this.viewRepository = viewRepository;
+        this.persistEntityRepository = persistEntityRepository;
         this.viewMapper = viewMapper;
         this.entityManager = entityManager;
     }
 
-
     public ViewDTO postObject(ViewDTO viewDTO) {
-        View view = this.viewMapper.map(viewDTO);
+        PersistEntity view = this.viewMapper.map(viewDTO);
 
-        View createdView = this.viewRepository.save(view);
+        PersistEntity createdView = this.persistEntityRepository.save(view);
         return this.viewMapper.map(createdView);
     }
 
@@ -51,12 +50,12 @@ public class ViewService {
 
 
     public List<ViewDTO> getObject() {
-        List<View> views = this.viewRepository.findAll();
+        List<PersistEntity> views = this.persistEntityRepository.findByEntitytype("View");
         return this.viewMapper.map(views);
     }
 
     public ViewDTO getObject(Long id) {
-        Optional<View> optionalView = this.viewRepository.findById(id);
+        Optional<PersistEntity> optionalView = this.persistEntityRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");
         }
@@ -64,11 +63,11 @@ public class ViewService {
     }
 
     public void deleteObject(Long id) {
-        Optional<View> optionalView = this.viewRepository.findById(id);
+        Optional<PersistEntity> optionalView = this.persistEntityRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");
         }
-        this.viewRepository.deleteById(optionalView.get().getId());
+        this.persistEntityRepository.deleteById(optionalView.get().getId());
     }
 
     @Transactional
@@ -77,7 +76,6 @@ public class ViewService {
         List<String> viewNames = query.getResultList();
         return viewNames;
     }
-
 
     @Transactional
     public List<String> getViewFields(String viewName) {
@@ -90,7 +88,7 @@ public class ViewService {
 
     @Transactional
     public void deteleDatabaseView(String viewName) {
-        Query query = entityManager.createNativeQuery("DROP TABLE "+viewName.replace(" ","")+";");
+        Query query = entityManager.createNativeQuery("DROP TABLE " + viewName.replace(" ", "") + ";");
         query.executeUpdate();
     }
 
@@ -103,14 +101,14 @@ public class ViewService {
     @Transactional
     public List<ViewFieldDTO> generateViewFields(String sql) {
 
-       List<ViewFieldDTO> dtos = new ArrayList<>();
-       String uuid = UUID.randomUUID().toString().replace("-","_");
-       this.createView(uuid, sql);
+        List<ViewFieldDTO> dtos = new ArrayList<>();
+        String uuid = UUID.randomUUID().toString().replace("-", "_");
+        this.createView(uuid, sql);
 
         Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + uuid + " FROM sofia;");
         List<Object[]> fields = query.getResultList();
 
-        for(Object[] field : fields){
+        for (Object[] field : fields) {
             ViewFieldDTO dto = new ViewFieldDTO();
             dto.setName(field[0].toString());
             dto.setDescription("");
@@ -118,13 +116,13 @@ public class ViewService {
             dto.setEntitytype("ViewField");
 
             Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(field[1].toString());
-            while(m.find()) {
-             dto.setSize(Integer.valueOf(m.group(1)));
+            while (m.find()) {
+                dto.setSize(Integer.valueOf(m.group(1)));
             }
 
             int index = field[1].toString().indexOf("(");
-            if(index > 0){
-                dto.setType(field[1].toString().substring(0,index));
+            if (index > 0) {
+                dto.setType(field[1].toString().substring(0, index));
             }
 
             dtos.add(dto);
@@ -136,7 +134,7 @@ public class ViewService {
     @Transactional
     @Modifying
     public void dropView(String name) {
-        String sql = "DROP VIEW IF EXISTS sofia."+name ;
+        String sql = "DROP VIEW IF EXISTS sofia." + name;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
@@ -144,7 +142,7 @@ public class ViewService {
     @Transactional
     @Modifying
     public void alterView(String name, String queryStr) {
-        String sql = "ALTER VIEW IF EXISTS sofia."+name + " AS " + queryStr;
+        String sql = "ALTER VIEW IF EXISTS sofia." + name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
@@ -152,7 +150,7 @@ public class ViewService {
     @Transactional
     @Modifying
     public void createView(String name, String queryStr) {
-        String sql = "CREATE VIEW IF NOT EXISTS sofia."+name + " AS " + queryStr;
+        String sql = "CREATE VIEW IF NOT EXISTS sofia." + name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }

@@ -1,12 +1,15 @@
 package com.crm.sofia.repository.persistEntity;
 
 import com.crm.sofia.model.persistEntity.PersistEntity;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-@Primary
-public interface PersistEntityRepository<M extends PersistEntity> extends PagingAndSortingRepository<M, Long> {
+public interface PersistEntityRepository extends BaseRepository<PersistEntity> {
+
+    List<PersistEntity> findByEntitytype(String entityType);
+
 }
 

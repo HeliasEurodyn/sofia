@@ -3,8 +3,9 @@ package com.crm.sofia.services.appview;
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.appview.AppViewFieldDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
-import com.crm.sofia.model.appview.AppView;
-import com.crm.sofia.repository.appview.AppViewRepository;
+import com.crm.sofia.mapper.persistEntity.PersistEntityMapper;
+import com.crm.sofia.model.persistEntity.PersistEntity;
+import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,11 @@ import java.util.stream.Collectors;
 @Service
 public class AppViewService {
 
-
-    private final AppViewRepository appViewRepository;
+    private final PersistEntityRepository appViewRepository;
     private final AppViewMapper appViewMapper;
     private final EntityManager entityManager;
 
-
-    public AppViewService(AppViewRepository appViewRepository,
+    public AppViewService(PersistEntityRepository appViewRepository,
                           AppViewMapper appViewMapper,
                           EntityManager entityManager) {
         this.appViewRepository = appViewRepository;
@@ -39,9 +38,9 @@ public class AppViewService {
 
     @Transactional
     public AppViewDTO postObject(AppViewDTO appViewDTO) {
-        AppView appView = this.appViewMapper.map(appViewDTO);
+        PersistEntity appView = this.appViewMapper.map(appViewDTO);
 
-        AppView createdAppView = this.appViewRepository.save(appView);
+        PersistEntity createdAppView = this.appViewRepository.save(appView);
         return this.appViewMapper.map(createdAppView);
     }
 
@@ -50,14 +49,13 @@ public class AppViewService {
         return null;
     }
 
-
     public List<AppViewDTO> getObject() {
-        List<AppView> views = this.appViewRepository.findAll();
+        List<PersistEntity> views = this.appViewRepository.findByEntitytype("AppView");
         return this.appViewMapper.map(views);
     }
 
     public AppViewDTO getObject(Long id) {
-        Optional<AppView> optionalView = this.appViewRepository.findById(id);
+        Optional<PersistEntity> optionalView = this.appViewRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");
         }
@@ -65,7 +63,7 @@ public class AppViewService {
     }
 
     public void deleteObject(Long id) {
-        Optional<AppView> optionalView = this.appViewRepository.findById(id);
+        Optional<PersistEntity> optionalView = this.appViewRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");
         }
@@ -108,7 +106,6 @@ public class AppViewService {
         if (views.contains(viewName)) return true;
         else return false;
     }
-
 
     @Transactional
     public List<AppViewFieldDTO> generateViewFields(String sql) {

@@ -10,11 +10,15 @@ import javax.persistence.*;
 
 @Data
 @Accessors(chain = true)
-@DynamicUpdate
-@DynamicInsert
+//@DynamicUpdate
+//@DynamicInsert
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "entity_type")
+@Table(name = "persist_entity_field")
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "entity_type")
+//@DiscriminatorValue("ViewField")
+//@DiscriminatorValue("AppViewField"
+//@DiscriminatorValue("TableField")
 public class PersistEntityField extends BaseEntity {
 
     @Column
@@ -29,9 +33,30 @@ public class PersistEntityField extends BaseEntity {
     @Column
     private Integer size;
 
-    @Column(name = "entity_type" , insertable = false, updatable = false)
+    @Column(name = "entity_type" , insertable = true, updatable = false, nullable = false)
     private String entitytype;
 
     @Column
     private Boolean autoIncrement;
+
+    @Column
+    private Boolean primaryKey;
+
+    @Column
+    private Boolean hasDefault;
+
+    @Column
+    private String defaultValue;
+
+    @Column
+    private Boolean isUnsigned;
+
+    @Column
+    private Boolean hasNotNull;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persist_entity_id")
+    private PersistEntity persistEntity;
+
+
 }

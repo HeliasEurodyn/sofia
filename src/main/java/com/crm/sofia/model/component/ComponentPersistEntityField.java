@@ -2,16 +2,12 @@ package com.crm.sofia.model.component;
 
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.persistEntity.PersistEntityField;
-import com.crm.sofia.model.table.TableField;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.List;
 
 
 @Data

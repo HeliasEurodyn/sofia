@@ -5,7 +5,6 @@ import com.crm.sofia.dto.list.GroupEntryDTO;
 import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.list.ListResultsDataDTO;
-import com.crm.sofia.mapper.appview.AppViewMapper;
 import com.crm.sofia.mapper.list.ListMapper;
 import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.jasperTest.JasperModelClass;
@@ -42,19 +41,17 @@ public class ListService {
     private final ListMapper listMapper;
     private final ExpressionService expressionService;
     private final ListDynamicQueryService listDynamicQueryService;
-    private final AppViewMapper appViewMapper;
     private final JWTService jwtService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ExpressionService expressionService,
                        ListDynamicQueryService listDynamicQueryService,
-                       AppViewMapper appViewMapper, JWTService jwtService) {
+                       JWTService jwtService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.expressionService = expressionService;
         this.listDynamicQueryService = listDynamicQueryService;
-        this.appViewMapper = appViewMapper;
         this.jwtService = jwtService;
     }
 

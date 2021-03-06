@@ -2,7 +2,6 @@ package com.crm.sofia.controllers.user;
 
 import com.crm.sofia.dto.auth.JWTResponseDTO;
 import com.crm.sofia.dto.auth.LoginDTO;
-import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.services.user.UserService;
 import lombok.extern.slf4j.Slf4j;

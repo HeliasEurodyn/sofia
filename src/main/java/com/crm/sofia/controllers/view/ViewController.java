@@ -61,7 +61,6 @@ public class ViewController {
         return this.viewService.getObject(id);
     }
 
-
     @GetMapping(path = "/view-exists")
     public Boolean tableExists(@RequestParam("name") String tableName) {
         return viewService.viewOnDatabase(tableName);

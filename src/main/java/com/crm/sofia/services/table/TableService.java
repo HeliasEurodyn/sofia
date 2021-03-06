@@ -3,9 +3,9 @@ package com.crm.sofia.services.table;
 import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.mapper.table.TableMapper;
-import com.crm.sofia.model.table.Table;
-import com.crm.sofia.repository.table.TableRepository;
-import org.springframework.data.jpa.repository.Modifying;
+import com.crm.sofia.model.persistEntity.PersistEntity;
+import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,79 +23,63 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableService {
-    //    private final TableFieldService customComponentFieldService;
-    private final TableRepository tableRepository;
-    private final TableMapper componentMapper;
-    private final EntityManager entityManager;
 
-    public TableService(TableRepository tableRepository,
-                        TableMapper componentMapper,
-//                        TableFieldService customComponentFieldService,
-                        EntityManager entityManager) {
-        this.tableRepository = tableRepository;
-//        this.customComponentFieldService = customComponentFieldService;
-        this.componentMapper = componentMapper;
+    private final PersistEntityRepository persistEntityRepository;
+    private final TableMapper tableMapper;
+    private final EntityManager entityManager;
+    private final JWTService jwtService;
+
+    public TableService(PersistEntityRepository persistEntityRepository,
+                        TableMapper tableMapper,
+                        EntityManager entityManager, JWTService jwtService) {
+        this.persistEntityRepository = persistEntityRepository;
+        this.tableMapper = tableMapper;
         this.entityManager = entityManager;
+        this.jwtService = jwtService;
     }
 
 
     public TableDTO postObject(TableDTO componentDTO) {
-        Table component = this.componentMapper.map(componentDTO);
+        PersistEntity persistEntity = this.tableMapper.map(componentDTO);
 
-        Table table = this.tableRepository.save(component);
-        return this.componentMapper.map(table);
+        persistEntity.setCreatedBy(jwtService.getUserId());
+        persistEntity.setModifiedBy(jwtService.getUserId());
+        persistEntity.setCreatedOn(Instant.now());
+        persistEntity.setModifiedOn(Instant.now());
+
+        persistEntity.getPersistEntityFieldList()
+                .stream()
+                .forEach(persistFieldEntity -> {
+                    persistFieldEntity.setCreatedBy(jwtService.getUserId());
+                    persistFieldEntity.setModifiedBy(jwtService.getUserId());
+                    persistFieldEntity.setCreatedOn(Instant.now());
+                    persistFieldEntity.setModifiedOn(Instant.now());
+                    persistFieldEntity.setPersistEntity(persistEntity);
+                });
+
+        PersistEntity entity = this.persistEntityRepository.save(persistEntity);
+        return this.tableMapper.map(entity);
     }
 
-
-//    public TableDTO putObject(TableDTO componentDTO) {
-//
-//        Optional<Table> optionalComponent = this.tableRepository.findById(componentDTO.getId());
-//        if (!optionalComponent.isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
-//        }
-//        Table table = optionalComponent.get();
-//
-//        componentMapper.setDtoToEntity(componentDTO, table);
-//        Table createdTable = this.tableRepository.save(table);
-//        TableDTO createdCustomComponentDTO = this.componentMapper.map(createdTable);
-//
-//        return createdCustomComponentDTO;
-//    }
-
-
-//    public List<TableFieldDTO> putNewObjectFields(TableDTO componentDTO) {
-//        List<TableFieldDTO> createdTableFieldDTOS = new ArrayList<>();
-//        for (TableFieldDTO tableFieldDTO : componentDTO.getTableFieldList()) {
-//            TableFieldDTO createdTableFieldDTO = this.customComponentFieldService.saveCustomComponentField(tableFieldDTO, componentDTO.getId());
-//            createdTableFieldDTOS.add(createdTableFieldDTO);
-//        }
-//
-//        List<Long> ids = createdTableFieldDTOS.stream().map(TableFieldDTO::getId).collect(Collectors.toList());
-//        this.customComponentFieldService.deleteObjectsNotInListForCustomComponent(ids, componentDTO.getId());
-//
-//        return createdTableFieldDTOS;
-//    }
-
-
     public List<TableDTO> getObject() {
-        List<Table> tables = this.tableRepository.findAll();
-        return this.componentMapper.map(tables);
+        List<PersistEntity> tables = this.persistEntityRepository.findByEntitytype("Table");
+        return this.tableMapper.map(tables);
     }
 
     public TableDTO getObject(Long id) {
-        Optional<Table> optionalComponent = this.tableRepository.findById(id);
+        Optional<PersistEntity> optionalComponent = this.persistEntityRepository.findById(id);
         if (!optionalComponent.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
         }
-        return this.componentMapper.map(optionalComponent.get());
+        return this.tableMapper.map(optionalComponent.get());
     }
 
     public void deleteObject(Long id) {
-        Optional<Table> optionalComponent = this.tableRepository.findById(id);
+        Optional<PersistEntity> optionalComponent = this.persistEntityRepository.findById(id);
         if (!optionalComponent.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
         }
-        this.tableRepository.deleteById(optionalComponent.get().getId());
+        this.persistEntityRepository.deleteById(optionalComponent.get().getId());
     }
 
     @Transactional
@@ -119,14 +104,14 @@ public class TableService {
         query.executeUpdate();
     }
 
-    public void updateDatabaseTable(TableDTO customComponentDTO) {
+    public void updateDatabaseTable(TableDTO tableDTO) {
 
-        List<String> existingTableFields = this.getTableFields(customComponentDTO.getName().replace(" ", ""));
+        List<String> existingTableFields = this.getTableFields(tableDTO.getName().replace(" ", ""));
         int fieldCounter = 0;
         String sql = "";
-        sql += "ALTER TABLE " + customComponentDTO.getName().replace(" ", "");
+        sql += "ALTER TABLE " + tableDTO.getName().replace(" ", "");
         sql += " \n";
-        for (TableFieldDTO tableFieldDTO : customComponentDTO.getTableFieldList()) {
+        for (TableFieldDTO tableFieldDTO : tableDTO.getTableFieldList()) {
 
             if (existingTableFields.contains(tableFieldDTO.getName().replace(" ", ""))) {
                 continue;
@@ -175,14 +160,14 @@ public class TableService {
     }
 
 
-    public void createDatabaseTable(TableDTO customComponentDTO) {
-        if (customComponentDTO.getTableFieldList().size() == 0) return;
+    public void createDatabaseTable(TableDTO TableDTO) {
+        if (TableDTO.getTableFieldList().size() == 0) return;
 
         int fieldCounter = 0;
         String sql = "";
-        sql += "CREATE TABLE IF NOT EXISTS " + customComponentDTO.getName().replace(" ", "");
+        sql += "CREATE TABLE IF NOT EXISTS " + TableDTO.getName().replace(" ", "");
         sql += " ( ";
-        for (TableFieldDTO tableFieldDTO : customComponentDTO.getTableFieldList()) {
+        for (TableFieldDTO tableFieldDTO : TableDTO.getTableFieldList()) {
             if (fieldCounter > 0) {
                 sql += ",";
             }

@@ -12,7 +12,6 @@ import org.mapstruct.NullValueCheckStrategy;
         uses = {MenuMapper.class})
 public abstract class MenuFieldMapper extends BaseMapper<MenuFieldDTO, MenuField> {
 
-
     @Mapping(ignore = true, target = "modifiedBy")
     @Mapping(ignore = true, target = "modifiedOn")
     @Mapping(ignore = true, target = "createdBy")

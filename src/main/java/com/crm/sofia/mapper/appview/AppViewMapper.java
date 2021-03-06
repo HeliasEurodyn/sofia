@@ -1,13 +1,30 @@
 package com.crm.sofia.mapper.appview;
 
 import com.crm.sofia.dto.appview.AppViewDTO;
+import com.crm.sofia.dto.view.ViewDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.mapper.persistEntity.PersistEntityMapper;
-import com.crm.sofia.model.appview.AppView;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 
-@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {AppViewFieldMapper.class})
-public abstract class AppViewMapper extends PersistEntityMapper<AppViewDTO, AppView> {
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+public abstract class AppViewMapper extends BaseMapper<AppViewDTO, PersistEntity> {
+
+    @Mapping(ignore = true, target = "modifiedBy")
+    @Mapping(ignore = true, target = "modifiedOn")
+    @Mapping(ignore = true, target = "createdBy")
+    @Mapping(target="persistEntityFieldList", source="dto.appViewFieldList")
+    public abstract PersistEntity map(AppViewDTO dto);
+
+    @Mapping(target = "appViewFieldList", source = "entity.persistEntityFieldList")
+    public abstract AppViewDTO map(PersistEntity entity);
+
+    public List<AppViewDTO> map(List<PersistEntity> all) {
+        return all.stream().map(this::map).collect(Collectors.toList());
+    }
+
 }

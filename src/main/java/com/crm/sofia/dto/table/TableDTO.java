@@ -1,5 +1,6 @@
 package com.crm.sofia.dto.table;
 
+import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -15,7 +16,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class TableDTO extends PersistEntityDTO {
+public class TableDTO extends BaseDTO {
+
+    private String name;
+
+    private String description;
+
+    private String query;
 
     private Integer creationVersion;
 
@@ -23,4 +30,5 @@ public class TableDTO extends PersistEntityDTO {
 
     private List<TableFieldDTO> tableFieldList;
 
+    private String entitytype;
 }
