@@ -14,8 +14,6 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@DynamicUpdate
-@DynamicInsert
 @Entity(name = "ComponentPersistEntity")
 @Table(name = "component_persist_entity")
 public class ComponentPersistEntity extends BaseEntity {
@@ -43,6 +41,6 @@ public class ComponentPersistEntity extends BaseEntity {
     @JoinColumn(name = "component_persist_entity_id")
     private List<ComponentPersistEntityField> componentPersistEntityFieldList;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
-    private Component component;
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
+//    private Component component;
 }

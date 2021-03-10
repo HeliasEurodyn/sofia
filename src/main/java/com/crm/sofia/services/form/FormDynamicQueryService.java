@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,18 +30,27 @@ public class FormDynamicQueryService {
     @Transactional
     public void generateQueriesAndSave(ComponentDTO component, Map<String, Map<String, Object>> parameters) {
 
+        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
+
+        /* Μaps parameters to component. The returning component contains also the parameters   */
         component = this.mapParametersToComponentDTO(component, parameters);
 
-        /*Filter-Keep only Table, saveable PersistEntities */
+        /* Filter - Keep only Table, Saveable PersistEntities */
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
                 component.getComponentPersistEntityList().stream()
                         .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
                         .filter(x -> x.getAllowSave())
                         .collect(Collectors.toList());
 
+        /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
+
+
+
             Query query = this.generateInsertQuery(componentPersistEntity);
             Long id = this.executeSave(query);
+
+            savedPersistEntities.add(componentPersistEntity);
         }
 
     }

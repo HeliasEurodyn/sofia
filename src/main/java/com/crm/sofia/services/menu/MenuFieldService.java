@@ -1,5 +1,6 @@
 package com.crm.sofia.services.menu;
 
+import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.mapper.menu.MenuFieldMapper;
 import com.crm.sofia.model.menu.Menu;
@@ -10,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuFieldService {
@@ -67,6 +70,10 @@ public class MenuFieldService {
 
         if (menuFieldDTOS == null) return null;
 
+        menuFieldDTOS = menuFieldDTOS.stream()
+                .sorted(Comparator.comparingLong(MenuFieldDTO::getShortOrder))
+                .collect(Collectors.toList());
+
         for (MenuFieldDTO entityDTO : menuFieldDTOS) {
             List<MenuFieldDTO> childrenEntities = this.getObjectTree(entityDTO.getId());
             entityDTO.setMenuFieldList(childrenEntities);
@@ -74,5 +81,23 @@ public class MenuFieldService {
 
         return menuFieldDTOS;
     }
+
+    public List<MenuFieldDTO> shortMenuFields(List<MenuFieldDTO> menuFieldDTOS) {
+
+        if (menuFieldDTOS == null) return null;
+
+        menuFieldDTOS = menuFieldDTOS.stream()
+                .sorted(Comparator.comparingLong(MenuFieldDTO::getShortOrder))
+                .collect(Collectors.toList());
+
+        for (MenuFieldDTO entityDTO : menuFieldDTOS) {
+            List<MenuFieldDTO> childrenEntities = this.shortMenuFields(entityDTO.getMenuFieldList());
+            entityDTO.setMenuFieldList(childrenEntities);
+        }
+
+        return menuFieldDTOS;
+    }
+
+
 
 }

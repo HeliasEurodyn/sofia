@@ -1,11 +1,7 @@
 package com.crm.sofia.model.form;
 
-import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.model.common.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,9 +12,9 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormComponent")
-@Table(name = "form_component")
-public class FormComponent extends BaseEntity {
+@Entity(name = "FormComponentTableComponent")
+@Table(name = "form_component_table_component")
+public class FormComponentTableComponent extends BaseEntity {
 
     @Column
     private String type;
@@ -35,11 +31,4 @@ public class FormComponent extends BaseEntity {
     @JoinColumn(name = "form_component_field_id")
     private FormComponentField formComponentField;
 
-    @OneToOne(
-            fetch = FetchType.LAZY,
-            cascade = { CascadeType.ALL },
-            orphanRemoval=true
-    )
-    @JoinColumn(name = "form_component_table_id")
-    private FormComponentTable formComponentTable;
 }

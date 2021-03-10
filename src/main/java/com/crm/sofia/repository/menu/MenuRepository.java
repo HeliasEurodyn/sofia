@@ -16,7 +16,8 @@ public interface MenuRepository extends BaseRepository<Menu> {
 
     @Query(" SELECT DISTINCT c " +
             " FROM Menu c " +
-            " LEFT JOIN FETCH c.menuFieldList  " +
-            " WHERE c.id =:id ")
+            " LEFT JOIN FETCH c.menuFieldList fl " +
+            " WHERE c.id =:id " +
+            " ORDER BY fl.shortOrder")
     Optional<Menu> findTreeById(@Param("id") Long id);
 }

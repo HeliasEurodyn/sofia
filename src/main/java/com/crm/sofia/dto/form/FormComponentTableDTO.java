@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.form;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,15 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormComponentDTO extends BaseDTO {
+public class FormComponentTableDTO extends BaseDTO {
 
-    private String type;
+    private String description;
 
-    private String cssclass;
-    
-    private FormComponentFieldDTO formComponentField;
+    private Boolean visible;
 
-    public FormComponentTableDTO formComponentTable;
+    private Boolean editable;
 
+    private Boolean required;
+
+    private String css;
+
+    private ComponentPersistEntityDTO componentPersistEntity;
+
+    private List<FormComponentTableComponentDTO> formComponents;
 
 }

@@ -37,7 +37,7 @@ public class ComponentPersistEntityField extends BaseEntity {
     @JoinColumn(name = "persist_entity_field_id", referencedColumnName = "id")
     private PersistEntityField persistEntityField;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntity.class)
-    private ComponentPersistEntity componentPersistEntity;
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntity.class)
+//    private ComponentPersistEntity componentPersistEntity;
 
 }

@@ -2,15 +2,15 @@ package com.crm.sofia.services.user;
 
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.auth.JWTResponseDTO;
+import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.mapper.user.UserMapper;
 import com.crm.sofia.model.user.User;
 import com.crm.sofia.repository.user.UserRepository;
 import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.menu.MenuFieldService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,15 +29,18 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
+    private final MenuFieldService menuFieldService;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
                        PasswordEncoder passwordEncoder,
-                       JWTService jwtService) {
+                       JWTService jwtService,
+                       MenuFieldService menuFieldService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.menuFieldService = menuFieldService;
     }
 
     public List<UserDTO> getAllUsers() {
@@ -148,24 +151,35 @@ public class UserService {
     }
 
     public UserDTO getCurrentUser() {
-        User user = getLoggedInUser();
-        return this.userMapper.map(user);
+        User user = this.getLoggedInUser();
+        UserDTO userDTO = this.userMapper.map(user);
+
+        if (userDTO.getMenu() != null) {
+            List<MenuFieldDTO> menuFieldList = this.menuFieldService.shortMenuFields(userDTO.getMenu().getMenuFieldList());
+            userDTO.getMenu().setMenuFieldList(menuFieldList);
+        }
+
+        return userDTO;
     }
 
     public User getLoggedInUser() {
 
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            return null;
-        }
+//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+//            return null;
+//        }
+//
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = "";
+//        if (principal instanceof UserDetails) {
+//            username = ((UserDetails) principal).getUsername();
+//        } else {
+//            username = principal.toString();
+//        }
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = "";
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        Optional<User> userOptional = this.userRepository.findByUsername(username);
+//        Optional<User> userOptional = this.userRepository.findByUsername(username);
+
+        Long id = jwtService.getUserId();
+        Optional<User> userOptional = this.userRepository.findById(id);
         if (!userOptional.isPresent()) {
             return null;
         }
