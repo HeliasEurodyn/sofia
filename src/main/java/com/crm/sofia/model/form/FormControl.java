@@ -12,9 +12,9 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormComponentTableComponent")
-@Table(name = "form_component_table_component")
-public class FormComponentTableComponent extends BaseEntity {
+@Entity(name = "FormControl")
+@Table(name = "form_control")
+public class FormControl extends BaseEntity {
 
     @Column
     private String type;
@@ -29,6 +29,13 @@ public class FormComponentTableComponent extends BaseEntity {
             orphanRemoval=true
     )
     @JoinColumn(name = "form_component_field_id")
-    private FormComponentField formComponentField;
+    private FormControlField formControlField;
 
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_component_table_id")
+    private FormControlTable formControlTable;
 }

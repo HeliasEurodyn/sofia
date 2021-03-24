@@ -7,22 +7,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormComponentDTO extends BaseDTO {
+public class FormControlDTO extends BaseDTO {
 
     private String type;
 
     private String cssclass;
     
-    private FormComponentFieldDTO formComponentField;
+    private FormControlFieldDTO formControlField;
 
-    public FormComponentTableDTO formComponentTable;
+    public FormControlTableDTO formControlTable;
 
 
 }

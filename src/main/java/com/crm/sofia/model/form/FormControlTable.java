@@ -1,7 +1,5 @@
 package com.crm.sofia.model.form;
 
-import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.form.FormComponentDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import lombok.Data;
@@ -16,9 +14,9 @@ import java.util.List;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormComponentTable")
-@Table(name = "form_component_table")
-public class FormComponentTable extends BaseEntity {
+@Entity(name = "FormControlTable")
+@Table(name = "form_control_table")
+public class FormControlTable extends BaseEntity {
 
     @Column
     private String description;
@@ -48,6 +46,6 @@ public class FormComponentTable extends BaseEntity {
             orphanRemoval=true
     )
     @JoinColumn(name = "form_component_table_id")
-    private List<FormComponentTableComponent> formComponents;
+    private List<FormControlTableControl> formControls;
 
 }

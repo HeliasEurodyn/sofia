@@ -22,6 +22,6 @@ public class FormAreaDTO extends BaseDTO {
 
     private String cssclass;
 
-    private List<FormComponentDTO> formComponents;
+    private List<FormControlDTO> formControls;
 
 }

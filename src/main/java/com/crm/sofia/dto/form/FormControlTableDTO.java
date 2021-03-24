@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormComponentTableDTO extends BaseDTO {
+public class FormControlTableDTO extends BaseDTO {
 
     private String description;
 
@@ -29,6 +29,6 @@ public class FormComponentTableDTO extends BaseDTO {
 
     private ComponentPersistEntityDTO componentPersistEntity;
 
-    private List<FormComponentTableComponentDTO> formComponents;
+    private List<FormControlTableControlDTO> formControls;
 
 }

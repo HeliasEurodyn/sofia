@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormComponentFieldDTO extends BaseDTO {
+public class FormControlFieldDTO extends BaseDTO {
     private String editor;
     private String description;
     private Boolean visible;

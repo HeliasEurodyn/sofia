@@ -12,12 +12,12 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormComponentTableComponentDTO extends BaseDTO {
+public class FormControlTableControlDTO extends BaseDTO {
 
     private String type;
 
     private String cssclass;
 
-    private FormComponentFieldDTO formComponentField;
+    private FormControlFieldDTO formControlField;
 
 }

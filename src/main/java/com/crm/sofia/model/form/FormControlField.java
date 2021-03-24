@@ -20,9 +20,9 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormComponentField")
-@Table(name = "form_component_field")
-public class FormComponentField extends BaseEntity {
+@Entity(name = "FormControlField")
+@Table(name = "form_control_field")
+public class FormControlField extends BaseEntity {
 
     @Column
     private String editor;
