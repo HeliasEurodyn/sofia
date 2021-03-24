@@ -70,6 +70,12 @@ public class FormService {
         return formDTO;
     }
 
+    public FormDTO getObjectAndRetrieveData(Long id, String selectionId) {
+        FormDTO formDTO = this.getObject(id);
+        this.formDynamicQueryService.retrieveComponentData(formDTO.getComponent(), selectionId);
+        return formDTO;
+    }
+
     public void deleteObject(Long id) {
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {

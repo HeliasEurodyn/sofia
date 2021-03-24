@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/test")
 public class TestController {
-
-    @Autowired
-    private KieSession session;
+//
+//    @Autowired
+//    private KieSession session;
 
     @PostMapping("/order")
     public Order orderNow(@RequestBody Order order) {
-        session.insert(order);
-        session.fireAllRules();
+//        session.insert(order);
+//        session.fireAllRules();
         return order;
     }
 

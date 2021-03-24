@@ -10,19 +10,17 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
-@Configuration
-public class DroolConfig {
+//@Configuration
+public class DroolsConfig {
 
     private KieServices kieServices = KieServices.Factory.get();
 
-    private KieFileSystem getKieFileSystem() throws IOException {
-        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-        kieFileSystem.write(ResourceFactory.newClassPathResource("offer.drl"));
-        return kieFileSystem;
-
+//    @Bean
+    public KieSession getKieSession() throws IOException {
+        System.out.println("session created...");
+        return getKieContainer().newKieSession();
     }
 
-    @Bean
     public KieContainer getKieContainer() throws IOException {
         System.out.println("Container created...");
         getKieRepository();
@@ -31,7 +29,12 @@ public class DroolConfig {
         KieModule kieModule = kb.getKieModule();
         KieContainer kContainer = kieServices.newKieContainer(kieModule.getReleaseId());
         return kContainer;
+    }
 
+    private KieFileSystem getKieFileSystem() {
+        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
+        kieFileSystem.write(ResourceFactory.newClassPathResource("offer.drl"));
+        return kieFileSystem;
     }
 
     private void getKieRepository() {
@@ -42,12 +45,5 @@ public class DroolConfig {
             }
         });
     }
-
-    @Bean
-    public KieSession getKieSession() throws IOException {
-        System.out.println("session created...");
-        return getKieContainer().newKieSession();
-    }
-
 
 }

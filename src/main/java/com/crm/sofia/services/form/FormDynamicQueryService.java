@@ -2,7 +2,10 @@ package com.crm.sofia.services.form;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,11 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +33,7 @@ public class FormDynamicQueryService {
 
         List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
 
-        /* Μaps parameters to component. The returning component contains also the parameters   */
+        /* Μaps parameters to component. */
         component = this.mapParametersToComponentDTO(component, parameters);
 
         /* Filter - Keep only Table, Saveable PersistEntities */
@@ -45,23 +46,96 @@ public class FormDynamicQueryService {
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
 
+            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
+            if (multiDataLine == true) {
+                this.saveComponentPersistEntityLine(componentPersistEntity, savedPersistEntities);
+            } else {
+                this.saveComponentPersistEntity(
+                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntity.getComponentPersistEntityFieldList(),
+                        savedPersistEntities);
+                savedPersistEntities.add(componentPersistEntity);
+            }
 
-
-            Query query = this.generateInsertQuery(componentPersistEntity);
-            Long id = this.executeSave(query);
-
-            savedPersistEntities.add(componentPersistEntity);
         }
 
     }
 
-    private Query generateInsertQuery(ComponentPersistEntityDTO componentPersistEntity) {
+    private ComponentPersistEntityDTO saveComponentPersistEntityLine(ComponentPersistEntityDTO componentPersistEntity,
+                                                                     List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+
+        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : componentPersistEntity.getComponentPersistEntityDataLines()) {
+
+            this.saveComponentPersistEntity(
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                    savedPersistEntities);
+
+        }
+
+        return componentPersistEntity;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> saveComponentPersistEntity(
+            String entityName,
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+            List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+        /* Map Values from previous saved ones */
+        componentPersistEntityFieldList =
+                this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
+
+        /* Generate Query */
+        Query query = this.generateInsertQuery(entityName, componentPersistEntityFieldList);
+
+        /* Execute Query */
+        Long id = this.executeSave(query);
+
+        /* Save Query */
+        this.setPrimaryKey(componentPersistEntityFieldList, id);
+
+        return componentPersistEntityFieldList;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> mapSavedValuesToComponentPersistEntity(List<ComponentPersistEntityDTO> savedPersistEntities,
+                                                                                        List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
+
+        for (ComponentPersistEntityDTO savedPersistEntity : savedPersistEntities) {
+            for (ComponentPersistEntityFieldDTO savedComponentPersistEntityField : savedPersistEntity.getComponentPersistEntityFieldList()) {
+
+                String currentFieldCode = "#" + savedPersistEntity.getCode() + "." + savedComponentPersistEntityField.getPersistEntityField().getName();
+
+                for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntityFieldList) {
+                    String saveStatement = (componentPersistEntityField.getSaveStatement() == null ? "" : componentPersistEntityField.getSaveStatement());
+                    if (saveStatement.equals(currentFieldCode)) {
+                        componentPersistEntityField.setValue(savedComponentPersistEntityField.getValue());
+                    }
+                }
+
+            }
+        }
+        return componentPersistEntityFieldList;
+
+    }
+
+    private List<ComponentPersistEntityFieldDTO> setPrimaryKey(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList, Long id) {
+        for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityFieldList) {
+            if (componentPersistEntityFieldDTO.getPersistEntityField().getPrimaryKey() == true) {
+                componentPersistEntityFieldDTO.setValue(id);
+            }
+        }
+        return componentPersistEntityFieldList;
+    }
+
+    private Query generateInsertQuery(String entityName,
+                                      List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
 
         /* Insert into Section */
-        String queryString = "INSERT INTO " + componentPersistEntity.getPersistEntity().getName();
+        String queryString = "INSERT INTO " + entityName;
 
         /* Insert into Values Section */
-        List<String> headersList = componentPersistEntity.getComponentPersistEntityFieldList().stream()
+        List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
                 .map(x -> x.getPersistEntityField().getName())
@@ -70,7 +144,7 @@ public class FormDynamicQueryService {
         queryString += " (" + headersString + " ) VALUES ";
 
         /* Parameters Section */
-        List<String> valuesParametersList = componentPersistEntity.getComponentPersistEntityFieldList().stream()
+        List<String> valuesParametersList = componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
                 .map(x -> ":" + x.getPersistEntityField().getName())
@@ -81,7 +155,7 @@ public class FormDynamicQueryService {
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
-        componentPersistEntity.getComponentPersistEntityFieldList().stream()
+        componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
                 .forEach(x ->
@@ -93,8 +167,7 @@ public class FormDynamicQueryService {
         return query;
     }
 
-
-    Long executeSave(Query query) {
+    private Long executeSave(Query query) {
         Long id;
         try {
             query.executeUpdate();
@@ -109,33 +182,28 @@ public class FormDynamicQueryService {
 
     private ComponentDTO mapParametersToComponentDTO(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
 
+        /* Iterate parameters */
         for (Map.Entry persistEntityPair : parameters.entrySet()) {
             String persistEntityCode = (String) persistEntityPair.getKey();
             Map<String, Object> persistEntityFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
 
-            Optional<ComponentPersistEntityDTO> compPersistEntityOptional =
-                    componentDTO.getComponentPersistEntityList()
-                            .stream()
-                            .filter(cpe -> cpe.getCode().equals(persistEntityCode)).findFirst();
+            /* Find component Persist entity from list */
+            ComponentPersistEntityDTO componentPersistEntity = this.findComponentPersistEntity(componentDTO.getComponentPersistEntityList(),
+                    persistEntityCode);
+            if (componentPersistEntity == null) continue;
 
-            if (!compPersistEntityOptional.isPresent()) continue;
-            ComponentPersistEntityDTO compPersistEntity = compPersistEntityOptional.get();
-
-            for (Map.Entry persistEntityFieldPair : persistEntityFieldsMap.entrySet()) {
-                String persistEntityFieldCode = (String) persistEntityFieldPair.getKey();
-                Object persistEntityFieldValue = (Object) persistEntityFieldPair.getValue();
-
-                Optional<ComponentPersistEntityFieldDTO> compPersistEntityFieldOptional =
-                        compPersistEntity.getComponentPersistEntityFieldList()
-                                .stream()
-                                .filter(cpef -> cpef.getPersistEntityField().getName().equals(persistEntityFieldCode))
-                                .findFirst();
-
-                if (!compPersistEntityFieldOptional.isPresent()) continue;
-                ComponentPersistEntityFieldDTO compPersistEntityField = compPersistEntityFieldOptional.get();
-
-                compPersistEntityField.setValue(persistEntityFieldValue);
-
+            if (persistEntityFieldsMap.containsKey("multiline")) {
+                /* Iterate parameters and map MultilinePersistEntity */
+                componentPersistEntity = this.mapMultilinePersistEntity(componentPersistEntity,
+                        persistEntityFieldsMap);
+                componentPersistEntity.setMultiDataLine(true);
+            } else {
+                /* Iterate parameters and map to componentPersistEntity Fields */
+                List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
+                        this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntity.getComponentPersistEntityFieldList(),
+                                persistEntityFieldsMap);
+                componentPersistEntity.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
+                componentPersistEntity.setMultiDataLine(false);
             }
 
         }
@@ -143,555 +211,250 @@ public class FormDynamicQueryService {
         return componentDTO;
     }
 
+    private ComponentPersistEntityDTO mapMultilinePersistEntity(ComponentPersistEntityDTO componentPersistEntity, Map<String, Object> persistEntityFieldsMap) {
 
-//
-//    /*
-//     * Iterate to Generate SELECT Columns part
-//     */
-//    private String generateSelectColumnsPart(ListDTO listDTO) {
-//
-//        String queryString = "SELECT ";
-//        Boolean firstItteration = true;
-//
-//
-//        List<ListComponentFieldDTO> fieldColumns = listDTO.getListComponentColumnFieldList()
-//                .stream().filter(
-//                        fieldColumn -> fieldColumn.getComponentPersistEntityField() != null).collect(Collectors.toList());
-//
-//
-//        for (ListComponentFieldDTO listComponentFieldDTO : fieldColumns) {
-//            String field =
-//                    listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
-//                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + listComponentFieldDTO.getCode();
-//            if (firstItteration) {
-//                queryString += field;
-//            } else {
-//                queryString += "," + field;
-//            }
-//            firstItteration = false;
-//        }
-//
-//        Pattern pattern = Pattern.compile("^SqlField\\('.+'\\)$");
-//        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
-//                .stream().filter(
-//                        fieldColumn -> pattern.matcher(fieldColumn.getEditor()).matches()).collect(Collectors.toList());
-//
-//        for (ListComponentFieldDTO listComponentFieldDTO : sqlFieldColumns) {
-//            String field = "( " +
-//                    listComponentFieldDTO.getEditor().substring(10, listComponentFieldDTO.getEditor().length() - 2) +
-//                    ") as " + listComponentFieldDTO.getCode();
-//            if (firstItteration) {
-//                queryString += field;
-//            } else {
-//                queryString += "," + field;
-//            }
-//            firstItteration = false;
-//        }
-//
-//        return queryString;
-//
-//    }
-//
-//    /*
-//     * Iterate to Generate SELECT Columns part
-//     */
-//    private String generateSelectLeftGroupPart(ListDTO listDTO) {
-//
-//        String queryString = "SELECT ";
-//        Boolean firstItteration = true;
-//        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
-//            String field =
-//                    listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
-//                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + listComponentFieldDTO.getCode();
-//            if (firstItteration) {
-//                queryString += field;
-//            } else {
-//                queryString += "," + field;
-//
-//            }
-//
-//            firstItteration = false;
-//        }
-//
-//        queryString += ", count(*) AS total";
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate FROM Tables & Relashionships part
-//     */
-//    private String generateFromColumnsPart(ListDTO listDTO) {
-//
-//        String queryString = " FROM";
-//
-//        List<ComponentPersistEntityDTO> sortedComponentPersistEntityList = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
-//
-//        for (ComponentPersistEntityDTO componentPersistEntityDTO : sortedComponentPersistEntityList) {
-//
-//            if (componentPersistEntityDTO.getSelector() != null) {
-//                String selector = componentPersistEntityDTO.getSelector();
-//                String join = selector.replaceAll("\\[|\\].+", "");
-//                queryString += " " + join;
-//            }
-//
-//            if (componentPersistEntityDTO.getPersistEntity().getEntitytype().equals("AppView")) {
-//                PersistEntityDTO appViewDTO = componentPersistEntityDTO.getPersistEntity();
-//                queryString += " ( " +
-//                        appViewDTO.getQuery() + " ) " + componentPersistEntityDTO.getCode();
-//            } else {
-//                queryString += " " +
-//                        componentPersistEntityDTO.getPersistEntity().getName() + " " + componentPersistEntityDTO.getCode();
-//            }
-//
-//            if (componentPersistEntityDTO.getSelector() != null) {
-//                String selector = componentPersistEntityDTO.getSelector();
-//                String onStatement = selector.replaceAll("\\[.+\\]", "");
-//                queryString += " ON " + onStatement;
-//
-//            }
-//
-//        }
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate WHERE Fields part
-//     */
-//    private String generateWhereColumnsPart(List<ListComponentFieldDTO> filtersList) {
-//
-//        String queryString = "";
-//        Boolean firstItteration = true;
-//        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
-//
-//            if (listComponentFieldDTO.getFieldValue() == null) listComponentFieldDTO.setFieldValue("");
-//            if (listComponentFieldDTO.getFieldValue().equals("")) {
-//                if (listComponentFieldDTO.getRequired()) {
-//                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Required filter " + listComponentFieldDTO.getCode() + " should not be empty!");
-//                }
-//                continue;
-//            }
-//
-//            String field =
-//                    listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
-//                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " " +
-//                            listComponentFieldDTO.getOperator() + " ";
-//
-//            if (listComponentFieldDTO.getType().equals("datetime")) {
-//                Instant valueInstant = Instant.parse(listComponentFieldDTO.getFieldValue().toString());
-//                field += " '" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant) + "' ";
-//            } else if (listComponentFieldDTO.getType().equals("varchar") || listComponentFieldDTO.getType().equals("text")) {
-//                if (listComponentFieldDTO.getOperator().equals("like")) {
-//                    field += " '" + listComponentFieldDTO.getFieldValue().toString().replaceAll("\\*+", "%") + "' ";
-//                } else {
-//                    field += " '" + listComponentFieldDTO.getFieldValue().toString() + "' ";
-//                }
-//            } else {
-//                field += " '" + listComponentFieldDTO.getFieldValue().toString() + "' ";
-//            }
-//
-//
-//            if (firstItteration) {
-//                queryString += " WHERE " + field;
-//            } else {
-//                queryString += " AND " + field;
-//            }
-//
-//
-//            firstItteration = false;
-//        }
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate custom structure WHERE Fields part
-//     */
-//    private String generateCustomWhereColumnsPart(List<ListComponentFieldDTO> filtersList, String filterFieldStructure) {
-//
-//        String queryString = " WHERE " + filterFieldStructure;
-//
-//        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
-//
-//            if (listComponentFieldDTO.getFieldValue() == null) listComponentFieldDTO.setFieldValue("");
-//            if (listComponentFieldDTO.getFieldValue().equals("")) {
-//                if (listComponentFieldDTO.getRequired()) {
-//                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Required filter " + listComponentFieldDTO.getCode() + " should not be empty!");
-//                }
-//
-//                queryString.replaceAll("$" + listComponentFieldDTO.getCode(), " 1=1 ");
-//                continue;
-//            }
-//
-//            String field =
-//                    listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
-//                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName() + " " +
-//                            listComponentFieldDTO.getOperator() + " ";
-//
-//            if (listComponentFieldDTO.getType().equals("datetime")) {
-//                Instant valueInstant = Instant.parse(listComponentFieldDTO.getFieldValue().toString());
-//                field += " '" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant) + "' ";
-//            } else if (listComponentFieldDTO.getType().equals("varchar") || listComponentFieldDTO.getType().equals("text")) {
-//                if (listComponentFieldDTO.getOperator().equals("like")) {
-//                    field += " '" + listComponentFieldDTO.getFieldValue().toString().replaceAll("\\*+", "%") + "' ";
-//                } else {
-//                    field += " '" + listComponentFieldDTO.getFieldValue().toString() + "' ";
-//                }
-//            } else {
-//                field += " '" + listComponentFieldDTO.getFieldValue().toString() + "' ";
-//            }
-//
-//            queryString.replaceAll("$" + listComponentFieldDTO.getCode(), field);
-//
-//        }
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate Group By Columns part
-//     */
-//    private String generateGroupByColumnsPart(ListDTO listDTO) {
-//        String queryString = "GROUP BY ";
-//        Boolean firstItteration = true;
-//        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
-//
-//            if (firstItteration) {
-//                queryString += listComponentFieldDTO.getCode();
-//            } else {
-//                queryString += "," + listComponentFieldDTO.getCode();
-//            }
-//
-//            firstItteration = false;
-//        }
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate Order By Columns part
-//     */
-//    private String generateOrderByColumnsPart(ListDTO listDTO) {
-//        String queryString = "";
-//        Boolean firstItteration = true;
-//        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentOrderByFieldList()) {
-//
-//            if (firstItteration) {
-//                queryString += " ORDER BY ";
-//            }
-//
-//            String field =
-//                    listComponentFieldDTO.getComponentPersistEntity().getCode() + "." +
-//                            listComponentFieldDTO.getComponentPersistEntityField().getPersistEntityField().getName();
-//
-//            if (listComponentFieldDTO.getEditor().equals("ASC") || listComponentFieldDTO.getEditor().equals("DESC")) {
-//                field += " " + listComponentFieldDTO.getEditor();
-//            } else {
-//                field += " ASC ";
-//            }
-//
-//            if (firstItteration) {
-//                queryString += field;
-//            } else {
-//                queryString += "," + field;
-//            }
-//
-//            firstItteration = false;
-//        }
-//
-//        return queryString;
-//    }
-//
-//    /*
-//     * Iterate to Generate Order By Columns part
-//     */
-//    private String generateOrderByLeftGroupPart(ListDTO listDTO) {
-//        String queryString = " ORDER BY ";
-//        Boolean firstItteration = true;
-//        for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
-//
-//            if (firstItteration) {
-//                queryString += listComponentFieldDTO.getCode() + " ASC ";
-//            } else {
-//                queryString += "," + listComponentFieldDTO.getCode() + " ASC ";
-//            }
-//
-//            firstItteration = false;
-//        }
-//        return queryString;
-//    }
-//
-//
-//    /*
-//     * Iterate to Generate Limit part
-//     */
-//    private String generateLimitPart(ListDTO listDTO) {
-//
-//        String queryString = "";
-//        if (listDTO.getHasPagination()) {
-//            Long currentPage = listDTO.getCurrentPage();
-//            if (currentPage == null) currentPage = 0L;
-//            Long offset = listDTO.getPageSize() * currentPage;
-//            queryString += "LIMIT " + listDTO.getPageSize() + " OFFSET  " + offset;
-//        } else if (listDTO.getHasMaxSize()) {
-//            queryString += "LIMIT " + listDTO.getMaxSize();
-//        }
-//        return queryString;
-//    }
-//
-//
-//
-//    /*
-//     * Execute Sql Query
-//     * Set results in a HashMap Array
-//     * return HashMap Array results
-//     */
-//    private List<Map<String, Object>> executeListQuery(ListDTO listDTO, String queryString) {
-//
-//        List<Map<String, Object>> listContent = new ArrayList<>();
-//
-//        List<ListComponentFieldDTO> fieldColumns = listDTO.getListComponentColumnFieldList()
-//                .stream().filter(
-//                        fieldColumn -> fieldColumn.getComponentPersistEntityField() != null).collect(Collectors.toList());
-//
-//        Pattern pattern = Pattern.compile("^SqlField\\('.+'\\)$");
-//        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
-//                .stream().filter(
-//                        fieldColumn -> pattern.matcher(fieldColumn.getEditor()).matches()).collect(Collectors.toList());
-//
-//
-//        Query query = entityManager.createNativeQuery(queryString);
-//        List<Object[]> dataList = query.getResultList();
-//        for (Object[] dataRow : dataList) {
-//
-//            Map<String, Object> dataMapRow = new HashMap<>();
-//            int i = 0;
-//
-//            for (ListComponentFieldDTO listComponentFieldDTO : fieldColumns) {
-//                dataMapRow.put(listComponentFieldDTO.getCode(), dataRow[i]);
-//                i++;
-//            }
-//
-//            for (ListComponentFieldDTO listComponentFieldDTO : sqlFieldColumns) {
-//                dataMapRow.put(listComponentFieldDTO.getCode(), dataRow[i]);
-//                i++;
-//            }
-//
-//            listContent.add(dataMapRow);
-//
-//        }
-//
-//        return listContent;
-//    }
-//
-//    /*
-//     * Execute algorithm
-//     * Set results in a HashMap Array
-//     * return HashMap Array results
-//     */
-//    private List<GroupEntryDTO> executeGroupQuery(ListDTO listDTO, String queryString) {
-//
-//        Query query = entityManager.createNativeQuery(queryString);
-//        List<Object[]> dataList = query.getResultList();
-//
-//        int countIndex = listDTO.getListComponentLeftGroupFieldList().size();
-//        List<GroupEntryDTO> groupEntries = new ArrayList<>();
-//        int i = 0;
-//
-//        for (Object[] dataRow : dataList) {
-//
-//            List<GroupEntryDTO> currentGroupEntries = groupEntries;
-//            GroupEntryDTO parrentEntry = null;
-//
-//            for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
-//
-//                String currentValue = dataRow[i].toString();
-//                GroupEntryDTO entry = currentGroupEntries.stream()
-//                        .filter(storedEntry -> currentValue.equals(storedEntry.getValue()))
-//                        .findAny()
-//                        .orElse(null);
-//
-//                if (entry == null) {
-//                    entry = new GroupEntryDTO();
-//                    entry.setCode(listComponentFieldDTO.getCode());
-//                    entry.setValue(dataRow[i]);
-//                    entry.setCount(Integer.parseInt(dataRow[countIndex].toString()));
-//                    entry.setChildren(new ArrayList<>());
-//
-//                    if (parrentEntry != null) {
-//                        GroupEntryDTO abstructParrent = new GroupEntryDTO();
-//                        abstructParrent.setCode(parrentEntry.getCode());
-//                        abstructParrent.setValue(parrentEntry.getValue());
-//                        abstructParrent.setParrent(parrentEntry.getParrent());
-//                        entry.setParrent(abstructParrent);
-//                    }
-//
-//                    currentGroupEntries.add(entry);
-//                }
-//
-//                currentGroupEntries = entry.getChildren();
-//                parrentEntry = entry;
-//                i++;
-//            }
-//            i = 0;
-//        }
-//
-//        return groupEntries;
-//    }
-//
-//    public List<Map<String, Object>> executeListAndGetData(ListDTO dto) {
-//        List<Map<String, Object>> listContent = new ArrayList<>();
-//
-//        if (dto.getListComponentColumnFieldList().size() == 0) {
-//            return listContent;
-//        }
-//
-//        /*
-//         * Select clause
-//         */
-//        String queryString = this.generateSelectColumnsPart(dto);
-//
-//        /*
-//         * From clause
-//         */
-//        queryString += this.generateFromColumnsPart(dto);
-//
-//        /*
-//         * Where clause
-//         */
-//        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentLeftGroupFieldList()) {
-//            listComponentFieldDTO.setOperator("=");
-//            listComponentFieldDTO.setRequired(false);
-//        }
-//
-//        List<ListComponentFieldDTO> filtersList = Stream.concat(dto.getListComponentFilterFieldList().stream(),
-//                dto.getListComponentLeftGroupFieldList().stream())
-//                .collect(Collectors.toList());
-//
-//        filtersList = Stream.concat(filtersList.stream(),
-//                dto.getListComponentColumnFieldList().stream())
-//                .collect(Collectors.toList());
-//
-//        filtersList = filtersList.stream()
-//                .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
-//
-//        if (!dto.getCustomFilterFieldStructure())
-//            queryString += this.generateWhereColumnsPart(filtersList);
-//        if (dto.getCustomFilterFieldStructure())
-//            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
-//
-//        /*
-//         * Order By clause
-//         */
-//        queryString += this.generateOrderByColumnsPart(dto);
-//
-//        /*
-//         * Limit clause
-//         */
-//        queryString += this.generateLimitPart(dto);
-//
-//        /*
-//         * Execute
-//         */
-//        listContent = this.executeListQuery(dto, queryString);
-//
-//        return listContent;
-//    }
-//
-//    public List<GroupEntryDTO> executeListAndGetGroupingData(ListDTO dto) {
-//        List<GroupEntryDTO> groupContent = new ArrayList<>();
-//        // ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
-//
-//        if (dto.getListComponentLeftGroupFieldList().size() == 0) {
-//            return groupContent;
-//        }
-//
-//        /*
-//         * Select clause
-//         */
-//        String queryString = this.generateSelectLeftGroupPart(dto);
-//
-//        /*
-//         * From clause
-//         */
-//        queryString += this.generateFromColumnsPart(dto);
-//
-//        /*
-//         * Where clause
-//         */
-//        List<ListComponentFieldDTO> filtersList = dto.getListComponentFilterFieldList().stream()
-//                .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
-//
-//        if (!dto.getCustomFilterFieldStructure())
-//            queryString += this.generateWhereColumnsPart(filtersList);
-//        if (dto.getCustomFilterFieldStructure())
-//            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
-//
-//        /*
-//         * Group By clause
-//         */
-//        queryString += this.generateGroupByColumnsPart(dto);
-//
-//        /*
-//         * Order By clause
-//         */
-//        queryString += this.generateOrderByLeftGroupPart(dto);
-//
-//        /*
-//         * Execute
-//         */
-//        groupContent = this.executeGroupQuery(dto, queryString);
-//
-//        return groupContent;
-//    }
-//
-//    public Long executeListAndCountTotalRows(ListDTO dto) {
-//
-//        //    ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
-//
-//        if (dto.getListComponentColumnFieldList().size() == 0) {
-//            return 0L;
-//        }
-//
-//        /*
-//         * Select clause
-//         */
-//        String queryString = "SELECT COUNT(*) AS TOTALROWS ";
-//
-//        /*
-//         * From clause
-//         */
-//        queryString += this.generateFromColumnsPart(dto);
-//
-//
-//        /*
-//         * Where clause
-//         */
-//        for (ListComponentFieldDTO listComponentFieldDTO : dto.getListComponentLeftGroupFieldList()) {
-//            listComponentFieldDTO.setOperator("=");
-//            listComponentFieldDTO.setRequired(false);
-//        }
-//
-//        List<ListComponentFieldDTO> filtersList = Stream.concat(dto.getListComponentFilterFieldList().stream(),
-//                dto.getListComponentLeftGroupFieldList().stream())
-//                .collect(Collectors.toList());
-//        filtersList = filtersList.stream()
-//                .filter(field -> field.getComponentPersistEntity() != null).collect(Collectors.toList());
-//
-//        if (!dto.getCustomFilterFieldStructure())
-//            queryString += this.generateWhereColumnsPart(filtersList);
-//        if (dto.getCustomFilterFieldStructure())
-//            queryString += this.generateCustomWhereColumnsPart(filtersList, dto.getFilterFieldStructure());
-//
-//
-//
-//        /*
-//         * Execute
-//         */
-//        Long totalRows = this.executeCountQuery(dto, queryString);
-//
-//        return totalRows;
-//    }
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {}.getType();
+
+        /* Iterate lines */
+        for (Map.Entry persistEntityPair : persistEntityFieldsMap.entrySet()) {
+            String persistEntityid = (String) persistEntityPair.getKey();
+            if (persistEntityid == "multiline") continue;
+
+            Map<String, Object> persistEntityLineFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
+
+            /* Clone ComponentPersistEntityFieldList and add to line */
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
+                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), listType);
+
+            /* Iterate parameters and map to componentPersistEntity Fields */
+            componentPersistEntityFieldList =
+                    this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntityFieldList,
+                            persistEntityLineFieldsMap);
+
+            ComponentPersistEntityDataLineDTO componentPersistEntityDataLine = new ComponentPersistEntityDataLineDTO();
+            componentPersistEntityDataLine.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
+            componentPersistEntity.getComponentPersistEntityDataLines().add(componentPersistEntityDataLine);
+        }
+
+        return componentPersistEntity;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> itterateAndMapPamametersToComponentPersistEntityFields(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                                                                        Map<String, Object> persistEntityFieldsMap) {
+        /* Iterate parameters */
+        for (Map.Entry persistEntityFieldPair : persistEntityFieldsMap.entrySet()) {
+            String persistEntityFieldCode = (String) persistEntityFieldPair.getKey();
+            Object persistEntityFieldValue = (Object) persistEntityFieldPair.getValue();
+
+            /* Find component Persist entity field */
+            ComponentPersistEntityFieldDTO compPersistEntityField =
+                    this.findComponentPersistEntityField(componentPersistEntityFieldList,
+                            persistEntityFieldCode);
+            if (compPersistEntityField == null) continue;
+
+            /* Set value to compPersistEntityField */
+            compPersistEntityField.setValue(persistEntityFieldValue);
+        }
+
+        return componentPersistEntityFieldList;
+    }
+
+    private ComponentPersistEntityDTO findComponentPersistEntity(List<ComponentPersistEntityDTO> componentPersistEntityList,
+                                                                 String persistEntityCode) {
+
+        /* Find component Persist entity from list */
+        Optional<ComponentPersistEntityDTO> compPersistEntityOptional =
+                componentPersistEntityList
+                        .stream()
+                        .filter(cpe -> cpe.getCode().equals(persistEntityCode)).findFirst();
+
+        if (!compPersistEntityOptional.isPresent()) return null;
+        ComponentPersistEntityDTO compPersistEntity = compPersistEntityOptional.get();
+
+        return compPersistEntity;
+    }
+
+    private ComponentPersistEntityFieldDTO findComponentPersistEntityField(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                                           String persistEntityFieldCode) {
+
+        /* Find component Persist entity field from selected componentPersistEntity */
+        Optional<ComponentPersistEntityFieldDTO> compPersistEntityFieldOptional =
+                componentPersistEntityFieldList
+                        .stream()
+                        .filter(cpef -> cpef.getPersistEntityField().getName().equals(persistEntityFieldCode))
+                        .findFirst();
+
+        if (!compPersistEntityFieldOptional.isPresent()) return null;
+        ComponentPersistEntityFieldDTO compPersistEntityField = compPersistEntityFieldOptional.get();
+
+        return compPersistEntityField;
+    }
+
+    public void retrieveComponentData(ComponentDTO component,
+                                      String selectionId) {
+
+        List<ComponentPersistEntityDTO> retrievedPersistEntities = new ArrayList<>();
+
+        /* Map selection id to first componentPersistEntity */
+        ComponentPersistEntityDTO mainComponentPersistEntity = component.getComponentPersistEntityList().get(0);
+        mainComponentPersistEntity = this.mapSelectionIdToPersistEntity(mainComponentPersistEntity, selectionId);
+
+        /* Itterate & retrieve */
+        for (ComponentPersistEntityDTO componentPersistEntity : component.getComponentPersistEntityList()) {
+            List<ComponentPersistEntityFieldDTO> retrievalFieldList =
+                    this.mapRetrivalFields(componentPersistEntity, retrievedPersistEntities);
+            componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievalFieldList);
+            retrievedPersistEntities.add(componentPersistEntity);
+        }
+    }
+
+    /* Map selection id to first componentPersistEntity */
+    private ComponentPersistEntityDTO mapSelectionIdToPersistEntity(ComponentPersistEntityDTO mainComponentPersistEntity,
+                                                                    String selectionId) {
+
+        Optional<ComponentPersistEntityFieldDTO> componentPersistEntityFieldOptional =
+                mainComponentPersistEntity.getComponentPersistEntityFieldList()
+                        .stream()
+                        .filter(x ->
+                                (x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals("#SELECTIONID")).findFirst();
+
+        if (!componentPersistEntityFieldOptional.isPresent()) {
+            return mainComponentPersistEntity;
+        }
+
+        ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = componentPersistEntityFieldOptional.get();
+        componentPersistEntityFieldDTO.setLocateStatement(selectionId);
+
+        return mainComponentPersistEntity;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO componentPersistEntity,
+                                                                   List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+
+        for (ComponentPersistEntityDTO retrievedPersistEntity : retrievedPersistEntities) {
+            for (ComponentPersistEntityFieldDTO retrievedComponentPersistEntityField : retrievedPersistEntity.getComponentPersistEntityFieldList()) {
+                String currentFieldCode = "#" + retrievedPersistEntity.getCode() + "." + retrievedComponentPersistEntityField.getPersistEntityField().getName();
+
+                for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
+                    String locateStatement = (componentPersistEntityField.getLocateStatement() == null ? "" : componentPersistEntityField.getLocateStatement());
+
+                    if (locateStatement.equals(currentFieldCode)) {
+                        componentPersistEntityField.setLocateStatement(retrievedComponentPersistEntityField.getValue().toString());
+                    }
+                }
+            }
+        }
+
+        List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
+                componentPersistEntity.getComponentPersistEntityFieldList()
+                        .stream()
+                        .filter(x ->
+                                !(x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals(""))
+                        .collect(Collectors.toList());
+
+        return componentPersistEntityFieldList;
+    }
+
+    private ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+                                                                     List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
+
+        Query query = this.generateSelectQuery(componentPersistEntity, retrievalFieldList);
+        componentPersistEntity = this.executeSelectQuery(query, componentPersistEntity);
+
+        return componentPersistEntity;
+    }
+
+    private Query generateSelectQuery(ComponentPersistEntityDTO componentPersistEntity,
+                                      List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
+
+        /* Select Values Section */
+        String queryString = "SELECT ";
+
+        List<String> headersList = componentPersistEntity.getComponentPersistEntityFieldList().stream()
+                .map(x -> x.getPersistEntityField().getName())
+                .collect(Collectors.toList());
+
+        String headersString = String.join(",", headersList);
+        queryString += headersString;
+
+        /* From Values Section */
+        queryString += " FROM " + componentPersistEntity.getPersistEntity().getName();
+
+        /* Where Values Section */
+        List<String> retrievalList = retrievalFieldList.stream()
+                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
+                .collect(Collectors.toList());
+
+        if(retrievalFieldList.size() > 0){
+            queryString += " WHERE ";
+            String retrievalString = String.join(" AND ", retrievalList);
+            queryString += retrievalString;
+        }
+
+        /* Parameters Replacement Section */
+        Query query = entityManager.createNativeQuery(queryString);
+
+        retrievalFieldList.stream()
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                (x.getLocateStatement() != null ? x.getLocateStatement().toString() : "")
+                        ));
+
+        return query;
+    }
+
+    private ComponentPersistEntityDTO executeSelectQuery(Query query, ComponentPersistEntityDTO componentPersistEntity) {
+
+        List<Object[]> dataList = query.getResultList();
+
+        if(dataList.size() == 1){
+            this.mapSingleLineQueryResponces(componentPersistEntity,dataList.get(0));
+        } else if (dataList.size() > 1){
+            this.mapMultiLineQueryResponces(componentPersistEntity,dataList);
+        }
+
+        return componentPersistEntity;
+    }
+
+    private ComponentPersistEntityDTO mapSingleLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
+
+            componentPersistEntity.setMultiDataLine(false);
+            int i = 0;
+            for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
+                componentPersistEntityField.setValue(dataRow[i]);
+                i++;
+            }
+
+        return componentPersistEntity;
+    }
+
+    private ComponentPersistEntityDTO mapMultiLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, List<Object[]> dataList) {
+
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {}.getType();
+        componentPersistEntity.setMultiDataLine(true);
+
+        for (Object[] dataRow : dataList) {
+            int i = 0;
+
+            /* Clone ComponentPersistEntityFieldList and add to line */
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
+                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), listType);
+            ComponentPersistEntityDataLineDTO componentPersistEntityDataLine = new ComponentPersistEntityDataLineDTO();
+            componentPersistEntityDataLine.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
+            componentPersistEntity.getComponentPersistEntityDataLines().add(componentPersistEntityDataLine);
+
+            /* Add data  to new line field list */
+            for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntityFieldList) {
+                componentPersistEntityField.setValue(dataRow[i]);
+                i++;
+            }
+        }
+
+        return componentPersistEntity;
+    }
+
 
 }

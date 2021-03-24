@@ -6,10 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,5 +28,13 @@ public class ComponentPersistEntityDTO extends BaseDTO {
     Boolean allowSave;
 
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
+
+    /* Form multiline */
+
+    private List<ComponentPersistEntityFieldDTO> defaultComponentPersistEntityFieldList;
+
+    private Boolean multiDataLine;
+
+    private List<ComponentPersistEntityDataLineDTO> componentPersistEntityDataLines = new ArrayList<>();
 
 }

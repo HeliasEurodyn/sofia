@@ -178,7 +178,7 @@ public class ListService {
                 listDTO.getListComponentLeftGroupFieldList().stream())
                 .collect(Collectors.toList());
 
-         filtersList = Stream.concat(filtersList.stream(),
+        filtersList = Stream.concat(filtersList.stream(),
                  listDTO.getListComponentColumnFieldList().stream())
                 .collect(Collectors.toList());
 

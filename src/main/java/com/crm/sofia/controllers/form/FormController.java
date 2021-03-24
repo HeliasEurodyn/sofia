@@ -46,8 +46,15 @@ public class FormController {
 
     @PostMapping(path = "/data")
     public void postObjectData(@RequestParam("id") Long id, @RequestBody Map<String, Map<String, Object>> parameters) throws Exception {
-       this.formService.save(id,parameters);
+        this.formService.save(id, parameters);
     }
+
+    @GetMapping(path = "/data/by-id")
+    FormDTO getObject(@RequestParam("id") Long id,
+                      @RequestParam("selection-id") String selectionId) {
+        return this.formService.getObjectAndRetrieveData(id, selectionId);
+    }
+
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {

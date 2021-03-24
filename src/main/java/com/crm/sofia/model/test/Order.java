@@ -1,11 +1,11 @@
 package com.crm.sofia.model.test;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-@Getter
-@Setter
+@Data
 public class Order {
 
     private String name;

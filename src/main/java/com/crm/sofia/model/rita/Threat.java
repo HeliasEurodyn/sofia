@@ -24,4 +24,6 @@ public class Threat extends BaseEntity {
 
     @Column(name = "occurrence_probability")
     Double occurrenceProbability;
+
+
 }
