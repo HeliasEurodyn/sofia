@@ -16,7 +16,9 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,12 +31,9 @@ public class FormDynamicQueryService {
     }
 
     @Transactional
-    public void generateQueriesAndSave(ComponentDTO component, Map<String, Map<String, Object>> parameters) {
+    public String generateQueriesAndInsert(ComponentDTO component) {
 
         List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
-
-        /* Μaps parameters to component. */
-        component = this.mapParametersToComponentDTO(component, parameters);
 
         /* Filter - Keep only Table, Saveable PersistEntities */
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
@@ -45,39 +44,235 @@ public class FormDynamicQueryService {
 
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
-
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
             if (multiDataLine == true) {
-                this.saveComponentPersistEntityLine(componentPersistEntity, savedPersistEntities);
+                this.insertMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
             } else {
-                this.saveComponentPersistEntity(
+                this.insertComponentPersistEntity(
                         componentPersistEntity.getPersistEntity().getName(),
                         componentPersistEntity.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
             }
-
         }
+
+        /* Retrieve and return created id */
+        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
+                .stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                .map(x -> x.getValue().toString()).findFirst()
+                .orElse("0");
+
+        return id;
+    }
+
+    @Transactional
+    public String generateQueriesAndUpdate(ComponentDTO component) {
+
+        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
+
+        /* Filter - Keep only Table, Saveable PersistEntities */
+        List<ComponentPersistEntityDTO> filteredPersistEntityList =
+                component.getComponentPersistEntityList().stream()
+                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
+                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
+                        .collect(Collectors.toList());
+
+        /* Itterate & save */
+        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
+
+            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
+            if (multiDataLine == true) {
+                this.updateMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+            } else {
+                this.updateComponentPersistEntity(
+                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntity.getComponentPersistEntityFieldList(),
+                        savedPersistEntities);
+                savedPersistEntities.add(componentPersistEntity);
+            }
+        }
+
+        /* Retrieve and return created id */
+        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
+                .stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                .map(x -> x.getValue().toString()).findFirst()
+                .orElse("0");
+
+        return id;
+    }
+
+    public void retrieveComponentData(ComponentDTO component,
+                                      String selectionId) {
+
+        List<ComponentPersistEntityDTO> retrievedPersistEntities = new ArrayList<>();
+
+        /* Map selection id to first componentPersistEntity */
+        ComponentPersistEntityDTO mainComponentPersistEntity = component.getComponentPersistEntityList().get(0);
+        this.mapSelectionIdToPersistEntity(mainComponentPersistEntity, selectionId);
+
+        this.retrieveComponentPersistEntityListData(
+                component.getComponentPersistEntityList(),
+                retrievedPersistEntities);
+    }
+
+    private void retrieveComponentPersistEntityListData(
+            List<ComponentPersistEntityDTO> componentPersistEntityList,
+            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+
+        /* Itterate & retrieve */
+        for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
+            this.retrieveComponentPersistEntityData(componentPersistEntity,
+                    retrievedPersistEntities);
+        }
+    }
+
+    private void retrieveComponentPersistEntityData(
+            ComponentPersistEntityDTO componentPersistEntity,
+            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+
+        List<ComponentPersistEntityFieldDTO> retrievalFieldList =
+                this.mapRetrivalFields(componentPersistEntity, retrievedPersistEntities);
+
+        if (retrievalFieldList.size() > 0) {
+            componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievalFieldList);
+        }
+
+//        if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine()) ) {
+//            componentPersistEntity.setComponentPersistEntityFieldList(
+//                    componentPersistEntity.getComponentPersistEntityDataLines().get(0).getComponentPersistEntityFieldList());
+//        }
+
+        if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
+            this.retrieveComponentPersistEntitiesDataByLines(componentPersistEntity,
+                    retrievedPersistEntities);
+            retrievedPersistEntities.add(componentPersistEntity);
+        } else {
+            retrievedPersistEntities.add(componentPersistEntity);
+            this.retrieveComponentPersistEntitiesDataByFields(componentPersistEntity.getComponentPersistEntityFieldList(),
+                    retrievedPersistEntities);
+        }
+
 
     }
 
-    private ComponentPersistEntityDTO saveComponentPersistEntityLine(ComponentPersistEntityDTO componentPersistEntity,
-                                                                     List<ComponentPersistEntityDTO> savedPersistEntities) {
+    private void retrieveComponentPersistEntitiesDataByLines(
+            ComponentPersistEntityDTO componentPersistEntity,
+            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+        componentPersistEntity.getComponentPersistEntityDataLines().stream().forEach(line -> {
 
+            ComponentPersistEntityDTO lineComponentPersistEntity = new  ComponentPersistEntityDTO();
+            lineComponentPersistEntity.setCode(componentPersistEntity.getCode());
+            lineComponentPersistEntity.setComponentPersistEntityFieldList(line.getComponentPersistEntityFieldList());
+            lineComponentPersistEntity.setMultiDataLine(false);
+
+            List<ComponentPersistEntityDTO> currentRetrievedPersistEntities = new ArrayList<>();
+            currentRetrievedPersistEntities.addAll(retrievedPersistEntities);
+            currentRetrievedPersistEntities.add(lineComponentPersistEntity);
+
+                    this.retrieveComponentPersistEntitiesDataByFields(line.getComponentPersistEntityFieldList(),
+                            currentRetrievedPersistEntities);
+                }
+        );
+    }
+
+    private void retrieveComponentPersistEntitiesDataByFields(
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+
+        componentPersistEntityFieldList.stream().forEach(componentPersistEntityField -> {
+            if (componentPersistEntityField.getJoinPersistEntity() != null) {
+                this.retrieveComponentPersistEntityData(componentPersistEntityField.getJoinPersistEntity(),
+                        retrievedPersistEntities);
+            }
+        });
+
+    }
+
+
+    public ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+                                                                    List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
+
+        Query query = this.generateSelectQuery(componentPersistEntity, retrievalFieldList);
+        componentPersistEntity = this.executeSelectQuery(query, componentPersistEntity);
+
+        return componentPersistEntity;
+    }
+
+    private ComponentPersistEntityDTO insertMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : componentPersistEntity.getComponentPersistEntityDataLines()) {
-
-            this.saveComponentPersistEntity(
+            this.insertComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
-
         }
 
         return componentPersistEntity;
     }
 
-    private List<ComponentPersistEntityFieldDTO> saveComponentPersistEntity(
+    private ComponentPersistEntityDTO updateMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+        List<String> existingPrimaryKeys = new ArrayList<>();
+        List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
+        List<ComponentPersistEntityDataLineDTO> insertableLines = new ArrayList<>();
+
+        /* Separate lines for insert, update, delete Section */
+        componentPersistEntity.getComponentPersistEntityDataLines()
+                .stream()
+                .forEach(x -> {
+                    Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
+                            x.getComponentPersistEntityFieldList().stream()
+                                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true)
+                                    .filter(y -> y.getValue() != null).findFirst();
+
+                    if (optionalComponentPersistEntityField.isPresent()) {
+                        updatableLines.add(x);
+                        existingPrimaryKeys.add("'" + optionalComponentPersistEntityField.get().getValue().toString() + "'");
+                    } else {
+                        insertableLines.add(x);
+                    }
+                });
+
+        /*  Delete Section */
+        if (existingPrimaryKeys.size() > 0) {
+
+            String primaryKeyName = updatableLines.get(0).getComponentPersistEntityFieldList().stream()
+                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
+                    .get().getPersistEntityField().getName();
+
+            this.deleteNotExistingComponentPersistEntity(
+                    existingPrimaryKeys,
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity.getComponentPersistEntityFieldList(),
+                    savedPersistEntities,
+                    primaryKeyName
+            );
+        }
+
+        /*  Update Section */
+        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : updatableLines) {
+            this.updateComponentPersistEntity(
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                    savedPersistEntities);
+        }
+
+        /*  Insert Section */
+        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : insertableLines) {
+            this.updateComponentPersistEntity(
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                    savedPersistEntities);
+        }
+
+        return componentPersistEntity;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> insertComponentPersistEntity(
             String entityName,
             List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
@@ -92,10 +287,54 @@ public class FormDynamicQueryService {
         /* Execute Query */
         Long id = this.executeSave(query);
 
-        /* Save Query */
-        this.setPrimaryKey(componentPersistEntityFieldList, id);
+        /* Set Id to component */
+        componentPersistEntityFieldList
+                .stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                .forEach(x -> x.setValue(id));
+
+        //  this.setPrimaryKey(componentPersistEntityFieldList, id);
 
         return componentPersistEntityFieldList;
+    }
+
+    private List<ComponentPersistEntityFieldDTO> updateComponentPersistEntity(
+            String entityName,
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+            List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+        /* Map Values from previous saved ones */
+        componentPersistEntityFieldList =
+                this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
+
+        /* Generate Query */
+        Query query = this.generateUpdateQuery(entityName, componentPersistEntityFieldList);
+
+        /* Execute Query */
+        if (query != null) {
+            this.executeSave(query);
+        }
+
+        return componentPersistEntityFieldList;
+    }
+
+    private void deleteNotExistingComponentPersistEntity(List<String> existingPrimaryKeys,
+                                                         String entityName,
+                                                         List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                         List<ComponentPersistEntityDTO> savedPersistEntities,
+                                                         String primaryKeyName) {
+
+        /* Map Values from previous saved ones */
+        componentPersistEntityFieldList =
+                this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
+
+        /* Generate Query */
+        Query query = this.generateDeteleOtherThanExistingKeysQuery(entityName, existingPrimaryKeys,
+                componentPersistEntityFieldList, primaryKeyName);
+
+        /* Execute Query */
+        this.executeDelete(query);
+
     }
 
     private List<ComponentPersistEntityFieldDTO> mapSavedValuesToComponentPersistEntity(List<ComponentPersistEntityDTO> savedPersistEntities,
@@ -117,15 +356,6 @@ public class FormDynamicQueryService {
         }
         return componentPersistEntityFieldList;
 
-    }
-
-    private List<ComponentPersistEntityFieldDTO> setPrimaryKey(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList, Long id) {
-        for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : componentPersistEntityFieldList) {
-            if (componentPersistEntityFieldDTO.getPersistEntityField().getPrimaryKey() == true) {
-                componentPersistEntityFieldDTO.setValue(id);
-            }
-        }
-        return componentPersistEntityFieldList;
     }
 
     private Query generateInsertQuery(String entityName,
@@ -167,6 +397,91 @@ public class FormDynamicQueryService {
         return query;
     }
 
+    private Query generateUpdateQuery(String entityName,
+                                      List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
+
+        /* UPDATE Section */
+        String queryString = "UPDATE " + entityName;
+
+        /* SET columns = values Section */
+        List<String> headersList = componentPersistEntityFieldList.stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
+                .filter(x -> x.getValue() != null)
+                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
+                .collect(Collectors.toList());
+        String headersString = String.join(", ", headersList);
+        queryString += " SET " + headersString;
+
+        if (headersList.size() == 0) {
+            return null;
+        }
+
+        /* WHERE Section */
+        Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
+                componentPersistEntityFieldList.stream()
+                        .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                        .filter(x -> x.getValue() != null)
+                        .findFirst();
+
+        if (!optionalComponentPersistEntityField.isPresent()) {
+            return null;
+        }
+
+        ComponentPersistEntityFieldDTO componentPersistEntityField = optionalComponentPersistEntityField.get();
+
+        queryString += " WHERE " + componentPersistEntityField.getPersistEntityField().getName() + " = :"
+                + componentPersistEntityField.getPersistEntityField().getName();
+
+        /* Parameters Replacement Section */
+        Query query = entityManager.createNativeQuery(queryString);
+
+        componentPersistEntityFieldList.stream()
+                .filter(x -> x.getValue() != null)
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                x.getValue()
+                        ));
+
+        return query;
+    }
+
+    private Query generateDeteleOtherThanExistingKeysQuery(String entityName,
+                                                           List<String> existingPrimaryKeys,
+                                                           List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                           String primaryKeyName) {
+
+        /* DELETE Section */
+        String queryString = "DELETE FROM " + entityName + " ";
+
+        /* WHERE Section */
+        String existingPrimaryKeysString = String.join(",", existingPrimaryKeys);
+        queryString += "WHERE " + primaryKeyName + " NOT IN (" + existingPrimaryKeysString + ") ";
+
+        List<ComponentPersistEntityFieldDTO> saveStatementFieldList = componentPersistEntityFieldList.stream()
+                .filter(x -> !(x.getSaveStatement() == null ? "" : x.getSaveStatement()).equals(""))
+                .collect(Collectors.toList());
+
+        for (ComponentPersistEntityFieldDTO saveStatementField : saveStatementFieldList) {
+            queryString += "AND " + saveStatementField.getPersistEntityField().getName() + " = :"
+                    + saveStatementField.getPersistEntityField().getName() + " ";
+        }
+
+        /* Query creation Section */
+        Query query = entityManager.createNativeQuery(queryString);
+
+        /* Parameters Replacement Section */
+        saveStatementFieldList.stream()
+                .filter(x -> x.getValue() != null)
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                x.getValue()
+                        ));
+
+        return query;
+    }
+
     private Long executeSave(Query query) {
         Long id;
         try {
@@ -180,84 +495,13 @@ public class FormDynamicQueryService {
         return id;
     }
 
-    private ComponentDTO mapParametersToComponentDTO(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
+    private void executeDelete(Query query) {
+        try {
+            query.executeUpdate();
 
-        /* Iterate parameters */
-        for (Map.Entry persistEntityPair : parameters.entrySet()) {
-            String persistEntityCode = (String) persistEntityPair.getKey();
-            Map<String, Object> persistEntityFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
-
-            /* Find component Persist entity from list */
-            ComponentPersistEntityDTO componentPersistEntity = this.findComponentPersistEntity(componentDTO.getComponentPersistEntityList(),
-                    persistEntityCode);
-            if (componentPersistEntity == null) continue;
-
-            if (persistEntityFieldsMap.containsKey("multiline")) {
-                /* Iterate parameters and map MultilinePersistEntity */
-                componentPersistEntity = this.mapMultilinePersistEntity(componentPersistEntity,
-                        persistEntityFieldsMap);
-                componentPersistEntity.setMultiDataLine(true);
-            } else {
-                /* Iterate parameters and map to componentPersistEntity Fields */
-                List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                        this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntity.getComponentPersistEntityFieldList(),
-                                persistEntityFieldsMap);
-                componentPersistEntity.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
-                componentPersistEntity.setMultiDataLine(false);
-            }
-
+        } catch (HibernateException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
-
-        return componentDTO;
-    }
-
-    private ComponentPersistEntityDTO mapMultilinePersistEntity(ComponentPersistEntityDTO componentPersistEntity, Map<String, Object> persistEntityFieldsMap) {
-
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {}.getType();
-
-        /* Iterate lines */
-        for (Map.Entry persistEntityPair : persistEntityFieldsMap.entrySet()) {
-            String persistEntityid = (String) persistEntityPair.getKey();
-            if (persistEntityid == "multiline") continue;
-
-            Map<String, Object> persistEntityLineFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
-
-            /* Clone ComponentPersistEntityFieldList and add to line */
-            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), listType);
-
-            /* Iterate parameters and map to componentPersistEntity Fields */
-            componentPersistEntityFieldList =
-                    this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntityFieldList,
-                            persistEntityLineFieldsMap);
-
-            ComponentPersistEntityDataLineDTO componentPersistEntityDataLine = new ComponentPersistEntityDataLineDTO();
-            componentPersistEntityDataLine.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
-            componentPersistEntity.getComponentPersistEntityDataLines().add(componentPersistEntityDataLine);
-        }
-
-        return componentPersistEntity;
-    }
-
-    private List<ComponentPersistEntityFieldDTO> itterateAndMapPamametersToComponentPersistEntityFields(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
-                                                                                                        Map<String, Object> persistEntityFieldsMap) {
-        /* Iterate parameters */
-        for (Map.Entry persistEntityFieldPair : persistEntityFieldsMap.entrySet()) {
-            String persistEntityFieldCode = (String) persistEntityFieldPair.getKey();
-            Object persistEntityFieldValue = (Object) persistEntityFieldPair.getValue();
-
-            /* Find component Persist entity field */
-            ComponentPersistEntityFieldDTO compPersistEntityField =
-                    this.findComponentPersistEntityField(componentPersistEntityFieldList,
-                            persistEntityFieldCode);
-            if (compPersistEntityField == null) continue;
-
-            /* Set value to compPersistEntityField */
-            compPersistEntityField.setValue(persistEntityFieldValue);
-        }
-
-        return componentPersistEntityFieldList;
     }
 
     private ComponentPersistEntityDTO findComponentPersistEntity(List<ComponentPersistEntityDTO> componentPersistEntityList,
@@ -273,40 +517,6 @@ public class FormDynamicQueryService {
         ComponentPersistEntityDTO compPersistEntity = compPersistEntityOptional.get();
 
         return compPersistEntity;
-    }
-
-    private ComponentPersistEntityFieldDTO findComponentPersistEntityField(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
-                                                                           String persistEntityFieldCode) {
-
-        /* Find component Persist entity field from selected componentPersistEntity */
-        Optional<ComponentPersistEntityFieldDTO> compPersistEntityFieldOptional =
-                componentPersistEntityFieldList
-                        .stream()
-                        .filter(cpef -> cpef.getPersistEntityField().getName().equals(persistEntityFieldCode))
-                        .findFirst();
-
-        if (!compPersistEntityFieldOptional.isPresent()) return null;
-        ComponentPersistEntityFieldDTO compPersistEntityField = compPersistEntityFieldOptional.get();
-
-        return compPersistEntityField;
-    }
-
-    public void retrieveComponentData(ComponentDTO component,
-                                      String selectionId) {
-
-        List<ComponentPersistEntityDTO> retrievedPersistEntities = new ArrayList<>();
-
-        /* Map selection id to first componentPersistEntity */
-        ComponentPersistEntityDTO mainComponentPersistEntity = component.getComponentPersistEntityList().get(0);
-        mainComponentPersistEntity = this.mapSelectionIdToPersistEntity(mainComponentPersistEntity, selectionId);
-
-        /* Itterate & retrieve */
-        for (ComponentPersistEntityDTO componentPersistEntity : component.getComponentPersistEntityList()) {
-            List<ComponentPersistEntityFieldDTO> retrievalFieldList =
-                    this.mapRetrivalFields(componentPersistEntity, retrievedPersistEntities);
-            componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievalFieldList);
-            retrievedPersistEntities.add(componentPersistEntity);
-        }
     }
 
     /* Map selection id to first componentPersistEntity */
@@ -339,7 +549,8 @@ public class FormDynamicQueryService {
                 for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
                     String locateStatement = (componentPersistEntityField.getLocateStatement() == null ? "" : componentPersistEntityField.getLocateStatement());
 
-                    if (locateStatement.equals(currentFieldCode)) {
+                    if (locateStatement.equals(currentFieldCode) &&
+                            retrievedComponentPersistEntityField.getValue() != null) {
                         componentPersistEntityField.setLocateStatement(retrievedComponentPersistEntityField.getValue().toString());
                     }
                 }
@@ -354,15 +565,6 @@ public class FormDynamicQueryService {
                         .collect(Collectors.toList());
 
         return componentPersistEntityFieldList;
-    }
-
-    private ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                     List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
-
-        Query query = this.generateSelectQuery(componentPersistEntity, retrievalFieldList);
-        componentPersistEntity = this.executeSelectQuery(query, componentPersistEntity);
-
-        return componentPersistEntity;
     }
 
     private Query generateSelectQuery(ComponentPersistEntityDTO componentPersistEntity,
@@ -386,7 +588,7 @@ public class FormDynamicQueryService {
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
                 .collect(Collectors.toList());
 
-        if(retrievalFieldList.size() > 0){
+        if (retrievalFieldList.size() > 0) {
             queryString += " WHERE ";
             String retrievalString = String.join(" AND ", retrievalList);
             queryString += retrievalString;
@@ -409,10 +611,10 @@ public class FormDynamicQueryService {
 
         List<Object[]> dataList = query.getResultList();
 
-        if(dataList.size() == 1){
-            this.mapSingleLineQueryResponces(componentPersistEntity,dataList.get(0));
-        } else if (dataList.size() > 1){
-            this.mapMultiLineQueryResponces(componentPersistEntity,dataList);
+        if (dataList.size() == 1) {
+            componentPersistEntity = this.mapSingleLineQueryResponces(componentPersistEntity, dataList.get(0));
+        } else if (dataList.size() > 1) {
+            componentPersistEntity = this.mapMultiLineQueryResponces(componentPersistEntity, dataList);
         }
 
         return componentPersistEntity;
@@ -420,12 +622,12 @@ public class FormDynamicQueryService {
 
     private ComponentPersistEntityDTO mapSingleLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
 
-            componentPersistEntity.setMultiDataLine(false);
-            int i = 0;
-            for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
-                componentPersistEntityField.setValue(dataRow[i]);
-                i++;
-            }
+        componentPersistEntity.setMultiDataLine(false);
+        int i = 0;
+        for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
+            componentPersistEntityField.setValue(dataRow[i]);
+            i++;
+        }
 
         return componentPersistEntity;
     }
@@ -433,7 +635,8 @@ public class FormDynamicQueryService {
     private ComponentPersistEntityDTO mapMultiLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, List<Object[]> dataList) {
 
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {
+        }.getType();
         componentPersistEntity.setMultiDataLine(true);
 
         for (Object[] dataRow : dataList) {
@@ -455,6 +658,5 @@ public class FormDynamicQueryService {
 
         return componentPersistEntity;
     }
-
 
 }

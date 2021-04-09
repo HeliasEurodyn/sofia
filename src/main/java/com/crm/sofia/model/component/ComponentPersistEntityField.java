@@ -1,5 +1,6 @@
 package com.crm.sofia.model.component;
 
+import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.persistEntity.PersistEntityField;
 import lombok.Data;
@@ -33,11 +34,15 @@ public class ComponentPersistEntityField extends BaseEntity {
     @Column
     private String locateStatement;
 
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true,
+            targetEntity = ComponentPersistEntity.class)
+    @JoinColumn(name = "join_persist_entity_id", referencedColumnName = "id")
+    private ComponentPersistEntity joinPersistEntity;
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersistEntityField.class)
     @JoinColumn(name = "persist_entity_field_id", referencedColumnName = "id")
     private PersistEntityField persistEntityField;
-
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ComponentPersistEntity.class)
-//    private ComponentPersistEntity componentPersistEntity;
 
 }

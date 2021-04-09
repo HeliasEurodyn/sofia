@@ -26,7 +26,24 @@ public class ComponentPersistEntityFieldDTO extends BaseDTO {
 
     private String locateStatement;
 
+    private ComponentPersistEntityDTO joinPersistEntity;
+
     private PersistEntityFieldDTO persistEntityField;
 
+    ComponentPersistEntityFieldAssignmentDTO assignment;
+
+//    private Boolean visible ;
+//
+//    private Boolean  editable ;
+//
+//    private Boolean required ;
+//
+//    private Integer decimals;
+//
+//    private String fieldtype ;
+//
+//    private String css ;
+//
+//    private String type;
 
 }

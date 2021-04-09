@@ -314,7 +314,7 @@ public class ListDynamicQueryService {
     private String generateLimitPart(ListDTO listDTO) {
 
         String queryString = "";
-        if (listDTO.getHasPagination()) {
+        if ((listDTO.getHasPagination() == null ? false : listDTO.getHasPagination())) {
             Long currentPage = listDTO.getCurrentPage();
             if (currentPage == null) currentPage = 0L;
             Long offset = listDTO.getPageSize() * currentPage;

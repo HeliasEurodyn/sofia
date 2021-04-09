@@ -24,35 +24,35 @@ import javax.persistence.*;
 @Table(name = "form_control_field")
 public class FormControlField extends BaseEntity {
 
-    @Column
-    private String editor;
-
-    @Column
-    private String description;
-
-    @Column
-    private Boolean visible;
-
-    @Column
-    private Boolean editable;
-
-    @Column
-    private Boolean required;
-
-    @Column
-    private String defaultValue;
-
-    @Column
-    private Integer decimals;
-
-    @Column
-    private String fieldtype;
-
-    @Column
-    private String cssclass;
-
-    @Column
-    private String type;
+//    @Column
+//    private String editor;
+//
+//    @Column
+//    private String description;
+//
+//    @Column
+//    private Boolean visible;
+//
+//    @Column
+//    private Boolean editable;
+//
+//    @Column
+//    private Boolean required;
+//
+//    @Column
+//    private String defaultValue;
+//
+//    @Column
+//    private Integer decimals;
+//
+//    @Column
+//    private String fieldtype;
+//
+//    @Column
+//    private String cssclass;
+//
+//    @Column
+//    private String type;
 
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = ComponentPersistEntity.class)
