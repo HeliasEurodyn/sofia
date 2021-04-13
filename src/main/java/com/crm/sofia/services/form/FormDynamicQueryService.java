@@ -263,7 +263,7 @@ public class FormDynamicQueryService {
 
         /*  Insert Section */
         for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : insertableLines) {
-            this.updateComponentPersistEntity(
+            this.insertComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                     savedPersistEntities);

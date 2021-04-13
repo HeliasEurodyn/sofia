@@ -28,6 +28,12 @@ public class ListEntity extends BaseEntity {
     private String name;
 
     @Column
+    private String description;
+
+    @Column
+    private String icon;
+
+    @Column
     private String selector;
 
     @Column(columnDefinition = "TEXT")

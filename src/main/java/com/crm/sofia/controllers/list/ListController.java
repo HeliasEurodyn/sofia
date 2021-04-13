@@ -51,27 +51,15 @@ public class ListController {
         return this.listService.getObjectData(id);
     }
 
-//    @PostMapping(path = "/data/results")
-//    ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
-//        return this.listService.getObjectData(dto);
-//    }
-
     @GetMapping(path = "/data/results")
     ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters,id);
     }
 
-//    @PostMapping(path = "/data/left-grouping/results")
-//    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestBody ListDTO dto) {
-//        return this.listService.getObjectLeftGroupingData(dto);
-//    }
-
-
     @GetMapping(path = "/data/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectLeftGroupingDataByParameters(parameters,id);
     }
-
 
     @GetMapping(path = "/by-name")
     ListDTO getObject(@RequestParam("name") String name) {
@@ -118,62 +106,5 @@ public class ListController {
                 .body(new InputStreamResource(in));
 
     }
-
-
-//    @RequestMapping("/test")
-//    public String example(@RequestParam Map<String, Object> map, TimeZone timezone){
-//        String apple = (String) map.get("AAA");//apple
-//        String banana = (String) map.get("BBB");//banana
-//        Instant date = (Instant) map.get("CCC");//banana
-//
-//        return apple + banana + date.toString();
-//    }
-
-
-//    @GetMapping(path = "/poi-test-excel")
-//    public ResponseEntity<InputStreamResource> doPoiTestExcel() throws IOException, JRException {
-//        ByteArrayInputStream in =  this.listService.doPoiTestExcel();
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Disposition", "attachment; filename=customers.xlsx");
-//
-//        return ResponseEntity
-//                .ok()
-//                .headers(headers)
-//                .body(new InputStreamResource(in));
-//
-//    }
-
-
-
-//    @PostMapping(path = "/data")
-//    ListResultsDataDTO getObjectData(@RequestBody ListDTO dto) {
-//        return this.listService.getObjectData(dto);
-//    }
-
-//    @RequestMapping(path = "/download_excel", method = RequestMethod.GET)
-//    public ResponseEntity<Resource> download(
-//            @RequestParam("filename")  String fileName,
-//            HttpServletResponse response
-//    ) throws IOException {
-
-//        response.setContentType("application/octet-stream");
-//        response.setHeader("Content-Disposition", "attachment;filename=testexcel.xlsx");
-//        response.setStatus(HttpServletResponse.SC_OK);
-
-//        ByteArrayResource resource = listService.export(fileName,response);
-//
-//        return ResponseEntity.ok()
-//                .headers(headers) // add headers if any
-//                .contentLength(resource.contentLength())
-//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-//                .body(resource);
-//    }
-
-//        return ResponseEntity.ok()
-//              //  .headers(null) // add headers if any
-//                .contentLength(resource.contentLength())
-//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-//                .body(resource);
 
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @Getter
@@ -20,8 +21,9 @@ public class ListDTO extends BaseDTO {
 
     private String code;
     private String name;
+    private String description;
     private String selector;
-
+    private String icon;
     private String filterFieldStructure;
     private Boolean customFilterFieldStructure;
 

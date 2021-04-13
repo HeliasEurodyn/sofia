@@ -86,25 +86,20 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
         }
         ListDTO listDTO = this.listMapper.map(optionalListEntity.get());
-        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
-        listDTO.getComponent().setComponentPersistEntityList(sorted);
+        listDTO.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        listDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
 
         return listDTO;
     }
 
     public ListDTO getObjectData(Long id) {
-        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
-        if (!optionalListEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-        }
-        ListEntity listEntity = optionalListEntity.get();
-        ListDTO listDTO = this.listMapper.map(listEntity);
 
-        List<ComponentPersistEntityDTO> sorted = listDTO.getComponent().getComponentPersistEntityList()
-                .stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder))
-                .collect(Collectors.toList());
-
-        listDTO.getComponent().setComponentPersistEntityList(sorted);
+        ListDTO listDTO = this.getObject(id);
 
         List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
                 listDTO.getListComponentColumnFieldList().stream())
@@ -141,25 +136,25 @@ public class ListService {
         this.listRepository.deleteById(optionalListEntity.get().getId());
     }
 
-    public ListResultsDataDTO getObjectData(ListDTO dto) {
+    public ListResultsDataDTO getObjectData(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
 
-        List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(dto);
+        List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(listDTO);
         listResultsDataDTO.setListContent(listContent);
 
-        if (dto.getHasPagination()) {
+        if (listDTO.getHasPagination()) {
 
             // Current Page
-            Long currentPage = dto.getCurrentPage();
+            Long currentPage = listDTO.getCurrentPage();
             if (currentPage == null) currentPage = 0L;
             listResultsDataDTO.setCurrentPage(currentPage);
 
             // Get Total Rows
-            Long totalRows = this.listDynamicQueryService.executeListAndCountTotalRows(dto);
+            Long totalRows = this.listDynamicQueryService.executeListAndCountTotalRows(listDTO);
             listResultsDataDTO.setTotalRows(totalRows);
 
             // Page Size & Total Pages
-            Long pageSize = dto.getPageSize();
+            Long pageSize = listDTO.getPageSize();
             Long totalPages = totalRows / pageSize;
             Long pageSizeOffset = totalRows % pageSize;
             if (pageSizeOffset > 0) totalPages += 1;
@@ -173,34 +168,45 @@ public class ListService {
 
     public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long id) {
         ListDTO listDTO = this.getObjectData(id);
+        listDTO = this.mapParametersToListDto(listDTO, parameters);
+        ListResultsDataDTO listResultsDataDTO = this.getObjectData(listDTO);
+        return listResultsDataDTO;
+    }
 
-        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
-                listDTO.getListComponentLeftGroupFieldList().stream())
-                .collect(Collectors.toList());
+    private ListDTO mapParametersToListDto(ListDTO listDTO, Map<String, String> parameters) {
 
-        filtersList = Stream.concat(filtersList.stream(),
-                 listDTO.getListComponentColumnFieldList().stream())
-                .collect(Collectors.toList());
+        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
+        filtersList.addAll(listDTO.getListComponentFilterFieldList());
+        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
+        filtersList.addAll(listDTO.getListComponentColumnFieldList());
 
-        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
-            if (listComponentFieldDTO.getEditable() && listComponentFieldDTO.getVisible()) {
-                if (parameters.containsKey(listComponentFieldDTO.getCode())) {
-                    String fieldValue = parameters.get(listComponentFieldDTO.getCode());
+        filtersList
+                .stream()
+                .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
+                .filter(x -> parameters.containsKey(x.getCode()))
+                .filter(x -> !x.getType().equals("datetime"))
+                .forEach(x -> {
+                    String fieldValue = parameters.get(x.getCode());
+                    x.setFieldValue(fieldValue);
+                });
 
-                    if (listComponentFieldDTO.getType().equals("datetime")) {
-                        Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
-                                DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
-                                .atZone(ZoneOffset.UTC)
-                                .toInstant();
-                        listComponentFieldDTO.setFieldValue(fieldValueInstant);
-                    } else {
-                        listComponentFieldDTO.setFieldValue(fieldValue);
-                    }
-                }
-            }
-        }
+        filtersList
+                .stream()
+                .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
+                .filter(x -> parameters.containsKey(x.getCode()))
+                .filter(x -> x.getType().equals("datetime"))
+                .forEach(x -> {
+                    String fieldValue = parameters.get(x.getCode());
+                    Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
+                            DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
+                            .atZone(ZoneOffset.UTC)
+                            .toInstant();
+                    x.setFieldValue(fieldValueInstant);
+                });
 
-        return this.getObjectData(listDTO);
+        return listDTO;
     }
 
     public List<GroupEntryDTO> getObjectLeftGroupingData(ListDTO dto) {
