@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.table.TableMapper;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.component.ComponentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +29,18 @@ public class TableService {
     private final TableMapper tableMapper;
     private final EntityManager entityManager;
     private final JWTService jwtService;
+    private final ComponentService componentService;
 
     public TableService(PersistEntityRepository persistEntityRepository,
                         TableMapper tableMapper,
-                        EntityManager entityManager, JWTService jwtService) {
+                        EntityManager entityManager, JWTService jwtService,
+                        ComponentService componentService) {
         this.persistEntityRepository = persistEntityRepository;
         this.tableMapper = tableMapper;
         this.entityManager = entityManager;
         this.jwtService = jwtService;
+        this.componentService = componentService;
     }
-
 
     public TableDTO postObject(TableDTO componentDTO) {
         PersistEntity persistEntity = this.tableMapper.map(componentDTO);
@@ -75,11 +78,12 @@ public class TableService {
     }
 
     public void deleteObject(Long id) {
-        Optional<PersistEntity> optionalComponent = this.persistEntityRepository.findById(id);
-        if (!optionalComponent.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
+        Optional<PersistEntity> optionalPersistEntity = this.persistEntityRepository.findById(id);
+        if (!optionalPersistEntity.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Persist entity does not exist");
         }
-        this.persistEntityRepository.deleteById(optionalComponent.get().getId());
+        this.componentService.removeComponentTablesByTableId(id);
+        this.persistEntityRepository.deleteById(optionalPersistEntity.get().getId());
     }
 
     @Transactional
@@ -88,7 +92,6 @@ public class TableService {
         List<String> tableNames = query.getResultList();
         return tableNames;
     }
-
 
     public List<String> getTableFields(String tableName) {
         Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM sofia;");
@@ -105,7 +108,6 @@ public class TableService {
     }
 
     public void updateDatabaseTable(TableDTO tableDTO) {
-
         List<String> existingTableFields = this.getTableFields(tableDTO.getName().replace(" ", ""));
         int fieldCounter = 0;
         String sql = "";
@@ -158,7 +160,6 @@ public class TableService {
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
-
 
     public void createDatabaseTable(TableDTO TableDTO) {
         if (TableDTO.getTableFieldList().size() == 0) return;
@@ -217,13 +218,20 @@ public class TableService {
         TableDTO createdDTO = this.postObject(dto);
         this.createDatabaseTable(createdDTO);
         return createdDTO;
-
     }
 
     @Transactional
     public TableDTO update(TableDTO dto) {
+        this.componentService.removeComponentTableFieldsByTable(
+                dto.getId(),
+                dto.getTableFieldList()
+                        .stream()
+                        .map( x -> x.getId())
+                        .collect(Collectors.toList())
+                );
         TableDTO createdDTO = this.postObject(dto);
         this.updateDatabaseTable(createdDTO);
+        this.componentService.insertComponentTableFieldsByTable(this.tableMapper.map(createdDTO));
         return createdDTO;
     }
 
@@ -278,7 +286,6 @@ public class TableService {
 
             dtos.add(dto);
         }
-
         return dtos;
     }
 }

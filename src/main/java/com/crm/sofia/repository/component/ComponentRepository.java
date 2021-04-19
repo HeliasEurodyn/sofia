@@ -6,11 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ComponentRepository extends BaseRepository<Component> {
 
     List<Component> findAll();
+
+    @Query(" SELECT c FROM Component c " +
+            " LEFT OUTER JOIN FETCH c.componentPersistEntityList l " +
+            " LEFT OUTER JOIN FETCH l.persistEntity lt " +
+            " WHERE lt.id =:id ")
+    List<Component> findComponentsThatContainTable(@Param("id") Long id);
 
 //    @Query( " SELECT c FROM Component c " +
 //            " LEFT OUTER JOIN FETCH c.componentPersistEntityList l " +

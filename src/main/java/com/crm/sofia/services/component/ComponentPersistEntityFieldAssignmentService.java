@@ -79,7 +79,7 @@ public class ComponentPersistEntityFieldAssignmentService {
                                         Optional<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentOptional =
                                            fieldAssignmentDTOs
                                                 .stream()
-                                                .filter(fieldAssignment -> fieldAssignment.getFieldId() == fieldId)
+                                                .filter(fieldAssignment -> fieldAssignment.getFieldId().equals(fieldId))
                                                 .findFirst();
 
                                         if(fieldAssignmentOptional.isPresent()){

@@ -3,82 +3,91 @@ package com.crm.sofia.services.expression;
 import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.expression.ExprUnit;
 import com.crm.sofia.model.expression.expressionUnits.*;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class ExpressionService {
 
+    private final JWTService jwtService;
+
+    public ExpressionService(JWTService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     public ExprResponce create(String expression) {
 
-       if(expression.length() == 0) return null;
+        this.defineSystemParameters();
+
+        if (expression.length() == 0) {
+            this.createEmptyExprResponce();
+        }
 
         Boolean brakcetCheck = this.checkBruckets(expression);
         if (!brakcetCheck) {
-            return new ExprResponce("Error on Bracker openings & closings",false,expression,null);
+            return new ExprResponce("Error on Bracker openings & closings", false, expression, null);
         }
 
         Boolean quoteCheck = this.checkQuotes(expression);
         if (!quoteCheck) {
-            return new ExprResponce("Error on Quotes openings & closings",false,expression,null);
+            return new ExprResponce("Error on Quotes openings & closings", false, expression, null);
         }
 
         expression = this.removeSpaces(expression);
-        if(expression.length() == 0) return null;
+        if (expression.length() == 0) {
+            this.createEmptyExprResponce();
+        }
 
         List<ExprUnit> exprUnits = this.createExprUnitList(expression);
 
         if (exprUnits == null) {
-            return new ExprResponce("Could not read parameter",false,expression,null);
+            return new ExprResponce("Could not read parameter", false, expression, null);
         }
 
         if (exprUnits.size() == 0) {
-            return new ExprResponce("Could not read parameter",false,expression,null);
+            return new ExprResponce("Could not read parameter", false, expression, null);
         }
 
         this.createBracketPriorities(exprUnits);
         exprUnits = this.removeBracketsFromList(exprUnits);
         Boolean treeCreated = this.createTree(exprUnits, exprUnits.get(0).getPriority());
         if (!treeCreated) {
-            return new ExprResponce("Error on tree creation",false,expression,null);
+            return new ExprResponce("Error on tree creation", false, expression, null);
         }
-
 
         ExprResponce exprResponce = new ExprResponce();
         exprResponce.setExpression(expression);
         exprResponce.setExprUnit(exprUnits.get(0).getTopParrent());
         return exprResponce;
-
     }
 
-
     /*
-    * Removes useless spaces from the expression
-    * This functionality checks Quotes, because spaces inside quote expression must not be removed
-    * */
+     * Removes useless spaces from the expression
+     * This functionality checks Quotes, because spaces inside quote expression must not be removed
+     * */
     private String removeSpaces(String expression) {
 
         Boolean outOfQuote = true;
         String prevExpressionPositionString = "";
         String expressionPositionString = "";
-        String newExpression= "";
-        for(int i=0;i<expression.length();i++){
+        String newExpression = "";
+        for (int i = 0; i < expression.length(); i++) {
 
             expressionPositionString = expression.substring(i, i + 1);
 
-            if(expressionPositionString.equals("'")  && outOfQuote )
-            {
+            if (expressionPositionString.equals("'") && outOfQuote) {
                 outOfQuote = false;
-            } else if(expressionPositionString.equals("'") && !prevExpressionPositionString.equals("/") && !outOfQuote )
-            {
+            } else if (expressionPositionString.equals("'") && !prevExpressionPositionString.equals("/") && !outOfQuote) {
                 outOfQuote = true;
             }
 
-            if(!outOfQuote || (outOfQuote && !expressionPositionString.equals(" ")) ) {
+            if (!outOfQuote || (outOfQuote && !expressionPositionString.equals(" "))) {
                 newExpression += expressionPositionString;
             }
 
@@ -89,21 +98,18 @@ public class ExpressionService {
 
     }
 
-
     private Boolean checkQuotes(String expression) {
         Boolean outOfQuote = true;
         String prevExpressionPositionString = "";
         String expressionPositionString = "";
 
-        for(int i=0;i<expression.length();i++){
+        for (int i = 0; i < expression.length(); i++) {
 
             expressionPositionString = expression.substring(i, i + 1);
 
-            if(expressionPositionString.equals("'")  && outOfQuote )
-            {
+            if (expressionPositionString.equals("'") && outOfQuote) {
                 outOfQuote = false;
-            } else if(expressionPositionString.equals("'") && !prevExpressionPositionString.equals("/") && !outOfQuote )
-            {
+            } else if (expressionPositionString.equals("'") && !prevExpressionPositionString.equals("/") && !outOfQuote) {
                 outOfQuote = true;
             }
 
@@ -112,30 +118,26 @@ public class ExpressionService {
         return outOfQuote;
     }
 
-
     private List<ExprUnit> removeBracketsFromList(List<ExprUnit> exprUnits) {
         return exprUnits.stream()
                 .filter(
-                        exprUnit -> !(exprUnit instanceof ExprOpenBracket || exprUnit instanceof ExprCloseBracket )
+                        exprUnit -> !(exprUnit instanceof ExprOpenBracket || exprUnit instanceof ExprCloseBracket)
                 ).collect(Collectors.toList());
     }
 
-
     private boolean createTree(List<ExprUnit> exprUnits, int currentPriority) {
 
-       // int currentPriority = this.currentPriority ;
         int listPosition = 0;
 
         for (ExprUnit exprUnit : exprUnits) {
-
 
             /*
              * On those Types of ExprUnits at least 3 expr units must follow
              * 1. The first parameter, 2. Comma, 3.The second parameter
              * So they get on the same code section
              */
-            if (    (exprUnit instanceof ExprStringConcat ||
-                    exprUnit instanceof ExprDatePlus   ||
+            if ((exprUnit instanceof ExprStringConcat ||
+                    exprUnit instanceof ExprDatePlus ||
                     exprUnit instanceof ExprDoubleNumberAddition ||
                     exprUnit instanceof ExprDoubleNumberDivision ||
                     exprUnit instanceof ExprDoubleNumberMultiplication ||
@@ -145,83 +147,75 @@ public class ExpressionService {
                     exprUnit instanceof ExprStringReplace ||
                     exprUnit instanceof ExprStringReplace)
                     && !exprUnit.getIsOnTree()
-                    &&  exprUnit.getPriority().equals(currentPriority)
+                    && exprUnit.getPriority().equals(currentPriority)
             ) {
-
 
                 /*
                  * On those Types of ExprUnits at least 3 expr units must follow
                  * 1. The first parameter, 2. Comma, 3.The second parameter
                  * If not return error on tree creation
                  */
-                if( (listPosition+3) > exprUnits.size()) return false;
-
+                if ((listPosition + 3) > exprUnits.size()) return false;
 
                 /*
                  * Run createTree for the next Priority level
                  * (inside the brackets of the current expression there is a higher priority)
                  * It must be executed first
                  */
-                boolean treeCreationResult = this.createTree(exprUnits,exprUnits.get(listPosition+1).getPriority());
-                if(!treeCreationResult) return false;
+                boolean treeCreationResult = this.createTree(exprUnits, exprUnits.get(listPosition + 1).getPriority());
+                if (!treeCreationResult) return false;
 
                 /*
                  * Set LeftChildExprUnit on the current exprUnit
                  */
-                exprUnit.setLeftChildExprUnit( exprUnits.get(listPosition+1).getTopParrent() );
-                exprUnits.get(listPosition+1).getTopParrent().setParentExprUnit(exprUnit);
+                exprUnit.setLeftChildExprUnit(exprUnits.get(listPosition + 1).getTopParrent());
+                exprUnits.get(listPosition + 1).getTopParrent().setParentExprUnit(exprUnit);
 
                 /*
                  * Set RightChildExprUnit on the current exprUnit
                  */
                 int rightChildPosition = this.traceRightChildPosition(exprUnits, listPosition);
-                if(rightChildPosition== 0) return false;
-                exprUnit.setRightChildExprUnit( exprUnits.get(rightChildPosition).getTopParrent() );
+                if (rightChildPosition == 0) return false;
+                exprUnit.setRightChildExprUnit(exprUnits.get(rightChildPosition).getTopParrent());
                 exprUnits.get(rightChildPosition).getTopParrent().setParentExprUnit(exprUnit);
 
-
                 exprUnit.setIsOnTree(true);
-
             }
 
             /*
              * On those Types of ExprUnits at least 1 expr unit must follow
              * So they get on the same code section
              */
-            if (    (exprUnit instanceof ExprDateNowPlus ||
-                    exprUnit instanceof ExprYyyyMmDdHhMmStringToDate   ||
-                    exprUnit instanceof ExprYyyyMmDdStringToDate)
+            if ((exprUnit instanceof ExprDateNowPlus ||
+                    exprUnit instanceof ExprYyyyMmDdHhMmStringToDate ||
+                    exprUnit instanceof ExprYyyyMmDdStringToDate ||
+                    exprUnit instanceof ExprSystemParameter)
                     && !exprUnit.getIsOnTree()
-                    &&  exprUnit.getPriority().equals(currentPriority)
+                    && exprUnit.getPriority().equals(currentPriority)
             ) {
-
 
                 /*
                  * On those Types of ExprUnits at least 1 expr unit must follow
                  * If not return error on tree creation
                  */
-                if( (listPosition+1) > exprUnits.size()) return false;
-
+                if ((listPosition + 1) > exprUnits.size()) return false;
 
                 /*
                  * Run createTree for the next Priority level
                  * (inside the brackets of the current expression there is a higher priority)
                  * It must be executed first
                  */
-                boolean treeCreationResult = this.createTree(exprUnits,exprUnits.get(listPosition+1).getPriority());
-                if(!treeCreationResult) return false;
+                boolean treeCreationResult = this.createTree(exprUnits, exprUnits.get(listPosition + 1).getPriority());
+                if (!treeCreationResult) return false;
 
                 /*
                  * Set ChildExprUnit on the current exprUnit
                  */
-                exprUnit.setChildExprUnit( exprUnits.get(listPosition+1).getTopParrent() );
-                exprUnits.get(listPosition+1).getTopParrent().setParentExprUnit(exprUnit);
-
+                exprUnit.setChildExprUnit(exprUnits.get(listPosition + 1).getTopParrent());
+                exprUnits.get(listPosition + 1).getTopParrent().setParentExprUnit(exprUnit);
 
                 exprUnit.setIsOnTree(true);
-
             }
-
 
             listPosition++;
         }
@@ -237,25 +231,13 @@ public class ExpressionService {
          * We search  from listPosition+2 because
          * +1 is be the firt parameter of the current exprUnit , only after that can be the comma
          */
-        for (int i=listPosition+2; i < exprUnits.size();i++) {
-            if(exprUnits.get(i) instanceof ExprComma && exprUnits.get(i).getPriority().equals(currentPriority)){
-                return i+1;
+        for (int i = listPosition + 2; i < exprUnits.size(); i++) {
+            if (exprUnits.get(i) instanceof ExprComma && exprUnits.get(i).getPriority().equals(currentPriority)) {
+                return i + 1;
             }
         }
         return 0;
     }
-
-//    private void createTree(List<ExprUnit> exprUnits, int priority) {
-//        if (priority < 0) return;
-//        int listPosition = 0;
-//        for (ExprUnit exprUnit : exprUnits) {
-//            exprUnit.joinTree(exprUnits, listPosition, priority );
-//            listPosition++;
-//        }
-//
-//        this.createTree(exprUnits, priority - 1);
-//
-//    }
 
     private void createBracketPriorities(List<ExprUnit> exprUnits) {
         int priority = 0;
@@ -271,11 +253,9 @@ public class ExpressionService {
                 exprUnit.setPriority(priority);
             }
 
-
             if (exprUnit.getClass() == ExprOpenBracket.class) {
                 priority += 1;
             }
-
         }
     }
 
@@ -306,6 +286,7 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprStringValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
 
             if (exprUnit == null) {
                 return null;
@@ -321,7 +302,7 @@ public class ExpressionService {
     /*
      * Checks if the brackets openings & closings numbers are equal
      * */
-    Boolean checkBruckets(String expression) {
+    private Boolean checkBruckets(String expression) {
         Integer opened = 0;
         Integer closed = 0;
         Integer length = expression.length();
@@ -337,5 +318,17 @@ public class ExpressionService {
         else return false;
     }
 
+    private void defineSystemParameters() {
+        Map<String, String> systemParameters = new HashMap<>();
+        systemParameters.put("userId", this.jwtService.getUserId().toString());
+        ExprSystemParameter.systemParameters = systemParameters;
+    }
+
+    private ExprResponce createEmptyExprResponce() {
+        ExprResponce exprResponce = new ExprResponce();
+        exprResponce.setExpression("");
+        exprResponce.setExprUnit(new ExprEmptyValue());
+        return exprResponce;
+    }
 
 }

@@ -142,7 +142,7 @@ public class ListService {
         List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(listDTO);
         listResultsDataDTO.setListContent(listContent);
 
-        if (listDTO.getHasPagination()) {
+        if ((listDTO.getHasPagination()== null?false:listDTO.getHasPagination())) {
 
             // Current Page
             Long currentPage = listDTO.getCurrentPage();

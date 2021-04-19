@@ -1,6 +1,7 @@
 package com.crm.sofia.model.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.list.ListActionButtonDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.component.Component;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -96,6 +97,14 @@ public class ListEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
     private Component component;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_id")
+    private List<ListActionButton> listActionButtons;
 
     @OneToMany(
             fetch = FetchType.LAZY,

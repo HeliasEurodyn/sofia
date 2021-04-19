@@ -31,6 +31,12 @@ public class FormController {
         return this.formService.getObject(id);
     }
 
+    @GetMapping(path = "/data/by-id")
+    FormDTO getObject(@RequestParam("id") Long formId,
+                      @RequestParam("selection-id") String selectionId) {
+        return this.formService.getObjectAndRetrieveData(formId, selectionId);
+    }
+
     @PostMapping
     public FormDTO postObject(@RequestBody FormDTO dto) {
         FormDTO createdDTO = this.formService.postObject(dto);
@@ -49,11 +55,6 @@ public class FormController {
         return this.formService.save(formId, parameters);
     }
 
-    @GetMapping(path = "/data/by-id")
-    FormDTO getObject(@RequestParam("id") Long formId,
-                      @RequestParam("selection-id") String selectionId) {
-        return this.formService.getObjectAndRetrieveData(formId, selectionId);
-    }
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {

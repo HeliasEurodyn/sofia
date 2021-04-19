@@ -1,13 +1,14 @@
 package com.crm.sofia.services.form;
 
-import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.form.FormDTO;
 import com.crm.sofia.mapper.form.FormMapper;
+import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.ComponentService;
+import com.crm.sofia.services.expression.ExpressionService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,20 +29,22 @@ public class FormService {
     private final FormDynamicQueryService formDynamicQueryService;
     private final ComponentService componentService;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-
+    private final ExpressionService expressionService;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
                        JWTService jwtService,
                        FormDynamicQueryService formDynamicQueryService,
                        ComponentService componentService,
-                       ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService) {
+                       ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
+                       ExpressionService expressionService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.jwtService = jwtService;
         this.formDynamicQueryService = formDynamicQueryService;
         this.componentService = componentService;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
+        this.expressionService = expressionService;
     }
 
     @Transactional
@@ -94,10 +97,37 @@ public class FormService {
 
     public FormDTO getObjectAndRetrieveData(Long formId, String selectionId) {
         FormDTO formDTO = this.getObject(formId);
-        formDTO = this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(formDTO);
-        this.formDynamicQueryService.retrieveComponentData(formDTO.getComponent(), selectionId);
+
+        if (selectionId.equals("") || selectionId.equals("0")) {
+            formDTO = this.calcDefaultValueExpressions(formDTO);
+        } else {
+            this.formDynamicQueryService.retrieveComponentData(formDTO.getComponent(), selectionId);
+        }
+
         return formDTO;
     }
+
+    private FormDTO calcDefaultValueExpressions(FormDTO formDTO) {
+
+        formDTO.getComponent().getComponentPersistEntityList()
+                .stream()
+                .forEach(cpe -> {
+                    cpe.getComponentPersistEntityFieldList()
+                            .stream()
+                            .filter(cpef -> cpef.getAssignment().getDefaultValue() != null )
+                            .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals("") )
+                            .forEach(cpef -> {
+                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue() );
+                                if (!exprResponce.getError()) {
+                                    Object fieldValue = exprResponce.getExprUnit().getResult();
+                                    cpef.setValue(fieldValue);
+                                }
+                            });
+                });
+
+        return formDTO;
+    }
+
 
     @Transactional
     @Modifying
@@ -119,13 +149,13 @@ public class FormService {
         componentService.mapParametersToComponentDTO(formDTO.getComponent(), parameters);
 
         /* Check Insert or Update. */
-       Boolean hasPrimaryKeyValue = componentService.hasPrimaryKeyValue(formDTO.getComponent());
+        Boolean hasPrimaryKeyValue = componentService.hasPrimaryKeyValue(formDTO.getComponent());
 
         /*Send to formDynamicQueryService to generate the queries & Save*/
-        if(hasPrimaryKeyValue){
+        if (hasPrimaryKeyValue) {
             return this.formDynamicQueryService.generateQueriesAndUpdate(formDTO.getComponent());
         } else {
-           return this.formDynamicQueryService.generateQueriesAndInsert(formDTO.getComponent());
+            return this.formDynamicQueryService.generateQueriesAndInsert(formDTO.getComponent());
         }
     }
 

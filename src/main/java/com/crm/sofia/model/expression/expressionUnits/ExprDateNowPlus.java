@@ -51,22 +51,4 @@ public class ExprDateNowPlus extends ExprUnit {
         return Instant.now().plus(days.intValue(), ChronoUnit.DAYS);
     }
 
-//    @Override
-//    public String checkBranchTypes(){
-//
-//        if(this.getChildExprUnit() == null) {
-//            return "Error! parameter of " + exprUnitString + " should not be empty.";
-//        }
-//
-//        AppConstants.Types.ExprUnitReturningType returningType = this.getChildExprUnit().getReturningType();
-//
-//        if(returningType.equals(AppConstants.Types.ExprUnitReturningType.Integer)) {
-//            return "Error! parameter of " + exprUnitString + " should be an Integer.";
-//        }
-//
-//
-//        return "";
-//
-//    }
-
 }

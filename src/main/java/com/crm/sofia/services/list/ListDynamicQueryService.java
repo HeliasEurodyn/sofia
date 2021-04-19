@@ -211,7 +211,7 @@ public class ListDynamicQueryService {
 
         listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher(x.getEditor()).matches())
+                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor()==null?"":x.getEditor())).matches())
                 .forEach(x -> {
                     String field = "( " +
                             x.getEditor().substring(10, x.getEditor().length() - 2) +
@@ -537,9 +537,9 @@ public class ListDynamicQueryService {
         listDTO.getListComponentOrderByFieldList().forEach(x -> {
             String orderByPart = x.getComponentPersistEntity().getCode() + "." +
                     x.getComponentPersistEntityField().getPersistEntityField().getName();
-
-            if (x.getEditor().equals("ASC") || x.getEditor().equals("DESC")) {
-                orderByPart += " " + x.getEditor();
+            String editor = (x.getEditor() == null? "" : x.getEditor());
+            if (editor.equals("ASC") || editor.equals("DESC")) {
+                orderByPart += " " + editor;
             } else {
                 orderByPart += " ASC";
             }
@@ -584,7 +584,7 @@ public class ListDynamicQueryService {
 
             return "LIMIT " + listDTO.getPageSize() + " OFFSET  " + offset;
 
-        } else if (listDTO.getHasMaxSize()) {
+        } else if ((listDTO.getHasMaxSize() == null? false:listDTO.getHasMaxSize())) {
             return "LIMIT " + listDTO.getMaxSize();
         }
 
@@ -718,12 +718,11 @@ public class ListDynamicQueryService {
 
         List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher(x.getEditor()).matches())
+                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor()==null?"":x.getEditor())).matches())
                 .collect(Collectors.toList());
 
         List<Object[]> dataList = query.getResultList();
         for (Object[] dataRow : dataList) {
-
             Map<String, Object> dataMapRow = new HashMap<>();
             int i = 0;
 

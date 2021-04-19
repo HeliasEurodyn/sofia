@@ -4,15 +4,15 @@ import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.component.Component;
 import com.crm.sofia.model.component.ComponentPersistEntity;
+import com.crm.sofia.model.component.ComponentPersistEntityField;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
 import com.crm.sofia.repository.component.ComponentRepository;
-import com.crm.sofia.services.appview.AppViewService;
-import com.crm.sofia.services.table.TableService;
-import com.crm.sofia.services.view.ViewService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.http.HttpStatus;
@@ -31,24 +31,18 @@ public class ComponentService {
     private final ComponentRepository componentRepository;
     private final ComponentPersistEntityRepository componentPersistEntityRepository;
     private final ComponentPersistEntityMapper componentPersistEntityMapper;
-    private final TableService tableService;
-    private final ViewService viewService;
-    private final AppViewService appViewService;
 
     public ComponentService(ComponentMapper menuMapper,
                             ComponentRepository componentRepository,
                             ComponentFieldService componentFieldService,
                             ComponentPersistEntityRepository componentPersistEntityRepository,
-                            ComponentPersistEntityMapper componentPersistEntityMapper, TableService tableService,
-                            ViewService viewService,
-                            AppViewService appViewService) {
+                            ComponentPersistEntityMapper componentPersistEntityMapper
+    ) {
         this.componentMapper = menuMapper;
         this.componentRepository = componentRepository;
         this.componentPersistEntityRepository = componentPersistEntityRepository;
         this.componentPersistEntityMapper = componentPersistEntityMapper;
-        this.tableService = tableService;
-        this.viewService = viewService;
-        this.appViewService = appViewService;
+
     }
 
     public List<ComponentDTO> getObject() {
@@ -252,4 +246,66 @@ public class ComponentService {
         return componentPersistEntityDTO;
     }
 
+    public void removeComponentTablesByTableId(Long persistEntityId) {
+        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntityId);
+
+        components
+                .forEach(c -> {
+                    c.getComponentPersistEntityList()
+                             .removeIf(cpe -> persistEntityId == cpe.getPersistEntity().getId());
+                });
+
+        this.componentRepository.saveAll(components);
+    }
+
+    public void removeComponentTableFieldsByTable(Long persistEntityId, List<Long> tableFieldIds) {
+        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntityId);
+
+        components
+                .forEach(c -> {
+                    c.getComponentPersistEntityList()
+                            .stream()
+                            .filter(cpe -> cpe.getPersistEntity() != null )
+                            .filter(cpe -> cpe.getPersistEntity().getId() == persistEntityId)
+                            .forEach(cpe -> {
+
+                                /* Remove Fields */
+                                cpe.getComponentPersistEntityFieldList()
+                                        .removeIf(cpef -> !tableFieldIds.contains(cpef.getPersistEntityField().getId()));
+                            });
+                });
+
+        this.componentRepository.saveAll(components);
+    }
+
+    public void insertComponentTableFieldsByTable(PersistEntity persistEntity) {
+        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntity.getId());
+
+        components
+                .forEach(c -> {
+                    c.getComponentPersistEntityList()
+                            .stream()
+                            .filter(cpe -> cpe.getPersistEntity() != null )
+                            .filter(cpe -> cpe.getPersistEntity().getId() == persistEntity.getId())
+                            .forEach(cpe -> {
+
+                                /* Add Fields */
+                                List<Long> currentTableFieldIds =  cpe.getComponentPersistEntityFieldList()
+                                        .stream()
+                                        .map(cpef -> cpef.getPersistEntityField().getId())
+                                        .collect(Collectors.toList());
+
+                                persistEntity.getPersistEntityFieldList()
+                                        .stream()
+                                        .filter(pf -> !currentTableFieldIds.contains(pf.getId()) )
+                                        .forEach(pf -> {
+                                            ComponentPersistEntityField cpef = new ComponentPersistEntityField();
+                                            cpef.setPersistEntityField(pf);
+                                            cpe.getComponentPersistEntityFieldList().add(cpef);
+                                        });
+                            });
+                });
+
+        this.componentRepository.saveAll(components);
+    }
 }

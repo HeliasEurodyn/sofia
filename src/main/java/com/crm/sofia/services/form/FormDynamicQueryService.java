@@ -39,7 +39,7 @@ public class FormDynamicQueryService {
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
                 component.getComponentPersistEntityList().stream()
                         .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-                        .filter(x -> x.getAllowSave())
+                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave() ))
                         .collect(Collectors.toList());
 
         /* Itterate & save */
