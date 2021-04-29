@@ -211,7 +211,7 @@ public class ListDynamicQueryService {
 
         listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor()==null?"":x.getEditor())).matches())
+                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
                 .forEach(x -> {
                     String field = "( " +
                             x.getEditor().substring(10, x.getEditor().length() - 2) +
@@ -259,6 +259,9 @@ public class ListDynamicQueryService {
         fields.addAll(listDTO.getListComponentOrderByFieldList());
         fields.addAll(listDTO.getListComponentTopGroupFieldList());
 
+        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
+
         fields
                 .stream()
                 .filter(x -> x.getComponentPersistEntity() != null)
@@ -268,8 +271,11 @@ public class ListDynamicQueryService {
                 });
 
         persistEntitiesMap
-                .forEach((k, v) -> {
-                    this.identifyFromPersistEntitiesByJoins(v, persistEntitiesMap, listDTO);
+                .forEach((id, componentPersistEntity) -> {
+                    this.identifyFromPersistEntitiesByJoins(componentPersistEntity,
+                            persistEntitiesMap,
+                            componentPersistEntityList
+                    );
                 });
 
         return persistEntitiesMap.values().stream().collect(Collectors.toList());
@@ -280,7 +286,7 @@ public class ListDynamicQueryService {
      */
     private Map<Long, ComponentPersistEntityDTO> identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
                                                                                     Map<Long, ComponentPersistEntityDTO> persistEntitiesMap,
-                                                                                    ListDTO listDTO) {
+                                                                                    List<ComponentPersistEntityDTO> componentPersistEntityList) {
 
         List<String> componentPersistEntityCodes = new ArrayList<>();
 
@@ -299,18 +305,18 @@ public class ListDynamicQueryService {
                         .toArray(String[]::new);
 
         Arrays.stream(selectorStatementParts)
-        .forEach(x -> {
-            String[] joinParts = x.split("\\.");
-            componentPersistEntityCodes.add(joinParts[0]);
-        });
+                .forEach(x -> {
+                    String[] joinParts = x.split("\\.");
+                    componentPersistEntityCodes.add(joinParts[0]);
+                });
 
-        listDTO.getComponent().getComponentPersistEntityList()
+        componentPersistEntityList
                 .stream()
                 .filter(x -> componentPersistEntityCodes.contains(x.getCode()))
                 .filter(x -> !persistEntitiesMap.containsKey(x.getId()))
                 .forEach(x -> {
                     persistEntitiesMap.put(x.getId(), x);
-                    this.identifyFromPersistEntitiesByJoins(x, persistEntitiesMap, listDTO);
+                    this.identifyFromPersistEntitiesByJoins(x, persistEntitiesMap, componentPersistEntityList);
                 });
 
         return persistEntitiesMap;
@@ -537,7 +543,7 @@ public class ListDynamicQueryService {
         listDTO.getListComponentOrderByFieldList().forEach(x -> {
             String orderByPart = x.getComponentPersistEntity().getCode() + "." +
                     x.getComponentPersistEntityField().getPersistEntityField().getName();
-            String editor = (x.getEditor() == null? "" : x.getEditor());
+            String editor = (x.getEditor() == null ? "" : x.getEditor());
             if (editor.equals("ASC") || editor.equals("DESC")) {
                 orderByPart += " " + editor;
             } else {
@@ -584,7 +590,7 @@ public class ListDynamicQueryService {
 
             return "LIMIT " + listDTO.getPageSize() + " OFFSET  " + offset;
 
-        } else if ((listDTO.getHasMaxSize() == null? false:listDTO.getHasMaxSize())) {
+        } else if ((listDTO.getHasMaxSize() == null ? false : listDTO.getHasMaxSize())) {
             return "LIMIT " + listDTO.getMaxSize();
         }
 
@@ -718,7 +724,7 @@ public class ListDynamicQueryService {
 
         List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor()==null?"":x.getEditor())).matches())
+                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
                 .collect(Collectors.toList());
 
         List<Object[]> dataList = query.getResultList();
@@ -830,4 +836,26 @@ public class ListDynamicQueryService {
 
         return groupEntries;
     }
+
+    private List<ComponentPersistEntityDTO> getComponentPersistEntitiesTreeToList(List<ComponentPersistEntityDTO> initialComponentPersistEntityList) {
+        List<ComponentPersistEntityDTO> allComponentPersistEntityList = new ArrayList<>();
+        allComponentPersistEntityList.addAll(initialComponentPersistEntityList);
+
+        initialComponentPersistEntityList
+                .stream()
+                .filter(x -> x.getComponentPersistEntityList() != null)
+                .filter(x -> x.getComponentPersistEntityList().size() > 0)
+                .forEach(x -> {
+
+                        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                                this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
+                        if (componentPersistEntityList.size() > 0) {
+                            allComponentPersistEntityList.addAll(componentPersistEntityList);
+                        }
+
+                });
+
+        return allComponentPersistEntityList;
+    }
+
 }

@@ -1,8 +1,8 @@
 package com.crm.sofia.services.component;
 
-import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldAssignmentDTO;
+import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.form.FormDTO;
 import com.crm.sofia.mapper.component.ComponentPersistEntityFieldAssignmentMapper;
 import com.crm.sofia.model.component.ComponentPersistEntityFieldAssignment;
@@ -26,19 +26,23 @@ public class ComponentPersistEntityFieldAssignmentService {
         this.componentPersistEntityFieldAssignmentMapper = componentPersistEntityFieldAssignmentMapper;
     }
 
-    public void extractAndSaveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList, Long formId) {
-
+    public void saveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList, Long formId) {
         this.deleteByFormId(formId);
+        this.saveFieldAssignmentsTree(componentPersistEntityList, formId);
+    }
 
+    private void saveFieldAssignmentsTree(List<ComponentPersistEntityDTO> componentPersistEntityList, Long formId) {
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments = new ArrayList<>();
-
         componentPersistEntityList
                 .stream()
                 .forEach(persistEntity -> {
+
                     persistEntity.getComponentPersistEntityFieldList()
                             .stream()
-                            .forEach(
-                                    persistEntityField -> {
+                            .forEach(persistEntityField -> {
+                                        if (persistEntityField.getAssignment() == null) {
+                                            this.createFieldAssignment(persistEntityField);
+                                        }
                                         Long fieldId = persistEntityField.getId();
                                         ComponentPersistEntityFieldAssignmentDTO fieldAssignment =
                                                 persistEntityField.getAssignment();
@@ -48,8 +52,10 @@ public class ComponentPersistEntityFieldAssignmentService {
                                     }
                             );
 
+                    if (persistEntity.getComponentPersistEntityList() != null) {
+                        this.saveFieldAssignmentsTree(persistEntity.getComponentPersistEntityList(), formId);
+                    }
                 });
-
         this.postObjects(fieldAssignments);
     }
 
@@ -68,35 +74,56 @@ public class ComponentPersistEntityFieldAssignmentService {
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs =
                 this.componentPersistEntityFieldAssignmentMapper.map(fieldAssignments);
 
-        formDTO.getComponent().getComponentPersistEntityList()
-                .stream()
-                .forEach(persistEntity -> {
-                    persistEntity.getComponentPersistEntityFieldList()
-                            .stream()
-                            .forEach(
-                                    componentPersistEntityField -> {
-                                        Long fieldId = componentPersistEntityField.getId();
-                                        Optional<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentOptional =
-                                           fieldAssignmentDTOs
-                                                .stream()
-                                                .filter(fieldAssignment -> fieldAssignment.getFieldId().equals(fieldId))
-                                                .findFirst();
-
-                                        if(fieldAssignmentOptional.isPresent()){
-                                            ComponentPersistEntityFieldAssignmentDTO fieldAssignment = fieldAssignmentOptional.get();
-                                            componentPersistEntityField.setAssignment(fieldAssignment);
-                                        }
-
-                                    }
-                            );
-
-                });
-
+        this.retrieveFieldAssignmentsTree(formDTO.getComponent().getComponentPersistEntityList(),
+                fieldAssignmentDTOs);
 
         return formDTO;
     }
 
+    private void retrieveFieldAssignmentsTree(
+            List<ComponentPersistEntityDTO> componentPersistEntityList,
+            List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs) {
+
+        componentPersistEntityList
+                .stream()
+                .forEach(componentPersistEntity -> {
+                    componentPersistEntity.getComponentPersistEntityFieldList()
+                            .stream()
+                            .forEach(componentPersistEntityField -> {
+                                        Long fieldId = componentPersistEntityField.getId();
+                                        Optional<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentOptional =
+                                                fieldAssignmentDTOs
+                                                        .stream()
+                                                        .filter(fieldAssignment -> fieldAssignment.getFieldId().equals(fieldId))
+                                                        .findFirst();
+
+                                        if (fieldAssignmentOptional.isPresent()) {
+                                            ComponentPersistEntityFieldAssignmentDTO fieldAssignment = fieldAssignmentOptional.get();
+                                            componentPersistEntityField.setAssignment(fieldAssignment);
+                                        }
+                                    }
+                            );
+
+                    if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                        this.retrieveFieldAssignmentsTree(componentPersistEntity.getComponentPersistEntityList(),
+                                fieldAssignmentDTOs);
+                    }
+                });
+    }
+
     public void deleteByFormId(Long formId) {
         componentPersistEntityFieldAssignmentRepository.deleteComponentPersistEntityFieldAssignmentByFormId(formId);
+    }
+
+    public void createFieldAssignment(ComponentPersistEntityFieldDTO componentPersistEntityField) {
+        ComponentPersistEntityFieldAssignmentDTO assignment = new ComponentPersistEntityFieldAssignmentDTO();
+        assignment = new ComponentPersistEntityFieldAssignmentDTO();
+        assignment.setDescription(componentPersistEntityField.getPersistEntityField().getName());
+        assignment.setType(componentPersistEntityField.getPersistEntityField().getType());
+        assignment.setVisible(true);
+        assignment.setEditable(true);
+        assignment.setRequired(false);
+
+        componentPersistEntityField.setAssignment(assignment);
     }
 }

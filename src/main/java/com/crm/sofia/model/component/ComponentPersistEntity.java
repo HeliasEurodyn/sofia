@@ -1,5 +1,6 @@
 package com.crm.sofia.model.component;
 
+import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import lombok.Data;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -40,6 +42,16 @@ public class ComponentPersistEntity extends BaseEntity {
     )
     @JoinColumn(name = "component_persist_entity_id")
     private List<ComponentPersistEntityField> componentPersistEntityFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "parent_id")
+    private List<ComponentPersistEntity> componentPersistEntityList = new ArrayList<>();
+
+    private Boolean multiDataLine;
 
 //    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
 //    private Component component;

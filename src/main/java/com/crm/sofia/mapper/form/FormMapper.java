@@ -15,13 +15,13 @@ public abstract class FormMapper extends BaseMapper<FormDTO, FormEntity> {
 
 
 
-    public FormDTO mapEntity(FormEntity entity){
-        FormDTO dto = this.map(entity);
-
-        dto.getComponent().getComponentPersistEntityList()
-                .stream()
-                .forEach(x -> x.setMultiDataLine(false));
-
-        return dto;
-    }
+//    public FormDTO mapEntity(FormEntity entity){
+//        FormDTO dto = this.map(entity);
+//
+////        dto.getComponent().getComponentPersistEntityList()
+////                .stream()
+////                .forEach(x -> x.setMultiDataLine(false));
+//
+//        return dto;
+//    }
 }

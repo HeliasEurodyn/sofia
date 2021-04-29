@@ -7,7 +7,8 @@ import com.crm.sofia.services.list.ListService;
 import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.springframework.http.HttpHeaders;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-
-import org.springframework.core.io.InputStreamResource;
 
 @Slf4j
 @RestController
@@ -53,12 +48,12 @@ public class ListController {
 
     @GetMapping(path = "/data/results")
     ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
-        return this.listService.getObjectDataByParameters(parameters,id);
+        return this.listService.getObjectDataByParameters(parameters, id);
     }
 
     @GetMapping(path = "/data/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
-        return this.listService.getObjectLeftGroupingDataByParameters(parameters,id);
+        return this.listService.getObjectLeftGroupingDataByParameters(parameters, id);
     }
 
     @GetMapping(path = "/by-name")
@@ -96,7 +91,7 @@ public class ListController {
     @PostMapping(path = "/data-excel")
     public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
         ListResultsDataDTO resultsDataDTO = this.listService.getObjectData(dto);
-        ByteArrayInputStream in =   ExcelGenerator.listToExcel(dto, resultsDataDTO);
+        ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
 

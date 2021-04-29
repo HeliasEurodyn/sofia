@@ -86,21 +86,29 @@ public class ComponentService {
     }
 
     public ComponentDTO mapParametersToComponentDTO(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
+
+
+        List<ComponentPersistEntityDTO> componentPersistEntityList
+                = this.setComponentPersistEntityTreeToList(componentDTO.getComponentPersistEntityList(), new ArrayList<>());
+
+      //  this.mapParametersToComponentPersistEntityList(componentPersistEntityList, parameters);
+
         /* Iterate parameters */
         for (Map.Entry persistEntityPair : parameters.entrySet()) {
             String persistEntityCode = (String) persistEntityPair.getKey();
             Map<String, Object> persistEntityFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
 
             /* Find component Persist entity from list */
-            ComponentPersistEntityDTO componentPersistEntity = this.findComponentPersistEntity(componentDTO.getComponentPersistEntityList(),
+            ComponentPersistEntityDTO componentPersistEntity = this.findComponentPersistEntity(componentPersistEntityList,
                     persistEntityCode);
             if (componentPersistEntity == null) continue;
 
-            if (persistEntityFieldsMap.containsKey("multiline")) {
+//            if (persistEntityFieldsMap.containsKey("multiline-entity")) {
+            if ((componentPersistEntity.getMultiDataLine()==null?false:componentPersistEntity.getMultiDataLine())) {
                 /* Iterate parameters and map MultilinePersistEntity */
                 componentPersistEntity = this.mapMultilinePersistEntity(componentPersistEntity,
                         persistEntityFieldsMap);
-                componentPersistEntity.setMultiDataLine(true);
+//                componentPersistEntity.setMultiDataLine(true);
             } else {
                 /* Iterate parameters and map to componentPersistEntity Fields */
                 List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
@@ -115,19 +123,72 @@ public class ComponentService {
         return componentDTO;
     }
 
+//    public ComponentDTO mapParametersToComponentPersistEntityList(List<ComponentPersistEntityDTO> componentPersistEntityList,
+//                                                                  Map<String, Map<String, Object>> parameters) {
+//
+//        /* Iterate parameters */
+//        for (Map.Entry persistEntityPair : parameters.entrySet()) {
+//            String persistEntityCode = (String) persistEntityPair.getKey();
+//            Map<String, Object> persistEntityFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
+//
+//            /* Find component Persist entity from list */
+//            ComponentPersistEntityDTO componentPersistEntity = this.findComponentPersistEntity(componentPersistEntityList,
+//                    persistEntityCode);
+//            if (componentPersistEntity == null) continue;
+//
+//            if (persistEntityFieldsMap.containsKey("multiline")) {
+//                /* Iterate parameters and map MultilinePersistEntity */
+//                componentPersistEntity = this.mapMultilinePersistEntity(componentPersistEntity,
+//                        persistEntityFieldsMap);
+//                componentPersistEntity.setMultiDataLine(true);
+//            } else {
+//                /* Iterate parameters and map to componentPersistEntity Fields */
+//                List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
+//                        this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntity.getComponentPersistEntityFieldList(),
+//                                persistEntityFieldsMap);
+//                componentPersistEntity.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
+//                componentPersistEntity.setMultiDataLine(false);
+//            }
+//
+//        }
+//
+//        return componentDTO;
+//    }
+
+
     private ComponentPersistEntityDTO findComponentPersistEntity(List<ComponentPersistEntityDTO> componentPersistEntityList,
                                                                  String persistEntityCode) {
 
-        /* Find component Persist entity from list */
-        Optional<ComponentPersistEntityDTO> compPersistEntityOptional =
+//        List<ComponentPersistEntityDTO> componentPersistEntityList
+//                = this.setComponentPersistEntityTreeToList(componentPersistEntityTree, new ArrayList<>());
+
+        Optional<ComponentPersistEntityDTO> componentPersistEntityOptional =
                 componentPersistEntityList
                         .stream()
                         .filter(cpe -> cpe.getCode().equals(persistEntityCode)).findFirst();
 
-        if (!compPersistEntityOptional.isPresent()) return null;
-        ComponentPersistEntityDTO compPersistEntity = compPersistEntityOptional.get();
+        if (!componentPersistEntityOptional.isPresent()){
+            return null;
+        }
 
-        return compPersistEntity;
+        return componentPersistEntityOptional.get();
+    }
+
+    private  List<ComponentPersistEntityDTO> setComponentPersistEntityTreeToList(
+            List<ComponentPersistEntityDTO> componentPersistEntityTree,
+            List<ComponentPersistEntityDTO> componentPersistEntityList) {
+
+        componentPersistEntityList.addAll(componentPersistEntityTree);
+
+        componentPersistEntityTree
+                .stream()
+                .filter(componentPersistEntity -> componentPersistEntity.getComponentPersistEntityList() != null)
+                .forEach(componentPersistEntity -> {
+                    this.setComponentPersistEntityTreeToList(
+                            componentPersistEntity.getComponentPersistEntityList(),componentPersistEntityList);
+                });
+
+        return componentPersistEntityList;
     }
 
     private ComponentPersistEntityDTO mapMultilinePersistEntity(ComponentPersistEntityDTO componentPersistEntity, Map<String, Object> persistEntityFieldsMap) {
@@ -139,7 +200,7 @@ public class ComponentService {
         /* Iterate lines */
         for (Map.Entry persistEntityPair : persistEntityFieldsMap.entrySet()) {
             String persistEntityid = (String) persistEntityPair.getKey();
-            if (persistEntityid == "multiline") continue;
+            if (persistEntityid == "multiline-entity") continue;
 
             Map<String, Object> persistEntityLineFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
 
@@ -218,6 +279,7 @@ public class ComponentService {
         if (!optionalComponentPersistEntityFieldDTO.isPresent()) {
             return false;
         }
+
         ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = optionalComponentPersistEntityFieldDTO.get();
 
         if (componentPersistEntityFieldDTO.getValue() == null) {

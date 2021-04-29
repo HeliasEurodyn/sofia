@@ -20,12 +20,14 @@ public class FormControlFieldDTO extends BaseDTO {
     private Boolean visible;
     private Boolean editable;
     private Boolean required;
-    private String defaultValue;
-    private Integer decimals;
-    private String fieldtype;
-    private String cssclass;
-    private Object fieldValue;
-    private String type;
+    private String css;
+    //    private String defaultValue;
+//    private Integer decimals;
+//    private String fieldtype;
+//    private String cssclass;
+//    private Object fieldValue;
+    //    private String type;
+
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
 }

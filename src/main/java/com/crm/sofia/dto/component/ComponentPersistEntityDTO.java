@@ -30,11 +30,14 @@ public class ComponentPersistEntityDTO extends BaseDTO {
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
 
     /* Form multiline */
-
     private List<ComponentPersistEntityFieldDTO> defaultComponentPersistEntityFieldList;
 
     private Boolean multiDataLine;
 
     private List<ComponentPersistEntityDataLineDTO> componentPersistEntityDataLines = new ArrayList<>();
+
+    private List<ComponentPersistEntityDTO> componentPersistEntityList = new ArrayList<>();
+
+    private List<ComponentPersistEntityDTO> defaultComponentPersistEntityList = new ArrayList<>();
 
 }

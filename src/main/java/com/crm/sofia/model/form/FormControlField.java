@@ -24,21 +24,24 @@ import javax.persistence.*;
 @Table(name = "form_control_field")
 public class FormControlField extends BaseEntity {
 
-//    @Column
-//    private String editor;
-//
-//    @Column
-//    private String description;
-//
-//    @Column
-//    private Boolean visible;
-//
-//    @Column
-//    private Boolean editable;
-//
-//    @Column
-//    private Boolean required;
-//
+    @Column
+    private String editor;
+
+    @Column
+    private String description;
+
+    @Column
+    private Boolean visible;
+
+    @Column
+    private Boolean editable;
+
+    @Column
+    private Boolean required;
+
+    @Column
+    private String css;
+
 //    @Column
 //    private String defaultValue;
 //

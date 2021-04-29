@@ -31,16 +31,22 @@ public class FormDynamicQueryService {
     }
 
     @Transactional
-    public String generateQueriesAndInsert(ComponentDTO component) {
+    public String generateQueriesAndInsert(
+            List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
+//        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
 
         /* Filter - Keep only Table, Saveable PersistEntities */
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
-                component.getComponentPersistEntityList().stream()
+                componentPersistEntityList
+                        .stream()
                         .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave() ))
+                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
                         .collect(Collectors.toList());
+
+        if(filteredPersistEntityList.size() == 0){
+            return "0";
+        }
 
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
@@ -53,7 +59,13 @@ public class FormDynamicQueryService {
                         componentPersistEntity.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
+
+                if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                    this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
+                }
             }
+
+
         }
 
         /* Retrieve and return created id */
@@ -67,16 +79,20 @@ public class FormDynamicQueryService {
     }
 
     @Transactional
-    public String generateQueriesAndUpdate(ComponentDTO component) {
-
-        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
+    public String generateQueriesAndUpdate(List<ComponentPersistEntityDTO> componentPersistEntityList,
+                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         /* Filter - Keep only Table, Saveable PersistEntities */
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
-                component.getComponentPersistEntityList().stream()
+                componentPersistEntityList
+                        .stream()
                         .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
                         .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
                         .collect(Collectors.toList());
+
+        if(filteredPersistEntityList.size() == 0){
+            return "0";
+        }
 
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
@@ -90,11 +106,16 @@ public class FormDynamicQueryService {
                         componentPersistEntity.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
+
+                if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                    this.generateQueriesAndUpdate(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
+                }
             }
         }
 
         /* Retrieve and return created id */
-        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
+        String id = filteredPersistEntityList.get(0)
+                .getComponentPersistEntityFieldList()
                 .stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
                 .map(x -> x.getValue().toString()).findFirst()
@@ -122,10 +143,10 @@ public class FormDynamicQueryService {
             List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
         /* Itterate & retrieve */
-        for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
-            this.retrieveComponentPersistEntityData(componentPersistEntity,
-                    retrievedPersistEntities);
-        }
+        componentPersistEntityList
+                .forEach(componentPersistEntity -> {
+                    this.retrieveComponentPersistEntityData(componentPersistEntity, retrievedPersistEntities);
+                });
     }
 
     private void retrieveComponentPersistEntityData(
@@ -139,57 +160,78 @@ public class FormDynamicQueryService {
             componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievalFieldList);
         }
 
-//        if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine()) ) {
-//            componentPersistEntity.setComponentPersistEntityFieldList(
-//                    componentPersistEntity.getComponentPersistEntityDataLines().get(0).getComponentPersistEntityFieldList());
-//        }
-
         if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
-            this.retrieveComponentPersistEntitiesDataByLines(componentPersistEntity,
+
+            this.retrieveChildrenComponentPersistEntitiesDataByLines(componentPersistEntity,
                     retrievedPersistEntities);
             retrievedPersistEntities.add(componentPersistEntity);
         } else {
             retrievedPersistEntities.add(componentPersistEntity);
-            this.retrieveComponentPersistEntitiesDataByFields(componentPersistEntity.getComponentPersistEntityFieldList(),
-                    retrievedPersistEntities);
+            this.retrieveChildrenComponentPersistEntitiesData(componentPersistEntity, retrievedPersistEntities);
         }
-
-
     }
 
-    private void retrieveComponentPersistEntitiesDataByLines(
+    private void retrieveChildrenComponentPersistEntitiesData(
             ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityDTO> retrievedPersistEntities) {
-        componentPersistEntity.getComponentPersistEntityDataLines().stream().forEach(line -> {
 
-            ComponentPersistEntityDTO lineComponentPersistEntity = new  ComponentPersistEntityDTO();
-            lineComponentPersistEntity.setCode(componentPersistEntity.getCode());
-            lineComponentPersistEntity.setComponentPersistEntityFieldList(line.getComponentPersistEntityFieldList());
-            lineComponentPersistEntity.setMultiDataLine(false);
+        if (componentPersistEntity.getComponentPersistEntityList() == null) {
+            return;
+        }
 
-            List<ComponentPersistEntityDTO> currentRetrievedPersistEntities = new ArrayList<>();
-            currentRetrievedPersistEntities.addAll(retrievedPersistEntities);
-            currentRetrievedPersistEntities.add(lineComponentPersistEntity);
-
-                    this.retrieveComponentPersistEntitiesDataByFields(line.getComponentPersistEntityFieldList(),
-                            currentRetrievedPersistEntities);
-                }
-        );
+        componentPersistEntity.getComponentPersistEntityList()
+                .forEach(childComponentPersistEntity -> {
+                    this.retrieveComponentPersistEntityData(childComponentPersistEntity, retrievedPersistEntities);
+                });
     }
 
-    private void retrieveComponentPersistEntitiesDataByFields(
-            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+    private void retrieveChildrenComponentPersistEntitiesDataByLines(
+            ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
-        componentPersistEntityFieldList.stream().forEach(componentPersistEntityField -> {
-            if (componentPersistEntityField.getJoinPersistEntity() != null) {
-                this.retrieveComponentPersistEntityData(componentPersistEntityField.getJoinPersistEntity(),
-                        retrievedPersistEntities);
-            }
-        });
+        if (componentPersistEntity.getComponentPersistEntityList() == null) {
+            return;
+        }
 
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<ComponentPersistEntityDTO>>() {
+        }.getType();
+        componentPersistEntity.getComponentPersistEntityDataLines()
+                .forEach(line -> {
+                            ComponentPersistEntityDTO lineComponentPersistEntity = new ComponentPersistEntityDTO();
+                            lineComponentPersistEntity.setCode(componentPersistEntity.getCode());
+                            lineComponentPersistEntity.setComponentPersistEntityFieldList(line.getComponentPersistEntityFieldList());
+                            lineComponentPersistEntity.setMultiDataLine(false);
+                            List<ComponentPersistEntityDTO> currentRetrievedPersistEntities = new ArrayList<>();
+                            currentRetrievedPersistEntities.addAll(retrievedPersistEntities);
+                            currentRetrievedPersistEntities.add(lineComponentPersistEntity);
+
+                            List<ComponentPersistEntityDTO> clonedChildComponentPersistEntityList =
+                                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityList()), listType);
+                            line.setComponentPersistEntityList(clonedChildComponentPersistEntityList);
+
+                            line.getComponentPersistEntityList()
+                                    .forEach(lineChildComponentPersistEntity -> {
+                                        this.retrieveComponentPersistEntityData(lineChildComponentPersistEntity, currentRetrievedPersistEntities);
+                                    });
+                        }
+                );
     }
 
+//    private void retrieveComponentPersistEntitiesDataByFields(
+//            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+//            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+//
+//        componentPersistEntityFieldList
+//                .stream()
+//                .forEach(componentPersistEntityField -> {
+//                    if (componentPersistEntityField.getJoinPersistEntity() != null) {
+//                        this.retrieveComponentPersistEntityData(componentPersistEntityField.getJoinPersistEntity(),
+//                                retrievedPersistEntities);
+//                    }
+//                });
+//
+//    }
 
     public ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                     List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
@@ -203,12 +245,25 @@ public class FormDynamicQueryService {
     private ComponentPersistEntityDTO insertMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                             List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : componentPersistEntity.getComponentPersistEntityDataLines()) {
-            this.insertComponentPersistEntity(
-                    componentPersistEntity.getPersistEntity().getName(),
-                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-                    savedPersistEntities);
-        }
+
+        componentPersistEntity.getComponentPersistEntityDataLines()
+                .forEach(componentPersistEntityDataLine -> {
+
+                    this.insertComponentPersistEntity(
+                            componentPersistEntity.getPersistEntity().getName(),
+                            componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                            savedPersistEntities);
+
+                    List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+                    lineSavedPersistEntities.addAll(savedPersistEntities);
+                    lineSavedPersistEntities.add(componentPersistEntity);
+
+                    if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                        this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+                    }
+
+                });
+
 
         return componentPersistEntity;
     }
@@ -222,18 +277,17 @@ public class FormDynamicQueryService {
 
         /* Separate lines for insert, update, delete Section */
         componentPersistEntity.getComponentPersistEntityDataLines()
-                .stream()
-                .forEach(x -> {
+                .forEach(componentPersistEntityDataLine -> {
                     Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
-                            x.getComponentPersistEntityFieldList().stream()
+                            componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
                                     .filter(y -> y.getPersistEntityField().getPrimaryKey() == true)
                                     .filter(y -> y.getValue() != null).findFirst();
 
                     if (optionalComponentPersistEntityField.isPresent()) {
-                        updatableLines.add(x);
+                        updatableLines.add(componentPersistEntityDataLine);
                         existingPrimaryKeys.add("'" + optionalComponentPersistEntityField.get().getValue().toString() + "'");
                     } else {
-                        insertableLines.add(x);
+                        insertableLines.add(componentPersistEntityDataLine);
                     }
                 });
 
@@ -254,20 +308,37 @@ public class FormDynamicQueryService {
         }
 
         /*  Update Section */
-        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : updatableLines) {
+         updatableLines.forEach(componentPersistEntityDataLine -> {
             this.updateComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
-        }
+
+             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+             lineSavedPersistEntities.addAll(savedPersistEntities);
+             lineSavedPersistEntities.add(componentPersistEntity);
+
+             if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                 this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+             }
+
+         });
 
         /*  Insert Section */
-        for (ComponentPersistEntityDataLineDTO componentPersistEntityDataLine : insertableLines) {
+        insertableLines.forEach(componentPersistEntityDataLine -> {
             this.insertComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
-        }
+
+            List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+            lineSavedPersistEntities.addAll(savedPersistEntities);
+            lineSavedPersistEntities.add(componentPersistEntity);
+
+            if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+            }
+        });
 
         return componentPersistEntity;
     }
@@ -611,9 +682,9 @@ public class FormDynamicQueryService {
 
         List<Object[]> dataList = query.getResultList();
 
-        if (dataList.size() == 1) {
+        if (!(componentPersistEntity.getMultiDataLine()==null?false:componentPersistEntity.getMultiDataLine())) {
             componentPersistEntity = this.mapSingleLineQueryResponces(componentPersistEntity, dataList.get(0));
-        } else if (dataList.size() > 1) {
+        } else {
             componentPersistEntity = this.mapMultiLineQueryResponces(componentPersistEntity, dataList);
         }
 
@@ -622,7 +693,7 @@ public class FormDynamicQueryService {
 
     private ComponentPersistEntityDTO mapSingleLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
 
-        componentPersistEntity.setMultiDataLine(false);
+//        componentPersistEntity.setMultiDataLine(false);
         int i = 0;
         for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
             componentPersistEntityField.setValue(dataRow[i]);
@@ -637,7 +708,7 @@ public class FormDynamicQueryService {
         Gson gson = new Gson();
         Type listType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {
         }.getType();
-        componentPersistEntity.setMultiDataLine(true);
+//        componentPersistEntity.setMultiDataLine(true);
 
         for (Object[] dataRow : dataList) {
             int i = 0;

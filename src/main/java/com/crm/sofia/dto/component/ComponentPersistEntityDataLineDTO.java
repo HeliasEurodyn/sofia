@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,6 +17,8 @@ import java.util.List;
 public class ComponentPersistEntityDataLineDTO extends BaseDTO {
 
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
+
+    private List<ComponentPersistEntityDTO> componentPersistEntityList = new ArrayList<>();
 
 }
 

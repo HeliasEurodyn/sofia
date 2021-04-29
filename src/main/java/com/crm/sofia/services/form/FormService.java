@@ -1,5 +1,7 @@
 package com.crm.sofia.services.form;
 
+import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.form.FormDTO;
 import com.crm.sofia.mapper.form.FormMapper;
 import com.crm.sofia.model.expression.ExprResponce;
@@ -16,9 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormService {
@@ -57,7 +61,7 @@ public class FormService {
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
 
         this.componentPersistEntityFieldAssignmentService
-                .extractAndSaveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
+                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
                         createdFormEntity.getId());
 
         return this.formMapper.map(createdFormEntity);
@@ -72,7 +76,7 @@ public class FormService {
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
 
         this.componentPersistEntityFieldAssignmentService
-                .extractAndSaveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
+                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
                         createdFormEntity.getId());
 
 
@@ -90,7 +94,7 @@ public class FormService {
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
-        FormDTO formDTO = this.formMapper.mapEntity(optionalFormEntity.get());
+        FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
         formDTO = this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(formDTO);
         return formDTO;
     }
@@ -99,35 +103,61 @@ public class FormService {
         FormDTO formDTO = this.getObject(formId);
 
         if (selectionId.equals("") || selectionId.equals("0")) {
-            formDTO = this.calcDefaultValueExpressions(formDTO);
+            formDTO = this.runDefaultValueExpressions(formDTO);
         } else {
             this.formDynamicQueryService.retrieveComponentData(formDTO.getComponent(), selectionId);
+            formDTO = this.setDefaultValueExpressionsOnTableComponents(formDTO);
         }
 
         return formDTO;
     }
 
-    private FormDTO calcDefaultValueExpressions(FormDTO formDTO) {
+    private FormDTO setDefaultValueExpressionsOnTableComponents(FormDTO formDTO) {
+        List<ComponentPersistEntityDTO> filteredComponentPersistEntityList =
+                formDTO.getComponent().getComponentPersistEntityList()
+                        .stream()
+                        .filter(cpe -> (cpe.getMultiDataLine()==null?false:cpe.getMultiDataLine()) == true)
+                        .collect(Collectors.toList());
 
-        formDTO.getComponent().getComponentPersistEntityList()
-                .stream()
+        this.runDefaultValueExpressionsOnTree(filteredComponentPersistEntityList);
+
+        return formDTO;
+    }
+
+    private FormDTO runDefaultValueExpressions(FormDTO formDTO) {
+        this.runDefaultValueExpressionsOnTree(formDTO.getComponent().getComponentPersistEntityList());
+        return formDTO;
+    }
+
+    private void runDefaultValueExpressionsOnTree(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+
+        componentPersistEntityList
                 .forEach(cpe -> {
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
-                            .filter(cpef -> cpef.getAssignment().getDefaultValue() != null )
-                            .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals("") )
+                            .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
+                            .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue() );
+                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue());
                                 if (!exprResponce.getError()) {
                                     Object fieldValue = exprResponce.getExprUnit().getResult();
                                     cpef.setValue(fieldValue);
                                 }
                             });
+
+                    if (cpe.getComponentPersistEntityList() != null) {
+                        this.runDefaultValueExpressionsOnTree(cpe.getComponentPersistEntityList());
+                    }
+
                 });
 
-        return formDTO;
-    }
+        componentPersistEntityList
+                .forEach(cpe -> cpe.setDefaultComponentPersistEntityFieldList(cpe.getComponentPersistEntityFieldList()));
 
+        componentPersistEntityList
+                .forEach(cpe -> cpe.setDefaultComponentPersistEntityList(cpe.getComponentPersistEntityList()));
+
+    }
 
     @Transactional
     @Modifying
@@ -153,9 +183,13 @@ public class FormService {
 
         /*Send to formDynamicQueryService to generate the queries & Save*/
         if (hasPrimaryKeyValue) {
-            return this.formDynamicQueryService.generateQueriesAndUpdate(formDTO.getComponent());
+            return this.formDynamicQueryService.generateQueriesAndUpdate(
+                    formDTO.getComponent().getComponentPersistEntityList(),
+                    new ArrayList<>());
         } else {
-            return this.formDynamicQueryService.generateQueriesAndInsert(formDTO.getComponent());
+            return this.formDynamicQueryService.generateQueriesAndInsert(
+                    formDTO.getComponent().getComponentPersistEntityList(),
+                    new ArrayList<>());
         }
     }
 
