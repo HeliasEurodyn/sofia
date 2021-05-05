@@ -176,21 +176,25 @@ public class FormService {
         FormDTO formDTO = this.getObject(formId);
 
         /* Μap parameters to component. */
-        componentService.mapParametersToComponentDTO(formDTO.getComponent(), parameters);
+        componentService.mapParametersToComponentDTO(formDTO.getComponent().getComponentPersistEntityList(), parameters);
+
+        return this.formDynamicQueryService.generateQueriesAndSave(
+                formDTO.getComponent().getComponentPersistEntityList(),
+                new ArrayList<>());
 
         /* Check Insert or Update. */
-        Boolean hasPrimaryKeyValue = componentService.hasPrimaryKeyValue(formDTO.getComponent());
+//        Boolean hasPrimaryKeyValue = componentService.hasPrimaryKeyValue(formDTO.getComponent());
 
         /*Send to formDynamicQueryService to generate the queries & Save*/
-        if (hasPrimaryKeyValue) {
-            return this.formDynamicQueryService.generateQueriesAndUpdate(
-                    formDTO.getComponent().getComponentPersistEntityList(),
-                    new ArrayList<>());
-        } else {
-            return this.formDynamicQueryService.generateQueriesAndInsert(
-                    formDTO.getComponent().getComponentPersistEntityList(),
-                    new ArrayList<>());
-        }
+//        if (hasPrimaryKeyValue) {
+//            return this.formDynamicQueryService.generateQueriesAndUpdate(
+//                    formDTO.getComponent().getComponentPersistEntityList(),
+//                    new ArrayList<>());
+//        } else {
+//            return this.formDynamicQueryService.generateQueriesAndInsert(
+//                    formDTO.getComponent().getComponentPersistEntityList(),
+//                    new ArrayList<>());
+//        }
     }
 
 }

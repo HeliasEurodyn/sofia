@@ -31,10 +31,8 @@ public class FormDynamicQueryService {
     }
 
     @Transactional
-    public String generateQueriesAndInsert(
+    public String generateQueriesAndSave(
             List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
-
-//        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
 
         /* Filter - Keep only Table, Saveable PersistEntities */
         List<ComponentPersistEntityDTO> filteredPersistEntityList =
@@ -52,16 +50,13 @@ public class FormDynamicQueryService {
         for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
             if (multiDataLine == true) {
-                this.insertMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+                this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
             } else {
-                this.insertComponentPersistEntity(
-                        componentPersistEntity.getPersistEntity().getName(),
-                        componentPersistEntity.getComponentPersistEntityFieldList(),
-                        savedPersistEntities);
+                this.saveComponentPersistEntity(componentPersistEntity, savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
 
                 if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                    this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
+                    this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
                 }
             }
 
@@ -78,51 +73,99 @@ public class FormDynamicQueryService {
         return id;
     }
 
-    @Transactional
-    public String generateQueriesAndUpdate(List<ComponentPersistEntityDTO> componentPersistEntityList,
-                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
+//    @Transactional
+//    public String generateQueriesAndInsert(
+//            List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
+//
+////        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
+//
+//        /* Filter - Keep only Table, Saveable PersistEntities */
+//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
+//                componentPersistEntityList
+//                        .stream()
+//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
+//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
+//                        .collect(Collectors.toList());
+//
+//        if(filteredPersistEntityList.size() == 0){
+//            return "0";
+//        }
+//
+//        /* Itterate & save */
+//        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
+//            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
+//            if (multiDataLine == true) {
+//                this.insertMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+//            } else {
+//                this.insertComponentPersistEntity(
+//                        componentPersistEntity.getPersistEntity().getName(),
+//                        componentPersistEntity.getComponentPersistEntityFieldList(),
+//                        savedPersistEntities);
+//                savedPersistEntities.add(componentPersistEntity);
+//
+//                if (componentPersistEntity.getComponentPersistEntityList() != null) {
+//                    this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
+//                }
+//            }
+//
+//
+//        }
+//
+//        /* Retrieve and return created id */
+//        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
+//                .stream()
+//                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+//                .map(x -> x.getValue().toString()).findFirst()
+//                .orElse("0");
+//
+//        return id;
+//    }
 
-        /* Filter - Keep only Table, Saveable PersistEntities */
-        List<ComponentPersistEntityDTO> filteredPersistEntityList =
-                componentPersistEntityList
-                        .stream()
-                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
-                        .collect(Collectors.toList());
-
-        if(filteredPersistEntityList.size() == 0){
-            return "0";
-        }
-
-        /* Itterate & save */
-        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
-
-            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
-            if (multiDataLine == true) {
-                this.updateMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
-            } else {
-                this.updateComponentPersistEntity(
-                        componentPersistEntity.getPersistEntity().getName(),
-                        componentPersistEntity.getComponentPersistEntityFieldList(),
-                        savedPersistEntities);
-                savedPersistEntities.add(componentPersistEntity);
-
-                if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                    this.generateQueriesAndUpdate(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
-                }
-            }
-        }
-
-        /* Retrieve and return created id */
-        String id = filteredPersistEntityList.get(0)
-                .getComponentPersistEntityFieldList()
-                .stream()
-                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
-                .map(x -> x.getValue().toString()).findFirst()
-                .orElse("0");
-
-        return id;
-    }
+//    @Transactional
+//    public String generateQueriesAndUpdate(List<ComponentPersistEntityDTO> componentPersistEntityList,
+//                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
+//
+//        /* Filter - Keep only Table, Saveable PersistEntities */
+//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
+//                componentPersistEntityList
+//                        .stream()
+//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
+//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
+//                        .collect(Collectors.toList());
+//
+//        if(filteredPersistEntityList.size() == 0){
+//            return "0";
+//        }
+//
+//        /* Itterate & save */
+//        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
+//
+//            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
+//            if (multiDataLine == true) {
+//                this.updateMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+//            } else {
+//                this.updateComponentPersistEntity(
+//                        componentPersistEntity.getPersistEntity().getName(),
+//                        componentPersistEntity.getComponentPersistEntityFieldList(),
+//                        savedPersistEntities);
+//                savedPersistEntities.add(componentPersistEntity);
+//
+//                if (componentPersistEntity.getComponentPersistEntityList() != null) {
+//                    this.generateQueriesAndUpdate(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
+//                }
+//            }
+//        }
+//
+//        /* Retrieve and return created id */
+//        String id = filteredPersistEntityList.get(0)
+//                .getComponentPersistEntityFieldList()
+//                .stream()
+//                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+//                .map(x -> x.getValue().toString()).findFirst()
+//                .orElse("0");
+//
+//        return id;
+//    }
 
     public void retrieveComponentData(ComponentDTO component,
                                       String selectionId) {
@@ -242,33 +285,7 @@ public class FormDynamicQueryService {
         return componentPersistEntity;
     }
 
-    private ComponentPersistEntityDTO insertMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
-
-
-        componentPersistEntity.getComponentPersistEntityDataLines()
-                .forEach(componentPersistEntityDataLine -> {
-
-                    this.insertComponentPersistEntity(
-                            componentPersistEntity.getPersistEntity().getName(),
-                            componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-                            savedPersistEntities);
-
-                    List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
-                    lineSavedPersistEntities.addAll(savedPersistEntities);
-                    lineSavedPersistEntities.add(componentPersistEntity);
-
-                    if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                        this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
-                    }
-
-                });
-
-
-        return componentPersistEntity;
-    }
-
-    private ComponentPersistEntityDTO updateMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+    private ComponentPersistEntityDTO saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                             List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         List<String> existingPrimaryKeys = new ArrayList<>();
@@ -308,21 +325,21 @@ public class FormDynamicQueryService {
         }
 
         /*  Update Section */
-         updatableLines.forEach(componentPersistEntityDataLine -> {
+        updatableLines.forEach(componentPersistEntityDataLine -> {
             this.updateComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
 
-             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
-             lineSavedPersistEntities.addAll(savedPersistEntities);
-             lineSavedPersistEntities.add(componentPersistEntity);
+            List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+            lineSavedPersistEntities.addAll(savedPersistEntities);
+            lineSavedPersistEntities.add(componentPersistEntity);
 
-             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                 this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
-             }
+            if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+            }
 
-         });
+        });
 
         /*  Insert Section */
         insertableLines.forEach(componentPersistEntityDataLine -> {
@@ -336,11 +353,133 @@ public class FormDynamicQueryService {
             lineSavedPersistEntities.add(componentPersistEntity);
 
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+                this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
         });
 
         return componentPersistEntity;
+    }
+
+//    private ComponentPersistEntityDTO insertMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+//                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
+//
+//
+//        componentPersistEntity.getComponentPersistEntityDataLines()
+//                .forEach(componentPersistEntityDataLine -> {
+//
+//                    this.insertComponentPersistEntity(
+//                            componentPersistEntity.getPersistEntity().getName(),
+//                            componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+//                            savedPersistEntities);
+//
+//                    List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+//                    lineSavedPersistEntities.addAll(savedPersistEntities);
+//                    lineSavedPersistEntities.add(componentPersistEntity);
+//
+//                    if (componentPersistEntity.getComponentPersistEntityList() != null) {
+//                        this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+//                    }
+//
+//                });
+//
+//
+//        return componentPersistEntity;
+//    }
+
+//    private ComponentPersistEntityDTO updateMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+//                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
+//
+//        List<String> existingPrimaryKeys = new ArrayList<>();
+//        List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
+//        List<ComponentPersistEntityDataLineDTO> insertableLines = new ArrayList<>();
+//
+//        /* Separate lines for insert, update, delete Section */
+//        componentPersistEntity.getComponentPersistEntityDataLines()
+//                .forEach(componentPersistEntityDataLine -> {
+//                    Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
+//                            componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
+//                                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true)
+//                                    .filter(y -> y.getValue() != null).findFirst();
+//
+//                    if (optionalComponentPersistEntityField.isPresent()) {
+//                        updatableLines.add(componentPersistEntityDataLine);
+//                        existingPrimaryKeys.add("'" + optionalComponentPersistEntityField.get().getValue().toString() + "'");
+//                    } else {
+//                        insertableLines.add(componentPersistEntityDataLine);
+//                    }
+//                });
+//
+//        /*  Delete Section */
+//        if (existingPrimaryKeys.size() > 0) {
+//
+//            String primaryKeyName = updatableLines.get(0).getComponentPersistEntityFieldList().stream()
+//                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
+//                    .get().getPersistEntityField().getName();
+//
+//            this.deleteNotExistingComponentPersistEntity(
+//                    existingPrimaryKeys,
+//                    componentPersistEntity.getPersistEntity().getName(),
+//                    componentPersistEntity.getComponentPersistEntityFieldList(),
+//                    savedPersistEntities,
+//                    primaryKeyName
+//            );
+//        }
+//
+//        /*  Update Section */
+//         updatableLines.forEach(componentPersistEntityDataLine -> {
+//            this.updateComponentPersistEntity(
+//                    componentPersistEntity.getPersistEntity().getName(),
+//                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+//                    savedPersistEntities);
+//
+//             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+//             lineSavedPersistEntities.addAll(savedPersistEntities);
+//             lineSavedPersistEntities.add(componentPersistEntity);
+//
+//             if (componentPersistEntity.getComponentPersistEntityList() != null) {
+//                 this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+//             }
+//
+//         });
+//
+//        /*  Insert Section */
+//        insertableLines.forEach(componentPersistEntityDataLine -> {
+//            this.insertComponentPersistEntity(
+//                    componentPersistEntity.getPersistEntity().getName(),
+//                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+//                    savedPersistEntities);
+//
+//            List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+//            lineSavedPersistEntities.addAll(savedPersistEntities);
+//            lineSavedPersistEntities.add(componentPersistEntity);
+//
+//            if (componentPersistEntity.getComponentPersistEntityList() != null) {
+//                this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+//            }
+//        });
+//
+//        return componentPersistEntity;
+//    }
+
+
+    private void saveComponentPersistEntity(
+            ComponentPersistEntityDTO componentPersistEntity,
+            List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+        Boolean hasPrimaryKeyValue = this.hasPrimaryKeyValue(componentPersistEntity);
+
+
+        if(hasPrimaryKeyValue){
+            this.updateComponentPersistEntity(
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity.getComponentPersistEntityFieldList(),
+                    savedPersistEntities);
+        }else {
+            this.insertComponentPersistEntity(
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity.getComponentPersistEntityFieldList(),
+                    savedPersistEntities);
+        }
     }
 
     private List<ComponentPersistEntityFieldDTO> insertComponentPersistEntity(
@@ -728,6 +867,30 @@ public class FormDynamicQueryService {
         }
 
         return componentPersistEntity;
+    }
+
+    public Boolean hasPrimaryKeyValue(ComponentPersistEntityDTO componentPersistEntity) {
+
+        if (componentPersistEntity == null) {
+            return false;
+        }
+
+        Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityFieldDTO =
+                componentPersistEntity.getComponentPersistEntityFieldList()
+                        .stream()
+                        .filter(componentPersistEntityField -> componentPersistEntityField.getPersistEntityField().getPrimaryKey() == true).findFirst();
+
+        if (!optionalComponentPersistEntityFieldDTO.isPresent()) {
+            return false;
+        }
+
+        ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = optionalComponentPersistEntityFieldDTO.get();
+
+        if (componentPersistEntityFieldDTO.getValue() == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }
