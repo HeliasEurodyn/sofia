@@ -29,10 +29,9 @@ public class AppViewController {
         return this.appViewService.getObject();
     }
 
-
-    @GetMapping(path = "/generate-view-fields")
-    List<AppViewFieldDTO> generateViewFields(@RequestParam("query") String query) {
-        return this.appViewService.generateViewFields(query);
+    @GetMapping(path = "/by-id")
+    AppViewDTO getObject(@RequestParam("id") Long id) {
+        return this.appViewService.getObject(id);
     }
 
     @PostMapping
@@ -47,13 +46,12 @@ public class AppViewController {
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
-       // AppViewDTO customComponentDTO = this.appViewService.getObject(id);
         this.appViewService.deleteObject(id);
     }
 
-    @GetMapping(path = "/by-id")
-    AppViewDTO getObject(@RequestParam("id") Long id) {
-        return this.appViewService.getObject(id);
+    @GetMapping(path = "/generate-view-fields")
+    List<AppViewFieldDTO> generateViewFields(@RequestParam("query") String query) {
+        return this.appViewService.generateViewFields(query);
     }
 
     @GetMapping(path = "/view-exists")

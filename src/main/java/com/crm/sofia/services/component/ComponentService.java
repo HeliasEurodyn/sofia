@@ -115,9 +115,6 @@ public class ComponentService {
     private ComponentPersistEntityDTO findComponentPersistEntity(List<ComponentPersistEntityDTO> componentPersistEntityList,
                                                                  String persistEntityCode) {
 
-//        List<ComponentPersistEntityDTO> componentPersistEntityList
-//                = this.setComponentPersistEntityTreeToList(componentPersistEntityTree, new ArrayList<>());
-
         Optional<ComponentPersistEntityDTO> componentPersistEntityOptional =
                 componentPersistEntityList
                         .stream()

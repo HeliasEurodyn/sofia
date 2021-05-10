@@ -19,8 +19,7 @@ import java.util.List;
 @Entity(name = "ComponentPersistEntity")
 @Table(name = "component_persist_entity")
 public class ComponentPersistEntity extends BaseEntity {
-
-
+    
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.persistEntity.PersistEntity.class)
     @JoinColumn(name = "persist_entity_id", referencedColumnName = "id")
     private PersistEntity persistEntity;
@@ -31,9 +30,14 @@ public class ComponentPersistEntity extends BaseEntity {
     @Column
     private String selector;
 
+    @Column
     Boolean allowRetrieve;
 
+    @Column
     Boolean allowSave;
+
+    @Column
+    private String deleteType;
 
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -53,6 +57,4 @@ public class ComponentPersistEntity extends BaseEntity {
 
     private Boolean multiDataLine;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Component.class)
-//    private Component component;
 }

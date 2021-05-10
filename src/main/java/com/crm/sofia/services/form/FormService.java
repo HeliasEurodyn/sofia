@@ -170,31 +170,19 @@ public class FormService {
         this.formRepository.deleteById(optionalFormEntity.get().getId());
     }
 
-    public String save(Long formId, Map<String, Map<String, Object>> parameters) throws Exception {
+    public String save(Long formId, Map<String, Map<String, Object>> parameters) {
 
-        /*Retrieve form from Database*/
+        /* Retrieve form from Database */
         FormDTO formDTO = this.getObject(formId);
 
-        /* Μap parameters to component. */
+        /* Μap parameters to component */
         componentService.mapParametersToComponentDTO(formDTO.getComponent().getComponentPersistEntityList(), parameters);
 
+        /* Save */
         return this.formDynamicQueryService.generateQueriesAndSave(
                 formDTO.getComponent().getComponentPersistEntityList(),
                 new ArrayList<>());
 
-        /* Check Insert or Update. */
-//        Boolean hasPrimaryKeyValue = componentService.hasPrimaryKeyValue(formDTO.getComponent());
-
-        /*Send to formDynamicQueryService to generate the queries & Save*/
-//        if (hasPrimaryKeyValue) {
-//            return this.formDynamicQueryService.generateQueriesAndUpdate(
-//                    formDTO.getComponent().getComponentPersistEntityList(),
-//                    new ArrayList<>());
-//        } else {
-//            return this.formDynamicQueryService.generateQueriesAndInsert(
-//                    formDTO.getComponent().getComponentPersistEntityList(),
-//                    new ArrayList<>());
-//        }
     }
 
 }

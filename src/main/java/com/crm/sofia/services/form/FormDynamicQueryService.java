@@ -42,7 +42,7 @@ public class FormDynamicQueryService {
                         .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
                         .collect(Collectors.toList());
 
-        if(filteredPersistEntityList.size() == 0){
+        if (filteredPersistEntityList.size() == 0) {
             return "0";
         }
 
@@ -286,7 +286,7 @@ public class FormDynamicQueryService {
     }
 
     private ComponentPersistEntityDTO saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
+                                                                          List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         List<String> existingPrimaryKeys = new ArrayList<>();
         List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
@@ -309,13 +309,22 @@ public class FormDynamicQueryService {
                 });
 
         /*  Delete Section */
-        if (existingPrimaryKeys.size() > 0) {
+        //    if (existingPrimaryKeys.size() > 0) {
+        String primaryKeyName = componentPersistEntity.getComponentPersistEntityFieldList()
+                .stream()
+                .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
+                .get().getPersistEntityField().getName();
 
-            String primaryKeyName = updatableLines.get(0).getComponentPersistEntityFieldList().stream()
-                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
-                    .get().getPersistEntityField().getName();
-
+        if (componentPersistEntity.getDeleteType().equals("delete")) {
             this.deleteNotExistingComponentPersistEntity(
+                    existingPrimaryKeys,
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity.getComponentPersistEntityFieldList(),
+                    savedPersistEntities,
+                    primaryKeyName
+            );
+        } else if (componentPersistEntity.getDeleteType().equals("clearJoin")) {
+            this.unjoinNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntity.getComponentPersistEntityFieldList(),
@@ -338,7 +347,6 @@ public class FormDynamicQueryService {
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
                 this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
-
         });
 
         /*  Insert Section */
@@ -360,108 +368,6 @@ public class FormDynamicQueryService {
         return componentPersistEntity;
     }
 
-//    private ComponentPersistEntityDTO insertMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-//                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
-//
-//
-//        componentPersistEntity.getComponentPersistEntityDataLines()
-//                .forEach(componentPersistEntityDataLine -> {
-//
-//                    this.insertComponentPersistEntity(
-//                            componentPersistEntity.getPersistEntity().getName(),
-//                            componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-//                            savedPersistEntities);
-//
-//                    List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
-//                    lineSavedPersistEntities.addAll(savedPersistEntities);
-//                    lineSavedPersistEntities.add(componentPersistEntity);
-//
-//                    if (componentPersistEntity.getComponentPersistEntityList() != null) {
-//                        this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
-//                    }
-//
-//                });
-//
-//
-//        return componentPersistEntity;
-//    }
-
-//    private ComponentPersistEntityDTO updateMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-//                                                                            List<ComponentPersistEntityDTO> savedPersistEntities) {
-//
-//        List<String> existingPrimaryKeys = new ArrayList<>();
-//        List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
-//        List<ComponentPersistEntityDataLineDTO> insertableLines = new ArrayList<>();
-//
-//        /* Separate lines for insert, update, delete Section */
-//        componentPersistEntity.getComponentPersistEntityDataLines()
-//                .forEach(componentPersistEntityDataLine -> {
-//                    Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
-//                            componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
-//                                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true)
-//                                    .filter(y -> y.getValue() != null).findFirst();
-//
-//                    if (optionalComponentPersistEntityField.isPresent()) {
-//                        updatableLines.add(componentPersistEntityDataLine);
-//                        existingPrimaryKeys.add("'" + optionalComponentPersistEntityField.get().getValue().toString() + "'");
-//                    } else {
-//                        insertableLines.add(componentPersistEntityDataLine);
-//                    }
-//                });
-//
-//        /*  Delete Section */
-//        if (existingPrimaryKeys.size() > 0) {
-//
-//            String primaryKeyName = updatableLines.get(0).getComponentPersistEntityFieldList().stream()
-//                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
-//                    .get().getPersistEntityField().getName();
-//
-//            this.deleteNotExistingComponentPersistEntity(
-//                    existingPrimaryKeys,
-//                    componentPersistEntity.getPersistEntity().getName(),
-//                    componentPersistEntity.getComponentPersistEntityFieldList(),
-//                    savedPersistEntities,
-//                    primaryKeyName
-//            );
-//        }
-//
-//        /*  Update Section */
-//         updatableLines.forEach(componentPersistEntityDataLine -> {
-//            this.updateComponentPersistEntity(
-//                    componentPersistEntity.getPersistEntity().getName(),
-//                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-//                    savedPersistEntities);
-//
-//             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
-//             lineSavedPersistEntities.addAll(savedPersistEntities);
-//             lineSavedPersistEntities.add(componentPersistEntity);
-//
-//             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-//                 this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
-//             }
-//
-//         });
-//
-//        /*  Insert Section */
-//        insertableLines.forEach(componentPersistEntityDataLine -> {
-//            this.insertComponentPersistEntity(
-//                    componentPersistEntity.getPersistEntity().getName(),
-//                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-//                    savedPersistEntities);
-//
-//            List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
-//            lineSavedPersistEntities.addAll(savedPersistEntities);
-//            lineSavedPersistEntities.add(componentPersistEntity);
-//
-//            if (componentPersistEntity.getComponentPersistEntityList() != null) {
-//                this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
-//            }
-//        });
-//
-//        return componentPersistEntity;
-//    }
-
-
     private void saveComponentPersistEntity(
             ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
@@ -469,12 +375,12 @@ public class FormDynamicQueryService {
         Boolean hasPrimaryKeyValue = this.hasPrimaryKeyValue(componentPersistEntity);
 
 
-        if(hasPrimaryKeyValue){
+        if (hasPrimaryKeyValue) {
             this.updateComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntity.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
-        }else {
+        } else {
             this.insertComponentPersistEntity(
                     componentPersistEntity.getPersistEntity().getName(),
                     componentPersistEntity.getComponentPersistEntityFieldList(),
@@ -526,6 +432,25 @@ public class FormDynamicQueryService {
         }
 
         return componentPersistEntityFieldList;
+    }
+
+    private void unjoinNotExistingComponentPersistEntity(List<String> existingPrimaryKeys,
+                                                         String entityName,
+                                                         List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                         List<ComponentPersistEntityDTO> savedPersistEntities,
+                                                         String primaryKeyName) {
+
+        /* Map Values from previous saved ones */
+        componentPersistEntityFieldList =
+                this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
+
+        /* Generate Query */
+        Query query = this.generateUnjoinOtherThanExistingKeysQuery(entityName, existingPrimaryKeys,
+                componentPersistEntityFieldList, primaryKeyName);
+
+        /* Execute Query */
+        this.executeDelete(query);
+
     }
 
     private void deleteNotExistingComponentPersistEntity(List<String> existingPrimaryKeys,
@@ -661,21 +586,87 @@ public class FormDynamicQueryService {
                                                            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
                                                            String primaryKeyName) {
 
-        /* DELETE Section */
-        String queryString = "DELETE FROM " + entityName + " ";
+        /* DELETE FROM WHERE Section */
+        String queryString = "DELETE FROM " + entityName + " WHERE ";
 
         /* WHERE Section */
-        String existingPrimaryKeysString = String.join(",", existingPrimaryKeys);
-        queryString += "WHERE " + primaryKeyName + " NOT IN (" + existingPrimaryKeysString + ") ";
+        List<String> whereParametersList = new ArrayList<>();
+
+        if (existingPrimaryKeys.size() > 0) {
+            whereParametersList.add(
+                    primaryKeyName + " NOT IN (" + String.join(",", existingPrimaryKeys) + ") "
+            );
+        }
 
         List<ComponentPersistEntityFieldDTO> saveStatementFieldList = componentPersistEntityFieldList.stream()
                 .filter(x -> !(x.getSaveStatement() == null ? "" : x.getSaveStatement()).equals(""))
                 .collect(Collectors.toList());
 
-        for (ComponentPersistEntityFieldDTO saveStatementField : saveStatementFieldList) {
-            queryString += "AND " + saveStatementField.getPersistEntityField().getName() + " = :"
-                    + saveStatementField.getPersistEntityField().getName() + " ";
+        saveStatementFieldList
+                .forEach(saveStatementField -> {
+                    whereParametersList.add(
+                            saveStatementField.getPersistEntityField().getName() + " = :"
+                                    + saveStatementField.getPersistEntityField().getName() + " "
+                    );
+                });
+
+        queryString += String.join(" AND ", whereParametersList);
+
+        /* Query creation Section */
+        Query query = entityManager.createNativeQuery(queryString);
+
+        /* Parameters Replacement Section */
+        saveStatementFieldList.stream()
+                .filter(x -> x.getValue() != null)
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                x.getValue()
+                        ));
+
+        return query;
+    }
+
+    private Query generateUnjoinOtherThanExistingKeysQuery(String entityName,
+                                                           List<String> existingPrimaryKeys,
+                                                           List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
+                                                           String primaryKeyName) {
+
+        /* UPDATE Section */
+        List<String> columnParametersList = new ArrayList<>();
+        String queryString = "UPDATE " + entityName + " SET ";
+
+        List<ComponentPersistEntityFieldDTO> saveStatementFieldList = componentPersistEntityFieldList.stream()
+                .filter(x -> !(x.getSaveStatement() == null ? "" : x.getSaveStatement()).equals(""))
+                .collect(Collectors.toList());
+
+        saveStatementFieldList
+                .forEach(saveStatementField -> {
+                    columnParametersList.add(
+                            saveStatementField.getPersistEntityField().getName() + " = NULL "
+                    );
+                });
+        queryString += String.join(",", columnParametersList);
+
+        /* WHERE Section */
+        queryString += " WHERE ";
+        List<String> whereParametersList = new ArrayList<>();
+
+        if (existingPrimaryKeys.size() > 0) {
+            whereParametersList.add(
+                    primaryKeyName + " NOT IN (" + String.join(",", existingPrimaryKeys) + ") "
+            );
         }
+
+        saveStatementFieldList
+                .forEach(saveStatementField -> {
+                    whereParametersList.add(
+                            saveStatementField.getPersistEntityField().getName() + " = :"
+                                    + saveStatementField.getPersistEntityField().getName() + " "
+                    );
+                });
+
+        queryString += String.join(" AND ", whereParametersList);
 
         /* Query creation Section */
         Query query = entityManager.createNativeQuery(queryString);
@@ -821,7 +812,7 @@ public class FormDynamicQueryService {
 
         List<Object[]> dataList = query.getResultList();
 
-        if (!(componentPersistEntity.getMultiDataLine()==null?false:componentPersistEntity.getMultiDataLine())) {
+        if (!(componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
             componentPersistEntity = this.mapSingleLineQueryResponces(componentPersistEntity, dataList.get(0));
         } else {
             componentPersistEntity = this.mapMultiLineQueryResponces(componentPersistEntity, dataList);
