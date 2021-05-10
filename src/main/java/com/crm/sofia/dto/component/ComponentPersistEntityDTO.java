@@ -27,6 +27,8 @@ public class ComponentPersistEntityDTO extends BaseDTO {
 
     Boolean allowSave;
 
+    private String deleteType;
+
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
 
     /* Form multiline */
