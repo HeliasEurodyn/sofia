@@ -3,15 +3,13 @@ package com.crm.sofia.model.user;
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.menu.Menu;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 
 @Data
@@ -45,4 +43,6 @@ public class User extends BaseEntity {
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     private Menu menu;
 
+    @Column
+    private String loginNavCommand;
 }

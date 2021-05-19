@@ -23,6 +23,9 @@ public class Chart extends BaseEntity {
     private String title;
 
     @Column
+    private String icon;
+
+    @Column
     private String secondTitle;
 
     @Column(columnDefinition = "TEXT")
@@ -47,6 +50,9 @@ public class Chart extends BaseEntity {
 
     @Column
     private Boolean executePeriodically;
+
+    @Column
+    private Boolean refreshButton;
 
     @Column
     private Integer executionInterval;

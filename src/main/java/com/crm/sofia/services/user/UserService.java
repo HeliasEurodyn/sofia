@@ -136,13 +136,14 @@ public class UserService {
         String jwt = "";
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
-            log.debug("User exists");
             User user = userOptional.get();
-
             if (verifyPassword(user, enteredPassword)) {
                 jwt = jwtService.generateJwt(user.getUsername(), userOptional.get().getId());
+                UserDTO userDTO = userMapper.mapUserToDto(user);
+                return new JWTResponseDTO(jwt, userDTO);
             }
         }
+
         return new JWTResponseDTO().setJwt(jwt);
     }
 

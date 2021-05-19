@@ -10,23 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ChartDesignerService {
 
-    private final EntityManager entityManager;
     private final ChartRepository chartRepository;
     private final ChartMapper chartMapper;
     private final ChartDynamicQueryService chartDynamicQueryService;
 
-    public ChartDesignerService(EntityManager entityManager,
-                                ChartRepository chartRepository,
+    public ChartDesignerService(ChartRepository chartRepository,
                                 ChartMapper chartMapper,
                                 ChartDynamicQueryService chartDynamicQueryService) {
-        this.entityManager = entityManager;
         this.chartRepository = chartRepository;
         this.chartMapper = chartMapper;
         this.chartDynamicQueryService = chartDynamicQueryService;

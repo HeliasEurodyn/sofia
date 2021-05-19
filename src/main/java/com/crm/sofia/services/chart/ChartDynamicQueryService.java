@@ -1,13 +1,14 @@
 package com.crm.sofia.services.chart;
 
-import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.dto.chart.ChartFieldDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,7 @@ public class ChartDynamicQueryService {
     public List<ChartFieldDTO> getData(List<ChartFieldDTO> chartFieldList, String sql) {
         Query query = entityManager.createNativeQuery(sql);
         List<Object[]> queryResults = query.getResultList();
-        chartFieldList.forEach( chartField -> chartField.setDataset(new ArrayList<>()) );
+        chartFieldList.forEach(chartField -> chartField.setDataset(new ArrayList<>()));
         for (Object[] queryResult : queryResults) {
             int i = 0;
             for (ChartFieldDTO chartField : chartFieldList) {

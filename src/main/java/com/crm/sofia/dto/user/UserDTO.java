@@ -38,4 +38,6 @@ public class UserDTO extends BaseDTO {
 
     private MenuDTO menu;
 
+    private String loginNavCommand;
+
 }

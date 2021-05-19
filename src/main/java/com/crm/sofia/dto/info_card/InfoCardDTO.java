@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.chart;
+package com.crm.sofia.dto.info_card;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,35 +8,29 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ChartDTO extends BaseDTO {
+public class InfoCardDTO extends BaseDTO {
 
     private String title;
 
     private String icon;
 
-    private String secondTitle;
+    private String description;
 
-    private String chartJson;
-
-    private String optionsJson;
+    private String cardText;
 
     private String query;
 
-    private String horizontalAxe;
+    private String command;
 
-    private List<ChartFieldDTO> chartFieldList;
+    private String commandIcon;
 
     private Boolean executePeriodically;
-
-    private Boolean refreshButton;
 
     private Integer executionInterval;
 
