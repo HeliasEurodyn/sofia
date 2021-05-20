@@ -51,10 +51,14 @@ public class FormController {
 
     @PostMapping(path = "/data")
     public String postObjectData(@RequestParam("id") Long formId,
-                               @RequestBody Map<String, Map<String, Object>> parameters) throws Exception {
+                                 @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.formService.save(formId, parameters);
     }
 
+    @DeleteMapping(path = "/data")
+    public void deleteObjectData(@RequestParam("component-id")Long componentId, @RequestParam("selection-id") String selectionId) {
+        this.formService.delete(componentId, selectionId);
+    }
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {

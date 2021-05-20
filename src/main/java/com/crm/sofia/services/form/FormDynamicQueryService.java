@@ -73,99 +73,54 @@ public class FormDynamicQueryService {
         return id;
     }
 
-//    @Transactional
-//    public String generateQueriesAndInsert(
-//            List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
-//
-////        List<ComponentPersistEntityDTO> savedPersistEntities = new ArrayList<>();
-//
-//        /* Filter - Keep only Table, Saveable PersistEntities */
-//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
-//                componentPersistEntityList
-//                        .stream()
-//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
-//                        .collect(Collectors.toList());
-//
-//        if(filteredPersistEntityList.size() == 0){
-//            return "0";
-//        }
-//
-//        /* Itterate & save */
-//        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
-//            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
-//            if (multiDataLine == true) {
-//                this.insertMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
-//            } else {
-//                this.insertComponentPersistEntity(
-//                        componentPersistEntity.getPersistEntity().getName(),
-//                        componentPersistEntity.getComponentPersistEntityFieldList(),
-//                        savedPersistEntities);
-//                savedPersistEntities.add(componentPersistEntity);
-//
-//                if (componentPersistEntity.getComponentPersistEntityList() != null) {
-//                    this.generateQueriesAndInsert(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
-//                }
-//            }
-//
-//
-//        }
-//
-//        /* Retrieve and return created id */
-//        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
-//                .stream()
-//                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
-//                .map(x -> x.getValue().toString()).findFirst()
-//                .orElse("0");
-//
-//        return id;
-//    }
+    public void generateQueriesAndDelete(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+        componentPersistEntityList
+                .forEach(componentPersistEntity -> {
+                    this.deleteComponentPersistEntity(componentPersistEntity);
+                });
+    }
 
-//    @Transactional
-//    public String generateQueriesAndUpdate(List<ComponentPersistEntityDTO> componentPersistEntityList,
-//                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
-//
-//        /* Filter - Keep only Table, Saveable PersistEntities */
-//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
-//                componentPersistEntityList
-//                        .stream()
-//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
-//                        .collect(Collectors.toList());
-//
-//        if(filteredPersistEntityList.size() == 0){
-//            return "0";
-//        }
-//
-//        /* Itterate & save */
-//        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
-//
-//            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
-//            if (multiDataLine == true) {
-//                this.updateMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
-//            } else {
-//                this.updateComponentPersistEntity(
-//                        componentPersistEntity.getPersistEntity().getName(),
-//                        componentPersistEntity.getComponentPersistEntityFieldList(),
-//                        savedPersistEntities);
-//                savedPersistEntities.add(componentPersistEntity);
-//
-//                if (componentPersistEntity.getComponentPersistEntityList() != null) {
-//                    this.generateQueriesAndUpdate(componentPersistEntity.getComponentPersistEntityList(), savedPersistEntities);
-//                }
-//            }
-//        }
-//
-//        /* Retrieve and return created id */
-//        String id = filteredPersistEntityList.get(0)
-//                .getComponentPersistEntityFieldList()
-//                .stream()
-//                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
-//                .map(x -> x.getValue().toString()).findFirst()
-//                .orElse("0");
-//
-//        return id;
-//    }
+    private void deleteComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntityDTO) {
+
+        if (componentPersistEntityDTO.getComponentPersistEntityList() != null) {
+            componentPersistEntityDTO.getComponentPersistEntityList()
+                    .forEach(componentPersistEntity -> {
+                        this.deleteComponentPersistEntity(componentPersistEntity);
+                    });
+        }
+
+        Boolean allowSave = componentPersistEntityDTO.getAllowSave() == null ? false : componentPersistEntityDTO.getAllowSave();
+        if (!allowSave) {
+            return;
+        }
+
+        /* Delete multiline */
+        Boolean multiDataLine = (componentPersistEntityDTO.getMultiDataLine()==null?false:componentPersistEntityDTO.getMultiDataLine());
+        if(multiDataLine){
+            componentPersistEntityDTO.getComponentPersistEntityDataLines()
+                    .forEach(componentPersistEntityDataLineDTO -> {
+                        componentPersistEntityDTO.setComponentPersistEntityList(
+                                componentPersistEntityDataLineDTO.getComponentPersistEntityList());
+                        componentPersistEntityDTO.setComponentPersistEntityList(
+                                componentPersistEntityDataLineDTO.getComponentPersistEntityList());
+
+                        this.deleteComponentPersistEntity(componentPersistEntityDTO);
+                    });
+            return;
+        }
+
+        /* If type=delete perform deletion, if type=clearJoin just update foreign keys to null */
+        String deleteType = componentPersistEntityDTO.getDeleteType() == null ? "" : componentPersistEntityDTO.getDeleteType();
+        if (deleteType.equals("delete")) {
+
+            this.generateDeleteQuery(componentPersistEntityDTO.getPersistEntity().getName(),
+                    componentPersistEntityDTO.getComponentPersistEntityFieldList());
+
+        } else if (deleteType.equals("clearJoin")) {
+            return;
+        }
+
+    }
 
     public void retrieveComponentData(ComponentDTO component,
                                       String selectionId) {
@@ -490,6 +445,40 @@ public class FormDynamicQueryService {
             }
         }
         return componentPersistEntityFieldList;
+
+    }
+
+    private void generateDeleteQuery(String entityName, List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
+
+        /* Delete From Section */
+        String queryString = "DELETE FROM " + entityName;
+
+        /* Where Section */
+        List<String> whereList = componentPersistEntityFieldList.stream()
+                .filter(x -> !(x.getSaveStatement()==null?"":x.getSaveStatement()).equals(""))
+                .filter(x -> x.getValue() != null)
+                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
+                .collect(Collectors.toList());
+
+        if (whereList.size() == 0) {
+            return;
+        }
+
+        String whereString = String.join(" AND ", whereList);
+        queryString += " WHERE " + whereString;
+
+        /* Parameters Replacement Section */
+        Query query = entityManager.createNativeQuery(queryString);
+
+        componentPersistEntityFieldList.stream()
+                .filter(x -> x.getValue() != null)
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                x.getValue()
+                        ));
+
+        query.executeUpdate();
 
     }
 

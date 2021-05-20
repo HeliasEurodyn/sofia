@@ -1,5 +1,6 @@
 package com.crm.sofia.services.form;
 
+import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.form.FormDTO;
@@ -116,7 +117,7 @@ public class FormService {
         List<ComponentPersistEntityDTO> filteredComponentPersistEntityList =
                 formDTO.getComponent().getComponentPersistEntityList()
                         .stream()
-                        .filter(cpe -> (cpe.getMultiDataLine()==null?false:cpe.getMultiDataLine()) == true)
+                        .filter(cpe -> (cpe.getMultiDataLine() == null ? false : cpe.getMultiDataLine()) == true)
                         .collect(Collectors.toList());
 
         this.runDefaultValueExpressionsOnTree(filteredComponentPersistEntityList);
@@ -182,6 +183,21 @@ public class FormService {
         return this.formDynamicQueryService.generateQueriesAndSave(
                 formDTO.getComponent().getComponentPersistEntityList(),
                 new ArrayList<>());
+
+    }
+
+    @Transactional
+    @Modifying
+    public void delete(Long componentId, String selectionId) {
+
+        /* Retrieve component from Database */
+        ComponentDTO componentDTO = this.componentService.getObject(componentId);
+
+        /* Retrieve component data from Database */
+        this.formDynamicQueryService.retrieveComponentData(componentDTO, selectionId);
+
+        /* delete */
+        this.formDynamicQueryService.generateQueriesAndDelete(componentDTO.getComponentPersistEntityList());
 
     }
 
