@@ -1,10 +1,9 @@
 package com.crm.sofia.controllers.component;
 
-import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.services.component.ComponentService;
-import com.crm.sofia.services.form.FormDynamicQueryService;
+import com.crm.sofia.services.component.dynamic_query.ComponentPersistEntityRetrieverService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,45 +18,18 @@ import java.util.stream.Collectors;
 public class ComponentController {
 
     private final ComponentService componentService;
-    private final FormDynamicQueryService formDynamicQueryService;
+    private final ComponentPersistEntityRetrieverService componentPersistEntityRetrieverService;
 
     public ComponentController(ComponentService componentService,
-                               FormDynamicQueryService formDynamicQueryService) {
+                               ComponentPersistEntityRetrieverService componentPersistEntityRetrieverService) {
         this.componentService = componentService;
-        this.formDynamicQueryService = formDynamicQueryService;
+        this.componentPersistEntityRetrieverService = componentPersistEntityRetrieverService;
     }
 
-    @GetMapping
-    List<ComponentDTO> getObject() {
-        return this.componentService.getObject();
-    }
-
-    @GetMapping(path = "/by-id")
-    ComponentDTO getObject(@RequestParam("id") Long id) {
-        return this.componentService.getObject(id);
-    }
-
-    @PostMapping
-    public ComponentDTO postObject(@RequestBody ComponentDTO dto) {
-        ComponentDTO createdDTO = this.componentService.postObject(dto);
-        return createdDTO;
-    }
-
-    @PutMapping
-    public ComponentDTO putObject(@RequestBody ComponentDTO dto) {
-        ComponentDTO createdDTO = this.componentService.putObject(dto);
-        return createdDTO;
-    }
-
-    @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
-        this.componentService.deleteObject(id);
-    }
-
-    @GetMapping(path = "/component-persist-entity/data/by-id")
+    @GetMapping(path = "/component-persist-entity/by-id")
     ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") Long id,
                                                                 @RequestParam("selection-id") String selectionId) {
-        ComponentPersistEntityDTO componentPersistEntityDTO = this.componentService.getComponentPersistEntityDataById(id, selectionId);
+        ComponentPersistEntityDTO componentPersistEntityDTO = this.componentService.getComponentPersistEntityById(id);
 
         List<ComponentPersistEntityFieldDTO> retrievalFieldList = componentPersistEntityDTO.getComponentPersistEntityFieldList()
                 .stream()
@@ -68,7 +40,8 @@ public class ComponentController {
                 .stream()
                 .forEach(x -> x.setLocateStatement(selectionId));
 
-        componentPersistEntityDTO = this.formDynamicQueryService.retrieveComponentPersistEntity(componentPersistEntityDTO,
+        componentPersistEntityDTO = this.componentPersistEntityRetrieverService
+                .retrieveComponentPersistEntity(componentPersistEntityDTO,
                 retrievalFieldList);
 
         return componentPersistEntityDTO;

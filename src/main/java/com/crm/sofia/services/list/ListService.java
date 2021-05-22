@@ -10,7 +10,6 @@ import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.jasperTest.JasperModelClass;
 import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.list.ListRepository;
-import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.expression.ExpressionService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -20,7 +19,6 @@ import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,43 +39,15 @@ public class ListService {
     private final ListMapper listMapper;
     private final ExpressionService expressionService;
     private final ListDynamicQueryService listDynamicQueryService;
-    private final JWTService jwtService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ExpressionService expressionService,
-                       ListDynamicQueryService listDynamicQueryService,
-                       JWTService jwtService) {
+                       ListDynamicQueryService listDynamicQueryService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.expressionService = expressionService;
         this.listDynamicQueryService = listDynamicQueryService;
-        this.jwtService = jwtService;
-    }
-
-    @Transactional
-    public ListDTO postObject(ListDTO listDTO) {
-        ListEntity listEntity = this.listMapper.map(listDTO);
-        listEntity.setCreatedOn(Instant.now());
-        listEntity.setModifiedOn(Instant.now());
-        listEntity.setCreatedBy(jwtService.getUserId());
-        listEntity.setModifiedBy(jwtService.getUserId());
-        ListEntity createdListEntity = this.listRepository.save(listEntity);
-        return this.listMapper.map(createdListEntity);
-    }
-
-    @Transactional
-    public ListDTO putObject(ListDTO listDTO) {
-        ListEntity listEntity = this.listMapper.map(listDTO);
-        listEntity.setModifiedOn(Instant.now());
-        listEntity.setModifiedBy(jwtService.getUserId());
-        ListEntity createdListEntity = this.listRepository.save(listEntity);
-        return this.listMapper.map(createdListEntity);
-    }
-
-    public List<ListDTO> getObject() {
-        List<ListEntity> views = this.listRepository.findAll();
-        return this.listMapper.map(views);
     }
 
     public ListDTO getObject(Long id) {
@@ -120,29 +90,13 @@ public class ListService {
         return listDTO;
     }
 
-    public ListDTO getObjectByName(String name) {
-        ListEntity listEntity = this.listRepository.findFirstByName(name);
-        if (listEntity == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-        }
-        return this.listMapper.map(listEntity);
-    }
-
-    public void deleteObject(Long id) {
-        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
-        if (!optionalListEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-        }
-        this.listRepository.deleteById(optionalListEntity.get().getId());
-    }
-
     public ListResultsDataDTO getObjectData(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
 
         List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(listDTO);
         listResultsDataDTO.setListContent(listContent);
 
-        if ((listDTO.getHasPagination()== null?false:listDTO.getHasPagination())) {
+        if ((listDTO.getHasPagination() == null ? false : listDTO.getHasPagination())) {
 
             // Current Page
             Long currentPage = listDTO.getCurrentPage();
@@ -306,60 +260,5 @@ public class ListService {
 
         return this.getObjectLeftGroupingData(listDTO);
     }
-
-
-//    public ByteArrayInputStream doPoiTestExcel() throws IOException {
-//        List<TestCustomer> testCustomers = new ArrayList<>();
-//        TestCustomer testCustomer = new TestCustomer(1L,"Ilias","25hs martiou", 35);
-//        testCustomers.add(testCustomer);
-//        testCustomer = new TestCustomer(2L,"Kostas","Stavroupoleos 49", 45);
-//        testCustomers.add(testCustomer);
-//
-//        ByteArrayInputStream in =   ExcelGenerator.customersToExcel(testCustomers);
-//        return in;
-//
-//    }
-
-
-//    public Resource exportXls() throws IOException {
-//        StringBuilder filename = new StringBuilder("Foo Export").append(" - ")
-//                .append("Test 1.xlsx");
-//        return export(filename);
-//    }
-//
-//    public ByteArrayResource export(String filename, HttpServletResponse response) throws IOException {
-//        ServletOutputStream sfos = response.getOutputStream();
-//
-//
-//
-//        byte[] bytes = new byte[1024];
-//        try (Workbook workbook = generateExcel()) {
-//            FileOutputStream fos = new FileOutputStream(sfos);
-////            FileOutputStream fos = write(workbook, filename);
-//            sfos.write(workbook);
-//            fos.write(bytes);
-//            fos.flush();
-//            fos.close();
-//        }
-//
-//        return new ByteArrayResource(bytes);
-//    }
-
-//    private Workbook generateExcel() {
-//        Workbook workbook = new XSSFWorkbook();
-//        Sheet sheet = workbook.createSheet();
-//
-//        //create columns and rows
-//
-//        return workbook;
-//    }
-//
-//    private FileOutputStream write(final Workbook workbook, final String filename) throws IOException {
-//        FileOutputStream fos = new FileOutputStream(filename);
-//        workbook.write(fos);
-//        fos.close();
-//        return fos;
-//    }
-
 
 }

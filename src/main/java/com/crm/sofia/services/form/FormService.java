@@ -2,15 +2,14 @@ package com.crm.sofia.services.form;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.form.FormDTO;
 import com.crm.sofia.mapper.form.FormMapper;
 import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.component.ComponentDesignerService;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
-import com.crm.sofia.services.component.ComponentService;
 import com.crm.sofia.services.expression.ExpressionService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,64 +28,23 @@ public class FormService {
 
     private final FormRepository formRepository;
     private final FormMapper formMapper;
-    private final JWTService jwtService;
     private final FormDynamicQueryService formDynamicQueryService;
-    private final ComponentService componentService;
+    private final ComponentDesignerService componentDesignerService;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
     private final ExpressionService expressionService;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
-                       JWTService jwtService,
                        FormDynamicQueryService formDynamicQueryService,
-                       ComponentService componentService,
+                       ComponentDesignerService componentDesignerService,
                        ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
                        ExpressionService expressionService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
-        this.jwtService = jwtService;
         this.formDynamicQueryService = formDynamicQueryService;
-        this.componentService = componentService;
+        this.componentDesignerService = componentDesignerService;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
         this.expressionService = expressionService;
-    }
-
-    @Transactional
-    public FormDTO postObject(FormDTO formDTO) {
-        FormEntity formEntity = this.formMapper.map(formDTO);
-        formEntity.setCreatedOn(Instant.now());
-        formEntity.setModifiedOn(Instant.now());
-        formEntity.setCreatedBy(jwtService.getUserId());
-        formEntity.setModifiedBy(jwtService.getUserId());
-        FormEntity createdFormEntity = this.formRepository.save(formEntity);
-
-        this.componentPersistEntityFieldAssignmentService
-                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
-                        createdFormEntity.getId());
-
-        return this.formMapper.map(createdFormEntity);
-    }
-
-    @Transactional
-    public FormDTO putObject(FormDTO formDTO) {
-        FormEntity formEntity = this.formMapper.map(formDTO);
-        formEntity.setModifiedOn(Instant.now());
-        formEntity.setModifiedBy(jwtService.getUserId());
-
-        FormEntity createdFormEntity = this.formRepository.save(formEntity);
-
-        this.componentPersistEntityFieldAssignmentService
-                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
-                        createdFormEntity.getId());
-
-
-        return this.formMapper.map(createdFormEntity);
-    }
-
-
-    public List<FormDTO> getObject() {
-        List<FormEntity> formEntities = this.formRepository.findAll();
-        return this.formMapper.map(formEntities);
     }
 
     public FormDTO getObject(Long id) {
@@ -160,24 +117,13 @@ public class FormService {
 
     }
 
-    @Transactional
-    @Modifying
-    public void deleteObject(Long id) {
-        Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
-        if (!optionalFormEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FormEntity does not exist");
-        }
-        this.componentPersistEntityFieldAssignmentService.deleteByFormId(optionalFormEntity.get().getId());
-        this.formRepository.deleteById(optionalFormEntity.get().getId());
-    }
-
     public String save(Long formId, Map<String, Map<String, Object>> parameters) {
 
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObject(formId);
 
         /* Μap parameters to component */
-        componentService.mapParametersToComponentDTO(formDTO.getComponent().getComponentPersistEntityList(), parameters);
+        componentDesignerService.mapParametersToComponentDTO(formDTO.getComponent().getComponentPersistEntityList(), parameters);
 
         /* Save */
         return this.formDynamicQueryService.generateQueriesAndSave(
@@ -191,7 +137,7 @@ public class FormService {
     public void delete(Long componentId, String selectionId) {
 
         /* Retrieve component from Database */
-        ComponentDTO componentDTO = this.componentService.getObject(componentId);
+        ComponentDTO componentDTO = this.componentDesignerService.getObject(componentId);
 
         /* Retrieve component data from Database */
         this.formDynamicQueryService.retrieveComponentData(componentDTO, selectionId);

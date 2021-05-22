@@ -31,61 +31,19 @@ public class ListController {
         this.listService = listService;
     }
 
-    @GetMapping
-    List<ListDTO> getObject() {
-        return this.listService.getObject();
-    }
-
-    @GetMapping(path = "/by-id")
-    ListDTO getObject(@RequestParam("id") Long id) {
-        return this.listService.getObject(id);
-    }
-
-    @GetMapping(path = "data/by-id")
+    @GetMapping(path = "by-id")
     ListDTO getObjectData(@RequestParam("id") Long id) {
         return this.listService.getObjectData(id);
     }
 
-    @GetMapping(path = "/data/results")
+    @GetMapping(path = "/results")
     ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters, id);
     }
 
-    @GetMapping(path = "/data/left-grouping/results")
+    @GetMapping(path = "/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectLeftGroupingDataByParameters(parameters, id);
-    }
-
-    @GetMapping(path = "/by-name")
-    ListDTO getObject(@RequestParam("name") String name) {
-        return this.listService.getObjectByName(name);
-    }
-
-    @PostMapping
-    public ListDTO postObject(@RequestBody ListDTO dto) {
-        ListDTO createdDTO = this.listService.postObject(dto);
-        return createdDTO;
-    }
-
-    @PutMapping
-    public ListDTO putObject(@RequestBody ListDTO dto) {
-        ListDTO createdDTO = this.listService.putObject(dto);
-        return createdDTO;
-    }
-
-    @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
-        this.listService.deleteObject(id);
-    }
-
-    @GetMapping(path = "/jasper-test-pdf")
-    void doJasperTest() throws FileNotFoundException, JRException {
-        this.listService.doJasperPdfTest();
-    }
-
-    @GetMapping(path = "/jasper-test-excel")
-    void doJasperTestExcel() throws FileNotFoundException, JRException {
-        this.listService.doJasperExcelTestExcel();
     }
 
     @PostMapping(path = "/data-excel")
@@ -100,6 +58,16 @@ public class ListController {
                 .headers(headers)
                 .body(new InputStreamResource(in));
 
+    }
+
+    @GetMapping(path = "/jasper-test-pdf")
+    void doJasperTest() throws FileNotFoundException, JRException {
+        this.listService.doJasperPdfTest();
+    }
+
+    @GetMapping(path = "/jasper-test-excel")
+    void doJasperTestExcel() throws FileNotFoundException, JRException {
+        this.listService.doJasperExcelTestExcel();
     }
 
 }

@@ -479,7 +479,6 @@ public class FormDynamicQueryService {
                         ));
 
         query.executeUpdate();
-
     }
 
     private Query generateInsertQuery(String entityName,

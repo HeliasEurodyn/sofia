@@ -4,6 +4,7 @@ import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.component.Component;
@@ -24,18 +25,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ComponentService {
+public class ComponentDesignerService {
 
     private final ComponentMapper componentMapper;
     private final ComponentRepository componentRepository;
     private final ComponentPersistEntityRepository componentPersistEntityRepository;
     private final ComponentPersistEntityMapper componentPersistEntityMapper;
 
-    public ComponentService(ComponentMapper menuMapper,
-                            ComponentRepository componentRepository,
-                            ComponentFieldService componentFieldService,
-                            ComponentPersistEntityRepository componentPersistEntityRepository,
-                            ComponentPersistEntityMapper componentPersistEntityMapper
+    public ComponentDesignerService(ComponentMapper menuMapper,
+                                    ComponentRepository componentRepository,
+                                    ComponentFieldService componentFieldService,
+                                    ComponentPersistEntityRepository componentPersistEntityRepository,
+                                    ComponentPersistEntityMapper componentPersistEntityMapper
     ) {
         this.componentMapper = menuMapper;
         this.componentRepository = componentRepository;
@@ -222,6 +223,41 @@ public class ComponentService {
         return compPersistEntityField;
     }
 
+//    public Boolean hasPrimaryKeyValue(ComponentDTO component) {
+//
+//        if (component.getComponentPersistEntityList() == null) {
+//            return false;
+//        }
+//
+//        if (component.getComponentPersistEntityList().size() == 0) {
+//            return false;
+//        }
+//
+//        ComponentPersistEntityDTO componentPersistEntity = component.getComponentPersistEntityList().get(0);
+//
+//        Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityFieldDTO =
+//                componentPersistEntity.getComponentPersistEntityFieldList()
+//                        .stream()
+//                        .filter(componentPersistEntityField -> componentPersistEntityField.getPersistEntityField().getPrimaryKey() == true).findFirst();
+//
+//        if (!optionalComponentPersistEntityFieldDTO.isPresent()) {
+//            return false;
+//        }
+//
+//        ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = optionalComponentPersistEntityFieldDTO.get();
+//
+//        if (componentPersistEntityFieldDTO.getValue() == null) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//
+//    }
+
+    public ComponentPersistEntityDTO getComponentPersistEntityDataById(Long id, String selectionId) {
+        ComponentPersistEntityDTO componentPersistEntityDTO = this.getComponentPersistEntityById(id);
+        return componentPersistEntityDTO;
+    }
 
     public ComponentPersistEntityDTO getComponentPersistEntityById(Long id) {
         Optional<ComponentPersistEntity> optionalComponentPersistEntity = componentPersistEntityRepository.findById(id);

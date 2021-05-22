@@ -6,7 +6,7 @@ import com.crm.sofia.mapper.table.TableMapper;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.component.ComponentService;
+import com.crm.sofia.services.component.ComponentDesignerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,17 +29,17 @@ public class TableService {
     private final TableMapper tableMapper;
     private final EntityManager entityManager;
     private final JWTService jwtService;
-    private final ComponentService componentService;
+    private final ComponentDesignerService componentDesignerService;
 
     public TableService(PersistEntityRepository persistEntityRepository,
                         TableMapper tableMapper,
                         EntityManager entityManager, JWTService jwtService,
-                        ComponentService componentService) {
+                        ComponentDesignerService componentDesignerService) {
         this.persistEntityRepository = persistEntityRepository;
         this.tableMapper = tableMapper;
         this.entityManager = entityManager;
         this.jwtService = jwtService;
-        this.componentService = componentService;
+        this.componentDesignerService = componentDesignerService;
     }
 
     public TableDTO postObject(TableDTO componentDTO) {
@@ -82,7 +82,7 @@ public class TableService {
         if (!optionalPersistEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Persist entity does not exist");
         }
-        this.componentService.removeComponentTablesByTableId(id);
+        this.componentDesignerService.removeComponentTablesByTableId(id);
         this.persistEntityRepository.deleteById(optionalPersistEntity.get().getId());
     }
 
@@ -222,7 +222,7 @@ public class TableService {
 
     @Transactional
     public TableDTO update(TableDTO dto) {
-        this.componentService.removeComponentTableFieldsByTable(
+        this.componentDesignerService.removeComponentTableFieldsByTable(
                 dto.getId(),
                 dto.getTableFieldList()
                         .stream()
@@ -231,7 +231,7 @@ public class TableService {
                 );
         TableDTO createdDTO = this.postObject(dto);
         this.updateDatabaseTable(createdDTO);
-        this.componentService.insertComponentTableFieldsByTable(this.tableMapper.map(createdDTO));
+        this.componentDesignerService.insertComponentTableFieldsByTable(this.tableMapper.map(createdDTO));
         return createdDTO;
     }
 
