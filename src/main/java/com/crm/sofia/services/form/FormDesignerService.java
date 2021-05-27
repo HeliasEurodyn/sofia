@@ -1,6 +1,10 @@
 package com.crm.sofia.services.form;
 
+import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.form.FormAreaDTO;
+import com.crm.sofia.dto.form.FormControlDTO;
 import com.crm.sofia.dto.form.FormDTO;
+import com.crm.sofia.dto.form.FormTabDTO;
 import com.crm.sofia.mapper.form.FormMapper;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.repository.form.FormRepository;
@@ -15,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class FormDesignerService {
@@ -52,6 +58,8 @@ public class FormDesignerService {
         formEntity.setModifiedOn(Instant.now());
         formEntity.setCreatedBy(jwtService.getUserId());
         formEntity.setModifiedBy(jwtService.getUserId());
+        formEntity.setVersionId(UUID.randomUUID().toString());
+
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
 
         this.componentPersistEntityFieldAssignmentService
@@ -66,6 +74,7 @@ public class FormDesignerService {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setModifiedOn(Instant.now());
         formEntity.setModifiedBy(jwtService.getUserId());
+        formEntity.setVersionId(UUID.randomUUID().toString());
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
 
@@ -88,7 +97,24 @@ public class FormDesignerService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
         FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
-        formDTO = this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(formDTO);
+
+        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                formDTO.getComponent().getComponentPersistEntityList(),
+                        "form",
+                        formDTO.getId()
+                );
+
+        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
+
+        formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
+        formDTO.getFormTabs().forEach(formTab -> {
+            formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formTab.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+            });
+        });
+
         return formDTO;
     }
 

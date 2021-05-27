@@ -4,6 +4,7 @@ import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.mapper.chart.ChartMapper;
 import com.crm.sofia.model.chart.Chart;
+import com.crm.sofia.native_repository.chart.ChartNativeRepository;
 import com.crm.sofia.repository.chart.ChartRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,26 +19,26 @@ public class ChartDesignerService {
 
     private final ChartRepository chartRepository;
     private final ChartMapper chartMapper;
-    private final ChartDynamicQueryService chartDynamicQueryService;
+    private final ChartNativeRepository chartNativeRepository;
 
     public ChartDesignerService(ChartRepository chartRepository,
                                 ChartMapper chartMapper,
-                                ChartDynamicQueryService chartDynamicQueryService) {
+                                ChartNativeRepository chartNativeRepository) {
         this.chartRepository = chartRepository;
         this.chartMapper = chartMapper;
-        this.chartDynamicQueryService = chartDynamicQueryService;
+        this.chartNativeRepository = chartNativeRepository;
     }
 
     @Transactional
     public List<ChartFieldDTO> generateDataFields(String sql) {
-        List<ChartFieldDTO> chartFieldList = this.chartDynamicQueryService.generateFields(sql);
-        return this.chartDynamicQueryService.getData(chartFieldList, sql);
+        List<ChartFieldDTO> chartFieldList = this.chartNativeRepository.generateFields(sql);
+        return this.chartNativeRepository.getData(chartFieldList, sql);
     }
 
     @Transactional
     public List<ChartFieldDTO> getData(Long id) {
         ChartDTO chartDTO = this.getObject(id);
-        return this.chartDynamicQueryService.getData(chartDTO.getChartFieldList(), chartDTO.getQuery());
+        return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), chartDTO.getQuery());
     }
 
     public List<ChartDTO> getObject() {

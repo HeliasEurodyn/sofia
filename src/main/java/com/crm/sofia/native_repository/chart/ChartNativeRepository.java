@@ -1,4 +1,4 @@
-package com.crm.sofia.services.chart;
+package com.crm.sofia.native_repository.chart;
 
 import com.crm.sofia.dto.chart.ChartFieldDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +13,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class ChartDynamicQueryService {
+public class ChartNativeRepository {
 
     @Value("${sofia.database}")
     private String sofiaDatabase;
 
     private final EntityManager entityManager;
 
-    public ChartDynamicQueryService(EntityManager entityManager) {
+    public ChartNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

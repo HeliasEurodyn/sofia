@@ -31,6 +31,38 @@ public class ComponentPersistEntityFieldAssignmentService {
         this.saveFieldAssignmentsTree(componentPersistEntityList, formId);
     }
 
+    public List<ComponentPersistEntityDTO> retrieveFormFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,
+                                                                        String entityType,
+                                                                        Long entityId ) {
+
+        List<ComponentPersistEntityFieldAssignment> fieldAssignments =
+                componentPersistEntityFieldAssignmentRepository.findByFormId(entityId);
+
+        List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs =
+                this.componentPersistEntityFieldAssignmentMapper.map(fieldAssignments);
+
+        this.retrieveFieldAssignmentsTree(componentPersistEntityList,
+                fieldAssignmentDTOs);
+
+        return componentPersistEntityList;
+    }
+
+    public void deleteByFormId(Long formId) {
+        componentPersistEntityFieldAssignmentRepository.deleteComponentPersistEntityFieldAssignmentByFormId(formId);
+    }
+
+    public void createFieldAssignment(ComponentPersistEntityFieldDTO componentPersistEntityField) {
+        ComponentPersistEntityFieldAssignmentDTO assignment = new ComponentPersistEntityFieldAssignmentDTO();
+        assignment = new ComponentPersistEntityFieldAssignmentDTO();
+        assignment.setDescription(componentPersistEntityField.getPersistEntityField().getName());
+        assignment.setType(componentPersistEntityField.getPersistEntityField().getType());
+        assignment.setVisible(true);
+        assignment.setEditable(true);
+        assignment.setRequired(false);
+
+        componentPersistEntityField.setAssignment(assignment);
+    }
+
     private void saveFieldAssignmentsTree(List<ComponentPersistEntityDTO> componentPersistEntityList, Long formId) {
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments = new ArrayList<>();
         componentPersistEntityList
@@ -65,21 +97,6 @@ public class ComponentPersistEntityFieldAssignmentService {
         componentPersistEntityFieldAssignmentRepository.saveAll(fieldAssignments);
     }
 
-    public FormDTO retrieveFieldAssignments(FormDTO formDTO) {
-        Long formId = formDTO.getId();
-
-        List<ComponentPersistEntityFieldAssignment> fieldAssignments =
-                componentPersistEntityFieldAssignmentRepository.findByFormId(formId);
-
-        List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs =
-                this.componentPersistEntityFieldAssignmentMapper.map(fieldAssignments);
-
-        this.retrieveFieldAssignmentsTree(formDTO.getComponent().getComponentPersistEntityList(),
-                fieldAssignmentDTOs);
-
-        return formDTO;
-    }
-
     private void retrieveFieldAssignmentsTree(
             List<ComponentPersistEntityDTO> componentPersistEntityList,
             List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs) {
@@ -111,19 +128,4 @@ public class ComponentPersistEntityFieldAssignmentService {
                 });
     }
 
-    public void deleteByFormId(Long formId) {
-        componentPersistEntityFieldAssignmentRepository.deleteComponentPersistEntityFieldAssignmentByFormId(formId);
-    }
-
-    public void createFieldAssignment(ComponentPersistEntityFieldDTO componentPersistEntityField) {
-        ComponentPersistEntityFieldAssignmentDTO assignment = new ComponentPersistEntityFieldAssignmentDTO();
-        assignment = new ComponentPersistEntityFieldAssignmentDTO();
-        assignment.setDescription(componentPersistEntityField.getPersistEntityField().getName());
-        assignment.setType(componentPersistEntityField.getPersistEntityField().getType());
-        assignment.setVisible(true);
-        assignment.setEditable(true);
-        assignment.setRequired(false);
-
-        componentPersistEntityField.setAssignment(assignment);
-    }
 }

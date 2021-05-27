@@ -1,4 +1,4 @@
-package com.crm.sofia.services.info_card;
+package com.crm.sofia.native_repository.info_card;
 
 import com.crm.sofia.dto.info_card.InfoCardTextResponceDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Service
-public class InfoCardDynamicQueryService {
+public class InfoCardNativeRepository {
 
     @Value("${sofia.database}")
     private String sofiaDatabase;
@@ -17,7 +17,7 @@ public class InfoCardDynamicQueryService {
     private final EntityManager entityManager;
 
 
-    public InfoCardDynamicQueryService(EntityManager entityManager) {
+    public InfoCardNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

@@ -19,8 +19,6 @@ import javax.persistence.*;
 @Entity(name = "User")
 @Table(name = "user")
 @EqualsAndHashCode(callSuper = true)
-//@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-
 public class User extends BaseEntity {
 
     @Column(updatable = false, nullable = false)

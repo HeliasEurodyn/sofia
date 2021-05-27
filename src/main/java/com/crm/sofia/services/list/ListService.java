@@ -9,6 +9,7 @@ import com.crm.sofia.mapper.list.ListMapper;
 import com.crm.sofia.model.expression.ExprResponce;
 import com.crm.sofia.model.jasperTest.JasperModelClass;
 import com.crm.sofia.model.list.ListEntity;
+import com.crm.sofia.native_repository.list.ListNativeRepository;
 import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.expression.ExpressionService;
 import net.sf.jasperreports.engine.*;
@@ -38,16 +39,16 @@ public class ListService {
     private final ListRepository listRepository;
     private final ListMapper listMapper;
     private final ExpressionService expressionService;
-    private final ListDynamicQueryService listDynamicQueryService;
+    private final ListNativeRepository listNativeRepository;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ExpressionService expressionService,
-                       ListDynamicQueryService listDynamicQueryService) {
+                       ListNativeRepository listNativeRepository) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.expressionService = expressionService;
-        this.listDynamicQueryService = listDynamicQueryService;
+        this.listNativeRepository = listNativeRepository;
     }
 
     public ListDTO getObject(Long id) {
@@ -93,7 +94,7 @@ public class ListService {
     public ListResultsDataDTO getObjectData(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
 
-        List<Map<String, Object>> listContent = this.listDynamicQueryService.executeListAndGetData(listDTO);
+        List<Map<String, Object>> listContent = this.listNativeRepository.executeListAndGetData(listDTO);
         listResultsDataDTO.setListContent(listContent);
 
         if ((listDTO.getHasPagination() == null ? false : listDTO.getHasPagination())) {
@@ -104,7 +105,7 @@ public class ListService {
             listResultsDataDTO.setCurrentPage(currentPage);
 
             // Get Total Rows
-            Long totalRows = this.listDynamicQueryService.executeListAndCountTotalRows(listDTO);
+            Long totalRows = this.listNativeRepository.executeListAndCountTotalRows(listDTO);
             listResultsDataDTO.setTotalRows(totalRows);
 
             // Page Size & Total Pages
@@ -164,7 +165,7 @@ public class ListService {
     }
 
     public List<GroupEntryDTO> getObjectLeftGroupingData(ListDTO dto) {
-        List<GroupEntryDTO> groupContent = this.listDynamicQueryService.executeListAndGetGroupingData(dto);
+        List<GroupEntryDTO> groupContent = this.listNativeRepository.executeListAndGetGroupingData(dto);
         return groupContent;
     }
 

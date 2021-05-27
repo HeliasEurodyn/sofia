@@ -31,4 +31,5 @@ public class FormControlTableDTO extends BaseDTO {
 
     private List<FormControlTableControlDTO> formControls;
 
+    private List<FormControlTableControlDTO> formControlButtons;
 }

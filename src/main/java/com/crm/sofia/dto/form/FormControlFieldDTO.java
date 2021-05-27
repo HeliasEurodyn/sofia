@@ -15,19 +15,14 @@ import lombok.experimental.Accessors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
 public class FormControlFieldDTO extends BaseDTO {
+
     private String editor;
     private String description;
     private Boolean visible;
     private Boolean editable;
     private Boolean required;
     private String css;
-    //    private String defaultValue;
-//    private Integer decimals;
-//    private String fieldtype;
-//    private String cssclass;
-//    private Object fieldValue;
-    //    private String type;
-
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
+
 }

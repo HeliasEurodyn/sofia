@@ -1,4 +1,4 @@
-package com.crm.sofia.services.component.dynamic_query;
+package com.crm.sofia.native_repository.component;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
@@ -19,11 +19,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ComponentSaverService {
+public class ComponentSaverNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ComponentSaverService(EntityManager entityManager) {
+    public ComponentSaverNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -36,19 +36,19 @@ public class ComponentSaverService {
             List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         /* Filter - Keep only Table, Saveable PersistEntities */
-        List<ComponentPersistEntityDTO> filteredPersistEntityList =
-                componentPersistEntityList
-                        .stream()
-                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
-                        .collect(Collectors.toList());
+//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
+//                componentPersistEntityList
+//                        .stream()
+//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
+//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
+//                        .collect(Collectors.toList());
 
-        if (filteredPersistEntityList.size() == 0) {
-            return "0";
-        }
+//        if (filteredPersistEntityList.size() == 0) {
+//            return "0";
+//        }
 
         /* Itterate & save */
-        for (ComponentPersistEntityDTO componentPersistEntity : filteredPersistEntityList) {
+        for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
             if (multiDataLine == true) {
                 this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
@@ -63,10 +63,14 @@ public class ComponentSaverService {
         }
 
         /* Retrieve and return created id */
-        String id = filteredPersistEntityList.get(0).getComponentPersistEntityFieldList()
+        if (componentPersistEntityList.size() == 0) {
+            return "0";
+        }
+
+        String id = componentPersistEntityList.get(0).getComponentPersistEntityFieldList()
                 .stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
-                .map(x -> x.getValue().toString()).findFirst()
+                .map(x -> (x.getValue()==null?"0":x.getValue().toString())).findFirst()
                 .orElse("0");
 
         return id;
@@ -96,13 +100,16 @@ public class ComponentSaverService {
                 });
 
         /*  Delete Section */
-        //    if (existingPrimaryKeys.size() > 0) {
         String primaryKeyName = componentPersistEntity.getComponentPersistEntityFieldList()
                 .stream()
                 .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
                 .get().getPersistEntityField().getName();
 
-        if (componentPersistEntity.getDeleteType().equals("delete")) {
+
+        if (componentPersistEntity.getDeleteType().equals("delete")
+        && componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())
+        ) {
             this.deleteNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
                     componentPersistEntity.getPersistEntity().getName(),
@@ -110,7 +117,9 @@ public class ComponentSaverService {
                     savedPersistEntities,
                     primaryKeyName
             );
-        } else if (componentPersistEntity.getDeleteType().equals("clearJoin")) {
+        } else if (componentPersistEntity.getDeleteType().equals("clearJoin")
+                && componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
             this.unjoinNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
                     componentPersistEntity.getPersistEntity().getName(),
@@ -122,33 +131,52 @@ public class ComponentSaverService {
 
         /*  Update Section */
         updatableLines.forEach(componentPersistEntityDataLine -> {
-            this.updateComponentPersistEntity(
-                    componentPersistEntity.getPersistEntity().getName(),
-                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-                    savedPersistEntities);
 
+            if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                    && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
+                this.updateComponentPersistEntity(
+                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                        savedPersistEntities);
+            }
             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
             lineSavedPersistEntities.addAll(savedPersistEntities);
-            lineSavedPersistEntities.add(componentPersistEntity);
+
+            ComponentPersistEntityDTO componentPersistEntityLine = new ComponentPersistEntityDTO();
+            componentPersistEntityLine.setComponentPersistEntityFieldList(componentPersistEntityDataLine.getComponentPersistEntityFieldList());
+            componentPersistEntityLine.setCode(componentPersistEntity.getCode());
+            componentPersistEntityLine.setPersistEntity(componentPersistEntity.getPersistEntity());
+            lineSavedPersistEntities.add(componentPersistEntityLine);
 
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+               // this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+                this.generateQueriesAndSave(componentPersistEntityDataLine.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
         });
 
         /*  Insert Section */
         insertableLines.forEach(componentPersistEntityDataLine -> {
-            this.insertComponentPersistEntity(
-                    componentPersistEntity.getPersistEntity().getName(),
-                    componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
-                    savedPersistEntities);
+
+            if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                    && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
+                this.insertComponentPersistEntity(
+                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
+                        savedPersistEntities);
+            }
 
             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
             lineSavedPersistEntities.addAll(savedPersistEntities);
-            lineSavedPersistEntities.add(componentPersistEntity);
+           // lineSavedPersistEntities.add(componentPersistEntity);
+            ComponentPersistEntityDTO componentPersistEntityLine = new ComponentPersistEntityDTO();
+            componentPersistEntityLine.setComponentPersistEntityFieldList(componentPersistEntityDataLine.getComponentPersistEntityFieldList());
+            componentPersistEntityLine.setPersistEntity(componentPersistEntity.getPersistEntity());
+            componentPersistEntityLine.setCode(componentPersistEntity.getCode());
+            lineSavedPersistEntities.add(componentPersistEntityLine);
 
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-                this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+               // this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
+                this.generateQueriesAndSave(componentPersistEntityDataLine.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
         });
 
@@ -326,6 +354,14 @@ public class ComponentSaverService {
     private void saveComponentPersistEntity(
             ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
+
+        if(!componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")){
+            return;
+        }
+
+        if(!(componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())){
+            return;
+        }
 
         Boolean hasPrimaryKeyValue = this.hasPrimaryKeyValue(componentPersistEntity);
 

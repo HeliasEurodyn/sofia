@@ -28,7 +28,7 @@ public class FormControl extends BaseEntity {
             cascade = { CascadeType.ALL },
             orphanRemoval=true
     )
-    @JoinColumn(name = "form_component_field_id")
+    @JoinColumn(name = "form_control_field_id")
     private FormControlField formControlField;
 
     @OneToOne(
@@ -36,6 +36,6 @@ public class FormControl extends BaseEntity {
             cascade = { CascadeType.ALL },
             orphanRemoval=true
     )
-    @JoinColumn(name = "form_component_table_id")
+    @JoinColumn(name = "form_control_table_id")
     private FormControlTable formControlTable;
 }

@@ -33,9 +33,4 @@ public class FormController {
         return this.formService.save(formId, parameters);
     }
 
-    @DeleteMapping
-    public void deleteObjectData(@RequestParam("component-id")Long componentId, @RequestParam("selection-id") String selectionId) {
-        this.formService.delete(componentId, selectionId);
-    }
-
 }

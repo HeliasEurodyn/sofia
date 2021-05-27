@@ -3,7 +3,6 @@ package com.crm.sofia.services.appview;
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.dto.appview.AppViewFieldDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
-import com.crm.sofia.mapper.persistEntity.PersistEntityMapper;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import org.springframework.http.HttpStatus;
@@ -130,8 +129,8 @@ public class AppViewService {
             }
 
             int index = field[1].toString().indexOf("(");
-            if(index > 0){
-                dto.setType(field[1].toString().substring(0,index));
+            if (index > 0) {
+                dto.setType(field[1].toString().substring(0, index));
             }
 
             dtos.add(dto);

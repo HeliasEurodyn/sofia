@@ -1,4 +1,4 @@
-package com.crm.sofia.services.component.dynamic_query;
+package com.crm.sofia.native_repository.component;
 
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ComponentPersistEntityRetrieverService {
+public class ComponentPersistEntityRetrieverNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ComponentPersistEntityRetrieverService(EntityManager entityManager) {
+    public ComponentPersistEntityRetrieverNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

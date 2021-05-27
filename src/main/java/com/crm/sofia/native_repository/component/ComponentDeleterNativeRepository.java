@@ -1,4 +1,4 @@
-package com.crm.sofia.services.component.dynamic_query;
+package com.crm.sofia.native_repository.component;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ComponentDeleterService {
+public class ComponentDeleterNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ComponentDeleterService(EntityManager entityManager) {
+    public ComponentDeleterNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -52,12 +52,21 @@ public class ComponentDeleterService {
         if (multiDataLine) {
             componentPersistEntityDTO.getComponentPersistEntityDataLines()
                     .forEach(componentPersistEntityDataLineDTO -> {
-                        componentPersistEntityDTO.setComponentPersistEntityList(
-                                componentPersistEntityDataLineDTO.getComponentPersistEntityList());
-                        componentPersistEntityDTO.setComponentPersistEntityList(
-                                componentPersistEntityDataLineDTO.getComponentPersistEntityList());
 
-                        this.deleteComponentPersistEntity(componentPersistEntityDTO);
+                        ComponentPersistEntityDTO componentPersistEntityDataLine = new ComponentPersistEntityDTO();
+
+                        componentPersistEntityDataLine.setComponentPersistEntityFieldList(
+                                componentPersistEntityDataLineDTO.getComponentPersistEntityFieldList());
+                        componentPersistEntityDataLine.setComponentPersistEntityList(
+                                componentPersistEntityDataLineDTO.getComponentPersistEntityList());
+                        componentPersistEntityDataLine.setMultiDataLine(false);
+                        componentPersistEntityDataLine.setPersistEntity(componentPersistEntityDTO.getPersistEntity());
+                        componentPersistEntityDataLine.setCode(componentPersistEntityDTO.getCode());
+                        componentPersistEntityDataLine.setAllowSave(componentPersistEntityDTO.getAllowSave());
+                        componentPersistEntityDataLine.setAllowRetrieve(componentPersistEntityDTO.getAllowRetrieve());
+                        componentPersistEntityDataLine.setDeleteType(componentPersistEntityDTO.getDeleteType());
+
+                        this.deleteComponentPersistEntity(componentPersistEntityDataLine);
                     });
             return;
         }
@@ -81,8 +90,16 @@ public class ComponentDeleterService {
         String queryString = "DELETE FROM " + entityName;
 
         /* Where Section */
-        List<String> whereList = componentPersistEntityFieldList.stream()
-                .filter(x -> !(x.getSaveStatement() == null ? "" : x.getSaveStatement()).equals(""))
+//        List<String> whereList = componentPersistEntityFieldList.stream()
+//                .filter(x -> !(x.getSaveStatement() == null ? "" : x.getSaveStatement()).equals(""))
+//                .filter(x -> x.getValue() != null)
+//                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
+//                .collect(Collectors.toList());
+
+        /* Where Section */
+        List<String> whereList = componentPersistEntityFieldList
+                .stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey())
                 .filter(x -> x.getValue() != null)
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
@@ -97,7 +114,9 @@ public class ComponentDeleterService {
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
-        componentPersistEntityFieldList.stream()
+        componentPersistEntityFieldList
+                .stream()
+                .filter(x -> x.getPersistEntityField().getPrimaryKey())
                 .filter(x -> x.getValue() != null)
                 .forEach(x ->
                         query.setParameter(

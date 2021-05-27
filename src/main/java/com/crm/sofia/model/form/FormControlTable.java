@@ -33,19 +33,25 @@ public class FormControlTable extends BaseEntity {
     @Column
     private String css;
 
-
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = ComponentPersistEntity.class)
     @JoinColumn(name = "component_persist_entity_id", referencedColumnName = "id")
     private ComponentPersistEntity componentPersistEntity;
-
 
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },
             orphanRemoval=true
     )
-    @JoinColumn(name = "form_component_table_id")
+    @JoinColumn(name = "form_control_table_id")
     private List<FormControlTableControl> formControls;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_control_table_id")
+    private List<FormControlTableButtonControl> formControlButtons;
 
 }

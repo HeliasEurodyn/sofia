@@ -12,9 +12,9 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormControlTableControl")
-@Table(name = "form_control_table_control")
-public class FormControlTableControl extends BaseEntity {
+@Entity(name = "FormControlTableButtonControl")
+@Table(name = "form_control_table_button_control")
+public class FormControlTableButtonControl extends BaseEntity {
 
     @Column
     private String type;
@@ -22,12 +22,13 @@ public class FormControlTableControl extends BaseEntity {
     @Column
     private String cssclass;
 
+
     @OneToOne(
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },
             orphanRemoval=true
     )
-    @JoinColumn(name = "form_control_field_id")
-    private FormControlField formControlField;
+    @JoinColumn(name = "form_control_table_button_id")
+    private FormControlButton formControlButton;
 
 }

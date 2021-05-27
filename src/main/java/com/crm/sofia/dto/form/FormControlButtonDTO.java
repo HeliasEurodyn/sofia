@@ -12,13 +12,11 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormControlTableControlDTO extends BaseDTO {
-
-    private String type;
-
-    private String cssclass;
-
-    private FormControlFieldDTO formControlField;
-
-    private FormControlButtonDTO formControlButton;
+public class FormControlButtonDTO extends BaseDTO {
+    private String code;
+    private String icon;
+    private String description;
+    private String editor;
+    private  Boolean visible;
+    private String cssClass;
 }

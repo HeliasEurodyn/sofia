@@ -29,7 +29,7 @@ public class ComponentDesignerController {
 
     @GetMapping
     List<ComponentDTO> getObject() {
-        return this.componentDesignerService.getObject();
+        return this.componentDesignerService.getList();
     }
 
     @GetMapping(path = "/by-id")

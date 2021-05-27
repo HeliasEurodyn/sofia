@@ -1,4 +1,4 @@
-package com.crm.sofia.services.list;
+package com.crm.sofia.native_repository.list;
 
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.GroupEntryDTO;
@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
-public class ListDynamicQueryService {
+public class ListNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ListDynamicQueryService(EntityManager entityManager) {
+    public ListNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 

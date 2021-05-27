@@ -4,6 +4,7 @@ import com.crm.sofia.dto.info_card.InfoCardDTO;
 import com.crm.sofia.dto.info_card.InfoCardTextResponceDTO;
 import com.crm.sofia.mapper.info_card.InfoCardMapper;
 import com.crm.sofia.model.info_card.InfoCard;
+import com.crm.sofia.native_repository.info_card.InfoCardNativeRepository;
 import com.crm.sofia.repository.info_card.InfoCardRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,14 @@ public class InfoCardDesignerService {
 
     private final InfoCardRepository infoCardRepository;
     private final InfoCardMapper infoCardMapper;
-    private final InfoCardDynamicQueryService infoCardDynamicQueryService;
+    private final InfoCardNativeRepository infoCardNativeRepository;
 
     public InfoCardDesignerService(InfoCardRepository infoCardRepository,
                                    InfoCardMapper infoCardMapper,
-                                   InfoCardDynamicQueryService infoCardDynamicQueryService) {
+                                   InfoCardNativeRepository infoCardNativeRepository) {
         this.infoCardRepository = infoCardRepository;
         this.infoCardMapper = infoCardMapper;
-        this.infoCardDynamicQueryService = infoCardDynamicQueryService;
+        this.infoCardNativeRepository = infoCardNativeRepository;
     }
 
     public List<InfoCardDTO> getObject() {
@@ -59,6 +60,6 @@ public class InfoCardDesignerService {
     }
 
     public InfoCardTextResponceDTO getData(String sql) {
-        return this.infoCardDynamicQueryService.getData(sql);
+        return this.infoCardNativeRepository.getData(sql);
     }
 }

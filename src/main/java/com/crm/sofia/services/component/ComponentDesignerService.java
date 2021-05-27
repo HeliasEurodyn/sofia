@@ -7,6 +7,7 @@ import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
+import com.crm.sofia.model.common.BaseNoIdEntity;
 import com.crm.sofia.model.component.Component;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.model.component.ComponentPersistEntityField;
@@ -34,7 +35,6 @@ public class ComponentDesignerService {
 
     public ComponentDesignerService(ComponentMapper menuMapper,
                                     ComponentRepository componentRepository,
-                                    ComponentFieldService componentFieldService,
                                     ComponentPersistEntityRepository componentPersistEntityRepository,
                                     ComponentPersistEntityMapper componentPersistEntityMapper
     ) {
@@ -42,12 +42,11 @@ public class ComponentDesignerService {
         this.componentRepository = componentRepository;
         this.componentPersistEntityRepository = componentPersistEntityRepository;
         this.componentPersistEntityMapper = componentPersistEntityMapper;
-
     }
 
-    public List<ComponentDTO> getObject() {
+    public List<ComponentDTO> getList() {
         List<Component> entites = this.componentRepository.findAll();
-        entites = entites.stream().sorted((o1, o2) -> o1.getCreatedOn().compareTo(o2.getCreatedOn()))
+        entites = entites.stream().sorted(Comparator.comparing(BaseNoIdEntity::getCreatedOn))
                 .collect(Collectors.toList());
         return this.componentMapper.map(entites);
     }
@@ -84,175 +83,6 @@ public class ComponentDesignerService {
     public void deleteObject(Long id) {
         this.componentRepository.deleteById(id);
     }
-
-    public void mapParametersToComponentDTO(List<ComponentPersistEntityDTO> componentPersistEntityList,
-                                                    Map<String, Map<String, Object>> parameters) {
-
-        /* Iterate parameters */
-        for (Map.Entry persistEntityPair : parameters.entrySet()) {
-            String persistEntityCode = (String) persistEntityPair.getKey();
-            Map<String, Object> persistEntityFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
-
-            ComponentPersistEntityDTO componentPersistEntity =
-                    this.findComponentPersistEntity(componentPersistEntityList, persistEntityCode);
-            if (componentPersistEntity == null) continue;
-
-            if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
-                this.mapMultilinePersistEntity(componentPersistEntity,
-                        persistEntityFieldsMap);
-            } else {
-                this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntity.getComponentPersistEntityFieldList(),
-                        persistEntityFieldsMap);
-
-                if (persistEntityFieldsMap.containsKey("sub-entities") && componentPersistEntity.getComponentPersistEntityList() != null) {
-                    this.mapParametersToComponentDTO(componentPersistEntity.getComponentPersistEntityList(),
-                            (Map<String, Map<String, Object>>) persistEntityFieldsMap.get("sub-entities"));
-                }
-            }
-        }
-    }
-
-    private ComponentPersistEntityDTO findComponentPersistEntity(List<ComponentPersistEntityDTO> componentPersistEntityList,
-                                                                 String persistEntityCode) {
-
-        Optional<ComponentPersistEntityDTO> componentPersistEntityOptional =
-                componentPersistEntityList
-                        .stream()
-                        .filter(cpe -> cpe.getCode().equals(persistEntityCode)).findFirst();
-
-        if (!componentPersistEntityOptional.isPresent()) {
-            return null;
-        }
-
-        return componentPersistEntityOptional.get();
-    }
-
-    private List<ComponentPersistEntityDTO> setComponentPersistEntityTreeToList(
-            List<ComponentPersistEntityDTO> componentPersistEntityTree,
-            List<ComponentPersistEntityDTO> componentPersistEntityList) {
-
-        componentPersistEntityList.addAll(componentPersistEntityTree);
-
-        componentPersistEntityTree
-                .stream()
-                .filter(componentPersistEntity -> componentPersistEntity.getComponentPersistEntityList() != null)
-                .forEach(componentPersistEntity -> {
-                    List<ComponentPersistEntityDTO> children =
-                            this.setComponentPersistEntityTreeToList(
-                                    componentPersistEntity.getComponentPersistEntityList(), componentPersistEntityList);
-                    componentPersistEntityList.addAll(children);
-                });
-
-        return componentPersistEntityList;
-    }
-
-    private ComponentPersistEntityDTO mapMultilinePersistEntity(ComponentPersistEntityDTO componentPersistEntity, Map<String, Object> persistEntityFieldsMap) {
-
-        Gson gson = new Gson();
-        Type fieldListType = new TypeToken<ArrayList<ComponentPersistEntityFieldDTO>>() {
-        }.getType();
-        Type listType = new TypeToken<ArrayList<ComponentPersistEntityDTO>>() {
-        }.getType();
-        /* Iterate lines */
-        for (Map.Entry persistEntityPair : persistEntityFieldsMap.entrySet()) {
-
-            Map<String, Object> persistEntityLineFieldsMap = (Map<String, Object>) persistEntityPair.getValue();
-
-            /* Clone ComponentPersistEntityFieldList and add to line */
-            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), fieldListType);
-
-            /* Clone ComponentPersistEntity and add to line */
-            List<ComponentPersistEntityDTO> componentPersistEntityList =
-                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityList()), listType);
-
-            /* Iterate parameters and map to componentPersistEntity Fields */
-            componentPersistEntityFieldList =
-                    this.itterateAndMapPamametersToComponentPersistEntityFields(componentPersistEntityFieldList,
-                            persistEntityLineFieldsMap);
-
-            if (persistEntityLineFieldsMap.containsKey("sub-entities") && componentPersistEntityList != null) {
-                this.mapParametersToComponentDTO(componentPersistEntityList,
-                        (Map<String, Map<String, Object>>) persistEntityLineFieldsMap.get("sub-entities"));
-            }
-
-            ComponentPersistEntityDataLineDTO componentPersistEntityDataLine = new ComponentPersistEntityDataLineDTO();
-            componentPersistEntityDataLine.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
-            componentPersistEntityDataLine.setComponentPersistEntityList(componentPersistEntityList);
-            componentPersistEntity.getComponentPersistEntityDataLines().add(componentPersistEntityDataLine);
-        }
-
-        return componentPersistEntity;
-    }
-
-    private List<ComponentPersistEntityFieldDTO>
-    itterateAndMapPamametersToComponentPersistEntityFields(
-            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
-            Map<String, Object> persistEntityFieldsMap) {
-        /* Iterate parameters */
-        for (Map.Entry persistEntityFieldPair : persistEntityFieldsMap.entrySet()) {
-            String persistEntityFieldCode = (String) persistEntityFieldPair.getKey();
-            Object persistEntityFieldValue = (Object) persistEntityFieldPair.getValue();
-
-            /* Find component Persist entity field */
-            ComponentPersistEntityFieldDTO compPersistEntityField =
-                    this.findComponentPersistEntityField(componentPersistEntityFieldList,
-                            persistEntityFieldCode);
-            if (compPersistEntityField == null) continue;
-
-            /* Set value to compPersistEntityField */
-            compPersistEntityField.setValue(persistEntityFieldValue);
-        }
-
-        return componentPersistEntityFieldList;
-    }
-
-    private ComponentPersistEntityFieldDTO findComponentPersistEntityField(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
-                                                                           String persistEntityFieldCode) {
-
-        /* Find component Persist entity field from selected componentPersistEntity */
-        Optional<ComponentPersistEntityFieldDTO> compPersistEntityFieldOptional =
-                componentPersistEntityFieldList
-                        .stream()
-                        .filter(cpef -> cpef.getPersistEntityField().getName().equals(persistEntityFieldCode))
-                        .findFirst();
-
-        if (!compPersistEntityFieldOptional.isPresent()) return null;
-        ComponentPersistEntityFieldDTO compPersistEntityField = compPersistEntityFieldOptional.get();
-
-        return compPersistEntityField;
-    }
-
-//    public Boolean hasPrimaryKeyValue(ComponentDTO component) {
-//
-//        if (component.getComponentPersistEntityList() == null) {
-//            return false;
-//        }
-//
-//        if (component.getComponentPersistEntityList().size() == 0) {
-//            return false;
-//        }
-//
-//        ComponentPersistEntityDTO componentPersistEntity = component.getComponentPersistEntityList().get(0);
-//
-//        Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityFieldDTO =
-//                componentPersistEntity.getComponentPersistEntityFieldList()
-//                        .stream()
-//                        .filter(componentPersistEntityField -> componentPersistEntityField.getPersistEntityField().getPrimaryKey() == true).findFirst();
-//
-//        if (!optionalComponentPersistEntityFieldDTO.isPresent()) {
-//            return false;
-//        }
-//
-//        ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = optionalComponentPersistEntityFieldDTO.get();
-//
-//        if (componentPersistEntityFieldDTO.getValue() == null) {
-//            return false;
-//        } else {
-//            return true;
-//        }
-//
-//    }
 
     public ComponentPersistEntityDTO getComponentPersistEntityDataById(Long id, String selectionId) {
         ComponentPersistEntityDTO componentPersistEntityDTO = this.getComponentPersistEntityById(id);

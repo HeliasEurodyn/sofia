@@ -25,4 +25,6 @@ public class FormDTO extends BaseDTO {
 
     private List<FormScriptDTO> formScripts;
 
+    private String versionId;
+
 }

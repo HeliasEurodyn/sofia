@@ -41,4 +41,7 @@ public class FormEntity extends BaseEntity {
     )
     @JoinColumn(name = "form_id")
     private List<FormScript> formScripts;
+
+    @Column
+    private String versionId;
 }
