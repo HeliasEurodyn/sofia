@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.form;
 import com.crm.sofia.dto.form.FormDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,12 @@ public class FormController {
     public String postObjectData(@RequestParam("id") Long formId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.formService.save(formId, parameters);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/dynamic-script/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormScript(@PathVariable("id") Long formId) {
+        return this.formService.getFormScript(formId);
     }
 
 }

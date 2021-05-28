@@ -2,12 +2,10 @@ package com.crm.sofia.services.form;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.form.FormAreaDTO;
-import com.crm.sofia.dto.form.FormControlDTO;
-import com.crm.sofia.dto.form.FormDTO;
-import com.crm.sofia.dto.form.FormTabDTO;
+import com.crm.sofia.dto.form.*;
 import com.crm.sofia.mapper.form.FormMapper;
 import com.crm.sofia.model.form.FormEntity;
+import com.crm.sofia.model.form.FormScript;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
@@ -16,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FormService {
@@ -33,7 +28,8 @@ public class FormService {
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
                        ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
-                       ComponentRetrieverService componentRetrieverService, ComponentSaverService componentSaverService) {
+                       ComponentRetrieverService componentRetrieverService,
+                       ComponentSaverService componentSaverService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
@@ -46,7 +42,7 @@ public class FormService {
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
-        FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
+        FormDTO formDTO = this.formMapper.mapForm(optionalFormEntity.get());
 
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
         formDTO.getFormTabs().forEach(formTab -> {
@@ -101,9 +97,22 @@ public class FormService {
 
     }
 
-//    @Transactional
-//    @Modifying
-//    public void delete(Long componentId, String selectionId) {
-//    }
+    public String getFormScript(Long formId) {
+
+        List<String> decodedScripts = new ArrayList<>();
+        List<String> formScripts = this.formRepository.getFormScriptsByFormId(formId);
+        String formScriptWithHandlers = this.formRepository.getFormScript(formId);
+        formScripts.add(formScriptWithHandlers);
+
+        formScripts.forEach(formScript -> {
+            byte[] decodedBytes = Base64.getDecoder().decode(formScript);
+            String decodedScript = new String(decodedBytes);
+            decodedScripts.add(decodedScript);
+        });
+        return String.join("\n\n", decodedScripts);
+    }
+
+
+
 
 }

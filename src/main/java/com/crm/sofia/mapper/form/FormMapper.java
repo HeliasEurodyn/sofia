@@ -12,8 +12,11 @@ import org.mapstruct.NullValueCheckStrategy;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class FormMapper extends BaseMapper<FormDTO, FormEntity> {
 
-
-
+    public FormDTO mapForm(FormEntity entity){
+        FormDTO dto = this.map(entity);
+        dto.getFormScripts().forEach(formScriptDTO -> formScriptDTO.setScript(""));
+        return dto;
+    }
 
 //    public FormDTO mapEntity(FormEntity entity){
 //        FormDTO dto = this.map(entity);

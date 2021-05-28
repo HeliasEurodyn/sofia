@@ -1,13 +1,14 @@
 package com.crm.sofia.model.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.component.ComponentPersistEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
