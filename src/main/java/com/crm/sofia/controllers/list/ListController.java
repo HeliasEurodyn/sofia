@@ -36,6 +36,11 @@ public class ListController {
         return this.listService.getObjectData(id);
     }
 
+    @GetMapping
+    List<ListDTO> getObject() {
+        return this.listService.getObject();
+    }
+
     @GetMapping(path = "/results")
     ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters, id);

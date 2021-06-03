@@ -1,5 +1,6 @@
 package com.crm.sofia.services.dashboard;
 
+import com.crm.sofia.dto.dashboard.DashboardAreaDTO;
 import com.crm.sofia.dto.dashboard.DashboardDTO;
 import com.crm.sofia.dto.dashboard.DashboardItemDTO;
 import com.crm.sofia.mapper.dashboard.DashboardMapper;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -35,16 +37,43 @@ public class DashboardService {
         }
         DashboardDTO dashboardDTO = dashboardMapper.map(optionalDashboard.get());
 
-        dashboardDTO.getDashboardItemList()
+        List<Long> ids = new ArrayList<>();
+        List<DashboardAreaDTO> dashboardAreaList = new ArrayList<>();
+        for (DashboardAreaDTO area : dashboardDTO.getDashboardAreaList()) {
+            if (!ids.contains(area.getId())) {
+                ids.add(area.getId());
+                dashboardAreaList.add(area);
+            }
+        }
+        dashboardDTO.setDashboardAreaList(dashboardAreaList);
+
+        dashboardDTO.getDashboardAreaList()
                 .stream()
                 .filter(x -> x.getShortOrder() == null)
                 .forEach(x -> x.setShortOrder(0L));
 
-        List<DashboardItemDTO> dashboardItemList = dashboardDTO.getDashboardItemList().stream()
-                .sorted(Comparator.comparingLong(DashboardItemDTO::getShortOrder))
-                .collect(Collectors.toList());
+        dashboardAreaList =
+                dashboardDTO.getDashboardAreaList()
+                        .stream()
+                        .sorted(Comparator.comparingLong(DashboardAreaDTO::getShortOrder))
+                        .collect(Collectors.toList());
 
-        dashboardDTO.setDashboardItemList(dashboardItemList);
+        dashboardDTO.setDashboardAreaList(dashboardAreaList);
+
+        dashboardDTO.getDashboardAreaList()
+                .forEach(area -> {
+                    area.getDashboardItemList().stream()
+                            .filter(x -> x.getShortOrder() == null)
+                            .forEach(x -> x.setShortOrder(0L));
+
+                    List<DashboardItemDTO> dashboardItemList =
+                            area.getDashboardItemList()
+                                    .stream()
+                                    .sorted(Comparator.comparingLong(DashboardItemDTO::getShortOrder))
+                                    .collect(Collectors.toList());
+
+                    area.setDashboardItemList(dashboardItemList);
+                });
 
         return dashboardDTO;
     }

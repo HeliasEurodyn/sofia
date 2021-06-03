@@ -68,6 +68,11 @@ public class ListService {
         return listDTO;
     }
 
+    public List<ListDTO> getObject() {
+        List<ListEntity> views = this.listRepository.findAll();
+        return this.listMapper.map(views);
+    }
+
     public ListDTO getObjectData(Long id) {
 
         ListDTO listDTO = this.getObject(id);

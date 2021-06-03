@@ -156,7 +156,9 @@ public class FormDesignerService {
     private String generatePointerVars() {
         List<String> pointerVarLines = new ArrayList<>();
         pointerVarLines.add("var setSelectedTabNumber;");
+        pointerVarLines.add("var textInputDialog;");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
+        pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
         return String.join("\n", pointerVarLines);
     }
 
@@ -177,11 +179,9 @@ public class FormDesignerService {
                                     )
                                     .forEach(formControlButtonControl -> {
                                         nativeButtonClickHandlerLines.
-                                                add("if(btnCode == '"+formControlButtonControl.getFormControlButton().getCode()+"') {");
-                                        nativeButtonClickHandlerLines.
-                                                add("\t btn_"+formControlButtonControl.getFormControlButton().getCode()+"_click();");
-                                        nativeButtonClickHandlerLines.
-                                                add("}");
+                                                add("if(btnCode == '"+formControlButtonControl.getFormControlButton().getCode()+"') "+
+                                                        "btn_"+formControlButtonControl.getFormControlButton().getCode()+"_click();");
+
                                     });
                         });
             });

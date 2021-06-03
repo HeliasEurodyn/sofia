@@ -18,8 +18,10 @@ import java.util.List;
 @Table(name = "form_script")
 public class FormScript extends BaseEntity {
 
+    @Column
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String script;
 
 }

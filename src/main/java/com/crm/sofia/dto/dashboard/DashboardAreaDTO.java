@@ -1,6 +1,5 @@
 package com.crm.sofia.dto.dashboard;
 
-import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -17,10 +16,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class DashboardDTO extends BaseDTO {
+public class DashboardAreaDTO extends BaseDTO {
 
-    private String description;
+    private String cssclass;
 
-    private List<DashboardAreaDTO> dashboardAreaList;
+    private String cssStyle;
+
+    private List<DashboardItemDTO> dashboardItemList;
 
 }
