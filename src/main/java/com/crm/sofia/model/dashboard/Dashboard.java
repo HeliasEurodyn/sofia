@@ -31,6 +31,6 @@ public class Dashboard extends BaseEntity {
             orphanRemoval = true
     )
     @JoinColumn(name = "dashboard_id")
-    private List<DashboardItem> dashboardItemList;
+    private List<DashboardArea> dashboardAreaList;
 
 }
