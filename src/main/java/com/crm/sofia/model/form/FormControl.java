@@ -1,5 +1,6 @@
 package com.crm.sofia.model.form;
 
+import com.crm.sofia.dto.form.FormControlButtonDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -38,4 +39,14 @@ public class FormControl extends BaseEntity {
     )
     @JoinColumn(name = "form_control_table_id")
     private FormControlTable formControlTable;
+
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_control_button_id")
+    public FormControlButton formControlButton;
+
+
 }

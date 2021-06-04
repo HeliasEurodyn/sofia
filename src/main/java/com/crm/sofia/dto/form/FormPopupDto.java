@@ -1,7 +1,6 @@
 package com.crm.sofia.dto.form;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.component.ComponentDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,16 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormDTO extends BaseDTO {
+public class FormPopupDto extends BaseDTO {
 
-    private String name;
+    private String code;
 
-    private ComponentDTO component;
+    private String description;
 
-    private List<FormTabDTO> formTabs;
+    private String icon;
 
-    private List<FormPopupDto> formPopups;
-
-    private List<FormScriptDTO> formScripts;
+    private List<FormAreaDTO> formAreas;
 
 }

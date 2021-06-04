@@ -1,5 +1,6 @@
 package com.crm.sofia.model.form;
 
+import com.crm.sofia.dto.form.FormPopupDto;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.component.Component;
 import lombok.Data;
@@ -33,6 +34,14 @@ public class FormEntity extends BaseEntity {
     )
     @JoinColumn(name = "form_id")
     private List<FormTab> formTabs;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<FormPopup> formPopups;
 
     @OneToMany(
             fetch = FetchType.LAZY,

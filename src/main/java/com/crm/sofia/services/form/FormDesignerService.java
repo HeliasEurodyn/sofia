@@ -155,42 +155,82 @@ public class FormDesignerService {
 
     private String generatePointerVars() {
         List<String> pointerVarLines = new ArrayList<>();
+        pointerVarLines.add("\n");
         pointerVarLines.add("var setSelectedTabNumber;");
         pointerVarLines.add("var textInputDialog;");
+        pointerVarLines.add("var openPopup;");
+        pointerVarLines.add("var closePopup;");
+
+        pointerVarLines.add("\n");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
+        pointerVarLines.add("function defineSelectedOpenPopupDialog(myCallback){openPopup = myCallback;}");
+        pointerVarLines.add("function defineSelectedClosePopupDialog(myCallback){closePopup = myCallback;}");
+        pointerVarLines.add("\n");
         return String.join("\n", pointerVarLines);
     }
 
     private String generateNativeButtonClickHandler(FormDTO formDTO) {
+
+        List<FormAreaDTO> formAreas = new ArrayList<>();
+
+        formDTO.getFormTabs()
+                .stream()
+                .filter(formTabDTO -> formTabDTO.getFormAreas() != null)
+                .forEach(formTabDTO -> formAreas.addAll(formTabDTO.getFormAreas()));
+
+        formDTO.getFormPopups()
+                .stream()
+                .filter(formPopupDTO -> formPopupDTO.getFormAreas() != null)
+                .forEach(formPopupDTO -> formAreas.addAll(formPopupDTO.getFormAreas()));
+
         List<String> nativeButtonClickHandlerLines = new ArrayList<>();
+        nativeButtonClickHandlerLines.add("\n");
         nativeButtonClickHandlerLines.add("function nativeButtonClickHandler(btnCode) {");
-        formDTO.getFormTabs().forEach(formTabDTO -> {
-            formTabDTO.getFormAreas().forEach(formAreaDTO -> {
-                formAreaDTO.getFormControls()
-                        .stream()
-                        .filter(formControlDTO -> formControlDTO.getType().equals("table"))
-                        .forEach(formControlDTO -> {
-                            formControlDTO.formControlTable.getFormControlButtons()
-                                    .stream()
-                                    .filter(formControlButtonControl ->
-                                            !(formControlButtonControl.getFormControlButton().getCode()==null?"":formControlButtonControl.getFormControlButton().getCode())
-                                                    .equals("")
-                                    )
-                                    .forEach(formControlButtonControl -> {
-                                        nativeButtonClickHandlerLines.
-                                                add("if(btnCode == '"+formControlButtonControl.getFormControlButton().getCode()+"') "+
-                                                        "btn_"+formControlButtonControl.getFormControlButton().getCode()+"_click();");
 
-                                    });
-                        });
-            });
+        /* Buttons */
+        formAreas.forEach(formAreaDTO -> {
+            formAreaDTO.getFormControls()
+                    .stream()
+                    .filter(formControlDTO -> formControlDTO.getType().equals("button"))
+                    .filter(formControlDTO ->
+                            !(formControlDTO.getFormControlButton().getCode() == null ? "" : formControlDTO.getFormControlButton().getCode())
+                                    .equals("")
+                    )
+                    .forEach(formControlDTO -> {
+                        nativeButtonClickHandlerLines.
+                                add("if(btnCode == '" + formControlDTO.getFormControlButton().getCode() + "') " +
+                                        "btn_" + formControlDTO.getFormControlButton().getCode() + "_click();");
+
+                    });
         });
-        nativeButtonClickHandlerLines.add("}");
 
+        /* Table Buttons */
+        formAreas.forEach(formAreaDTO -> {
+            formAreaDTO.getFormControls()
+                    .stream()
+                    .filter(formControlDTO -> formControlDTO.getType().equals("table"))
+                    .forEach(formControlDTO -> {
+                        formControlDTO.formControlTable.getFormControlButtons()
+                                .stream()
+                                .filter(formControlButtonControl ->
+                                        !(formControlButtonControl.getFormControlButton().getCode() == null ? "" : formControlButtonControl.getFormControlButton().getCode())
+                                                .equals("")
+                                )
+                                .forEach(formControlButtonControl -> {
+                                    nativeButtonClickHandlerLines.
+                                            add("if(btnCode == '" + formControlButtonControl.getFormControlButton().getCode() + "') " +
+                                                    "btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click();");
+
+                                });
+                    });
+        });
+
+
+        nativeButtonClickHandlerLines.add("}");
+        nativeButtonClickHandlerLines.add("\n");
         return String.join("\n", nativeButtonClickHandlerLines);
     }
-
 
 
 //    @Transactional

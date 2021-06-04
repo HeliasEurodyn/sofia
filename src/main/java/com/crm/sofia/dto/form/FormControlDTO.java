@@ -22,5 +22,6 @@ public class FormControlDTO extends BaseDTO {
 
     public FormControlTableDTO formControlTable;
 
+    public FormControlButtonDTO formControlButton;
 
 }
