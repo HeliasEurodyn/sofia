@@ -23,8 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -40,15 +44,18 @@ public class ListService {
     private final ListMapper listMapper;
     private final ExpressionService expressionService;
     private final ListNativeRepository listNativeRepository;
+    private final DataSource dataSource;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ExpressionService expressionService,
-                       ListNativeRepository listNativeRepository) {
+                       ListNativeRepository listNativeRepository,
+                       DataSource dataSource) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.expressionService = expressionService;
         this.listNativeRepository = listNativeRepository;
+        this.dataSource = dataSource;
     }
 
     public ListDTO getObject(Long id) {
@@ -174,68 +181,91 @@ public class ListService {
         return groupContent;
     }
 
-    public void doJasperPdfTest() throws FileNotFoundException, JRException {
-
-        List<JasperModelClass> entities = new ArrayList<>();
-        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
-        entities.add(entity);
-        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
-        entities.add(entity);
-        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
-        entities.add(entity);
-
-        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
-        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("createdBy", "Helias");
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-
-        JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\helias\\Desktop\\cv new\\test.pdf");
-
-    }
-
-    public void doJasperExcelTestExcel() throws FileNotFoundException, JRException {
-
-        List<JasperModelClass> entities = new ArrayList<>();
-        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
-        entities.add(entity);
-        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
-        entities.add(entity);
-        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
-        entities.add(entity);
-
-        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
-        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("createdBy", "Helias");
-
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-
-        JRXlsxExporter exporter = new JRXlsxExporter();
-
-        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:\\Users\\helias\\Desktop\\cv new\\testexcel.xlsx"));
-
-        SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
-        reportConfig.setSheetNames(new String[]{"Sofia output data"});
-        reportConfig.setRemoveEmptySpaceBetweenRows(true);
-        reportConfig.setWhitePageBackground(false);
-        reportConfig.setDetectCellType(true);
-        reportConfig.setOnePagePerSheet(true);
-        exporter.setConfiguration(reportConfig);
-
-
-        try {
-            exporter.exportReport();
-        } catch (JRException ex) {
-//            Logger.getLogger(SimpleReportFiller.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-        //JasperExportManager.exportReportToPdfFile(jasperPrint,);
-    }
+//    public void doJasperPdfTestN(HttpServletResponse response) throws JRException, SQLException, IOException {
+//
+////        List<JasperModelClass> entities = new ArrayList<>();
+////        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
+////        entities.add(entity);
+////        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
+////        entities.add(entity);
+////        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
+////        entities.add(entity);
+//
+//        File file = ResourceUtils.getFile("classpath:hrep.jrxml");
+//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+////        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
+//        Map<String, Object> parameters = new HashMap<>();
+//        parameters.put("id", "1");
+////        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
+//
+//        //JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\helias\\Desktop\\test1.pdf");
+//        JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+//
+//    }
+//
+//    public void doJasperPdfTest() throws FileNotFoundException, JRException {
+//
+//        List<JasperModelClass> entities = new ArrayList<>();
+//        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
+//        entities.add(entity);
+//        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
+//        entities.add(entity);
+//        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
+//        entities.add(entity);
+//
+//        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
+//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+//        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
+//        Map<String, Object> parameters = new HashMap<>();
+//        parameters.put("createdBy", "Helias");
+//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+//
+//        JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\helias\\Desktop\\cv new\\test.pdf");
+//
+//    }
+//
+//    public void doJasperExcelTestExcel() throws FileNotFoundException, JRException {
+//
+//        List<JasperModelClass> entities = new ArrayList<>();
+//        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
+//        entities.add(entity);
+//        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
+//        entities.add(entity);
+//        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
+//        entities.add(entity);
+//
+//        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
+//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+//        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
+//        Map<String, Object> parameters = new HashMap<>();
+//        parameters.put("createdBy", "Helias");
+//
+//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+//
+//        JRXlsxExporter exporter = new JRXlsxExporter();
+//
+//        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+//        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:\\Users\\helias\\Desktop\\cv new\\testexcel.xlsx"));
+//
+//        SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
+//        reportConfig.setSheetNames(new String[]{"Sofia output data"});
+//        reportConfig.setRemoveEmptySpaceBetweenRows(true);
+//        reportConfig.setWhitePageBackground(false);
+//        reportConfig.setDetectCellType(true);
+//        reportConfig.setOnePagePerSheet(true);
+//        exporter.setConfiguration(reportConfig);
+//
+//
+//        try {
+//            exporter.exportReport();
+//        } catch (JRException ex) {
+////            Logger.getLogger(SimpleReportFiller.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//
+//        //JasperExportManager.exportReportToPdfFile(jasperPrint,);
+//    }
 
     public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, Long id) {
         ListDTO listDTO = this.getObjectData(id);

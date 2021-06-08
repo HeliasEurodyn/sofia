@@ -99,41 +99,4 @@ public class MenuService {
         return createdDto;
     }
 
-//    @Transactional
-//    public List<MenuFieldDTO> putNewObjectFields(MenuDTO dto) {
-//
-//        List<MenuFieldDTO> createdMenuItemConponentDTOs = new ArrayList<>();
-//        for (MenuFieldDTO menuItemConponentDTO : dto.getMenuFieldList()) {
-//            MenuFieldDTO createdMenuItemConponentDTO = this.menuFieldService.save(menuItemConponentDTO, dto.getId());
-//            createdMenuItemConponentDTOs.add(createdMenuItemConponentDTO);
-//        }
-//
-//        List<Long> ids = createdMenuItemConponentDTOs.stream().map(MenuFieldDTO::getId).collect(Collectors.toList());
-//        this.menuFieldService.deleteNotInListForParent(ids, dto.getId());
-//
-//        return createdMenuItemConponentDTOs;
-//    }
-
-
-//    @PostMapping
-//    public MenuComponentDTO postObject(@RequestBody MenuComponentDTO componentDTO) {
-//        MenuComponentDTO customComponentDTO = this.menuComponentService.postObject(componentDTO);
-//        return customComponentDTO;
-//    }
-
-//    @PutMapping
-//    public MenuComponentDTO putObject(@RequestBody MenuComponentDTO dto) {
-//
-//        Optional<CustomComponent> optionalComponent = this.componentRepository.findById(componentDTO.getId());
-//        if (!optionalComponent.isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
-//        }
-//
-//        MenuComponentDTO customComponentDTO = this.menuComponentService.putObject(dto);
-//        List<CustomComponentFieldDTO> fields = this.menuComponentService.putNewObjectFields(dto);
-//        customComponentDTO.setCustomComponentFieldList(fields);
-//        return customComponentDTO;
-//    }
-
-
 }

@@ -13,9 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -62,17 +64,21 @@ public class ListController {
                 .ok()
                 .headers(headers)
                 .body(new InputStreamResource(in));
-
     }
 
-    @GetMapping(path = "/jasper-test-pdf")
-    void doJasperTest() throws FileNotFoundException, JRException {
-        this.listService.doJasperPdfTest();
-    }
-
-    @GetMapping(path = "/jasper-test-excel")
-    void doJasperTestExcel() throws FileNotFoundException, JRException {
-        this.listService.doJasperExcelTestExcel();
-    }
+//    @GetMapping(path = "/jasper-test-pdf")
+//    void doJasperTest() throws FileNotFoundException, JRException {
+//        this.listService.doJasperPdfTest();
+//    }
+//
+//    @GetMapping(path = "/jasper-test-pdf-n")
+//    void doJasperTestNew(HttpServletResponse response) throws IOException, JRException, SQLException {
+//        this.listService.doJasperPdfTestN(response);
+//    }
+//
+//    @GetMapping(path = "/jasper-test-excel")
+//    void doJasperTestExcel() throws FileNotFoundException, JRException {
+//        this.listService.doJasperExcelTestExcel();
+//    }
 
 }
