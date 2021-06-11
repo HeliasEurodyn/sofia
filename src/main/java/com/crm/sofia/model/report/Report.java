@@ -43,4 +43,10 @@ public class Report extends BaseEntity {
     @Column
     private String reportFilename;
 
+    @Column
+    private String reportExtension;
+
+    @Column
+    private String reportType;
+
 }

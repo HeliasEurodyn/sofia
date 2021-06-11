@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @Data
@@ -27,4 +28,7 @@ public class ReportDTO extends BaseDTO {
 
     private List<ReportParameterDTO> reportParameterList;
 
+    private String reportFilename;
+
+    private String reportType;
 }

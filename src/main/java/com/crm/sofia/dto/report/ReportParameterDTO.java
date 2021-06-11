@@ -16,11 +16,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ReportParameterDTO extends BaseDTO {
 
-
     private String code;
 
-    private String reportCode;
-
-    private String description;
+    private String value;
 
 }

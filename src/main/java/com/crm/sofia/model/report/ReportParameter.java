@@ -22,9 +22,6 @@ public class ReportParameter extends BaseEntity {
     private String code;
 
     @Column
-    private String reportCode;
-
-    @Column
-    private String description;
+    private String value;
 
 }

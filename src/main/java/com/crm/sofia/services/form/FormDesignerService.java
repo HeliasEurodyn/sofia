@@ -155,18 +155,25 @@ public class FormDesignerService {
 
     private String generatePointerVars() {
         List<String> pointerVarLines = new ArrayList<>();
-        pointerVarLines.add("\n");
+        pointerVarLines.add("");
         pointerVarLines.add("var setSelectedTabNumber;");
         pointerVarLines.add("var textInputDialog;");
         pointerVarLines.add("var openPopup;");
         pointerVarLines.add("var closePopup;");
-
-        pointerVarLines.add("\n");
+        pointerVarLines.add("var printReport;");
+        pointerVarLines.add("var dataSet;");
+        pointerVarLines.add("var getFieldValue;");
+        pointerVarLines.add("var setFieldValue;");
+        pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
         pointerVarLines.add("function defineSelectedOpenPopupDialog(myCallback){openPopup = myCallback;}");
         pointerVarLines.add("function defineSelectedClosePopupDialog(myCallback){closePopup = myCallback;}");
-        pointerVarLines.add("\n");
+        pointerVarLines.add("function definePrintReport(myCallback){printReport = myCallback;}");
+        pointerVarLines.add("function defineDataset(myDataSet){dataSet = myDataSet;}");
+        pointerVarLines.add("function defineGetFieldValue(myCallback){getFieldValue = myCallback;}");
+        pointerVarLines.add("function defineSetFieldValue(myCallback){setFieldValue = myCallback;}");
+        pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }
 
@@ -185,7 +192,7 @@ public class FormDesignerService {
                 .forEach(formPopupDTO -> formAreas.addAll(formPopupDTO.getFormAreas()));
 
         List<String> nativeButtonClickHandlerLines = new ArrayList<>();
-        nativeButtonClickHandlerLines.add("\n");
+        nativeButtonClickHandlerLines.add("");
         nativeButtonClickHandlerLines.add("function nativeButtonClickHandler(btnCode) {");
 
         /* Buttons */
@@ -199,7 +206,8 @@ public class FormDesignerService {
                     )
                     .forEach(formControlDTO -> {
                         nativeButtonClickHandlerLines.
-                                add("if(btnCode == '" + formControlDTO.getFormControlButton().getCode() + "') " +
+                                add("if((btnCode == '" + formControlDTO.getFormControlButton().getCode() + "') && "+
+                                        "(typeof btn_" + formControlDTO.getFormControlButton().getCode() + "_click === \"function\")) " +
                                         "btn_" + formControlDTO.getFormControlButton().getCode() + "_click();");
 
                     });
@@ -219,16 +227,15 @@ public class FormDesignerService {
                                 )
                                 .forEach(formControlButtonControl -> {
                                     nativeButtonClickHandlerLines.
-                                            add("if(btnCode == '" + formControlButtonControl.getFormControlButton().getCode() + "') " +
+                                            add("if((btnCode == '" + formControlButtonControl.getFormControlButton().getCode() + "') && " +
+                                                    "(btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click === \"function\")) " +
                                                     "btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click();");
 
                                 });
                     });
         });
 
-
         nativeButtonClickHandlerLines.add("}");
-        nativeButtonClickHandlerLines.add("\n");
         return String.join("\n", nativeButtonClickHandlerLines);
     }
 
