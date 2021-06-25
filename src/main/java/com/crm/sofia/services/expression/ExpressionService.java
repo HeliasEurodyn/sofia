@@ -16,12 +16,17 @@ import java.util.stream.Collectors;
 public class ExpressionService {
 
     private final JWTService jwtService;
+    private Map<String, Object> dataset;
 
     public ExpressionService(JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
     public ExprResponce create(String expression) {
+        return this.create(expression, null);
+    }
+
+    public ExprResponce create(String expression, Map<String, Object> importDataset) {
 
         this.defineSystemParameters();
 
@@ -44,7 +49,7 @@ public class ExpressionService {
             this.createEmptyExprResponce();
         }
 
-        List<ExprUnit> exprUnits = this.createExprUnitList(expression);
+        List<ExprUnit> exprUnits = this.createExprUnitList(expression, importDataset);
 
         if (exprUnits == null) {
             return new ExprResponce("Could not read parameter", false, expression, null);
@@ -95,7 +100,6 @@ public class ExpressionService {
         }
 
         return newExpression;
-
     }
 
     private Boolean checkQuotes(String expression) {
@@ -189,7 +193,8 @@ public class ExpressionService {
             if ((exprUnit instanceof ExprDateNowPlus ||
                     exprUnit instanceof ExprYyyyMmDdHhMmStringToDate ||
                     exprUnit instanceof ExprYyyyMmDdStringToDate ||
-                    exprUnit instanceof ExprSystemParameter)
+                    exprUnit instanceof ExprSystemParameter ||
+                    exprUnit instanceof ExprImportColumnParameter )
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
             ) {
@@ -259,7 +264,7 @@ public class ExpressionService {
         }
     }
 
-    private List<ExprUnit> createExprUnitList(String expression) {
+    private List<ExprUnit> createExprUnitList(String expression, Map<String, Object> importDataset) {
         List<ExprUnit> exprUnits = new ArrayList<>();
 
         int i = 0;
@@ -287,6 +292,7 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprDoubleValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, importDataset);
 
             if (exprUnit == null) {
                 return null;

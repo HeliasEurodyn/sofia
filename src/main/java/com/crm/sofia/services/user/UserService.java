@@ -139,7 +139,8 @@ public class UserService {
             User user = userOptional.get();
             if (verifyPassword(user, enteredPassword)) {
                 jwt = jwtService.generateJwt(user.getUsername(), userOptional.get().getId());
-                UserDTO userDTO = userMapper.mapUserToDto(user);
+                UserDTO userDTO = userMapper.mapUserToDtoWithMenu(user);
+
                 return new JWTResponseDTO(jwt, userDTO);
             }
         }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,10 +52,18 @@ public class MenuService {
         Menu entity = optionalEntity.get();
         MenuDTO dto = this.menuMapper.map(entity);
 
-        for (MenuFieldDTO menuFieldDTO : dto.getMenuFieldList()) {
-            List<MenuFieldDTO> childrenDTOs = this.menuFieldService.getObjectTree(menuFieldDTO.getId());
-            menuFieldDTO.setMenuFieldList(childrenDTOs);
-        }
+        List<MenuFieldDTO> menuFieldList =
+                dto.getMenuFieldList()
+                        .stream()
+                        .sorted(Comparator.comparingLong(MenuFieldDTO::getShortOrder))
+                        .collect(Collectors.toList());
+
+        menuFieldList.forEach( x -> {
+            List<MenuFieldDTO> childrenDTOs = this.menuFieldService.getObjectTree( x.getId());
+            x.setMenuFieldList(childrenDTOs);
+        });
+
+        dto.setMenuFieldList(menuFieldList);
 
         return dto;
     }

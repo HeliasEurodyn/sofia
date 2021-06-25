@@ -35,18 +35,6 @@ public class ComponentSaverNativeRepository {
     private String generateQueriesAndSave(
             List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        /* Filter - Keep only Table, Saveable PersistEntities */
-//        List<ComponentPersistEntityDTO> filteredPersistEntityList =
-//                componentPersistEntityList
-//                        .stream()
-//                        .filter(x -> x.getPersistEntity().getEntitytype().equals("Table"))
-//                        .filter(x -> (x.getAllowSave() == null ? false : x.getAllowSave()))
-//                        .collect(Collectors.toList());
-
-//        if (filteredPersistEntityList.size() == 0) {
-//            return "0";
-//        }
-
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
@@ -322,7 +310,6 @@ public class ComponentSaverNativeRepository {
             }
         }
         return componentPersistEntityFieldList;
-
     }
 
     private List<ComponentPersistEntityFieldDTO> insertComponentPersistEntity(

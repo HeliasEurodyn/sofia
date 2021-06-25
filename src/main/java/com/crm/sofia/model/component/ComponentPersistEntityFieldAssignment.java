@@ -17,11 +17,17 @@ import javax.persistence.*;
 // @Table(name = "component_persist_entity_field_assignment", uniqueConstraints = @UniqueConstraint(columnNames = {"field_id", "form_id"}))
 public class ComponentPersistEntityFieldAssignment extends BaseEntity {
 
+    @Column
+    private String entityType;
+
+    @Column
+    private Long entityId;
+
     @Column(name = "field_id")
     private Long fieldId;
 
-    @Column(name = "form_id")
-    private Long formId;
+  //  @Column(name = "form_id")
+ //   private Long formId;
 
     @Column
     private String description;
@@ -44,8 +50,8 @@ public class ComponentPersistEntityFieldAssignment extends BaseEntity {
     @Column
     private Integer decimals;
 
-    @Column
-    private String fieldtype;
+ //   @Column
+ //   private String fieldtype;
 
     @Column
     private String css;

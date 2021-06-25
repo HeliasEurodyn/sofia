@@ -244,12 +244,9 @@ public class ListNativeRepository {
     }
 
     /*
-     * Iterate to Generate FROM Tables & Relashionships part
+     * Iterate to find related to query persist entities
      */
     private List<ComponentPersistEntityDTO> identifyFromPersistEntities(ListDTO listDTO) {
-
-        Map<Long, ComponentPersistEntityDTO> persistEntitiesMap = new HashMap<>();
-        //  List<String> componentPersistEntityCodes = new ArrayList<>();
 
         List<ListComponentFieldDTO> fields = new ArrayList<>();
         fields.addAll(listDTO.getListComponentColumnFieldList());
@@ -262,96 +259,153 @@ public class ListNativeRepository {
         List<ComponentPersistEntityDTO> componentPersistEntityList =
                 this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
 
-        fields
+        List<Long> entityIds =
+                fields.stream()
+                        .filter(x -> x.getComponentPersistEntity() != null)
+                        .map(x -> x.getComponentPersistEntity().getId())
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        entityIds.forEach(id -> {
+
+        ComponentPersistEntityDTO persistEntity =
+                componentPersistEntityList
+                        .stream()
+                        .filter(x -> x.getId() == id)
+                        .findFirst()
+                        .orElse(null);
+
+            this.identifyFromPersistEntitiesByJoins(persistEntity,
+                    entityIds,
+                    componentPersistEntityList
+            );
+        });
+
+       return componentPersistEntityList
                 .stream()
-                .filter(x -> x.getComponentPersistEntity() != null)
-                .forEach(x -> {
-                    Long id = x.getComponentPersistEntity().getId();
-                    persistEntitiesMap.put(id, x.getComponentPersistEntity());
-                });
-
-        persistEntitiesMap
-                .forEach((id, componentPersistEntity) -> {
-                    this.identifyFromPersistEntitiesByJoins(componentPersistEntity,
-                            persistEntitiesMap,
-                            componentPersistEntityList
-                    );
-                });
-
-        return persistEntitiesMap.values().stream().collect(Collectors.toList());
+                .filter(x -> x != null)
+                .filter(x -> entityIds.contains(x.getId()))
+              .collect(Collectors.toList());
     }
 
     /*
      * Iterate to Generate FROM Tables & Relashionships part
      */
-    private Map<Long, ComponentPersistEntityDTO> identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
-                                                                                    Map<Long, ComponentPersistEntityDTO> persistEntitiesMap,
+    private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
+                                                                                    List<Long> entityIds,
                                                                                     List<ComponentPersistEntityDTO> componentPersistEntityList) {
 
         List<String> componentPersistEntityCodes = new ArrayList<>();
 
-        String selector = (persistEntity.getSelector() == null ? "" : persistEntity.getSelector());
-        String selectorStatement = selector.replaceAll("\\[.+\\]", "");
-        selectorStatement = selectorStatement.replaceAll("and/i", "");
-        selectorStatement = selectorStatement.replaceAll("or/i", "");
-        selectorStatement = selectorStatement.replaceAll("\\(", "");
-        selectorStatement = selectorStatement.replaceAll("\\)", "");
-        selectorStatement = selectorStatement.replaceAll(" {2,}", " ");
-        String[] selectorStatementParts = selectorStatement.split(" ");
+//        ComponentPersistEntityDTO persistEntity =
+//                componentPersistEntityList
+//                        .stream()
+//                        .filter(x -> x.getId() == entityId)
+//                        .findFirst()
+//                        .orElse(null);
 
-        selectorStatementParts =
-                Arrays.stream(selectorStatementParts)
-                        .filter(x -> x.contains("."))
-                        .toArray(String[]::new);
+        List<String> locateStatemens =
+                persistEntity.getComponentPersistEntityFieldList()
+                        .stream()
+                        .filter(x -> x.getLocateStatement() != null)
+                        .filter(x -> x.getLocateStatement() != "")
+                        .filter(x -> x.getLocateStatement().contains("."))
+                        .filter(x -> x.getLocateStatement().startsWith("#"))
+                        .map(x -> x.getLocateStatement())
+                        .collect(Collectors.toList());
 
-        Arrays.stream(selectorStatementParts)
-                .forEach(x -> {
-                    String[] joinParts = x.split("\\.");
-                    componentPersistEntityCodes.add(joinParts[0]);
-                });
+                locateStatemens
+                        .stream()
+                        .forEach(x -> {
+                            String[] joinParts = x.split("\\.");
+                            String cpeCode = joinParts[0].replace("#", "");
+                            componentPersistEntityCodes.add(cpeCode);
+                        });
+
+
+//        String selector = (persistEntity.getSelector() == null ? "" : persistEntity.getSelector());
+//        String selectorStatement = selector.replaceAll("\\[.+\\]", "");
+//        selectorStatement = selectorStatement.replaceAll("and/i", "");
+//        selectorStatement = selectorStatement.replaceAll("or/i", "");
+//        selectorStatement = selectorStatement.replaceAll("\\(", "");
+//        selectorStatement = selectorStatement.replaceAll("\\)", "");
+//        selectorStatement = selectorStatement.replaceAll(" {2,}", " ");
+//        String[] selectorStatementParts = selectorStatement.split(" ");
+
+//        selectorStatementParts =
+//                selectorStatementParts
+//                        .stream()
+//                        .filter(x -> x.contains("."))
+//                        .filter(x -> x.startsWith("#"))
+//                        .collect(Collectors.toList());
+
+//        Arrays.stream(selectorStatementParts)
+//                .forEach(x -> {
+//                    String[] joinParts = x.split("\\.");
+//                    componentPersistEntityCodes.add(joinParts[0]);
+//                });
 
         componentPersistEntityList
                 .stream()
                 .filter(x -> componentPersistEntityCodes.contains(x.getCode()))
-                .filter(x -> !persistEntitiesMap.containsKey(x.getId()))
+                .filter(x -> !entityIds.contains(x.getId()))
                 .forEach(x -> {
-                    persistEntitiesMap.put(x.getId(), x);
-                    this.identifyFromPersistEntitiesByJoins(x, persistEntitiesMap, componentPersistEntityList);
+                    entityIds.add(x.getId());
+                    this.identifyFromPersistEntitiesByJoins(x, entityIds, componentPersistEntityList);
                 });
 
-        return persistEntitiesMap;
+      //  return entityIds;
     }
 
     /*
      * Iterate to Generate FROM Tables & Relashionships part
      */
-    private String generateFromPart(List<ComponentPersistEntityDTO> fromPersistEntities) {
+    private String generateFromPart(List<ComponentPersistEntityDTO> fromCPersistEntities) {
 
         List<String> joinParts = new ArrayList<>();
-        fromPersistEntities
+        fromCPersistEntities
                 .stream()
                 .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder))
-                .forEach(x -> {
+                .forEach(cPersistEntity -> {
                     String joinPart = "";
 
                     /* Join */
-                    String selector = (x.getSelector() == null ? "" : x.getSelector());
-                    String joinTypePart = selector.replaceAll("\\[|\\].+", "");
-                    joinPart += " " + joinTypePart;
+                    String joinTypePart = " LEFT OUTER JOIN ";
 
-                    /* Table name */
-                    if (x.getPersistEntity().getEntitytype().equals("AppView")) {
-                        PersistEntityDTO appViewDTO = x.getPersistEntity();
-                        joinPart += " ( " +
-                                appViewDTO.getQuery() + " ) " + x.getCode();
+                    /* Table, View or AppView */
+                    String joinEntityPart = "";
+                    if (cPersistEntity.getPersistEntity().getEntitytype().equals("AppView")) {
+                        PersistEntityDTO appViewDTO = cPersistEntity.getPersistEntity();
+                        joinEntityPart = " ( " +
+                                appViewDTO.getQuery() + " ) " + cPersistEntity.getCode();
                     } else {
-                        joinPart += " " + x.getPersistEntity().getName() + " " + x.getCode();
+                        joinEntityPart += " " + cPersistEntity.getPersistEntity().getName() + " " + cPersistEntity.getCode();
                     }
 
                     /* On */
-                    String onStatement = selector.replaceAll("\\[.+\\]", "");
-                    if (!onStatement.equals("")) {
-                        joinPart += " ON " + onStatement;
+                    List<String> joinFieldsPart = new ArrayList<>();
+                    cPersistEntity.getComponentPersistEntityFieldList()
+                            .stream()
+                            .filter(f -> !(f.getLocateStatement() == null ? "" : f.getLocateStatement()).equals("#SELECTIONID"))
+                            .filter(f -> !(f.getLocateStatement() == null ? "" : f.getLocateStatement()).equals(""))
+                            .forEach(persistEntityField -> {
+
+                                String field = cPersistEntity.getCode() + "." +
+                                        persistEntityField.getPersistEntityField().getName();
+
+                                String fieldJoin =
+                                        persistEntityField.getLocateStatement().replaceAll("#", "");
+
+                                joinFieldsPart.add(String.join(" ", field, "=", fieldJoin));
+                            });
+
+                    if (joinFieldsPart.size() > 0) {
+                        joinPart = joinTypePart +
+                                joinEntityPart +
+                                " ON " +
+                                String.join(" AND ", joinFieldsPart);
+                    } else {
+                        joinPart = joinEntityPart;
                     }
 
                     joinParts.add(joinPart);
@@ -847,11 +901,11 @@ public class ListNativeRepository {
                 .filter(x -> x.getComponentPersistEntityList().size() > 0)
                 .forEach(x -> {
 
-                        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                                this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
-                        if (componentPersistEntityList.size() > 0) {
-                            allComponentPersistEntityList.addAll(componentPersistEntityList);
-                        }
+                    List<ComponentPersistEntityDTO> componentPersistEntityList =
+                            this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
+                    if (componentPersistEntityList.size() > 0) {
+                        allComponentPersistEntityList.addAll(componentPersistEntityList);
+                    }
 
                 });
 

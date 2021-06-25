@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface ComponentPersistEntityFieldAssignmentRepository extends BaseRepository<ComponentPersistEntityFieldAssignment> {
 
-    List<ComponentPersistEntityFieldAssignment> findByFormId(Long formId);
+    List<ComponentPersistEntityFieldAssignment> findByEntityIdAndEntityType(Long entityId, String entityType);
 
-    void deleteComponentPersistEntityFieldAssignmentByFormId(Long aLong);
+    void deleteComponentPersistEntityFieldAssignmentByEntityIdAndEntityType(Long entityId, String entityType);
 
 }

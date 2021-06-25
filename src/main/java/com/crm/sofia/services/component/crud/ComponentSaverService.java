@@ -24,7 +24,7 @@ public class ComponentSaverService {
         ComponentDTO componentDTO = componentService.getObject(componentId);
 
         /* Map Parameters and Save */
-       return this.save(componentDTO, parameters);
+        return this.save(componentDTO, parameters);
     }
 
     public String save(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
@@ -33,8 +33,13 @@ public class ComponentSaverService {
         componentService.mapParametersToComponentDTO(componentDTO.getComponentPersistEntityList(), parameters);
 
         /* Save */
-        return this.componentSaverNativeRepository.save(componentDTO);
+        return this.save(componentDTO);
+       // return this.componentSaverNativeRepository.save(componentDTO);
     }
 
+    public String save(ComponentDTO componentDTO) {
 
+        /* Save */
+        return this.componentSaverNativeRepository.save(componentDTO);
+    }
 }

@@ -18,9 +18,13 @@ import javax.persistence.Column;
 @Accessors(chain = true)
 public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
+    private String entityType;
+
+    private Long entityId;
+
     private Long fieldId;
 
-    private Long formId;
+  //  private Long formId;
 
     private String description;
 
@@ -36,7 +40,7 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
     private Integer decimals;
 
-    private String fieldtype;
+  //  private String fieldtype;
 
     private String css;
 
