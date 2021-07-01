@@ -36,7 +36,9 @@ public class UserDTO extends BaseDTO {
 
     private String dateformat;
 
-    private MenuDTO menu;
+    private MenuDTO sidebarMenu;
+
+    private MenuDTO headerMenu;
 
     private String loginNavCommand;
 

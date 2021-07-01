@@ -18,36 +18,41 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class UserMapper extends BaseMapper<UserDTO, User> {
 
-
     public UserDTO mapUserToDtoWithMenu(User entity){
         UserDTO userDTO = this.mapUserToDto(entity);
-        if(userDTO.getMenu() == null) {
-            return userDTO;
+        if(userDTO.getSidebarMenu() != null && userDTO.getSidebarMenu().getMenuFieldList() != null) {
+            List<MenuFieldDTO> shorted = this.shortUserMenu(userDTO.getSidebarMenu().getMenuFieldList());
+            userDTO.getSidebarMenu().setMenuFieldList(shorted);
         }
 
-        if(userDTO.getMenu().getMenuFieldList() == null) {
-            return userDTO;
+        if(userDTO.getHeaderMenu() != null && userDTO.getHeaderMenu().getMenuFieldList() != null) {
+            List<MenuFieldDTO> shorted = this.shortUserMenu(userDTO.getHeaderMenu().getMenuFieldList());
+            userDTO.getHeaderMenu().setMenuFieldList(shorted);
         }
 
-        List<MenuFieldDTO> menuFieldDTOS =
-                userDTO.getMenu().getMenuFieldList()
+        return userDTO;
+    }
+
+    private List<MenuFieldDTO> shortUserMenu(List<MenuFieldDTO> menuFieldList){
+
+        menuFieldList =
+                menuFieldList
                         .stream()
                         .sorted(Comparator.comparingLong(MenuFieldDTO::getShortOrder))
                         .collect(Collectors.toList());
 
-        menuFieldDTOS
+        menuFieldList
                 .stream()
                 .filter(x -> x.getMenuFieldList() != null)
                 .filter(x -> x.getMenuFieldList().size() > 0)
                 .forEach(x -> {
-                    List<MenuFieldDTO> shorted = shortMenu( x.getMenuFieldList());
+                    List<MenuFieldDTO> shorted = this.shortUserMenu(x.getMenuFieldList());
                     x.setMenuFieldList(shorted);
                 });
 
-        userDTO.getMenu().setMenuFieldList(menuFieldDTOS);
-
-        return userDTO;
+        return menuFieldList;
     }
+
 
     public List<MenuFieldDTO> shortMenu(List<MenuFieldDTO> menuFieldDTOS) {
 

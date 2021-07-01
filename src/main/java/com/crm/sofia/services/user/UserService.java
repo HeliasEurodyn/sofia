@@ -154,12 +154,12 @@ public class UserService {
 
     public UserDTO getCurrentUser() {
         User user = this.getLoggedInUser();
-        UserDTO userDTO = this.userMapper.map(user);
+        UserDTO userDTO = this.userMapper.mapUserToDtoWithMenu(user);
 
-        if (userDTO.getMenu() != null) {
-            List<MenuFieldDTO> menuFieldList = this.menuFieldService.shortMenuFields(userDTO.getMenu().getMenuFieldList());
-            userDTO.getMenu().setMenuFieldList(menuFieldList);
-        }
+//        if (userDTO.getMenu() != null) {
+//            List<MenuFieldDTO> menuFieldList = this.menuFieldService.shortMenuFields(userDTO.getMenu().getMenuFieldList());
+//            userDTO.getMenu().setMenuFieldList(menuFieldList);
+//        }
 
         return userDTO;
     }

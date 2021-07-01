@@ -1,6 +1,7 @@
 package com.crm.sofia.model.user;
 
 import com.crm.sofia.config.AppConstants;
+import com.crm.sofia.dto.menu.MenuDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.menu.Menu;
 import lombok.Data;
@@ -38,8 +39,12 @@ public class User extends BaseEntity {
     private String dateFormat;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
-    @JoinColumn(name = "menu_id", referencedColumnName = "id")
-    private Menu menu;
+    @JoinColumn(name = "sidebar_menu_id", referencedColumnName = "id")
+    private Menu sidebarMenu;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
+    @JoinColumn(name = "header_menu_id", referencedColumnName = "id")
+    private Menu headerMenu;
 
     @Column
     private String loginNavCommand;
