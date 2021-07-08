@@ -2,9 +2,6 @@ package com.crm.sofia.services.component;
 
 import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
-import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.common.BaseNoIdEntity;
@@ -14,14 +11,11 @@ import com.crm.sofia.model.component.ComponentPersistEntityField;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
 import com.crm.sofia.repository.component.ComponentRepository;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,23 +97,17 @@ public class ComponentDesignerService {
     }
 
     public void removeComponentTablesByTableId(Long persistEntityId) {
-        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntityId);
+        List<ComponentPersistEntity> componentPersistEntities =
+                this.componentPersistEntityRepository.findComponentEntitiesOfTableId(persistEntityId);
 
-        components
-                .forEach(c -> {
-                    c.getComponentPersistEntityList()
-                            .removeIf(cpe -> persistEntityId == cpe.getPersistEntity().getId());
-                });
-
-        this.componentRepository.saveAll(components);
+        this.componentPersistEntityRepository.deleteAll(componentPersistEntities);
     }
 
     public void removeComponentTableFieldsByTable(Long persistEntityId, List<Long> tableFieldIds) {
-        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntityId);
+        List<ComponentPersistEntity> componentPersistEntities = this.componentPersistEntityRepository.findComponentEntitiesOfTableId(persistEntityId);
 
-        components
-                .forEach(c -> {
-                    c.getComponentPersistEntityList()
+
+        componentPersistEntities
                             .stream()
                             .filter(cpe -> cpe.getPersistEntity() != null)
                             .filter(cpe -> cpe.getPersistEntity().getId() == persistEntityId)
@@ -129,39 +117,36 @@ public class ComponentDesignerService {
                                 cpe.getComponentPersistEntityFieldList()
                                         .removeIf(cpef -> !tableFieldIds.contains(cpef.getPersistEntityField().getId()));
                             });
-                });
 
-        this.componentRepository.saveAll(components);
+        this.componentPersistEntityRepository.saveAll(componentPersistEntities);
     }
 
     public void insertComponentTableFieldsByTable(PersistEntity persistEntity) {
-        List<Component> components = this.componentRepository.findComponentsThatContainTable(persistEntity.getId());
 
-        components
-                .forEach(c -> {
-                    c.getComponentPersistEntityList()
+        List<ComponentPersistEntity> componentPersistEntities = this.componentPersistEntityRepository.findComponentEntitiesOfTableId(persistEntity.getId());
+
+        componentPersistEntities
+                .stream()
+                .filter(cpe -> cpe.getPersistEntity() != null)
+                .filter(cpe -> cpe.getPersistEntity().getId() == persistEntity.getId())
+                .forEach(cpe -> {
+
+                    /* Add Fields */
+                    List<Long> currentTableFieldIds = cpe.getComponentPersistEntityFieldList()
                             .stream()
-                            .filter(cpe -> cpe.getPersistEntity() != null)
-                            .filter(cpe -> cpe.getPersistEntity().getId() == persistEntity.getId())
-                            .forEach(cpe -> {
+                            .map(cpef -> cpef.getPersistEntityField().getId())
+                            .collect(Collectors.toList());
 
-                                /* Add Fields */
-                                List<Long> currentTableFieldIds = cpe.getComponentPersistEntityFieldList()
-                                        .stream()
-                                        .map(cpef -> cpef.getPersistEntityField().getId())
-                                        .collect(Collectors.toList());
-
-                                persistEntity.getPersistEntityFieldList()
-                                        .stream()
-                                        .filter(pf -> !currentTableFieldIds.contains(pf.getId()))
-                                        .forEach(pf -> {
-                                            ComponentPersistEntityField cpef = new ComponentPersistEntityField();
-                                            cpef.setPersistEntityField(pf);
-                                            cpe.getComponentPersistEntityFieldList().add(cpef);
-                                        });
+                    persistEntity.getPersistEntityFieldList()
+                            .stream()
+                            .filter(pf -> !currentTableFieldIds.contains(pf.getId()))
+                            .forEach(pf -> {
+                                ComponentPersistEntityField cpef = new ComponentPersistEntityField();
+                                cpef.setPersistEntityField(pf);
+                                cpe.getComponentPersistEntityFieldList().add(cpef);
                             });
                 });
 
-        this.componentRepository.saveAll(components);
+        this.componentPersistEntityRepository.saveAll(componentPersistEntities);
     }
 }

@@ -167,6 +167,8 @@ public class FormDesignerService {
         pointerVarLines.add("var dataSet;");
         pointerVarLines.add("var getFieldValue;");
         pointerVarLines.add("var setFieldValue;");
+        pointerVarLines.add("var getComponentData;");
+        pointerVarLines.add("var appendLineToTable;");
         pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
@@ -177,7 +179,8 @@ public class FormDesignerService {
         pointerVarLines.add("function defineDataset(myDataSet){dataSet = myDataSet;}");
         pointerVarLines.add("function defineGetFieldValue(myCallback){getFieldValue = myCallback;}");
         pointerVarLines.add("function defineSetFieldValue(myCallback){setFieldValue = myCallback;}");
-
+        pointerVarLines.add("function defineGetComponentData(myCallback){getComponentData = myCallback;}");
+        pointerVarLines.add("function defineAppendLineToTable(myCallback){appendLineToTable = myCallback;}");
         pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }
@@ -313,6 +316,7 @@ public class FormDesignerService {
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseover" ));
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup" ));
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize" ));
+                        nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected" ));
 
                         assignedFields.add(fieldCode);
                     });
@@ -372,6 +376,7 @@ public class FormDesignerService {
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseover" ));
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup" ));
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize" ));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected" ));
 
                                     assignedFields.add(fieldCode);
                                 });

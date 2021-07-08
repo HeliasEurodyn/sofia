@@ -34,5 +34,4 @@ public class Component extends BaseEntity {
     @JoinColumn(name = "component_id")
     private List<ComponentPersistEntity> componentPersistEntityList;
 
-
 }

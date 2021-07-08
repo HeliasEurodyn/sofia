@@ -4,6 +4,7 @@ import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityFieldDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ComponentSaverNativeRepository {
 
@@ -137,7 +139,6 @@ public class ComponentSaverNativeRepository {
             lineSavedPersistEntities.add(componentPersistEntityLine);
 
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-               // this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
                 this.generateQueriesAndSave(componentPersistEntityDataLine.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
         });
@@ -163,7 +164,6 @@ public class ComponentSaverNativeRepository {
             lineSavedPersistEntities.add(componentPersistEntityLine);
 
             if (componentPersistEntity.getComponentPersistEntityList() != null) {
-               // this.generateQueriesAndSave(componentPersistEntity.getComponentPersistEntityList(), lineSavedPersistEntities);
                 this.generateQueriesAndSave(componentPersistEntityDataLine.getComponentPersistEntityList(), lineSavedPersistEntities);
             }
         });
@@ -182,6 +182,9 @@ public class ComponentSaverNativeRepository {
 
         /* Generate Query */
         Query query = this.generateUpdateQuery(entityName, componentPersistEntityFieldList);
+
+    //    log.debug(query.toString());
+        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
 
         /* Execute Query */
         if (query != null) {
@@ -324,6 +327,9 @@ public class ComponentSaverNativeRepository {
         /* Generate Query */
         Query query = this.generateInsertQuery(entityName, componentPersistEntityFieldList);
 
+        log.debug(query.unwrap(org.hibernate.Query.class).getQueryString());
+        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
         /* Execute Query */
         Long id = this.executeSave(query);
 

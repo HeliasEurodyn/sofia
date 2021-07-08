@@ -4,10 +4,12 @@ import com.crm.sofia.dto.component.ComponentDTO;
 import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.form.*;
 import com.crm.sofia.mapper.form.FormMapper;
+import com.crm.sofia.model.component.Component;
 import com.crm.sofia.model.form.FormEntity;
-import com.crm.sofia.model.form.FormScript;
+import com.crm.sofia.repository.component.ComponentRepository;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
+import com.crm.sofia.services.component.ComponentService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.*;
 public class FormService {
 
     private final FormRepository formRepository;
+
     private final FormMapper formMapper;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
     private final ComponentRetrieverService componentRetrieverService;
@@ -38,12 +41,12 @@ public class FormService {
     }
 
     public FormDTO getObject(Long id) {
+
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
         FormDTO formDTO = this.formMapper.mapForm(optionalFormEntity.get());
-
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
         formDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
@@ -67,7 +70,6 @@ public class FormService {
                         "form",
                         formDTO.getId()
                 );
-
         formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
 
         /* Retrieve Data */
@@ -94,7 +96,6 @@ public class FormService {
 
         /* Μap parameters to component And save */
         return componentSaverService.save(formDTO.getComponent(), parameters);
-
     }
 
     public String getFormScript(Long formId) {
@@ -111,8 +112,5 @@ public class FormService {
         });
         return String.join("\n\n", decodedScripts);
     }
-
-
-
 
 }

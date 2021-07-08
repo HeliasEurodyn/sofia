@@ -58,6 +58,7 @@ public class ComponentRetrieverService {
                 .forEach(cpe -> {
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
+                            .filter(cpef -> cpef.getAssignment() != null)
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
@@ -104,6 +105,7 @@ public class ComponentRetrieverService {
                 .forEach(cpe -> {
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
+                            .filter(cpef -> cpef.getAssignment() != null)
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {

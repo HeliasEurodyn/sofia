@@ -7,6 +7,7 @@ import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.component.ComponentDesignerService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableService {
+
+    @Value("${sofia.database}")
+    private String sofiaDatabase;
 
     private final PersistEntityRepository persistEntityRepository;
     private final TableMapper tableMapper;
@@ -88,13 +92,13 @@ public class TableService {
 
     @Transactional
     public List<String> getTables() {
-        Query query = entityManager.createNativeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='sofia';");
+        Query query = entityManager.createNativeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"+this.sofiaDatabase+"';");
         List<String> tableNames = query.getResultList();
         return tableNames;
     }
 
     public List<String> getTableFields(String tableName) {
-        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM sofia;");
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM "+this.sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();
         List<String> fieldNames = fields.stream().map(f -> f[0].toString()).collect(Collectors.toList());
 
