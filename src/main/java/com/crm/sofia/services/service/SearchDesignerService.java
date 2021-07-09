@@ -69,6 +69,7 @@ public class SearchDesignerService {
     }
 
     public InfoCardTextResponceDTO getData(String sql) {
-        return this.searchRepository.getData(sql);
+        //return this.searchRepository.getData(sql);
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package com.crm.sofia.controllers.xls_import;
 
 import com.crm.sofia.services.xls_import.XlsImportService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,11 @@ public class XlsImportController {
         this.xlsImportService = xlsImportService;
     }
 
-    @PostMapping
-    public void postObject(
+    @PostMapping( produces = "application/text")
+    public String postObject(
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("id") Long id) throws IOException {
-        this.xlsImportService.importXls(multipartFile, id);
+       return this.xlsImportService.importXls(multipartFile, id);
     }
 
 }

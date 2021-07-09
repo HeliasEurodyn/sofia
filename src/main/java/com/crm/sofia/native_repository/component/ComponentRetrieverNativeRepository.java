@@ -92,26 +92,26 @@ public class ComponentRetrieverNativeRepository {
         }
     }
 
-    private List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO componentPersistEntity,
-                                                                   List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+    private List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO cpe,
+                                                                   List<ComponentPersistEntityDTO> retrievedCpeList) {
 
-        for (ComponentPersistEntityDTO retrievedPersistEntity : retrievedPersistEntities) {
-            for (ComponentPersistEntityFieldDTO retrievedComponentPersistEntityField : retrievedPersistEntity.getComponentPersistEntityFieldList()) {
-                String currentFieldCode = "#" + retrievedPersistEntity.getCode() + "." + retrievedComponentPersistEntityField.getPersistEntityField().getName();
+        for (ComponentPersistEntityDTO retrievedCpe : retrievedCpeList) {
+            for (ComponentPersistEntityFieldDTO retrievedCpef : retrievedCpe.getComponentPersistEntityFieldList()) {
+                String currentFieldCode = "#" + retrievedCpe.getCode() + "." + retrievedCpef.getPersistEntityField().getName();
 
-                for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
-                    String locateStatement = (componentPersistEntityField.getLocateStatement() == null ? "" : componentPersistEntityField.getLocateStatement());
+                for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+                    String locateStatement = (cpef.getLocateStatement() == null ? "" : cpef.getLocateStatement());
 
-                    if (locateStatement.equals(currentFieldCode) &&
-                            retrievedComponentPersistEntityField.getValue() != null) {
-                        componentPersistEntityField.setLocateStatement(retrievedComponentPersistEntityField.getValue().toString());
+                    if (locateStatement.equals(currentFieldCode)) {
+                        String value = retrievedCpef.getValue() == null ? "" : retrievedCpef.getValue().toString();
+                        cpef.setLocateStatement(value);
                     }
                 }
             }
         }
 
         List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                componentPersistEntity.getComponentPersistEntityFieldList()
+                cpe.getComponentPersistEntityFieldList()
                         .stream()
                         .filter(x ->
                                 !(x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals(""))

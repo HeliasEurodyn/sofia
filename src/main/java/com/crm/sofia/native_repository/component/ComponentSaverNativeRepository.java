@@ -203,7 +203,7 @@ public class ComponentSaverNativeRepository {
         /* SET columns = values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
-                .filter(x -> x.getValue() != null)
+               // .filter(x -> x.getValue() != null)
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
         String headersString = String.join(", ", headersList);
@@ -214,26 +214,26 @@ public class ComponentSaverNativeRepository {
         }
 
         /* WHERE Section */
-        Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
+        Optional<ComponentPersistEntityFieldDTO> optionalCpef =
                 componentPersistEntityFieldList.stream()
                         .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
                         .filter(x -> x.getValue() != null)
                         .findFirst();
 
-        if (!optionalComponentPersistEntityField.isPresent()) {
+        if (!optionalCpef.isPresent()) {
             return null;
         }
 
-        ComponentPersistEntityFieldDTO componentPersistEntityField = optionalComponentPersistEntityField.get();
+        ComponentPersistEntityFieldDTO cpef = optionalCpef.get();
 
-        queryString += " WHERE " + componentPersistEntityField.getPersistEntityField().getName() + " = :"
-                + componentPersistEntityField.getPersistEntityField().getName();
+        queryString += " WHERE " + cpef.getPersistEntityField().getName() + " = :"
+                + cpef.getPersistEntityField().getName();
 
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
         componentPersistEntityFieldList.stream()
-                .filter(x -> x.getValue() != null)
+                //.filter(x -> x.getValue() != null)
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
@@ -285,6 +285,7 @@ public class ComponentSaverNativeRepository {
     private Long executeSave(Query query) {
         Long id;
         try {
+            System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
             query.executeUpdate();
             id = ((BigInteger) entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult()).longValue();
 
