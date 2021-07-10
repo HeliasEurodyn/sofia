@@ -1,34 +1,22 @@
-package com.crm.sofia.services.service;
+package com.crm.sofia.services.search;
 
-import com.crm.sofia.dto.component.ComponentDTO;
-import com.crm.sofia.dto.component.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.form.FormAreaDTO;
-import com.crm.sofia.dto.form.FormControlDTO;
-import com.crm.sofia.dto.form.FormDTO;
-import com.crm.sofia.dto.form.FormTabDTO;
-import com.crm.sofia.dto.info_card.InfoCardTextResponceDTO;
+
 import com.crm.sofia.dto.search.SearchDTO;
-import com.crm.sofia.mapper.form.FormMapper;
 import com.crm.sofia.mapper.search.SearchMapper;
-import com.crm.sofia.model.form.FormEntity;
-import com.crm.sofia.model.info_card.InfoCard;
 import com.crm.sofia.model.search.Search;
-import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.repository.search.SearchRepository;
-import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
-import com.crm.sofia.services.component.crud.ComponentRetrieverService;
-import com.crm.sofia.services.component.crud.ComponentSaverService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SearchDesignerService {
-
+    
     private final SearchRepository searchRepository;
     private final SearchMapper searchMapper;
 
@@ -38,16 +26,15 @@ public class SearchDesignerService {
         this.searchMapper = searchMapper;
     }
 
-
     public List<SearchDTO> getObject() {
-        List<Search> seaches = this.searchRepository.findAll();
-        return this.searchMapper.map(seaches);
+        List<Search> searcies = this.searchRepository.findAll();
+        return this.searchMapper.map(searcies);
     }
 
     public SearchDTO getObject(Long id) {
         Optional<Search> optionalSearch = this.searchRepository.findById(id);
         if (!optionalSearch.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Search does not exist");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Info card does not exist");
         }
         return this.searchMapper.map(optionalSearch.get());
     }
@@ -66,10 +53,5 @@ public class SearchDesignerService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Search does not exist");
         }
         this.searchRepository.deleteById(optionalSearch.get().getId());
-    }
-
-    public InfoCardTextResponceDTO getData(String sql) {
-        //return this.searchRepository.getData(sql);
-        return null;
     }
 }
