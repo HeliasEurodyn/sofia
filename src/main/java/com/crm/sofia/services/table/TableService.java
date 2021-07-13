@@ -242,7 +242,7 @@ public class TableService {
     public List<TableFieldDTO> generateTableFields(String name) {
         List<TableFieldDTO> dtos = new ArrayList<>();
 
-        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + name + " FROM sofia;");
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + name + " FROM "+sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();
 
         for (Object[] field : fields) {

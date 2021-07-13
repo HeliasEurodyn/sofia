@@ -42,4 +42,6 @@ public class UserDTO extends BaseDTO {
 
     private String loginNavCommand;
 
+    private String searchNavCommand;
+
 }

@@ -48,4 +48,8 @@ public class User extends BaseEntity {
 
     @Column
     private String loginNavCommand;
+
+    @Column
+    private String searchNavCommand;
+
 }

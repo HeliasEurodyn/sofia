@@ -26,9 +26,4 @@ public class InfoCardController {
         return this.infoCardService.getObject(id);
     }
 
-//    @GetMapping(path = "/data")
-//    InfoCardTextResponceDTO getData(@RequestParam("query") String sql) {
-//        return this.infoCardService.getData(sql);
-//    }
-
 }
