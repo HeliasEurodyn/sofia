@@ -317,7 +317,7 @@ public class FormDesignerService {
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup" ));
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize" ));
                         nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected" ));
-
+                        nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared" ));
                         assignedFields.add(fieldCode);
                     });
         });
@@ -377,6 +377,7 @@ public class FormDesignerService {
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup" ));
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize" ));
                                     nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected" ));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared" ));
 
                                     assignedFields.add(fieldCode);
                                 });
