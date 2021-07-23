@@ -1,13 +1,11 @@
 package com.crm.sofia.filters;
 
-import com.crm.sofia.dto.auth.JWTClaimsResponseDTO;
-import com.crm.sofia.repository.user.UserRepository;
-import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.dto.sofia.auth.JWTClaimsResponseDTO;
+import com.crm.sofia.repository.sofia.user.UserRepository;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -19,8 +17,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
 
 
 @Component

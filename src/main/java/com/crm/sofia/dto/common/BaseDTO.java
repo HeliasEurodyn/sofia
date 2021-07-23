@@ -8,7 +8,6 @@ import java.time.Instant;
 
 @Data
 public abstract class BaseDTO implements Serializable {
-
     private Long id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -20,5 +19,4 @@ public abstract class BaseDTO implements Serializable {
     private Long version;
 
     private Long shortOrder;
-
 }

@@ -1,10 +1,7 @@
 package com.crm.sofia.controllers.test;
 
-import com.crm.sofia.model.test.Order;
+import com.crm.sofia.model.sofia.test.Order;
 import lombok.extern.slf4j.Slf4j;
-import org.kie.api.runtime.KieSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

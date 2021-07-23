@@ -1,0 +1,60 @@
+package com.crm.sofia.controllers.sofia.form;
+
+import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
+import com.crm.sofia.dto.sofia.form.designer.FormDTO;
+import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
+import com.crm.sofia.services.sofia.form.FormService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@Slf4j
+@RestController
+@Validated
+@RequestMapping("/form")
+public class FormController {
+
+    private final FormService formService;
+
+    public FormController(FormService formService) {
+        this.formService = formService;
+    }
+
+    @GetMapping(path = "/by-id")
+    FormDTO getObject(@RequestParam("id") Long formId,
+                      @RequestParam("selection-id") String selectionId) {
+        return this.formService.getObjectAndRetrieveData(formId, selectionId);
+    }
+
+    @GetMapping(path = "ui")
+    FormUiDTO getUiObject(@RequestParam("id") Long formId) {
+        return this.formService.getUiObject(formId);
+    }
+
+    @GetMapping(path = "data")
+    ComponentUiDTO getData(@RequestParam("id") Long formId,
+                           @RequestParam("selection-id") String selectionId) {
+        return this.formService.retrieveData(formId, selectionId);
+    }
+
+    @GetMapping(path = "version")
+    String getVersion(@RequestParam("id") Long formId) {
+        return this.formService.getVersion(formId);
+    }
+
+    @PostMapping
+    public String postObjectData(@RequestParam("id") Long formId,
+                                 @RequestBody Map<String, Map<String, Object>> parameters) {
+        return this.formService.save(formId, parameters);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/dynamic-script/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormScript(@PathVariable("id") Long formId) {
+        return this.formService.getFormScript(formId);
+    }
+
+}

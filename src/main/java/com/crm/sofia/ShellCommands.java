@@ -1,9 +1,9 @@
 package com.crm.sofia;
 
-import com.crm.sofia.model.rita.Asset;
-import com.crm.sofia.model.test.Order;
-import com.crm.sofia.services.rita.AssetService;
-import com.crm.sofia.services.rita.DroolsService;
+import com.crm.sofia.model.cityscape.cve_search.rita.Asset;
+import com.crm.sofia.model.sofia.test.Order;
+import com.crm.sofia.services.cityscape.rita.AssetService;
+import com.crm.sofia.services.cityscape.rita.DroolsService;
 import org.kie.api.runtime.KieSession;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;

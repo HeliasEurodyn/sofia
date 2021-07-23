@@ -1,8 +1,8 @@
 package com.crm.sofia.utils;
 
-import com.crm.sofia.dto.list.ListComponentFieldDTO;
-import com.crm.sofia.dto.list.ListDTO;
-import com.crm.sofia.dto.list.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.sofia.list.ListDTO;
+import com.crm.sofia.dto.sofia.list.ListResultsDataDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class ExcelGenerator {
