@@ -120,6 +120,20 @@ public class ListService {
         return listResultsDataDTO;
     }
 
+    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, String jsonUrl) {
+
+        List<Long> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
+
+        if (ids.size() <= 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
+        }
+
+        ListDTO listDTO = this.getObjectData(ids.get(0));
+        listDTO = this.mapParametersToListDto(listDTO, parameters);
+        ListResultsDataDTO listResultsDataDTO = this.getObjectData(listDTO);
+        return listResultsDataDTO;
+    }
+
     public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long id) {
         ListDTO listDTO = this.getObjectData(id);
         listDTO = this.mapParametersToListDto(listDTO, parameters);

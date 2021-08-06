@@ -25,6 +25,9 @@ public class FormPopup extends BaseEntity {
     @Column
     private String icon;
 
+    @Column
+    private Boolean editable;
+
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },

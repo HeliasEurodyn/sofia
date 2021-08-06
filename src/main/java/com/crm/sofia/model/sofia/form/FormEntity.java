@@ -2,6 +2,7 @@ package com.crm.sofia.model.sofia.form;
 
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.component.Component;
+import com.crm.sofia.model.sofia.list.ListActionButton;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -20,6 +21,15 @@ public class FormEntity extends BaseEntity {
 
     @Column
     private String name;
+
+    @Column
+    private String title;
+
+    @Column
+    private String description;
+
+    @Column
+    private String icon;
 
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = com.crm.sofia.model.sofia.component.Component.class)
@@ -50,9 +60,28 @@ public class FormEntity extends BaseEntity {
     @JoinColumn(name = "form_id")
     private List<FormScript> formScripts;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<FormCss> formCssList;
+
     @Column(columnDefinition = "TEXT")
     private String script;
 
     @Column
     private String instanceVersion;
+
+    @Column
+    private String jsonUrl;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<FormActionButton> formActionButtons;
 }

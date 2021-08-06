@@ -16,6 +16,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class FormAreaDTO extends BaseDTO {
 
+    public String title;
+
     private String description;
 
     private String icon;

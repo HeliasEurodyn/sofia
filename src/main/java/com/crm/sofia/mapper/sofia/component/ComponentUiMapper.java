@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class ComponentUiMapper {
 
-    public ComponentUiDTO mapComponent(ComponentDTO componentDTO){
+    public ComponentUiDTO mapToUi(ComponentDTO componentDTO){
 
         ComponentUiDTO componentUiDTO = new ComponentUiDTO();
         componentUiDTO.setId(componentDTO.getId());

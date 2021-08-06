@@ -39,7 +39,7 @@ public class ListDTO extends BaseDTO {
     private Long maxSize;
     private Boolean HeaderFilters;
     private String rowNavigation;
-
+    private String jsonUrl;
     private ComponentDTO component;
 
     private List<ListActionButtonDTO> listActionButtons;

@@ -61,7 +61,7 @@ public class FormDesignerService {
         formEntity.setModifiedBy(jwtService.getUserId());
         formEntity.setInstanceVersion(UUID.randomUUID().toString());
 
-        String script = this.generateDynamicHandlersScriptEndEncode(formDTO);
+        String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
@@ -81,7 +81,7 @@ public class FormDesignerService {
         formEntity.setModifiedBy(jwtService.getUserId());
         formEntity.setInstanceVersion(UUID.randomUUID().toString());
 
-        String script = this.generateDynamicHandlersScriptEndEncode(formDTO);
+        String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
@@ -138,7 +138,7 @@ public class FormDesignerService {
         this.formRepository.deleteById(optionalFormEntity.get().getId());
     }
 
-    private String generateDynamicHandlersScriptEndEncode(FormDTO formDTO) {
+    private String generateDynamicHandlersJavaScriptAndEncode(FormDTO formDTO) {
         String script = this.generateDynamicHandlersScript(formDTO);
         byte[] encodedBytes = Base64.getEncoder().encode(script.getBytes());
         String encodedScript = new String(encodedBytes);
@@ -175,6 +175,12 @@ public class FormDesignerService {
         pointerVarLines.add("var appendLineToTable;");
         pointerVarLines.add("var setFieldEditable;");
         pointerVarLines.add("var getFromBackend;");
+        pointerVarLines.add("var setFormTitle;");
+        pointerVarLines.add("var setFormDescription;");
+        pointerVarLines.add("var setHeaderTabEditable;");
+        pointerVarLines.add("var saveFormData;");
+        pointerVarLines.add("var deleteFormData;");
+        pointerVarLines.add("var setActionButtonEditable;");
         pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
@@ -189,6 +195,13 @@ public class FormDesignerService {
         pointerVarLines.add("function defineAppendLineToTable(myCallback){appendLineToTable = myCallback;}");
         pointerVarLines.add("function defineSetFieldEditable(myCallback){setFieldEditable = myCallback;}");
         pointerVarLines.add("function defineGetFromBackend(myCallback){getFromBackend = myCallback;}");
+        pointerVarLines.add("function defineSetFormTitle(myCallback){setFormTitle = myCallback;}");
+        pointerVarLines.add("function defineSetFormDescription(myCallback){setFormDescription = myCallback;}");
+        pointerVarLines.add("function defineSetHeaderTabEditable(myCallback){setHeaderTabEditable = myCallback;}");
+        pointerVarLines.add("function defineSetActionButtonEditable(myCallback){setActionButtonEditable = myCallback;}");
+        pointerVarLines.add("function defineSaveFormData(myCallback){saveFormData = myCallback;}");
+        pointerVarLines.add("function defineDeleteFormData(myCallback){deleteFormData = myCallback;}");
+
         pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }

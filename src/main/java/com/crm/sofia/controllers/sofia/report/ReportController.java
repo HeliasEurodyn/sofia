@@ -35,14 +35,6 @@ public class ReportController {
         return this.reportService.getObject(id);
     }
 
-    @PostMapping(value = "/fileReport")
-    public ReportDTO postObject(
-            @RequestParam("file") MultipartFile multipartFile,
-            @RequestParam("report") String reportBase64Str) throws IOException {
-        ReportDTO createdDTO = this.reportService.postObject(multipartFile, reportBase64Str);
-        return createdDTO;
-    }
-
     @PostMapping
     public ReportDTO postObject(@RequestBody ReportDTO dto) throws IOException {
         ReportDTO createdDTO = this.reportService.postObject(dto);
@@ -52,6 +44,14 @@ public class ReportController {
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
         this.reportService.deleteObject(id);
+    }
+
+    @PostMapping(value = "/fileReport")
+    public ReportDTO postObject(
+            @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam("report") String reportBase64Str) throws IOException {
+        ReportDTO createdDTO = this.reportService.postObject(multipartFile, reportBase64Str);
+        return createdDTO;
     }
 
     @PostMapping(path = "/print")

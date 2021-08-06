@@ -15,4 +15,9 @@ public interface ListRepository extends BaseRepository<ListEntity> {
     @Query(" SELECT DISTINCT l.instanceVersion FROM ListEntity l " +
             " WHERE l.id =:id ")
     public String getInstanceVersion(@Param("id") Long id);
+
+    @Query(" SELECT l.id FROM ListEntity l " +
+            " WHERE l.jsonUrl =:jsonUrl ")
+    public List<Long> getIdByJsonUrl(@Param("jsonUrl") String jsonUrl);
+
 }

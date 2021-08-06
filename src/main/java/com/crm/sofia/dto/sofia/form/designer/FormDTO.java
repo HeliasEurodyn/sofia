@@ -19,6 +19,12 @@ public class FormDTO extends BaseDTO {
 
     private String name;
 
+    private String title;
+
+    private String icon;
+
+    private String description;
+
     private ComponentDTO component;
 
     private List<FormTabDTO> formTabs;
@@ -26,5 +32,11 @@ public class FormDTO extends BaseDTO {
     private List<FormPopupDto> formPopups;
 
     private List<FormScriptDTO> formScripts;
+
+    private List<FormCssDTO> formCssList;
+
+    private String jsonUrl;
+
+    private List<FormActionButtonDTO> formActionButtons;
 
 }

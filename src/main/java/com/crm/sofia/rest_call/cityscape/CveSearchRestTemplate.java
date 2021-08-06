@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 @Service
 public class CveSearchRestTemplate {
@@ -89,7 +92,12 @@ public class CveSearchRestTemplate {
             );
 
             return responce.getBody();
-        } catch (Exception ex) {
+        } catch (HttpClientErrorException ex) {
+
+            if(ex.getRawStatusCode() == 404){
+                return new ArrayList<>();
+            }
+
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }

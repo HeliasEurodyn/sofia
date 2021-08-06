@@ -25,6 +25,12 @@ public class FormControlField extends BaseEntity {
     private String description;
 
     @Column
+    private String message;
+
+    @Column
+    private String placeholder;
+
+    @Column
     private Boolean visible;
 
     @Column

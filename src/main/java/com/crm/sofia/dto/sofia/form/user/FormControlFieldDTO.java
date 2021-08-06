@@ -18,6 +18,8 @@ public class FormControlFieldDTO extends BaseDTO {
 
     private String editor;
     private String description;
+    private String message;
+    private String placeholder;
     private Boolean visible;
     private Boolean editable;
     private Boolean required;

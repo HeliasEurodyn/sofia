@@ -11,6 +11,7 @@ import com.crm.sofia.dto.sofia.form.user.FormUiAreaDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiTabDTO;
+import com.crm.sofia.mapper.sofia.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.sofia.component.ComponentUiMapper;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.mapper.sofia.form.user.FormUiMapper;
@@ -38,6 +39,7 @@ public class FormService {
     private final ComponentSaverService componentSaverService;
     private final ComponentService componentService;
     private final ComponentUiMapper componentUiMapper;
+    private final ComponentJsonMapper componentJsonMapper;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
@@ -46,7 +48,8 @@ public class FormService {
                        ComponentRetrieverService componentRetrieverService,
                        ComponentSaverService componentSaverService,
                        ComponentService componentService,
-                       ComponentUiMapper componentUiMapper) {
+                       ComponentUiMapper componentUiMapper,
+                       ComponentJsonMapper componentJsonMapper) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.formUiMapper = formUiMapper;
@@ -55,6 +58,7 @@ public class FormService {
         this.componentSaverService = componentSaverService;
         this.componentService = componentService;
         this.componentUiMapper = componentUiMapper;
+        this.componentJsonMapper = componentJsonMapper;
     }
 
     public FormDTO getObject(Long id) {
@@ -67,6 +71,30 @@ public class FormService {
 
         /* Map */
         FormDTO formDTO = this.formMapper.mapForm(optionalFormEntity.get());
+
+        /* Shorting */
+        formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
+        formDTO.getFormTabs().forEach(formTab -> {
+            formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formTab.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+            });
+        });
+
+        /* Return */
+        return formDTO;
+    }
+
+    public FormDTO getObject(String jsonUrl) {
+
+        /* Retrieve */
+        List<FormEntity> formEntityList = this.formRepository.getByJsonUrl(jsonUrl);
+        if (formEntityList.size() <= 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
+        }
+
+        /* Map */
+        FormDTO formDTO = this.formMapper.mapForm(formEntityList.get(0));
 
         /* Shorting */
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
@@ -123,7 +151,28 @@ public class FormService {
         /* Retrieve Data */
         componentDTO = componentRetrieverService.retrieveComponentWithData(componentDTO, selectionId);
 
-        return componentUiMapper.mapComponent(componentDTO);
+        return componentUiMapper.mapToUi(componentDTO);
+    }
+
+    public Map retrieveJsonData(String jsonUrl, String selectionId) {
+
+        /* Retrieve Component */
+        FormDTO formDTO = this.getObject(jsonUrl);
+        ComponentDTO componentDTO = formDTO.getComponent();
+
+        /* Retrieve Form Component field Assignments from Database */
+        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                        componentDTO.getComponentPersistEntityList(),
+                        "form",
+                        formDTO.getId()
+                );
+        componentDTO.setComponentPersistEntityList(componentPersistEntityList);
+
+        /* Retrieve Data */
+        componentDTO = componentRetrieverService.retrieveComponentWithData(componentDTO, selectionId);
+
+        return componentJsonMapper.mapToJson(componentDTO);
     }
 
     public FormDTO getObjectAndRetrieveData(Long formId, String selectionId) {
@@ -166,10 +215,10 @@ public class FormService {
         return componentSaverService.save(formDTO.getComponent(), parameters);
     }
 
-    public String getFormScript(Long formId) {
+    public String getJavaScript(Long formId) {
 
         List<String> decodedScripts = new ArrayList<>();
-        List<String> formScripts = this.formRepository.getFormScriptsByFormId(formId);
+        List<String> formScripts = this.formRepository.getFormJavaScriptsByFormId(formId);
         String formScriptWithHandlers = this.formRepository.getFormScript(formId);
         formScripts.add(formScriptWithHandlers);
 
@@ -180,6 +229,19 @@ public class FormService {
         });
         return String.join("\n\n", decodedScripts);
     }
+
+    public String getCssScript(Long formId) {
+        List<String> decodedScripts = new ArrayList<>();
+        List<String> formScripts = this.formRepository.getFormCssScriptsByFormId(formId);
+        
+        formScripts.forEach(formScript -> {
+            byte[] decodedBytes = Base64.getDecoder().decode(formScript);
+            String decodedScript = new String(decodedBytes);
+            decodedScripts.add(decodedScript);
+        });
+        return String.join("\n\n", decodedScripts);
+    }
+
 
     public String getVersion(Long id) {
         return this.formRepository.getInstanceVersion(id);

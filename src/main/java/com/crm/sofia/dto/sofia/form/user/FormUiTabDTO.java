@@ -16,9 +16,13 @@ import java.util.List;
 @Accessors(chain = true)
 public class FormUiTabDTO extends BaseDTO {
 
+    private String code;
+
     private String description;
 
     private String icon;
+
+    private Boolean editable;
 
     private List<FormUiAreaDTO> formAreas;
 

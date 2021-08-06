@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.form.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.form.designer.FormActionButtonDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,11 @@ public class FormUiDTO extends BaseDTO {
 
     private String name;
 
-   // private ComponentDTO component;
+    private String title;
+
+    private String description;
+
+    private String icon;
 
     private List<FormUiTabDTO> formTabs;
 
@@ -26,4 +31,7 @@ public class FormUiDTO extends BaseDTO {
 
     private List<FormScriptDTO> formScripts;
 
+    private String jsonUrl;
+
+    private List<FormActionButtonUiDTO> formActionButtons;
 }

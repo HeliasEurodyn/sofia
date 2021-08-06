@@ -13,28 +13,36 @@ import java.util.List;
 @Accessors(chain = true)
 @DynamicUpdate
 @DynamicInsert
-@Entity(name = "FormTab")
-@Table(name = "form_tab")
-public class FormTab extends BaseEntity {
+@Entity(name = "FormActionButton")
+@Table(name = "form_action_button")
+public class FormActionButton extends BaseEntity {
 
     @Column
     private String code;
 
     @Column
+    private String icon;
+
+    @Column
     private String description;
 
     @Column
-    private String icon;
+    private String editor;
+
+    @Column
+    private String cssClass;
+
+    @Column
+    private Boolean visible;
 
     @Column
     private Boolean editable;
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = { CascadeType.ALL },
-            orphanRemoval=true
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
-    @JoinColumn(name = "form_tab_id")
-    private List<FormArea> formAreas;
-
+    @JoinColumn(name = "parent_id")
+    private List<FormActionButton> formActionButtons;
 }

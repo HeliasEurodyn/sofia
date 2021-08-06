@@ -18,6 +18,9 @@ import java.util.List;
 public class FormArea extends BaseEntity {
 
     @Column
+    public String title;
+
+    @Column
     private String description;
 
     @Column

@@ -154,4 +154,7 @@ public class ListEntity extends BaseEntity {
 
     @Column
     private String instanceVersion;
+
+    @Column
+    private String jsonUrl;
 }
