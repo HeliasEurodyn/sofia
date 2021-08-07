@@ -4,10 +4,13 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
+import com.crm.sofia.native_repository.sofia.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.sofia.component.ComponentPersistEntityRepository;
-import com.crm.sofia.native_repository.sofia.component.ComponentPersistEntityRetrieverNativeRepository;
+//import com.crm.sofia.native_repository.sofia.component.ComponentPersistEntityRetrieverNativeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,14 +20,17 @@ public class ComponentPersistEntityRetrieverService {
 
     private final ComponentPersistEntityRepository componentPersistEntityRepository;
     private final ComponentPersistEntityMapper componentPersistEntityMapper;
-    private final ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository;
+//    private final ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository;
+    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
 
     public ComponentPersistEntityRetrieverService(ComponentPersistEntityRepository componentPersistEntityRepository,
                                                   ComponentPersistEntityMapper componentPersistEntityMapper,
-                                                  ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository) {
+//                                                  ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository,
+                                                    ComponentRetrieverNativeRepository componentRetrieverNativeRepository) {
         this.componentPersistEntityRepository = componentPersistEntityRepository;
         this.componentPersistEntityMapper = componentPersistEntityMapper;
-        this.componentPersistEntityRetrieverNativeRepository = componentPersistEntityRetrieverNativeRepository;
+//        this.componentPersistEntityRetrieverNativeRepository = componentPersistEntityRetrieverNativeRepository;
+        this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
     }
 
     public ComponentPersistEntityDTO get(Long id, String selectionId){
@@ -39,9 +45,13 @@ public class ComponentPersistEntityRetrieverService {
                 .stream()
                 .forEach(x -> x.setLocateStatement(selectionId));
 
-        componentPersistEntityDTO = this.componentPersistEntityRetrieverNativeRepository
-                .retrieveComponentPersistEntity(componentPersistEntityDTO,
-                        retrievalFieldList);
+//        componentPersistEntityDTO = this.componentPersistEntityRetrieverNativeRepository
+//                .retrieveComponentPersistEntity(componentPersistEntityDTO,
+//                        retrievalFieldList);
+
+        this.componentRetrieverNativeRepository.retrieveComponentPersistEntityListData(
+                Collections.singletonList(componentPersistEntityDTO),
+                new ArrayList<>());
 
         return componentPersistEntityDTO;
     }

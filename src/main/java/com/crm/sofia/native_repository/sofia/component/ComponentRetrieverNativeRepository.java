@@ -60,7 +60,7 @@ public class ComponentRetrieverNativeRepository {
         return mainComponentPersistEntity;
     }
 
-    private void retrieveComponentPersistEntityListData(
+    public void retrieveComponentPersistEntityListData(
             List<ComponentPersistEntityDTO> componentPersistEntityList,
             List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
