@@ -224,6 +224,10 @@ public class ComponentRetrieverNativeRepository {
 
         List<Object[]> dataList = query.getResultList();
 
+        if(dataList.size() == 0){
+            return componentPersistEntity;
+        }
+
         if (!(componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
             componentPersistEntity = this.mapSingleLineQueryResponces(componentPersistEntity, dataList.get(0));
         } else {
