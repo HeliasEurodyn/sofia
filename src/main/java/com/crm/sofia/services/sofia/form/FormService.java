@@ -3,10 +3,7 @@ package com.crm.sofia.services.sofia.form;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormControlDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormTabDTO;
+import com.crm.sofia.dto.sofia.form.designer.*;
 import com.crm.sofia.dto.sofia.form.user.FormUiAreaDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
@@ -78,6 +75,25 @@ public class FormService {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+        formDTO.getFormPopups().sort(Comparator.comparingLong(FormPopupDto::getShortOrder));
+        formDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
 
@@ -85,28 +101,17 @@ public class FormService {
         return formDTO;
     }
 
+
     public FormDTO getObject(String jsonUrl) {
 
         /* Retrieve */
-        List<FormEntity> formEntityList = this.formRepository.getByJsonUrl(jsonUrl);
-        if (formEntityList.size() <= 0) {
+        List<Long> formEntityIdsList = this.formRepository.getIdsByJsonUrl(jsonUrl);
+        if (formEntityIdsList.size() <= 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
 
-        /* Map */
-        FormDTO formDTO = this.formMapper.mapForm(formEntityList.get(0));
-
-        /* Shorting */
-        formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
-        formDTO.getFormTabs().forEach(formTab -> {
-            formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
-            formTab.getFormAreas().forEach(formArea -> {
-                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
-            });
-        });
-
         /* Return */
-        return formDTO;
+        return this.getObject(formEntityIdsList.get(0));
     }
 
     public FormUiDTO getUiObject(Long id) {
@@ -121,11 +126,31 @@ public class FormService {
         FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get());
 
         /* Shorting */
+        /* Shorting */
         formUiDTO.getFormTabs().sort(Comparator.comparingLong(FormUiTabDTO::getShortOrder));
         formUiDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+        formUiDTO.getFormPopups().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormPopupDto::getShortOrder));
+        formUiDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
 
@@ -233,7 +258,7 @@ public class FormService {
     public String getCssScript(Long formId) {
         List<String> decodedScripts = new ArrayList<>();
         List<String> formScripts = this.formRepository.getFormCssScriptsByFormId(formId);
-        
+
         formScripts.forEach(formScript -> {
             byte[] decodedBytes = Base64.getDecoder().decode(formScript);
             String decodedScript = new String(decodedBytes);

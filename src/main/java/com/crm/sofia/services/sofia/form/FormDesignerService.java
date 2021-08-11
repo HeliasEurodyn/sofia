@@ -1,10 +1,7 @@
 package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormControlDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormTabDTO;
+import com.crm.sofia.dto.sofia.form.designer.*;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
@@ -101,29 +98,54 @@ public class FormDesignerService {
     }
 
     public FormDTO getObject(Long id) {
+
+        /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
+
+        /* Map */
         FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
 
+        /* Retrieve Field Assignments */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
                 this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
                 );
-
         formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
 
+        /* Shorting */
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
         formDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+        formDTO.getFormPopups().sort(Comparator.comparingLong(FormPopupDto::getShortOrder));
+        formDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
 
+        /* Return */
         return formDTO;
     }
 
