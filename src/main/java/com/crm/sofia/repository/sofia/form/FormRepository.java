@@ -28,8 +28,8 @@ public interface FormRepository extends BaseRepository<FormEntity> {
             " WHERE f.id =:id ")
     public String getInstanceVersion(@Param("id") Long id);
 
-    @Query(" SELECT f FROM FormEntity f " +
+    @Query(" SELECT f.id FROM FormEntity f " +
             " WHERE f.jsonUrl =:jsonUrl ")
-    public List<FormEntity> getByJsonUrl(@Param("jsonUrl") String jsonUrl);
+    public List<Long> getIdsByJsonUrl(@Param("jsonUrl") String jsonUrl);
 
 }
