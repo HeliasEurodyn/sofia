@@ -20,9 +20,13 @@ public class ListDTO extends BaseDTO {
 
     private String code;
     private String name;
+    private String headerTitle;
+    private String HeaderDescription;
+    private String headerIcon;
+    private String title;
     private String description;
-    private String selector;
     private String icon;
+    private String selector;
     private String filterFieldStructure;
     private Boolean customFilterFieldStructure;
     private Boolean exportExcel;

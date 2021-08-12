@@ -26,6 +26,18 @@ public class ListEntity extends BaseEntity {
     private String name;
 
     @Column
+    private String headerTitle;
+
+    @Column(length=1024)
+    private String HeaderDescription;
+
+    @Column
+    private String headerIcon;
+
+    @Column
+    private String title;
+
+    @Column(length=1024)
     private String description;
 
     @Column
