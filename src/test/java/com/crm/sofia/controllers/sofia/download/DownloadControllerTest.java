@@ -27,8 +27,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-;
-
 @ExtendWith(MockitoExtension.class)
 public class DownloadControllerTest {
 

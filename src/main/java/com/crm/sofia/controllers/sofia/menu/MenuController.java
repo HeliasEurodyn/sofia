@@ -36,7 +36,6 @@ public class MenuController {
         return createdDTO;
     }
 
-
     @PutMapping
     public MenuDTO putObject(@RequestBody MenuDTO dto) {
         MenuDTO createdDTO = this.menuService.putObject(dto);

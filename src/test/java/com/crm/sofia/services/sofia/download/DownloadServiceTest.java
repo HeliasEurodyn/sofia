@@ -24,7 +24,6 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class DownloadServiceTest {
 
-
     @Mock
     private DownloadRepository downloadRepository;
     @InjectMocks
@@ -64,8 +63,8 @@ public class DownloadServiceTest {
     public void getObjectByIdTest(){
         given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(download));
         DownloadDTO dto = downloadService.getObject(6L);
-
     }
+
     @Test
     public void getObjectByIdWhenEmptyTest(){
         given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -92,6 +91,7 @@ public class DownloadServiceTest {
         downloadService.deleteObject(6L);
 
     }
+
     @Test
     public void getDeleteByIdWhenEmptyTest(){
         given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -102,7 +102,5 @@ public class DownloadServiceTest {
         String actualMessage = exception.getMessage();
         assertEquals(actualMessage,expectedMessage);
     }
-
-
 
 }
