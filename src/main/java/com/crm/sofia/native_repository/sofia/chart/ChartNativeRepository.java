@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @Service
 public class ChartNativeRepository {
 
-    @Value("${sofia.database}")
+    @Value("${sofia.db.name}")
     private String sofiaDatabase;
 
     private final EntityManager entityManager;

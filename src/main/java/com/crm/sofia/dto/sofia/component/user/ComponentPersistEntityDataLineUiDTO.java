@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
 @Accessors(chain = true)
 public class ComponentPersistEntityDataLineUiDTO {
 

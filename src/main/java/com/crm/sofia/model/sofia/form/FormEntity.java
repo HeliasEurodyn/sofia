@@ -71,8 +71,8 @@ public class FormEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String script;
 
-    @Column
-    private String instanceVersion;
+    @Column(columnDefinition ="BIGINT(20) default 0")
+    private Long instanceVersion;
 
     @Column
     private String jsonUrl;

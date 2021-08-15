@@ -37,8 +37,14 @@ public class ListDesignerService {
         listEntity.setModifiedOn(Instant.now());
         listEntity.setCreatedBy(jwtService.getUserId());
         listEntity.setModifiedBy(jwtService.getUserId());
-        listEntity.setInstanceVersion(UUID.randomUUID().toString());
         ListEntity createdListEntity = this.listRepository.save(listEntity);
+        Long instanceVersion = listEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        listEntity.setInstanceVersion(instanceVersion);
         return this.listMapper.map(createdListEntity);
     }
 
@@ -47,8 +53,14 @@ public class ListDesignerService {
         ListEntity listEntity = this.listMapper.map(listDTO);
         listEntity.setModifiedOn(Instant.now());
         listEntity.setModifiedBy(jwtService.getUserId());
-        listEntity.setInstanceVersion(UUID.randomUUID().toString());
         ListEntity createdListEntity = this.listRepository.save(listEntity);
+        Long instanceVersion = listEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        listEntity.setInstanceVersion(instanceVersion);
         return this.listMapper.map(createdListEntity);
     }
 

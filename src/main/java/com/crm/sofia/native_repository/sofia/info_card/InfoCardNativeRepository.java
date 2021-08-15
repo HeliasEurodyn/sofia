@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class InfoCardNativeRepository {
 
-    @Value("${sofia.database}")
+    @Value("${sofia.db.name}")
     private String sofiaDatabase;
 
     private final EntityManager entityManager;

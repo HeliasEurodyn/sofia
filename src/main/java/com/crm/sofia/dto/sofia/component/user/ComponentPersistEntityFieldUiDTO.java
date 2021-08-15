@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
 @Accessors(chain = true)
 public class ComponentPersistEntityFieldUiDTO {
 

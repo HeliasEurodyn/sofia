@@ -298,7 +298,7 @@ public class ListService {
         return this.getObjectLeftGroupingData(listDTO);
     }
 
-    public String getVersion(Long id) {
+    public String getInstanceVersion(Long id) {
         return this.listRepository.getInstanceVersion(id);
     }
 }

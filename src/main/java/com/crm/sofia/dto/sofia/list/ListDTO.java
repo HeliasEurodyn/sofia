@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @Getter
@@ -45,6 +46,7 @@ public class ListDTO extends BaseDTO {
     private String rowNavigation;
     private String jsonUrl;
     private ComponentDTO component;
+    private Long instanceVersion;
 
     private List<ListActionButtonDTO> listActionButtons;
     private List<ListComponentFieldDTO> listComponentColumnFieldList;

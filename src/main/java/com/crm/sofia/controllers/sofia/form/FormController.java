@@ -40,9 +40,9 @@ public class FormController {
         return this.formService.retrieveData(formId, selectionId);
     }
 
-    @GetMapping(path = "version")
-    String getVersion(@RequestParam("id") Long formId) {
-        return this.formService.getVersion(formId);
+    @GetMapping(path = "instance-version", produces = "text/plain")
+    String getInstanceVersion(@RequestParam("id") Long formId) {
+        return this.formService.getInstanceVersion(formId);
     }
 
     @PostMapping

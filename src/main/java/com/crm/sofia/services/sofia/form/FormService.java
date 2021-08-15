@@ -37,6 +37,7 @@ public class FormService {
     private final ComponentService componentService;
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
+    private final FormCacheingService formCacheingService;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
@@ -46,7 +47,8 @@ public class FormService {
                        ComponentSaverService componentSaverService,
                        ComponentService componentService,
                        ComponentUiMapper componentUiMapper,
-                       ComponentJsonMapper componentJsonMapper) {
+                       ComponentJsonMapper componentJsonMapper,
+                       FormCacheingService formCacheingService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.formUiMapper = formUiMapper;
@@ -56,6 +58,7 @@ public class FormService {
         this.componentService = componentService;
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
+        this.formCacheingService = formCacheingService;
     }
 
     public FormDTO getObject(Long id) {
@@ -116,6 +119,10 @@ public class FormService {
 
     public FormUiDTO getUiObject(Long id) {
 
+        if (this.formCacheingService.hasUiObject(id)) {
+            return this.formCacheingService.getUiObject(id);
+        }
+
         /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
@@ -125,7 +132,6 @@ public class FormService {
         /* Map */
         FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get());
 
-        /* Shorting */
         /* Shorting */
         formUiDTO.getFormTabs().sort(Comparator.comparingLong(FormUiTabDTO::getShortOrder));
         formUiDTO.getFormTabs().forEach(formTab -> {
@@ -153,6 +159,9 @@ public class FormService {
                 });
             });
         });
+
+        /* Cache */
+        this.formCacheingService.putUiObject(id, formUiDTO);
 
         /* Return */
         return formUiDTO;
@@ -268,7 +277,7 @@ public class FormService {
     }
 
 
-    public String getVersion(Long id) {
+    public String getInstanceVersion(Long id) {
         return this.formRepository.getInstanceVersion(id);
     }
 }

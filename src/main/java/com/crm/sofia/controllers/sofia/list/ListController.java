@@ -32,7 +32,9 @@ public class ListController {
 
     @GetMapping(path = "by-id")
     ListDTO getObjectData(@RequestParam("id") Long id) {
-        return this.listService.getObjectData(id);
+        ListDTO listDTO = this.listService.getObjectData(id);
+        listDTO.setComponent(null);
+        return listDTO;
     }
 
     @GetMapping
@@ -63,9 +65,9 @@ public class ListController {
                 .body(new InputStreamResource(in));
     }
 
-    @GetMapping(path = "version")
-    String getVersion(@RequestParam("id") Long formId) {
-        return this.listService.getVersion(formId);
+    @GetMapping(path = "instance-version", produces = "text/plain")
+    String getInstanceVersion(@RequestParam("id") Long formId) {
+        return this.listService.getInstanceVersion(formId);
     }
 
 //    @GetMapping(path = "/jasper-test-pdf")

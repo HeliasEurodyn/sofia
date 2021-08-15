@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    @Value("${sofia.database}")
+    @Value("${sofia.db.name}")
     private String sofiaDatabase;
 
     private final PersistEntityRepository persistEntityRepository;

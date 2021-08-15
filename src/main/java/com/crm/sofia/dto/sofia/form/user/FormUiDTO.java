@@ -1,7 +1,8 @@
 package com.crm.sofia.dto.sofia.form.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormActionButtonDTO;
+import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
+import com.crm.sofia.model.sofia.component.Component;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
+
 @Accessors(chain = true)
 public class FormUiDTO extends BaseDTO {
 
@@ -29,9 +31,9 @@ public class FormUiDTO extends BaseDTO {
 
     private List<FormPopupDto> formPopups;
 
-    private List<FormScriptDTO> formScripts;
-
-    private String jsonUrl;
+    private Long instanceVersion;
 
     private List<FormActionButtonUiDTO> formActionButtons;
+
+
 }

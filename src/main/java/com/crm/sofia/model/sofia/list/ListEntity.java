@@ -164,8 +164,8 @@ public class ListEntity extends BaseEntity {
     @JoinColumn(name = "action_list_component_id")
     private List<ListComponentField> listComponentActionFieldList;
 
-    @Column
-    private String instanceVersion;
+    @Column(columnDefinition ="BIGINT(20) default 0")
+    private Long instanceVersion;
 
     @Column
     private String jsonUrl;

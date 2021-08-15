@@ -1,0 +1,60 @@
+version: "3.7"
+services:
+  db:
+    image: mariadb:10.5
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: rita-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rita
+    ports:
+      - "4822:3306"
+    volumes:
+      - ./mysql-files:/var/lib/mysql
+      - ./mysql-scripts:/docker-entrypoint-initdb.d
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: rita-db-admin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 300M
+    ports:
+      - "4801:80"
+  dozzle:
+    image: amir20/dozzle
+    container_name: rita-logs
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8081:8080"
+  rita-backend:
+    build:
+      context: rita-backend
+      args:
+        DB_IP: db
+        DB_PORT: 3306
+        DB_NAME: rita
+        DB_USERNAME: root
+        DB_PASSWORD: root
+      dockerfile: Dockerfile
+    image: rita-backend
+    container_name: rita-backend
+    ports:
+      - "15502:15502"
+    restart: always
+  rita-frontend:
+    build:
+      context: rita-frontend
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: http://localhost:15502/api
+    image: rita-frontend
+    container_name: rita-frontend
+    ports:
+      - "5000:5000"
+    restart: always

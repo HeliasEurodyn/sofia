@@ -30,6 +30,7 @@ public class FormDesignerService {
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
     private final ExpressionService expressionService;
     private final ResourceLoader resourceLoader;
+    private final FormCacheingService formCacheingService;
 
     public FormDesignerService(FormRepository formRepository,
                                FormMapper formMapper,
@@ -38,7 +39,8 @@ public class FormDesignerService {
                                ComponentDesignerService componentDesignerService,
                                ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
                                ExpressionService expressionService,
-                               ResourceLoader resourceLoader) {
+                               ResourceLoader resourceLoader,
+                               FormCacheingService formCacheingService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.jwtService = jwtService;
@@ -47,6 +49,7 @@ public class FormDesignerService {
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
         this.expressionService = expressionService;
         this.resourceLoader = resourceLoader;
+        this.formCacheingService = formCacheingService;
     }
 
     @Transactional
@@ -56,7 +59,14 @@ public class FormDesignerService {
         formEntity.setModifiedOn(Instant.now());
         formEntity.setCreatedBy(jwtService.getUserId());
         formEntity.setModifiedBy(jwtService.getUserId());
-        formEntity.setInstanceVersion(UUID.randomUUID().toString());
+
+        Long instanceVersion = formEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        formEntity.setInstanceVersion(instanceVersion);
 
         String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
@@ -68,6 +78,7 @@ public class FormDesignerService {
                         createdFormEntity.getId());
 
         FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
+        formCacheingService.clearUiObject(createdFormDTO.getId());
         return createdFormDTO;
     }
 
@@ -76,7 +87,13 @@ public class FormDesignerService {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setModifiedOn(Instant.now());
         formEntity.setModifiedBy(jwtService.getUserId());
-        formEntity.setInstanceVersion(UUID.randomUUID().toString());
+        Long instanceVersion = formEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        formEntity.setInstanceVersion(instanceVersion);
 
         String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
