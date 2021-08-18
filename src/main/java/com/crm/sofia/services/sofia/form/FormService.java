@@ -175,7 +175,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         componentDTO.getComponentPersistEntityList(),
                         "form",
                         formId
@@ -196,7 +196,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         componentDTO.getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -216,7 +216,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -237,7 +237,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()

@@ -43,7 +43,7 @@ public class XlsImportDesignerService {
         XlsImportDTO dto = this.xlsImportMapper.map(optionalchart.get());
 
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         dto.getComponent().getComponentPersistEntityList(),
                         "xls_import",
                         dto.getId()
@@ -73,7 +73,7 @@ public class XlsImportDesignerService {
         if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
-        this.componentPersistEntityFieldAssignmentService.deleteByFormIdAndEntityType(optionalChart.get().getId(),"xls_import");
+        this.componentPersistEntityFieldAssignmentService.deleteByIdAndEntityType(optionalChart.get().getId(),"xls_import");
         this.xlsImportRepository.deleteById(optionalChart.get().getId());
     }
 

@@ -127,7 +127,7 @@ public class FormDesignerService {
 
         /* Retrieve Field Assignments */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -173,7 +173,7 @@ public class FormDesignerService {
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FormEntity does not exist");
         }
-        this.componentPersistEntityFieldAssignmentService.deleteByFormIdAndEntityType(optionalFormEntity.get().getId(), "form");
+        this.componentPersistEntityFieldAssignmentService.deleteByIdAndEntityType(optionalFormEntity.get().getId(), "form");
         this.formRepository.deleteById(optionalFormEntity.get().getId());
     }
 
