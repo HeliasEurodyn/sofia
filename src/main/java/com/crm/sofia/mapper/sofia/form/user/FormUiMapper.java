@@ -1,5 +1,6 @@
 package com.crm.sofia.mapper.sofia.form.user;
 
+import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
@@ -14,21 +15,7 @@ public abstract class FormUiMapper extends BaseMapper<FormUiDTO, FormEntity> {
         dto.getFormTabs().forEach(tab -> {
             tab.getFormAreas().forEach(area -> {
                 area.getFormControls().forEach(control -> {
-                    if (control.getType().equals("field")) {
-                        Long fieldId = control.getFormControlField().getComponentPersistEntityField().getId();
-                        control.getFormControlField().setFieldId(fieldId);
-                        control.getFormControlField().setComponentPersistEntity(null);
-                        control.getFormControlField().setComponentPersistEntityField(null);
-                    } else if (control.getType().equals("table")){
-                        control.getFormControlTable().getFormControls().forEach(tableConrtol -> {
-                            if (tableConrtol.getType().equals("field")) {
-                                Long fieldId = tableConrtol.getFormControlField().getComponentPersistEntityField().getId();
-                                tableConrtol.getFormControlField().setFieldId(fieldId);
-                                tableConrtol.getFormControlField().setComponentPersistEntity(null);
-                                tableConrtol.getFormControlField().setComponentPersistEntityField(null);
-                            }
-                        });
-                    }
+                    this.setFieldIdToFormControl(control);
                 });
             });
         });
@@ -36,26 +23,30 @@ public abstract class FormUiMapper extends BaseMapper<FormUiDTO, FormEntity> {
         dto.getFormPopups().forEach(popup -> {
             popup.getFormAreas().forEach(area -> {
                 area.getFormControls().forEach(control -> {
-                    if (control.getType().equals("field")) {
-                        Long fieldId = control.getFormControlField().getComponentPersistEntityField().getId();
-                        control.getFormControlField().setFieldId(fieldId);
-                        control.getFormControlField().setComponentPersistEntity(null);
-                        control.getFormControlField().setComponentPersistEntityField(null);
-                    } else if (control.getType().equals("table")){
-                        control.getFormControlTable().getFormControls().forEach(tableConrtol -> {
-                            if (tableConrtol.getType().equals("field")) {
-                                Long fieldId = tableConrtol.getFormControlField().getComponentPersistEntityField().getId();
-                                tableConrtol.getFormControlField().setFieldId(fieldId);
-                                tableConrtol.getFormControlField().setComponentPersistEntity(null);
-                                tableConrtol.getFormControlField().setComponentPersistEntityField(null);
-                            }
-                        });
-                    }
+                    this.setFieldIdToFormControl(control);
                 });
             });
         });
 
         return dto;
+    }
+
+    public void setFieldIdToFormControl(FormUiControlDTO control) {
+        if (control.getType().equals("field")) {
+            Long fieldId = control.getFormControlField().getComponentPersistEntityField().getId();
+            control.getFormControlField().setFieldId(fieldId);
+            control.getFormControlField().setComponentPersistEntity(null);
+            control.getFormControlField().setComponentPersistEntityField(null);
+        } else if (control.getType().equals("table")) {
+            control.getFormControlTable().getFormControls().forEach(tableConrtol -> {
+                if (tableConrtol.getType().equals("field")) {
+                    Long fieldId = tableConrtol.getFormControlField().getComponentPersistEntityField().getId();
+                    tableConrtol.getFormControlField().setFieldId(fieldId);
+                    tableConrtol.getFormControlField().setComponentPersistEntity(null);
+                    tableConrtol.getFormControlField().setComponentPersistEntityField(null);
+                }
+            });
+        }
     }
 
 }

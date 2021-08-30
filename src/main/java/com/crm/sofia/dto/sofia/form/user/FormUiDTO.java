@@ -30,9 +30,8 @@ public class FormUiDTO extends BaseDTO {
 
     private List<FormPopupDto> formPopups;
 
-    private Long instanceVersion;
-
     private List<FormActionButtonUiDTO> formActionButtons;
 
+    private Long instanceVersion;
 
 }

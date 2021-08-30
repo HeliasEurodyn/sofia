@@ -25,30 +25,18 @@ public class FormDesignerService {
     private final FormRepository formRepository;
     private final FormMapper formMapper;
     private final JWTService jwtService;
-    private final FormDynamicQueryService formDynamicQueryService;
-    private final ComponentDesignerService componentDesignerService;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-    private final ExpressionService expressionService;
-    private final ResourceLoader resourceLoader;
     private final FormCacheingService formCacheingService;
 
     public FormDesignerService(FormRepository formRepository,
                                FormMapper formMapper,
                                JWTService jwtService,
-                               FormDynamicQueryService formDynamicQueryService,
-                               ComponentDesignerService componentDesignerService,
                                ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
-                               ExpressionService expressionService,
-                               ResourceLoader resourceLoader,
                                FormCacheingService formCacheingService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.jwtService = jwtService;
-        this.formDynamicQueryService = formDynamicQueryService;
-        this.componentDesignerService = componentDesignerService;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-        this.expressionService = expressionService;
-        this.resourceLoader = resourceLoader;
         this.formCacheingService = formCacheingService;
     }
 
@@ -111,7 +99,7 @@ public class FormDesignerService {
 
     public List<FormDTO> getObject() {
         List<FormEntity> formEntities = this.formRepository.findAll();
-        return this.formMapper.map(formEntities);
+        return this.formMapper.mapEntitiesForList(formEntities);
     }
 
     public FormDTO getObject(Long id) {
@@ -463,50 +451,10 @@ public class FormDesignerService {
     }
 
 
-//    @Transactional
-//    @RequestMapping(value = "testjavascript.js", method = RequestMethod.GET, produces = "text/javascript;")
-//    public String home() throws Exception {
-//        File file = ResourceUtils.getFile("classpath:test.js");
-//        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-//    }
-
-//    public void saveScriptsToResources(FormDTO formDTO) throws IOException {
-//        this.recreateFolder(formDTO.getId());
-//        String script = this.generateScript(formDTO);
-//       // File file = ResourceUtils.getFile("generated-scripts/form/" + formDTO.getId().toString() + "/script.js");
-//        File file = new ClassPathResource("generated-scripts/form/" + formDTO.getId().toString() + "/script.js").getFile();
-//        Files.write(file.toPath(), script.getBytes());
-//    }
-
-//    public void recreateFolder(Long formId) throws IOException {
-//
-//      //  Path path = Paths.get("generated-scripts/form/" + formId.toString());
-//       // Path path = Paths.get(new ClassPathResource("generated-scripts/form/" + formId.toString()).getPath());
-//
-//        Resource resource = resourceLoader.getResource("classpath:generated-scripts/form/" + formId.toString());
-//        // Boolean folderExists = Files.exists(path);
-////        Boolean folderExists = Files.exists(path);
-//        if (resource.exists()) {
-//            File folderFile = new ClassPathResource("generated-scripts/form/" + formId.toString()).getFile();
-//            folderFile.delete();
-//            //File folderFile = ResourceUtils.getFile("generated-scripts/form/" + formId.toString());
-//            //folderFile.delete();
-//        }
-//
-//        //File folderFile = ResourceUtils.getFile("generated-scripts/form/" + formId.toString());
-//       // folderFile.mkdirs();
-//        File folderFile = new ClassPathResource("generated-scripts/form/" + formId.toString()).getFile();
-//        folderFile.mkdirs();
-//    }
-
-//    public String generateScript(FormDTO formDTO) {
-//        List<String> decodedScripts = new ArrayList<>();
-//        formDTO.getFormScripts().forEach(formScriptDTO -> {
-//            byte[] decodedBytes = Base64.getDecoder().decode(formScriptDTO.getScript());
-//            String decodedScript = new String(decodedBytes);
-//            decodedScripts.add(decodedScript);
-//        });
-//        return String.join("\n\n  ", decodedScripts);
-//    }
+    public boolean clearCache() {
+        this.formCacheingService.clear();
+        this.formRepository.increaseInstanceVersions();
+        return true;
+    }
 
 }

@@ -52,4 +52,9 @@ public class ListDesignerController {
         this.listDesignerService.deleteObject(id);
     }
 
+    @RequestMapping(value = "/clear-cache", method = RequestMethod.GET)
+    boolean clearCache() {
+        return this.listDesignerService.clearCache();
+    }
+
 }

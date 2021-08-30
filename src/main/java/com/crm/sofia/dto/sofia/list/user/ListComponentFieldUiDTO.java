@@ -15,8 +15,13 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder",
+        "version","operator",
+        "shortLocation",
+        "decimals","componentPersistEntity",
+        "componentPersistEntityField" }
+)
 public class ListComponentFieldUiDTO extends BaseDTO {
     private String code;
     private String editor;

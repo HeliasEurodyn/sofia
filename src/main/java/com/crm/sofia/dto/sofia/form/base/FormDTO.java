@@ -39,4 +39,5 @@ public class FormDTO extends BaseDTO {
 
     private List<FormActionButtonDTO> formActionButtons;
 
+    private Long instanceVersion;
 }

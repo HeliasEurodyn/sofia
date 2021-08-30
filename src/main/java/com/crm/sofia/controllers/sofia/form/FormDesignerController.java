@@ -47,4 +47,9 @@ public class FormDesignerController {
         this.formDesignerService.deleteObject(id);
     }
 
+    @RequestMapping(value = "/clear-cache", method = RequestMethod.GET)
+    boolean clearCache() {
+        return this.formDesignerService.clearCache();
+    }
+
 }

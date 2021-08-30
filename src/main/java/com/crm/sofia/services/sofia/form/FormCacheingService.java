@@ -31,6 +31,10 @@ public class FormCacheingService {
         this.cachedForms.put(id, formUiDTO);
     }
 
+    public void clear() {
+        this.cachedForms.clear();
+    }
+
     public void clearUiObject(Long id) {
         if (this.cachedForms.containsKey(id)) {
             this.cachedForms.remove(id);

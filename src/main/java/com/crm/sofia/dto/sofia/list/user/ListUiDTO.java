@@ -24,8 +24,7 @@ import java.util.List;
         "totalRows",
         "rowNavigation",
         "jsonUrl",
-        "component",
-        "instanceVersion"}
+        "component"}
         )
 
 @Accessors(chain = true)

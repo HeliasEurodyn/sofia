@@ -132,7 +132,7 @@ public class FormService {
         /* Map */
         FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get());
 
-        /* Shorting */
+        /* Short */
         formUiDTO.getFormTabs().sort(Comparator.comparingLong(FormUiTabDTO::getShortOrder));
         formUiDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));

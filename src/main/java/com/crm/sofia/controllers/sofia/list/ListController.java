@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.sofia.list;
 import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.services.sofia.list.ListService;
 import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,15 @@ public class ListController {
     }
 
     @GetMapping(path = "by-id")
-    ListDTO getObjectData(@RequestParam("id") Long id) {
-        ListDTO listDTO = this.listService.getObjectData(id);
+    ListDTO getObject(@RequestParam("id") Long id) {
+        ListDTO listDTO = this.listService.getListObject(id);
+        listDTO.setComponent(null);
+        return listDTO;
+    }
+
+    @GetMapping(path = "ui")
+    ListUiDTO getUiObject(@RequestParam("id") Long id) {
+        ListUiDTO listDTO = this.listService.getUiListObject(id);
         listDTO.setComponent(null);
         return listDTO;
     }
@@ -43,7 +51,7 @@ public class ListController {
     }
 
     @GetMapping(path = "/results")
-    ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters, id);
     }
 
@@ -54,7 +62,7 @@ public class ListController {
 
     @PostMapping(path = "/data-excel")
     public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
-        ListResultsDataDTO resultsDataDTO = this.listService.getObjectData(dto);
+        ListResultsDataDTO resultsDataDTO = this.listService.getListObject(dto);
         ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
