@@ -69,7 +69,7 @@ public class ListDesignerService {
 
     public List<ListDTO> getObject() {
         List<ListEntity> views = this.listRepository.findAll();
-        return this.listMapper.map(views);
+        return this.listMapper.mapEntitiesForList(views);
     }
 
     public ListDTO getObject(Long id) {

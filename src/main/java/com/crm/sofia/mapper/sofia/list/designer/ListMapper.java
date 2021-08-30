@@ -1,9 +1,7 @@
 package com.crm.sofia.mapper.sofia.list.designer;
 
-import com.crm.sofia.dto.sofia.form.base.FormDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -52,7 +50,6 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
     @Mapping(ignore = true, target = "rowNavigation")
     @Mapping(ignore = true, target = "jsonUrl")
     @Mapping(ignore = true, target = "instanceVersion")
-
     @Mapping(ignore = true, target = "component.componentPersistEntityList")
     public abstract ListDTO mapEntityForList(ListEntity entity);
 
