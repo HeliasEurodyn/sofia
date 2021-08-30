@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.form.designer.*;
+import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;

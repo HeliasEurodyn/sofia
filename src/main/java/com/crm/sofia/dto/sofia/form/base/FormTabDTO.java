@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.form.designer;
+package com.crm.sofia.dto.sofia.form.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormPopupDto extends BaseDTO {
+public class FormTabDTO extends BaseDTO {
 
     private String code;
 

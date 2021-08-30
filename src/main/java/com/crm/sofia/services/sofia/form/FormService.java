@@ -3,7 +3,7 @@ package com.crm.sofia.services.sofia.form;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.designer.*;
+import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.dto.sofia.form.user.FormUiAreaDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;

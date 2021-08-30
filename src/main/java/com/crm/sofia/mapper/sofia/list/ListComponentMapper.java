@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.ListComponentDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.list.ListComponent;
 import org.mapstruct.Mapper;

@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.form.designer;
+package com.crm.sofia.dto.sofia.form.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,13 +12,16 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormControlTableControlDTO extends BaseDTO {
+public class FormControlDTO extends BaseDTO {
 
     private String type;
 
     private String cssclass;
-
+    
     private FormControlFieldDTO formControlField;
 
-    private FormControlButtonDTO formControlButton;
+    public FormControlTableDTO formControlTable;
+
+    public FormControlButtonDTO formControlButton;
+
 }

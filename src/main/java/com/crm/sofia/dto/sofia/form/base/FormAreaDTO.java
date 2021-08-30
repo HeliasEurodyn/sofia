@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.form.designer;
+package com.crm.sofia.dto.sofia.form.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,15 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormScriptDTO extends BaseDTO {
+public class FormAreaDTO extends BaseDTO {
 
-    private String name;
+    public String title;
 
-    private String script;
+    private String description;
+
+    private String icon;
+
+    private String cssclass;
+
+    private List<FormControlDTO> formControls;
 
 }

@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.list;
+package com.crm.sofia.dto.sofia.list.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;

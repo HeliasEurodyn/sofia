@@ -1,8 +1,8 @@
 package com.crm.sofia.utils;
 
-import com.crm.sofia.dto.sofia.list.ListComponentFieldDTO;
-import com.crm.sofia.dto.sofia.list.ListDTO;
-import com.crm.sofia.dto.sofia.list.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
+import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

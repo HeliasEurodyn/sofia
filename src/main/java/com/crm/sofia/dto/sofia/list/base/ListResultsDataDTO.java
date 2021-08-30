@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.list;
+package com.crm.sofia.dto.sofia.list.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;

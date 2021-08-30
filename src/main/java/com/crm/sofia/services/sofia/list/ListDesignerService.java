@@ -1,8 +1,8 @@
 package com.crm.sofia.services.sofia.list;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.list.ListComponentFieldDTO;
-import com.crm.sofia.dto.sofia.list.ListDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.mapper.sofia.list.ListMapper;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.sofia.list.ListRepository;

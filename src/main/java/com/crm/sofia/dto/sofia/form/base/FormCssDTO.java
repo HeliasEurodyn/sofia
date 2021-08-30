@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.form.designer;
+package com.crm.sofia.dto.sofia.form.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

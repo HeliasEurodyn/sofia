@@ -1,12 +1,12 @@
-package com.crm.sofia.dto.sofia.list;
+package com.crm.sofia.dto.sofia.list.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
+import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
 import java.util.List;
 
 @Getter
@@ -15,9 +15,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version", "name",
+        "selector",
+        "filterFieldStructure",
+        "customFilterFieldStructure",
+        "totalPages",
+        "currentPage",
+        "totalRows",
+        "rowNavigation",
+        "jsonUrl",
+        "component",
+        "instanceVersion"}
+        )
+
 @Accessors(chain = true)
-public class ListDTO extends BaseDTO {
+public class ListUiDTO extends BaseDTO {
 
     private String code;
     private String name;
@@ -45,14 +57,14 @@ public class ListDTO extends BaseDTO {
     private Boolean HeaderFilters;
     private String rowNavigation;
     private String jsonUrl;
-    private ComponentDTO component;
+    private ComponentUiDTO component;
     private Long instanceVersion;
 
-    private List<ListActionButtonDTO> listActionButtons;
-    private List<ListComponentFieldDTO> listComponentColumnFieldList;
-    private List<ListComponentFieldDTO> listComponentFilterFieldList;
-    private List<ListComponentFieldDTO> listComponentLeftGroupFieldList;
-    private List<ListComponentFieldDTO> listComponentTopGroupFieldList;
-    private List<ListComponentFieldDTO> listComponentOrderByFieldList;
-    private List<ListComponentFieldDTO> listComponentActionFieldList;
+    private List<ListActionButtonUiDTO> listActionButtons;
+    private List<ListComponentFieldUiDTO> listComponentColumnFieldList;
+    private List<ListComponentFieldUiDTO> listComponentFilterFieldList;
+    private List<ListComponentFieldUiDTO> listComponentLeftGroupFieldList;
+    private List<ListComponentFieldUiDTO> listComponentTopGroupFieldList;
+    private List<ListComponentFieldUiDTO> listComponentOrderByFieldList;
+    private List<ListComponentFieldUiDTO> listComponentActionFieldList;
 }

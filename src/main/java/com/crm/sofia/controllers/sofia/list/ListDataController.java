@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
 import com.crm.sofia.services.sofia.list.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

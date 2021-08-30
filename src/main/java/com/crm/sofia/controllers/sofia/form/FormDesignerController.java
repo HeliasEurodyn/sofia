@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sofia.form;
 
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
+import com.crm.sofia.dto.sofia.form.base.FormDTO;
 import com.crm.sofia.services.sofia.form.FormDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

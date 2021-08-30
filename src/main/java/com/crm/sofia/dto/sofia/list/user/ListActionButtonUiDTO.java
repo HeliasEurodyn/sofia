@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.list;
+package com.crm.sofia.dto.sofia.list.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListActionButtonDTO extends BaseDTO {
+public class ListActionButtonUiDTO extends BaseDTO {
     private String code;
     private String icon;
     private String description;

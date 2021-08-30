@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
-
 @Accessors(chain = true)
 public class FormUiDTO extends BaseDTO {
 
