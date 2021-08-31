@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @Service
 public class AppViewService {
 
-    private final PersistEntityRepository appViewRepository;
-    private final AppViewMapper appViewMapper;
-    private final EntityManager entityManager;
+    private PersistEntityRepository appViewRepository;
+    private AppViewMapper appViewMapper;
+    private EntityManager entityManager;
 
     public AppViewService(PersistEntityRepository appViewRepository,
                           AppViewMapper appViewMapper,

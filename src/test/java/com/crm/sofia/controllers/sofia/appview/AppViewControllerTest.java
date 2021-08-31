@@ -1,8 +1,9 @@
-package com.crm.sofia.controllers.sofia.download;
+package com.crm.sofia.controllers.sofia.appview;
 
-import com.crm.sofia.dto.sofia.download.DownloadDTO;
+import com.crm.sofia.dto.sofia.appview.AppViewDTO;
+import com.crm.sofia.dto.sofia.appview.AppViewFieldDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.download.DownloadService;
+import com.crm.sofia.services.sofia.appview.AppViewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,45 +29,64 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-
 @ExtendWith(MockitoExtension.class)
-public class DownloadControllerTest {
+public class AppViewControllerTest {
 
     private MockMvc mvc;
-    private DownloadDTO dto;
 
     @InjectMocks
     @Autowired
     private ObjectMapper objectMapper;
 
     @Mock
-    private DownloadService downloadService;
-
-    private List<DownloadDTO> downloadDTOList;
-
-    @Mock
     private JWTAuthFilter filter;
 
+    @Mock
+    private AppViewService appViewService;
+
     @InjectMocks
-    private DownloadController downloadController;
+    private AppViewController appViewController;
+
+    private List<AppViewDTO> appViewDTOList;
+
+    private AppViewDTO dto;
+
+    private List<AppViewFieldDTO> appViewFieldDTOList;
+
+    private AppViewFieldDTO appViewFieldDTO;
+
+
 
     @BeforeEach
     void setUp() {
-        this.downloadDTOList = new ArrayList<>();
-        dto = new DownloadDTO();
-        dto.setCode("1234");
+        this.appViewDTOList = new ArrayList<>();
+        this.appViewFieldDTOList = new ArrayList<>();
+        dto = new AppViewDTO();
         dto.setName("dummy");
-        this.downloadDTOList.add(dto);
+        dto.setDescription("app view");
+        dto.setEntitytype("dummy");
+        dto.setQuery("select * ");
+        dto.setIndexes("12");
+        dto.setCreatedBy(6l);
+        dto.setCreatedOn(Instant.now());
+        this.appViewDTOList.add(dto);
 
-        mvc = MockMvcBuilders.standaloneSetup(downloadController)
+        appViewFieldDTO = new AppViewFieldDTO();
+        appViewFieldDTO.setType("Demo");
+        appViewFieldDTO.setDescription("Demo");
+        appViewFieldDTO.setName("Test");
+        appViewFieldDTO.setSize(5);
+        appViewFieldDTO.setCreatedBy(5l);
+        this.appViewFieldDTOList.add(appViewFieldDTO);
+
+        mvc = MockMvcBuilders.standaloneSetup(appViewController)
                 .build();
     }
-
     @Test
     void getObjectTest() throws Exception {
 
-        given(downloadService.getObject()).willReturn(downloadDTOList);
-        MockHttpServletResponse response = mvc.perform(get("/download")
+        given(appViewService.getObject()).willReturn(appViewDTOList);
+        MockHttpServletResponse response = mvc.perform(get("/appview")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$[0].name")  ,"dummy");
@@ -73,27 +94,27 @@ public class DownloadControllerTest {
 
     @Test
     void getDownloadByIdTest() throws Exception {
-        given(downloadService.getObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(get("/download/by-id?id=0")
+        given(appViewService.getObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(get("/appview/by-id?id=0")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$.name")  ,"dummy");
     }
-
     @Test
     void postObjectTest() throws Exception {
-        given(downloadService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(post("/download")
+        given(appViewService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(post("/appview")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$.name")  ,"dummy");
     }
+
     @Test
     void putObjectTest() throws Exception {
-        given(downloadService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(put("/download")
+        given(appViewService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(put("/appview")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -103,12 +124,30 @@ public class DownloadControllerTest {
 
     @Test
     void deleteObjectTest() throws Exception {
-        doNothing().when(downloadService).deleteObject(any());
-        MockHttpServletResponse response = mvc.perform(delete("/download?id=0")
+        doNothing().when(appViewService).deleteObject(any());
+        MockHttpServletResponse response = mvc.perform(delete("/appview?id=0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
     }
+
+    @Test
+    void getGenerateViewFieldsTest() throws Exception {
+        given(appViewService.generateViewFields(any())).willReturn(appViewFieldDTOList);
+        MockHttpServletResponse response = mvc.perform(get("/appview/generate-view-fields?query=select")
+                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        assertEquals(response.getStatus(), HttpStatus.OK.value());
+        assertEquals(JsonPath.parse(response.getContentAsString()).read("$.[0].type")  ,"Demo");
+    }
+    @Test
+    void chkTableExistsTest() throws Exception {
+        given(appViewService.viewOnDatabase(any())).willReturn(Boolean.TRUE);
+        MockHttpServletResponse response = mvc.perform(get("/appview/view-exists?name=demo")
+                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        assertEquals(response.getStatus(), HttpStatus.OK.value());
+        assertEquals(response.getContentAsString() ,"true");
+    }
+
 
 }
