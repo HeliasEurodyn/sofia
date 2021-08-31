@@ -1,11 +1,14 @@
 package com.crm.sofia.services.sofia.list;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.list.GroupEntryDTO;
-import com.crm.sofia.dto.sofia.list.ListComponentFieldDTO;
-import com.crm.sofia.dto.sofia.list.ListDTO;
-import com.crm.sofia.dto.sofia.list.ListResultsDataDTO;
-import com.crm.sofia.mapper.sofia.list.ListMapper;
+import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
+import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
+import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
+import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
+import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
 import com.crm.sofia.model.sofia.expression.ExprResponce;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.native_repository.sofia.list.ListNativeRepository;
@@ -15,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.sql.DataSource;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -29,20 +31,23 @@ public class ListService {
 
     private final ListRepository listRepository;
     private final ListMapper listMapper;
+    private final ListUiMapper listUiMapper;
     private final ExpressionService expressionService;
     private final ListNativeRepository listNativeRepository;
-    private final DataSource dataSource;
+    private final ListCacheingService listCacheingService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
+                       ListUiMapper listUiMapper,
                        ExpressionService expressionService,
                        ListNativeRepository listNativeRepository,
-                       DataSource dataSource) {
+                       ListCacheingService listCacheingService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
+        this.listUiMapper = listUiMapper;
         this.expressionService = expressionService;
         this.listNativeRepository = listNativeRepository;
-        this.dataSource = dataSource;
+        this.listCacheingService = listCacheingService;
     }
 
     public ListDTO getObject(Long id) {
@@ -67,7 +72,7 @@ public class ListService {
         return this.listMapper.map(views);
     }
 
-    public ListDTO getObjectData(Long id) {
+    public ListDTO getListObject(Long id) {
 
         ListDTO listDTO = this.getObject(id);
 
@@ -90,7 +95,55 @@ public class ListService {
         return listDTO;
     }
 
-    public ListResultsDataDTO getObjectData(ListDTO listDTO) {
+    public ListUiDTO getUiListObject(Long id) {
+
+        /* Try Retrieve Cached */
+        if (this.listCacheingService.hasUiObject(id)) {
+            return this.listCacheingService.getUiObject(id);
+        }
+
+        /* Retrieve */
+        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
+        if (!optionalListEntity.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
+        }
+
+        /* Map */
+        ListUiDTO listUiDTO = this.listUiMapper.map(optionalListEntity.get());
+
+        /* Short */
+        listUiDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+
+        List<ListComponentFieldUiDTO> filtersList = Stream.concat(listUiDTO.getListComponentFilterFieldList().stream(),
+                listUiDTO.getListComponentColumnFieldList().stream())
+                .collect(Collectors.toList());
+
+        /* Calc Default Values */
+        for (ListComponentFieldUiDTO filterDto : filtersList) {
+
+            if (filterDto.getDefaultValue() == null) continue;
+            if (filterDto.getDefaultValue().equals("")) continue;
+
+            ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
+            if (!exprResponce.getError()) {
+                Object fieldValue = exprResponce.getExprUnit().getResult();
+                filterDto.setFieldValue(fieldValue);
+            }
+        }
+
+        /* Cache */
+        this.listCacheingService.putUiObject(id, listUiDTO);
+
+        /* Return */
+        return listUiDTO;
+    }
+
+    public ListResultsDataDTO getListObject(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
 
         List<Map<String, Object>> listContent = this.listNativeRepository.executeListAndGetData(listDTO);
@@ -128,16 +181,16 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
         }
 
-        ListDTO listDTO = this.getObjectData(ids.get(0));
+        ListDTO listDTO = this.getListObject(ids.get(0));
         listDTO = this.mapParametersToListDto(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getObjectData(listDTO);
+        ListResultsDataDTO listResultsDataDTO = this.getListObject(listDTO);
         return listResultsDataDTO;
     }
 
     public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long id) {
-        ListDTO listDTO = this.getObjectData(id);
+        ListDTO listDTO = this.getListObject(id);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getObjectData(listDTO);
+        ListResultsDataDTO listResultsDataDTO = this.getListObject(listDTO);
         return listResultsDataDTO;
     }
 
@@ -269,7 +322,7 @@ public class ListService {
 //    }
 
     public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, Long id) {
-        ListDTO listDTO = this.getObjectData(id);
+        ListDTO listDTO = this.getListObject(id);
 
         List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
                 listDTO.getListComponentLeftGroupFieldList().stream())
@@ -298,7 +351,7 @@ public class ListService {
         return this.getObjectLeftGroupingData(listDTO);
     }
 
-    public String getVersion(Long id) {
+    public String getInstanceVersion(Long id) {
         return this.listRepository.getInstanceVersion(id);
     }
 }

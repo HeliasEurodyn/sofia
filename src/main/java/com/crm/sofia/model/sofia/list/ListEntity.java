@@ -26,6 +26,18 @@ public class ListEntity extends BaseEntity {
     private String name;
 
     @Column
+    private String headerTitle;
+
+    @Column(length=1024)
+    private String HeaderDescription;
+
+    @Column
+    private String headerIcon;
+
+    @Column
+    private String title;
+
+    @Column(length=1024)
     private String description;
 
     @Column
@@ -152,8 +164,8 @@ public class ListEntity extends BaseEntity {
     @JoinColumn(name = "action_list_component_id")
     private List<ListComponentField> listComponentActionFieldList;
 
-    @Column
-    private String instanceVersion;
+    @Column(columnDefinition ="BIGINT(20) default 0")
+    private Long instanceVersion;
 
     @Column
     private String jsonUrl;

@@ -2,8 +2,10 @@ package com.crm.sofia.repository.sofia.form;
 
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.common.BaseRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,8 +30,13 @@ public interface FormRepository extends BaseRepository<FormEntity> {
             " WHERE f.id =:id ")
     public String getInstanceVersion(@Param("id") Long id);
 
-    @Query(" SELECT f FROM FormEntity f " +
+    @Query(" SELECT f.id FROM FormEntity f " +
             " WHERE f.jsonUrl =:jsonUrl ")
-    public List<FormEntity> getByJsonUrl(@Param("jsonUrl") String jsonUrl);
+    public List<Long> getIdsByJsonUrl(@Param("jsonUrl") String jsonUrl);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE form SET instance_version = instance_version + 1", nativeQuery = true)
+    void increaseInstanceVersions();
 
 }

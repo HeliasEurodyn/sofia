@@ -57,7 +57,7 @@ public class XlsImportService {
         XlsImportDTO dto = this.xlsImportMapper.map(optionalchart.get());
 
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         dto.getComponent().getComponentPersistEntityList(),
                         "xls_import",
                         dto.getId()

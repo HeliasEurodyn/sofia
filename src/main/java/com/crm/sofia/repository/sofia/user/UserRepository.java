@@ -21,6 +21,8 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query(" SELECT u " +
             " FROM User u " +
+            " LEFT JOIN FETCH u.sidebarMenu sm " +
+            " LEFT JOIN FETCH u.headerMenu hm " +
             " WHERE u.username = :username ")
     Optional<User> findByUsername(@Param("username") String username);
 

@@ -1,8 +1,9 @@
 package com.crm.sofia.controllers.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.GroupEntryDTO;
-import com.crm.sofia.dto.sofia.list.ListDTO;
-import com.crm.sofia.dto.sofia.list.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
+import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
+import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.services.sofia.list.ListService;
 import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,17 @@ public class ListController {
     }
 
     @GetMapping(path = "by-id")
-    ListDTO getObjectData(@RequestParam("id") Long id) {
-        return this.listService.getObjectData(id);
+    ListDTO getObject(@RequestParam("id") Long id) {
+        ListDTO listDTO = this.listService.getListObject(id);
+        listDTO.setComponent(null);
+        return listDTO;
+    }
+
+    @GetMapping(path = "ui")
+    ListUiDTO getUiObject(@RequestParam("id") Long id) {
+        ListUiDTO listDTO = this.listService.getUiListObject(id);
+        listDTO.setComponent(null);
+        return listDTO;
     }
 
     @GetMapping
@@ -41,7 +51,7 @@ public class ListController {
     }
 
     @GetMapping(path = "/results")
-    ListResultsDataDTO getObjectData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters, id);
     }
 
@@ -52,7 +62,7 @@ public class ListController {
 
     @PostMapping(path = "/data-excel")
     public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
-        ListResultsDataDTO resultsDataDTO = this.listService.getObjectData(dto);
+        ListResultsDataDTO resultsDataDTO = this.listService.getListObject(dto);
         ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
@@ -63,9 +73,9 @@ public class ListController {
                 .body(new InputStreamResource(in));
     }
 
-    @GetMapping(path = "version")
-    String getVersion(@RequestParam("id") Long formId) {
-        return this.listService.getVersion(formId);
+    @GetMapping(path = "instance-version", produces = "text/plain")
+    String getInstanceVersion(@RequestParam("id") Long formId) {
+        return this.listService.getInstanceVersion(formId);
     }
 
 //    @GetMapping(path = "/jasper-test-pdf")

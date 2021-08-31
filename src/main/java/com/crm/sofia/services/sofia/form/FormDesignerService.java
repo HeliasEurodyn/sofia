@@ -1,10 +1,7 @@
 package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormControlDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormTabDTO;
+import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
@@ -28,28 +25,19 @@ public class FormDesignerService {
     private final FormRepository formRepository;
     private final FormMapper formMapper;
     private final JWTService jwtService;
-    private final FormDynamicQueryService formDynamicQueryService;
-    private final ComponentDesignerService componentDesignerService;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-    private final ExpressionService expressionService;
-    private final ResourceLoader resourceLoader;
+    private final FormCacheingService formCacheingService;
 
     public FormDesignerService(FormRepository formRepository,
                                FormMapper formMapper,
                                JWTService jwtService,
-                               FormDynamicQueryService formDynamicQueryService,
-                               ComponentDesignerService componentDesignerService,
                                ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
-                               ExpressionService expressionService,
-                               ResourceLoader resourceLoader) {
+                               FormCacheingService formCacheingService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.jwtService = jwtService;
-        this.formDynamicQueryService = formDynamicQueryService;
-        this.componentDesignerService = componentDesignerService;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-        this.expressionService = expressionService;
-        this.resourceLoader = resourceLoader;
+        this.formCacheingService = formCacheingService;
     }
 
     @Transactional
@@ -59,7 +47,14 @@ public class FormDesignerService {
         formEntity.setModifiedOn(Instant.now());
         formEntity.setCreatedBy(jwtService.getUserId());
         formEntity.setModifiedBy(jwtService.getUserId());
-        formEntity.setInstanceVersion(UUID.randomUUID().toString());
+
+        Long instanceVersion = formEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        formEntity.setInstanceVersion(instanceVersion);
 
         String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
@@ -71,6 +66,7 @@ public class FormDesignerService {
                         createdFormEntity.getId());
 
         FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
+        formCacheingService.clearUiObject(createdFormDTO.getId());
         return createdFormDTO;
     }
 
@@ -79,7 +75,13 @@ public class FormDesignerService {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setModifiedOn(Instant.now());
         formEntity.setModifiedBy(jwtService.getUserId());
-        formEntity.setInstanceVersion(UUID.randomUUID().toString());
+        Long instanceVersion = formEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        formEntity.setInstanceVersion(instanceVersion);
 
         String script = this.generateDynamicHandlersJavaScriptAndEncode(formDTO);
         formEntity.setScript(script);
@@ -97,33 +99,58 @@ public class FormDesignerService {
 
     public List<FormDTO> getObject() {
         List<FormEntity> formEntities = this.formRepository.findAll();
-        return this.formMapper.map(formEntities);
+        return this.formMapper.mapEntitiesForList(formEntities);
     }
 
     public FormDTO getObject(Long id) {
+
+        /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
+
+        /* Map */
         FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
 
+        /* Retrieve Field Assignments */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
                 );
-
         formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
 
+        /* Shorting */
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
         formDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+        formDTO.getFormPopups().sort(Comparator.comparingLong(FormPopupDto::getShortOrder));
+        formDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
 
+        /* Return */
         return formDTO;
     }
 
@@ -134,7 +161,7 @@ public class FormDesignerService {
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FormEntity does not exist");
         }
-        this.componentPersistEntityFieldAssignmentService.deleteByFormIdAndEntityType(optionalFormEntity.get().getId(), "form");
+        this.componentPersistEntityFieldAssignmentService.deleteByIdAndEntityType(optionalFormEntity.get().getId(), "form");
         this.formRepository.deleteById(optionalFormEntity.get().getId());
     }
 
@@ -424,50 +451,10 @@ public class FormDesignerService {
     }
 
 
-//    @Transactional
-//    @RequestMapping(value = "testjavascript.js", method = RequestMethod.GET, produces = "text/javascript;")
-//    public String home() throws Exception {
-//        File file = ResourceUtils.getFile("classpath:test.js");
-//        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-//    }
-
-//    public void saveScriptsToResources(FormDTO formDTO) throws IOException {
-//        this.recreateFolder(formDTO.getId());
-//        String script = this.generateScript(formDTO);
-//       // File file = ResourceUtils.getFile("generated-scripts/form/" + formDTO.getId().toString() + "/script.js");
-//        File file = new ClassPathResource("generated-scripts/form/" + formDTO.getId().toString() + "/script.js").getFile();
-//        Files.write(file.toPath(), script.getBytes());
-//    }
-
-//    public void recreateFolder(Long formId) throws IOException {
-//
-//      //  Path path = Paths.get("generated-scripts/form/" + formId.toString());
-//       // Path path = Paths.get(new ClassPathResource("generated-scripts/form/" + formId.toString()).getPath());
-//
-//        Resource resource = resourceLoader.getResource("classpath:generated-scripts/form/" + formId.toString());
-//        // Boolean folderExists = Files.exists(path);
-////        Boolean folderExists = Files.exists(path);
-//        if (resource.exists()) {
-//            File folderFile = new ClassPathResource("generated-scripts/form/" + formId.toString()).getFile();
-//            folderFile.delete();
-//            //File folderFile = ResourceUtils.getFile("generated-scripts/form/" + formId.toString());
-//            //folderFile.delete();
-//        }
-//
-//        //File folderFile = ResourceUtils.getFile("generated-scripts/form/" + formId.toString());
-//       // folderFile.mkdirs();
-//        File folderFile = new ClassPathResource("generated-scripts/form/" + formId.toString()).getFile();
-//        folderFile.mkdirs();
-//    }
-
-//    public String generateScript(FormDTO formDTO) {
-//        List<String> decodedScripts = new ArrayList<>();
-//        formDTO.getFormScripts().forEach(formScriptDTO -> {
-//            byte[] decodedBytes = Base64.getDecoder().decode(formScriptDTO.getScript());
-//            String decodedScript = new String(decodedBytes);
-//            decodedScripts.add(decodedScript);
-//        });
-//        return String.join("\n\n  ", decodedScripts);
-//    }
+    public boolean clearCache() {
+        this.formCacheingService.clear();
+        this.formRepository.increaseInstanceVersions();
+        return true;
+    }
 
 }

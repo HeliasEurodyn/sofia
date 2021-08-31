@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
+import com.crm.sofia.dto.sofia.form.base.FormDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
 import com.crm.sofia.services.sofia.form.FormService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,9 @@ public class FormController {
         return this.formService.retrieveData(formId, selectionId);
     }
 
-    @GetMapping(path = "version")
-    String getVersion(@RequestParam("id") Long formId) {
-        return this.formService.getVersion(formId);
+    @GetMapping(path = "instance-version", produces = "text/plain")
+    String getInstanceVersion(@RequestParam("id") Long formId) {
+        return this.formService.getInstanceVersion(formId);
     }
 
     @PostMapping

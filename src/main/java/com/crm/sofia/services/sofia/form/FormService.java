@@ -3,10 +3,7 @@ package com.crm.sofia.services.sofia.form;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormControlDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormDTO;
-import com.crm.sofia.dto.sofia.form.designer.FormTabDTO;
+import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.dto.sofia.form.user.FormUiAreaDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
 import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
@@ -40,6 +37,7 @@ public class FormService {
     private final ComponentService componentService;
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
+    private final FormCacheingService formCacheingService;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
@@ -49,7 +47,8 @@ public class FormService {
                        ComponentSaverService componentSaverService,
                        ComponentService componentService,
                        ComponentUiMapper componentUiMapper,
-                       ComponentJsonMapper componentJsonMapper) {
+                       ComponentJsonMapper componentJsonMapper,
+                       FormCacheingService formCacheingService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.formUiMapper = formUiMapper;
@@ -59,6 +58,7 @@ public class FormService {
         this.componentService = componentService;
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
+        this.formCacheingService = formCacheingService;
     }
 
     public FormDTO getObject(Long id) {
@@ -78,38 +78,50 @@ public class FormService {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+        formDTO.getFormPopups().sort(Comparator.comparingLong(FormPopupDto::getShortOrder));
+        formDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
 
         /* Return */
         return formDTO;
     }
+
 
     public FormDTO getObject(String jsonUrl) {
 
         /* Retrieve */
-        List<FormEntity> formEntityList = this.formRepository.getByJsonUrl(jsonUrl);
-        if (formEntityList.size() <= 0) {
+        List<Long> formEntityIdsList = this.formRepository.getIdsByJsonUrl(jsonUrl);
+        if (formEntityIdsList.size() <= 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
 
-        /* Map */
-        FormDTO formDTO = this.formMapper.mapForm(formEntityList.get(0));
-
-        /* Shorting */
-        formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
-        formDTO.getFormTabs().forEach(formTab -> {
-            formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
-            formTab.getFormAreas().forEach(formArea -> {
-                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
-            });
-        });
-
         /* Return */
-        return formDTO;
+        return this.getObject(formEntityIdsList.get(0));
     }
 
     public FormUiDTO getUiObject(Long id) {
+
+        if (this.formCacheingService.hasUiObject(id)) {
+            return this.formCacheingService.getUiObject(id);
+        }
 
         /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
@@ -120,14 +132,36 @@ public class FormService {
         /* Map */
         FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get());
 
-        /* Shorting */
+        /* Short */
         formUiDTO.getFormTabs().sort(Comparator.comparingLong(FormUiTabDTO::getShortOrder));
         formUiDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));
             formTab.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                    }
+                });
             });
         });
+        formUiDTO.getFormPopups().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormPopupDto::getShortOrder));
+        formUiDTO.getFormPopups().forEach(formPopup -> {
+            formPopup.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));
+            formPopup.getFormAreas().forEach(formArea -> {
+                formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
+                formArea.getFormControls().forEach(formControl -> {
+                    if (formControl.getType().equals("table")) {
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                    }
+                });
+            });
+        });
+
+        /* Cache */
+        this.formCacheingService.putUiObject(id, formUiDTO);
 
         /* Return */
         return formUiDTO;
@@ -141,7 +175,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         componentDTO.getComponentPersistEntityList(),
                         "form",
                         formId
@@ -162,7 +196,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         componentDTO.getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -182,7 +216,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -203,7 +237,7 @@ public class FormService {
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFormFieldAssignments(
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         formDTO.getComponent().getComponentPersistEntityList(),
                         "form",
                         formDTO.getId()
@@ -233,7 +267,7 @@ public class FormService {
     public String getCssScript(Long formId) {
         List<String> decodedScripts = new ArrayList<>();
         List<String> formScripts = this.formRepository.getFormCssScriptsByFormId(formId);
-        
+
         formScripts.forEach(formScript -> {
             byte[] decodedBytes = Base64.getDecoder().decode(formScript);
             String decodedScript = new String(decodedBytes);
@@ -243,7 +277,7 @@ public class FormService {
     }
 
 
-    public String getVersion(Long id) {
+    public String getInstanceVersion(Long id) {
         return this.formRepository.getInstanceVersion(id);
     }
 }

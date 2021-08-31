@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.ListDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.services.sofia.list.ListDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -50,6 +50,11 @@ public class ListDesignerController {
     @DeleteMapping
     public void deleteObject(@RequestParam("id") Long id) {
         this.listDesignerService.deleteObject(id);
+    }
+
+    @RequestMapping(value = "/clear-cache", method = RequestMethod.GET)
+    boolean clearCache() {
+        return this.listDesignerService.clearCache();
     }
 
 }

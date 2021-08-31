@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version","componentPersistEntity","componentPersistEntityField"})
 @Accessors(chain = true)
 public class FormControlFieldDTO extends BaseDTO {
 
@@ -26,5 +26,5 @@ public class FormControlFieldDTO extends BaseDTO {
     private String css;
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
-
+    private Long fieldId;
 }

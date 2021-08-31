@@ -26,13 +26,13 @@ public class ComponentPersistEntityFieldAssignmentService {
     }
 
     public void saveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,String entityType, Long entityId) {
-        this.deleteByFormIdAndEntityType(entityId,entityType);
+        this.deleteByIdAndEntityType(entityId,entityType);
         this.saveFieldAssignmentsTree(componentPersistEntityList,entityType, entityId);
     }
 
-    public List<ComponentPersistEntityDTO> retrieveFormFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,
-                                                                        String entityType,
-                                                                        Long entityId ) {
+    public List<ComponentPersistEntityDTO> retrieveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,
+                                                                    String entityType,
+                                                                    Long entityId ) {
 
         List<ComponentPersistEntityFieldAssignment> fieldAssignments =
                 componentPersistEntityFieldAssignmentRepository.findByEntityIdAndEntityType(entityId, entityType);
@@ -46,7 +46,7 @@ public class ComponentPersistEntityFieldAssignmentService {
         return componentPersistEntityList;
     }
 
-    public void deleteByFormIdAndEntityType(Long entityId, String entityType) {
+    public void deleteByIdAndEntityType(Long entityId, String entityType) {
         componentPersistEntityFieldAssignmentRepository.deleteComponentPersistEntityFieldAssignmentByEntityIdAndEntityType(entityId,entityType);
     }
 

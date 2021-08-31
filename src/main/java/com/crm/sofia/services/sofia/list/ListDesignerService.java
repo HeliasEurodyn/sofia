@@ -1,9 +1,9 @@
 package com.crm.sofia.services.sofia.list;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.list.ListComponentFieldDTO;
-import com.crm.sofia.dto.sofia.list.ListDTO;
-import com.crm.sofia.mapper.sofia.list.ListMapper;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.sofia.list.base.ListDTO;
+import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
@@ -21,13 +21,16 @@ public class ListDesignerService {
     private final ListRepository listRepository;
     private final ListMapper listMapper;
     private final JWTService jwtService;
+    private final ListCacheingService listCacheingService;
 
     public ListDesignerService(ListRepository listRepository,
                                ListMapper listMapper,
-                               JWTService jwtService) {
+                               JWTService jwtService,
+                               ListCacheingService listCacheingService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.jwtService = jwtService;
+        this.listCacheingService = listCacheingService;
     }
 
     @Transactional
@@ -37,7 +40,13 @@ public class ListDesignerService {
         listEntity.setModifiedOn(Instant.now());
         listEntity.setCreatedBy(jwtService.getUserId());
         listEntity.setModifiedBy(jwtService.getUserId());
-        listEntity.setInstanceVersion(UUID.randomUUID().toString());
+        Long instanceVersion = listEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        listEntity.setInstanceVersion(instanceVersion);
         ListEntity createdListEntity = this.listRepository.save(listEntity);
         return this.listMapper.map(createdListEntity);
     }
@@ -47,14 +56,20 @@ public class ListDesignerService {
         ListEntity listEntity = this.listMapper.map(listDTO);
         listEntity.setModifiedOn(Instant.now());
         listEntity.setModifiedBy(jwtService.getUserId());
-        listEntity.setInstanceVersion(UUID.randomUUID().toString());
+        Long instanceVersion = listEntity.getInstanceVersion();
+        if (instanceVersion == null) {
+            instanceVersion = 0L;
+        } else {
+            instanceVersion += 1L;
+        }
+        listEntity.setInstanceVersion(instanceVersion);
         ListEntity createdListEntity = this.listRepository.save(listEntity);
         return this.listMapper.map(createdListEntity);
     }
 
     public List<ListDTO> getObject() {
         List<ListEntity> views = this.listRepository.findAll();
-        return this.listMapper.map(views);
+        return this.listMapper.mapEntitiesForList(views);
     }
 
     public ListDTO getObject(Long id) {
@@ -90,4 +105,9 @@ public class ListDesignerService {
         this.listRepository.deleteById(optionalListEntity.get().getId());
     }
 
+    public boolean clearCache() {
+        this.listCacheingService.clear();
+        this.listRepository.increaseInstanceVersions();
+        return true;
+    }
 }
