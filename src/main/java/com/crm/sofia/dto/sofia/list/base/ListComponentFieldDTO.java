@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -34,4 +36,6 @@ public class ListComponentFieldDTO extends BaseDTO {
     private String bclass;
     private String css;
     private Object fieldValue;
+    private List<ListComponentFieldDTO> listComponentActionFieldList;
+
 }

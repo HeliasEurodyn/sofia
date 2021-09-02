@@ -2,6 +2,7 @@ package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.form.base.*;
+import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
@@ -66,7 +67,6 @@ public class FormDesignerService {
                         createdFormEntity.getId());
 
         FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
-        formCacheingService.clearUiObject(createdFormDTO.getId());
         return createdFormDTO;
     }
 
@@ -93,6 +93,7 @@ public class FormDesignerService {
                         createdFormEntity.getId());
 
         FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
+        this.formCacheingService.clearUiObject(createdFormDTO.getId());
 
         return createdFormDTO;
     }
@@ -149,6 +150,8 @@ public class FormDesignerService {
                 });
             });
         });
+
+        formDTO.getFormActionButtons().sort(Comparator.comparingLong(FormActionButtonDTO::getShortOrder));
 
         /* Return */
         return formDTO;

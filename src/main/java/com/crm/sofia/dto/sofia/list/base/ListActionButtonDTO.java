@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -20,4 +22,5 @@ public class ListActionButtonDTO extends BaseDTO {
     private String editor;
     private String cssClass;
     private Boolean visible;
+    List<ListActionButtonDTO> listActionButtons;
 }

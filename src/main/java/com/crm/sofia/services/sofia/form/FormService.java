@@ -4,10 +4,9 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
 import com.crm.sofia.dto.sofia.form.base.*;
-import com.crm.sofia.dto.sofia.form.user.FormUiAreaDTO;
-import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
-import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
-import com.crm.sofia.dto.sofia.form.user.FormUiTabDTO;
+import com.crm.sofia.dto.sofia.form.base.FormControlTableControlDTO;
+import com.crm.sofia.dto.sofia.form.base.FormPopupDto;
+import com.crm.sofia.dto.sofia.form.user.*;
 import com.crm.sofia.mapper.sofia.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.sofia.component.ComponentUiMapper;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
@@ -159,6 +158,8 @@ public class FormService {
                 });
             });
         });
+
+        formUiDTO.getFormActionButtons().sort(Comparator.comparingLong(FormActionButtonUiDTO::getShortOrder));
 
         /* Cache */
         this.formCacheingService.putUiObject(id, formUiDTO);

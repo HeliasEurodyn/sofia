@@ -5,9 +5,12 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentPersistEntityFieldUiDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentPersistEntityUiDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,4 +44,5 @@ public class ListComponentFieldUiDTO extends BaseDTO {
     private String bclass;
     private String css;
     private Object fieldValue;
+    private List<ListComponentFieldUiDTO> listComponentActionFieldList;
 }

@@ -1,14 +1,14 @@
 package com.crm.sofia.model.sofia.list;
 
+import com.crm.sofia.dto.sofia.list.base.ListActionButtonDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -35,4 +35,12 @@ public class ListActionButton extends BaseEntity {
 
     @Column
     private Boolean visible;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "parent_id")
+    List<ListActionButton> listActionButtons;
 }

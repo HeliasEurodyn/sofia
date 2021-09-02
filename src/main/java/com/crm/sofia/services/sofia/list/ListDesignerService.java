@@ -3,6 +3,7 @@ package com.crm.sofia.services.sofia.list;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
+import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.sofia.list.ListRepository;
@@ -64,6 +65,7 @@ public class ListDesignerService {
         }
         listEntity.setInstanceVersion(instanceVersion);
         ListEntity createdListEntity = this.listRepository.save(listEntity);
+        listCacheingService.clearUiObject(createdListEntity.getId());
         return this.listMapper.map(createdListEntity);
     }
 
@@ -81,10 +83,15 @@ public class ListDesignerService {
         listDTO.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
         listDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-        listDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentActionFieldList().forEach(af -> {
+            if( af.getListComponentActionFieldList() != null) {
+                af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+            }
+        });
 
         return listDTO;
     }

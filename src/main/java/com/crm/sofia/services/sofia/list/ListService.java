@@ -114,10 +114,15 @@ public class ListService {
         /* Short */
         listUiDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
-        listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+        listUiDTO.getListComponentActionFieldList().forEach(af -> {
+           if( af.getListComponentActionFieldList() != null) {
+               af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+           }
+        });
 
         List<ListComponentFieldUiDTO> filtersList = Stream.concat(listUiDTO.getListComponentFilterFieldList().stream(),
                 listUiDTO.getListComponentColumnFieldList().stream())
