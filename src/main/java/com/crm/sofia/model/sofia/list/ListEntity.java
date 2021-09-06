@@ -2,6 +2,8 @@ package com.crm.sofia.model.sofia.list;
 
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.component.Component;
+import com.crm.sofia.model.sofia.form.FormCss;
+import com.crm.sofia.model.sofia.form.FormScript;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -17,7 +19,6 @@ import java.util.List;
 @Entity(name = "ListEntity")
 @Table(name = "list")
 public class ListEntity extends BaseEntity {
-
 
     @Column
     private String code;
@@ -52,8 +53,6 @@ public class ListEntity extends BaseEntity {
     @Column
     private Boolean customFilterFieldStructure;
 
-
-
     @Column
     private Boolean exportExcel;
 
@@ -68,8 +67,6 @@ public class ListEntity extends BaseEntity {
 
     @Column
     private Boolean filterVisible;
-
-
 
     @Column
     private Boolean hasPagination;
@@ -86,15 +83,11 @@ public class ListEntity extends BaseEntity {
     @Column
     private Long totalRows;
 
-
-
     @Column
     private Boolean hasMaxSize;
 
     @Column
     private Long maxSize;
-
-
 
     @Column
     private Boolean HeaderFilters;
@@ -169,4 +162,24 @@ public class ListEntity extends BaseEntity {
 
     @Column
     private String jsonUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String script;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_id")
+    private List<ListScript> listScripts;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_id")
+    private List<ListCss> listCssList;
+
 }

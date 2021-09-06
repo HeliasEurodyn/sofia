@@ -47,6 +47,9 @@ public class ListDTO extends BaseDTO {
     private ComponentDTO component;
     private Long instanceVersion;
 
+    private List<ListScriptDTO> listScripts;
+    private List<ListCssDTO> listCssList;
+
     private List<ListActionButtonDTO> listActionButtons;
     private List<ListComponentFieldDTO> listComponentColumnFieldList;
     private List<ListComponentFieldDTO> listComponentFilterFieldList;
@@ -54,4 +57,5 @@ public class ListDTO extends BaseDTO {
     private List<ListComponentFieldDTO> listComponentTopGroupFieldList;
     private List<ListComponentFieldDTO> listComponentOrderByFieldList;
     private List<ListComponentFieldDTO> listComponentActionFieldList;
+
 }

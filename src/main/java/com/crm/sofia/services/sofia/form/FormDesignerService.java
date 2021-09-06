@@ -211,6 +211,7 @@ public class FormDesignerService {
         pointerVarLines.add("var saveFormData;");
         pointerVarLines.add("var deleteFormData;");
         pointerVarLines.add("var setActionButtonEditable;");
+        pointerVarLines.add("var getParams;");
         pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
@@ -231,7 +232,7 @@ public class FormDesignerService {
         pointerVarLines.add("function defineSetActionButtonEditable(myCallback){setActionButtonEditable = myCallback;}");
         pointerVarLines.add("function defineSaveFormData(myCallback){saveFormData = myCallback;}");
         pointerVarLines.add("function defineDeleteFormData(myCallback){deleteFormData = myCallback;}");
-
+        pointerVarLines.add("function defineGetParams(myCallback){getParams = myCallback;}");
         pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }

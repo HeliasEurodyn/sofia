@@ -11,6 +11,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +78,19 @@ public class ListController {
     String getInstanceVersion(@RequestParam("id") Long formId) {
         return this.listService.getInstanceVersion(formId);
     }
+
+    @Transactional
+    @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormJavaScript(@PathVariable("id") Long id) {
+        return this.listService.getJavaScript(id);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
+    String getFormCssScript(@PathVariable("id") Long id) {
+        return this.listService.getCssScript(id);
+    }
+
 
 //    @GetMapping(path = "/jasper-test-pdf")
 //    void doJasperTest() throws FileNotFoundException, JRException {

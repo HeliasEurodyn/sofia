@@ -3,7 +3,6 @@ package com.crm.sofia.services.sofia.list;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
-import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.sofia.list.ListRepository;
@@ -23,15 +22,18 @@ public class ListDesignerService {
     private final ListMapper listMapper;
     private final JWTService jwtService;
     private final ListCacheingService listCacheingService;
+    private final ListJavascriptService listJavascriptService;
 
     public ListDesignerService(ListRepository listRepository,
                                ListMapper listMapper,
                                JWTService jwtService,
-                               ListCacheingService listCacheingService) {
+                               ListCacheingService listCacheingService,
+                               ListJavascriptService listJavascriptService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.jwtService = jwtService;
         this.listCacheingService = listCacheingService;
+        this.listJavascriptService = listJavascriptService;
     }
 
     @Transactional
@@ -48,6 +50,10 @@ public class ListDesignerService {
             instanceVersion += 1L;
         }
         listEntity.setInstanceVersion(instanceVersion);
+
+        String script = this.listJavascriptService.generate(listDTO);
+        listEntity.setScript(script);
+
         ListEntity createdListEntity = this.listRepository.save(listEntity);
         return this.listMapper.map(createdListEntity);
     }
@@ -64,6 +70,10 @@ public class ListDesignerService {
             instanceVersion += 1L;
         }
         listEntity.setInstanceVersion(instanceVersion);
+
+        String script = this.listJavascriptService.generate(listDTO);
+        listEntity.setScript(script);
+
         ListEntity createdListEntity = this.listRepository.save(listEntity);
         listCacheingService.clearUiObject(createdListEntity.getId());
         return this.listMapper.map(createdListEntity);
