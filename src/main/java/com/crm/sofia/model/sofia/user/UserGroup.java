@@ -1,7 +1,6 @@
 package com.crm.sofia.model.sofia.user;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.sofia.menu.MenuField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -23,8 +22,7 @@ public class UserGroup extends BaseEntity {
     @Column
     private String name;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "user_to_user_group",
             joinColumns = @JoinColumn(name = "user_group_id"),
