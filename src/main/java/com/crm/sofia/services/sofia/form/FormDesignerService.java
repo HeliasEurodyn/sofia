@@ -180,10 +180,14 @@ public class FormDesignerService {
         List<String> nativeHandlerLines = new ArrayList<>();
         String nativeButtonClickHandlerString = this.generateNativeButtonClickHandler(formDTO);
         nativeHandlerLines.add(nativeButtonClickHandlerString);
+        String nativeTableButtonClickHandlerString = this.generateNativeTableButtonClickHandler(formDTO);
+        nativeHandlerLines.add(nativeTableButtonClickHandlerString);
         String nativeFormEventsHandlerString = this.generateNativeFormEventsHandler();
         nativeHandlerLines.add(nativeFormEventsHandlerString);
         String nativeFieldEventsHandlerString = this.generateNativeFieldEventsHandler(formDTO);
         nativeHandlerLines.add(nativeFieldEventsHandlerString);
+        String nativeTableFieldEventsHandlerString = this.generateNativeTableFieldEventsHandler(formDTO);
+        nativeHandlerLines.add(nativeTableFieldEventsHandlerString);
         String pointerVars = generatePointerVars();
         nativeHandlerLines.add(pointerVars);
         return String.join("\n", nativeHandlerLines);
@@ -212,6 +216,8 @@ public class FormDesignerService {
         pointerVarLines.add("var deleteFormData;");
         pointerVarLines.add("var setActionButtonEditable;");
         pointerVarLines.add("var getParams;");
+        pointerVarLines.add("var setTableRowActiveById;");
+        pointerVarLines.add("var appendLineToComponent;");
         pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
@@ -224,6 +230,7 @@ public class FormDesignerService {
         pointerVarLines.add("function defineSetFieldValue(myCallback){setFieldValue = myCallback;}");
         pointerVarLines.add("function defineGetComponentData(myCallback){getComponentData = myCallback;}");
         pointerVarLines.add("function defineAppendLineToTable(myCallback){appendLineToTable = myCallback;}");
+        pointerVarLines.add("function defineAppendLineToComponent(myCallback){appendLineToComponent = myCallback;}");
         pointerVarLines.add("function defineSetFieldEditable(myCallback){setFieldEditable = myCallback;}");
         pointerVarLines.add("function defineGetFromBackend(myCallback){getFromBackend = myCallback;}");
         pointerVarLines.add("function defineSetFormTitle(myCallback){setFormTitle = myCallback;}");
@@ -233,6 +240,8 @@ public class FormDesignerService {
         pointerVarLines.add("function defineSaveFormData(myCallback){saveFormData = myCallback;}");
         pointerVarLines.add("function defineDeleteFormData(myCallback){deleteFormData = myCallback;}");
         pointerVarLines.add("function defineGetParams(myCallback){getParams = myCallback;}");
+        pointerVarLines.add("function defineSetTableRowActiveById(myCallback){setTableRowActiveById = myCallback;}");
+
         pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }
@@ -273,6 +282,28 @@ public class FormDesignerService {
                     });
         });
 
+        nativeButtonClickHandlerLines.add("}");
+        return String.join("\n", nativeButtonClickHandlerLines);
+    }
+
+    private String generateNativeTableButtonClickHandler(FormDTO formDTO) {
+
+        List<FormAreaDTO> formAreas = new ArrayList<>();
+
+        formDTO.getFormTabs()
+                .stream()
+                .filter(formTabDTO -> formTabDTO.getFormAreas() != null)
+                .forEach(formTabDTO -> formAreas.addAll(formTabDTO.getFormAreas()));
+
+        formDTO.getFormPopups()
+                .stream()
+                .filter(formPopupDTO -> formPopupDTO.getFormAreas() != null)
+                .forEach(formPopupDTO -> formAreas.addAll(formPopupDTO.getFormAreas()));
+
+        List<String> nativeButtonClickHandlerLines = new ArrayList<>();
+        nativeButtonClickHandlerLines.add("");
+        nativeButtonClickHandlerLines.add("function nativeTableButtonClickHandler(btnCode, formControlTable, dataLine) {");
+
         /* Table Buttons */
         formAreas.forEach(formAreaDTO -> {
             formAreaDTO.getFormControls()
@@ -288,8 +319,8 @@ public class FormDesignerService {
                                 .forEach(formControlButtonControl -> {
                                     nativeButtonClickHandlerLines.
                                             add("if((btnCode == '" + formControlButtonControl.getFormControlButton().getCode() + "') && " +
-                                                    "(typeof btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click == \"function\")) " +
-                                                    "btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click();");
+                                                    "(typeof table_btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click == \"function\")) " +
+                                                    "table_btn_" + formControlButtonControl.getFormControlButton().getCode() + "_click(formControlTable, dataLine);");
 
                                 });
                     });
@@ -311,6 +342,90 @@ public class FormDesignerService {
 
         nativeFormEventsHandler.add("}");
         return String.join("\n", nativeFormEventsHandler);
+    }
+
+    private String generateNativeTableFieldEventsHandler(FormDTO formDTO) {
+        List<String> assignedFields = new ArrayList<>();
+        List<FormAreaDTO> formAreas = new ArrayList<>();
+
+        formDTO.getFormTabs()
+                .stream()
+                .filter(formTabDTO -> formTabDTO.getFormAreas() != null)
+                .forEach(formTabDTO -> formAreas.addAll(formTabDTO.getFormAreas()));
+
+        formDTO.getFormPopups()
+                .stream()
+                .filter(formPopupDTO -> formPopupDTO.getFormAreas() != null)
+                .forEach(formPopupDTO -> formAreas.addAll(formPopupDTO.getFormAreas()));
+
+        List<String> nativeFieldEventHandlerLines = new ArrayList<>();
+        nativeFieldEventHandlerLines.add("");
+        nativeFieldEventHandlerLines.add("function nativeTableFieldEventsHandler(entityCode, fieldName, type, event, formControlTable, dataLine) {");
+
+        /* Table Fields */
+        formAreas.forEach(formAreaDTO -> {
+            formAreaDTO.getFormControls()
+                    .stream()
+                    .filter(formControlDTO -> formControlDTO.getType().equals("table"))
+                    .forEach(formControlDTO -> {
+                        formControlDTO.formControlTable.getFormControls()
+                                .stream()
+                                .forEach(formControl -> {
+                                    List<String> fieldCodeParts = new ArrayList<>();
+                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntity().getCode());
+                                    fieldCodeParts.add("_");
+                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName());
+                                    String fieldCode = String.join("", fieldCodeParts);
+
+                                    if (assignedFields.contains(fieldCode)) {
+                                        return;
+                                    }
+
+                                    List<String> fieldFunctionDefParts = new ArrayList<>();
+                                    fieldFunctionDefParts.add("on_table_");
+                                    fieldFunctionDefParts.add(fieldCode);
+                                    fieldFunctionDefParts.add("_");
+                                    fieldFunctionDefParts.add("%%type%%");
+
+                                    List<String> fieldFunctionParts = new ArrayList<>();
+                                    fieldFunctionParts.addAll(fieldFunctionDefParts);
+                                    fieldFunctionParts.add("(event, formControlTable, dataLine);");
+
+                                    List<String> statementParts = new ArrayList<>();
+                                    statementParts.add("if(");
+                                    statementParts.add("(entityCode == '" + formControl.getFormControlField().getComponentPersistEntity().getCode() + "') && ");
+                                    statementParts.add("(fieldName == '" + formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName() + "') && ");
+                                    statementParts.add("(type == '%%type%%') && ");
+                                    statementParts.add("(typeof " + String.join("", fieldFunctionDefParts) + " == \"function\")");
+                                    statementParts.add(") ");
+                                    statementParts.add(String.join("", fieldFunctionParts));
+
+                                    String statement = String.join("", statementParts);
+
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keydown"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keyup"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dblclick"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "click"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "change"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focus"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focusout"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "drag"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dragend"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mousemove"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseout"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseover"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected"));
+                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared"));
+
+                                    assignedFields.add(fieldCode);
+                                });
+                    });
+        });
+
+        nativeFieldEventHandlerLines.add("}");
+        return String.join("\n", nativeFieldEventHandlerLines);
     }
 
     private String generateNativeFieldEventsHandler(FormDTO formDTO) {
@@ -388,72 +503,71 @@ public class FormDesignerService {
                     });
         });
 
-        /* Table Fields */
-        formAreas.forEach(formAreaDTO -> {
-            formAreaDTO.getFormControls()
-                    .stream()
-                    .filter(formControlDTO -> formControlDTO.getType().equals("table"))
-                    .forEach(formControlDTO -> {
-                        formControlDTO.formControlTable.getFormControls()
-                                .stream()
-                                .forEach(formControl -> {
-                                    List<String> fieldCodeParts = new ArrayList<>();
-                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntity().getCode());
-                                    fieldCodeParts.add("_");
-                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName());
-                                    String fieldCode = String.join("", fieldCodeParts);
-
-                                    if (assignedFields.contains(fieldCode)) {
-                                        return;
-                                    }
-
-                                    List<String> fieldFunctionDefParts = new ArrayList<>();
-                                    fieldFunctionDefParts.add("on_");
-                                    fieldFunctionDefParts.add(fieldCode);
-                                    fieldFunctionDefParts.add("_");
-                                    fieldFunctionDefParts.add("%%type%%");
-
-                                    List<String> fieldFunctionParts = new ArrayList<>();
-                                    fieldFunctionParts.addAll(fieldFunctionDefParts);
-                                    fieldFunctionParts.add("(event);");
-
-                                    List<String> statementParts = new ArrayList<>();
-                                    statementParts.add("if(");
-                                    statementParts.add("(entityCode == '" + formControl.getFormControlField().getComponentPersistEntity().getCode() + "') && ");
-                                    statementParts.add("(fieldName == '" + formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName() + "') && ");
-                                    statementParts.add("(type == '%%type%%') && ");
-                                    statementParts.add("(typeof " + String.join("", fieldFunctionDefParts) + " == \"function\")");
-                                    statementParts.add(") ");
-                                    statementParts.add(String.join("", fieldFunctionParts));
-
-                                    String statement = String.join("", statementParts);
-
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keydown"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keyup"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dblclick"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "click"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "change"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focus"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focusout"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "drag"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dragend"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mousemove"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseout"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseover"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected"));
-                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared"));
-
-                                    assignedFields.add(fieldCode);
-                                });
-                    });
-        });
+//        /* Table Fields */
+//        formAreas.forEach(formAreaDTO -> {
+//            formAreaDTO.getFormControls()
+//                    .stream()
+//                    .filter(formControlDTO -> formControlDTO.getType().equals("table"))
+//                    .forEach(formControlDTO -> {
+//                        formControlDTO.formControlTable.getFormControls()
+//                                .stream()
+//                                .forEach(formControl -> {
+//                                    List<String> fieldCodeParts = new ArrayList<>();
+//                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntity().getCode());
+//                                    fieldCodeParts.add("_");
+//                                    fieldCodeParts.add(formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName());
+//                                    String fieldCode = String.join("", fieldCodeParts);
+//
+//                                    if (assignedFields.contains(fieldCode)) {
+//                                        return;
+//                                    }
+//
+//                                    List<String> fieldFunctionDefParts = new ArrayList<>();
+//                                    fieldFunctionDefParts.add("on_");
+//                                    fieldFunctionDefParts.add(fieldCode);
+//                                    fieldFunctionDefParts.add("_");
+//                                    fieldFunctionDefParts.add("%%type%%");
+//
+//                                    List<String> fieldFunctionParts = new ArrayList<>();
+//                                    fieldFunctionParts.addAll(fieldFunctionDefParts);
+//                                    fieldFunctionParts.add("(event);");
+//
+//                                    List<String> statementParts = new ArrayList<>();
+//                                    statementParts.add("if(");
+//                                    statementParts.add("(entityCode == '" + formControl.getFormControlField().getComponentPersistEntity().getCode() + "') && ");
+//                                    statementParts.add("(fieldName == '" + formControl.getFormControlField().getComponentPersistEntityField().getPersistEntityField().getName() + "') && ");
+//                                    statementParts.add("(type == '%%type%%') && ");
+//                                    statementParts.add("(typeof " + String.join("", fieldFunctionDefParts) + " == \"function\")");
+//                                    statementParts.add(") ");
+//                                    statementParts.add(String.join("", fieldFunctionParts));
+//
+//                                    String statement = String.join("", statementParts);
+//
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keydown"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "keyup"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dblclick"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "click"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "change"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focus"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "focusout"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "drag"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "dragend"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mousemove"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseout"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseover"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "mouseup"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected"));
+//                                    nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared"));
+//
+//                                    assignedFields.add(fieldCode);
+//                                });
+//                    });
+//        });
 
         nativeFieldEventHandlerLines.add("}");
         return String.join("\n", nativeFieldEventHandlerLines);
     }
-
 
     public boolean clearCache() {
         this.formCacheingService.clear();
