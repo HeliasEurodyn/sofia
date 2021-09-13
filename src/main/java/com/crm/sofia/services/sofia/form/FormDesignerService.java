@@ -2,15 +2,11 @@ package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.form.base.*;
-import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
-import com.crm.sofia.services.sofia.component.ComponentDesignerService;
 import com.crm.sofia.services.sofia.component.ComponentPersistEntityFieldAssignmentService;
-import com.crm.sofia.services.sofia.expression.ExpressionService;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -218,6 +214,12 @@ public class FormDesignerService {
         pointerVarLines.add("var getParams;");
         pointerVarLines.add("var setTableRowActiveById;");
         pointerVarLines.add("var appendLineToComponent;");
+        pointerVarLines.add("var setAreaClass;");
+        pointerVarLines.add("var setAreaTitle;");
+        pointerVarLines.add("var setAreaDescription;");
+        pointerVarLines.add("var getArea;");
+        pointerVarLines.add("var navigate;");
+        pointerVarLines.add("var saveAndBackFormData;");
         pointerVarLines.add("");
         pointerVarLines.add("function defineSelectedTabNumberFunction(myCallback){setSelectedTabNumber = myCallback;}");
         pointerVarLines.add("function defineSelectedTextInputDialog(myCallback){textInputDialog = myCallback;}");
@@ -235,9 +237,15 @@ public class FormDesignerService {
         pointerVarLines.add("function defineGetFromBackend(myCallback){getFromBackend = myCallback;}");
         pointerVarLines.add("function defineSetFormTitle(myCallback){setFormTitle = myCallback;}");
         pointerVarLines.add("function defineSetFormDescription(myCallback){setFormDescription = myCallback;}");
+        pointerVarLines.add("function defineSetAreaClass(myCallback){setAreaClass = myCallback;}");
+        pointerVarLines.add("function defineSetAreaTitle(myCallback){setAreaTitle = myCallback;}");
+        pointerVarLines.add("function defineSetAreaDescription(myCallback){setAreaDescription = myCallback;}");
+        pointerVarLines.add("function defineGetArea(myCallback){getArea = myCallback;}");
+        pointerVarLines.add("function defineNavigate(myCallback){navigate = myCallback;}");
         pointerVarLines.add("function defineSetHeaderTabEditable(myCallback){setHeaderTabEditable = myCallback;}");
         pointerVarLines.add("function defineSetActionButtonEditable(myCallback){setActionButtonEditable = myCallback;}");
         pointerVarLines.add("function defineSaveFormData(myCallback){saveFormData = myCallback;}");
+        pointerVarLines.add("function defineSaveAndBackFormData(myCallback){saveAndBackFormData = myCallback;}");
         pointerVarLines.add("function defineDeleteFormData(myCallback){deleteFormData = myCallback;}");
         pointerVarLines.add("function defineGetParams(myCallback){getParams = myCallback;}");
         pointerVarLines.add("function defineSetTableRowActiveById(myCallback){setTableRowActiveById = myCallback;}");
@@ -280,6 +288,15 @@ public class FormDesignerService {
                                         "btn_" + formControlDTO.getFormControlButton().getCode() + "_click();");
 
                     });
+        });
+
+        /* Header Buttons */
+        formDTO.getFormActionButtons().forEach(formActionButton -> {
+            nativeButtonClickHandlerLines.
+                    add("if((btnCode == '" + formActionButton.getCode() + "') && " +
+                            "(typeof btn_" + formActionButton.getCode() + "_click == \"function\")) " +
+                            "btn_" + formActionButton.getCode() + "_click();");
+
         });
 
         nativeButtonClickHandlerLines.add("}");
