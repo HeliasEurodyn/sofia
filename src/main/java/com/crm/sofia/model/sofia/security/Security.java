@@ -1,8 +1,8 @@
 package com.crm.sofia.model.sofia.security;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.sofia.menu.Menu;
 import com.crm.sofia.model.sofia.user.User;
+import com.crm.sofia.model.sofia.user.UserGroup;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,24 +26,24 @@ public class Security extends BaseEntity {
     @Column
     private Long entityId;
 
-    @Column
+    @Column(name= "createstatus")
     private Boolean create;
 
-    @Column
+    @Column(name= "updatestatus")
     private Boolean update;
 
-    @Column
+    @Column(name= "readstatus")
     private Boolean read;
 
-    @Column
+    @Column(name= "deletestatus")
     private Boolean delete;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    User user;
+    private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
-//    @JoinColumn(name = "user_group_id", referencedColumnName = "id")
-//    UserGroup userGroup;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = UserGroup.class)
+    @JoinColumn(name = "user_group_id", referencedColumnName = "id")
+    private UserGroup userGroup;
 
 }
