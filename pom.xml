@@ -157,27 +157,27 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>unit</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*IntegrationTest.java</exclude>
-                                <exclude>**/*IntTest.java</exclude>
-                            </excludes>
-                            <!-- Run only tests whose name end with "UnitTest" -->
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>unit</id>-->
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                        <configuration>-->
+<!--                            <excludes>-->
+<!--                                <exclude>**/*IntegrationTest.java</exclude>-->
+<!--                                <exclude>**/*IntTest.java</exclude>-->
+<!--                            </excludes>-->
+<!--                            &lt;!&ndash; Run only tests whose name end with "UnitTest" &ndash;&gt;-->
+<!--                            <includes>-->
+<!--                                <include>**/*Test.java</include>-->
+<!--                            </includes>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
 </project>
