@@ -17,7 +17,6 @@ public class UserGroupController {
 
     @GetMapping
     List<UserGroupDTO> getObject() {
-
         return userGroupService.getObject();
     }
 

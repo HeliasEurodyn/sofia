@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.sofia.user.UserGroupMapper;
 import com.crm.sofia.model.sofia.user.UserGroup;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.crm.sofia.repository.sofia.user.UserGroupRepository;
@@ -19,12 +18,18 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class UserGroupService {
-    @Autowired
-    private UserGroupMapper userGroupMapper;
-    @Autowired
-    private UserGroupRepository userGroupRepository;
-    @Autowired
-    private JWTService jwtService;
+
+    private final UserGroupMapper userGroupMapper;
+    private final UserGroupRepository userGroupRepository;
+    private final JWTService jwtService;
+
+    public UserGroupService(UserGroupMapper userGroupMapper,
+                            UserGroupRepository userGroupRepository,
+                            JWTService jwtService) {
+        this.userGroupMapper = userGroupMapper;
+        this.userGroupRepository = userGroupRepository;
+        this.jwtService = jwtService;
+    }
 
     public List<UserGroupDTO> getObject() {
         List<UserGroup> entites = userGroupRepository.findAll();
@@ -59,6 +64,7 @@ public class UserGroupService {
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
-        userGroupRepository.deleteById(optionalEntity.get().getId());
+        userGroupRepository.deleteById(id);
     }
+
 }
