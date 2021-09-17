@@ -1,32 +1,11 @@
 package com.crm.sofia.services.sofia.list;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.form.base.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.base.FormDTO;
-import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
-import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
-import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
-import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
-import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
-import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
-import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
-import com.crm.sofia.model.sofia.list.ListEntity;
-import com.crm.sofia.native_repository.sofia.list.ListNativeRepository;
-import com.crm.sofia.repository.sofia.list.ListRepository;
-import com.crm.sofia.services.sofia.expression.ExpressionService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Service
 public class ListJavascriptService {
