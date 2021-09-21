@@ -13,11 +13,12 @@ public interface UserRepository extends BaseRepository<User> {
 
     List<User> findAllByStatusIsNotLike(AppConstants.Types.UserStatus status);
 
+    List<User> findUsersByIdIn(List<Long> ids);
+
     @Query(" SELECT (count (u)>0) " +
             " FROM User u " +
             " WHERE u.username=:username " )
     boolean userExists(@Param("username") String username);
-
 
     @Query(" SELECT u " +
             " FROM User u " +
