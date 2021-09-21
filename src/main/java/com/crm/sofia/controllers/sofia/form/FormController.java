@@ -58,9 +58,22 @@ public class FormController {
     }
 
     @Transactional
+    @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormMinJavaScript(@PathVariable("id") Long formId) {
+        return this.formService.getMinJavaScript(formId);
+    }
+
+
+    @Transactional
+    @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormJavaScriptFactory() {
+        return this.formService.getFormJavaScriptFactory();
+    }
+
+
+    @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
     String getFormCssScript(@PathVariable("id") Long formId) {
         return this.formService.getCssScript(formId);
     }
-
 }

@@ -17,6 +17,9 @@ public interface FormRepository extends BaseRepository<FormEntity> {
             " WHERE f.id =:id ")
     public List<String> getFormJavaScriptsByFormId(@Param("id") Long id);
 
+    @Query(" SELECT DISTINCT f.id FROM FormEntity f ")
+    public List<Long> getFormIds();
+
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formCssList fs " +
             " WHERE f.id =:id ")
@@ -25,6 +28,10 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     @Query(" SELECT DISTINCT f.script FROM FormEntity f " +
             " WHERE f.id =:id ")
     public String getFormScript(@Param("id") Long id);
+
+    @Query(" SELECT DISTINCT f.scriptMin FROM FormEntity f " +
+            " WHERE f.id =:id ")
+    public String getFormMinScript(@Param("id") Long id);
 
     @Query(" SELECT DISTINCT f.instanceVersion FROM FormEntity f " +
             " WHERE f.id =:id ")

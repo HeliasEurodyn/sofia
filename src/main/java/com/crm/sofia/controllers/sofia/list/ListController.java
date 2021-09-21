@@ -80,7 +80,7 @@ public class ListController {
     }
 
     @Transactional
-    @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScript(@PathVariable("id") Long id) {
         return this.listService.getJavaScript(id);
     }

@@ -21,10 +21,13 @@ public class ListJavascriptService {
 
     private String generateDynamicHandlersScript(ListDTO listDTO) {
         List<String> nativeHandlerLines = new ArrayList<>();
+
         String listNativeRowButtonClickHandlerString = this.generateListNativeRowButtonClickHandler(listDTO);
         nativeHandlerLines.add(listNativeRowButtonClickHandlerString);
+
         String listNativeHeaderButtonHandlerString = this.generateListNativeHeaderButtonClickHandler(listDTO);
         nativeHandlerLines.add(listNativeHeaderButtonHandlerString);
+
         String pointerVars = generatePointerVars();
         nativeHandlerLines.add(pointerVars);
         return String.join("\n", nativeHandlerLines);

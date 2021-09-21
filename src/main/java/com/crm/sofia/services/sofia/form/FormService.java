@@ -251,18 +251,30 @@ public class FormService {
     }
 
     public String getJavaScript(Long formId) {
+        String script = this.formRepository.getFormScript(formId);
+        return script;
+    }
 
-        List<String> decodedScripts = new ArrayList<>();
-        List<String> formScripts = this.formRepository.getFormJavaScriptsByFormId(formId);
-        String formScriptWithHandlers = this.formRepository.getFormScript(formId);
-        formScripts.add(formScriptWithHandlers);
+    public String getMinJavaScript(Long formId) {
+        String script = this.formRepository.getFormMinScript(formId);
+        return script;
+    }
 
-        formScripts.forEach(formScript -> {
-            byte[] decodedBytes = Base64.getDecoder().decode(formScript);
-            String decodedScript = new String(decodedBytes);
-            decodedScripts.add(decodedScript);
+    public String getFormJavaScriptFactory() {
+        List<Long> formIds = this.formRepository.getFormIds();
+        List<String> scriptLines = new ArrayList<>();
+        scriptLines.add("function newFormDynamicScript(id) {");
+        formIds.forEach(id -> {
+           String ifClause =
+                   String.join("",
+                           "if (id == " , id.toString(),
+                           " ) return new FormDynamicScript",id.toString() , "();" );
+           scriptLines.add(ifClause);
         });
-        return String.join("\n\n", decodedScripts);
+        scriptLines.add("}");
+
+        return String.join("\n", scriptLines);
+
     }
 
     public String getCssScript(Long formId) {
@@ -281,4 +293,5 @@ public class FormService {
     public String getInstanceVersion(Long id) {
         return this.formRepository.getInstanceVersion(id);
     }
+
 }

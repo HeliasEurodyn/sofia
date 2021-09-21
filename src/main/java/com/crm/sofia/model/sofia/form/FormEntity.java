@@ -68,8 +68,11 @@ public class FormEntity extends BaseEntity {
     @JoinColumn(name = "form_id")
     private List<FormCss> formCssList;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String script;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String scriptMin;
 
     @Column(columnDefinition ="BIGINT(20) default 0")
     private Long instanceVersion;

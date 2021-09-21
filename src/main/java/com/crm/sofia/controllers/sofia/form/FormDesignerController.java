@@ -31,13 +31,13 @@ public class FormDesignerController {
     }
 
     @PostMapping
-    public FormDTO postObject(@RequestBody FormDTO dto) {
+    public FormDTO postObject(@RequestBody FormDTO dto) throws Exception {
         FormDTO createdDTO = this.formDesignerService.postObject(dto);
         return createdDTO;
     }
 
     @PutMapping
-    public FormDTO putObject(@RequestBody FormDTO dto) {
+    public FormDTO putObject(@RequestBody FormDTO dto) throws Exception {
         FormDTO createdDTO = this.formDesignerService.putObject(dto);
         return createdDTO;
     }

@@ -41,7 +41,7 @@ public class FormDesignerService {
     }
 
     @Transactional
-    public FormDTO postObject(FormDTO formDTO) {
+    public FormDTO postObject(FormDTO formDTO) throws Exception {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setCreatedOn(Instant.now());
         formEntity.setModifiedOn(Instant.now());
@@ -56,7 +56,11 @@ public class FormDesignerService {
         }
         formEntity.setInstanceVersion(instanceVersion);
 
-        String script = this.formJavascriptService.generateDynamicHandlersJavaScriptAndEncode(formDTO);
+        String script = this.formJavascriptService.generateDynamicScript(formDTO);
+        String scriptMin = this.formJavascriptService.minify(script);
+        formEntity.setScript(script);
+        formEntity.setScriptMin(scriptMin);
+
         formEntity.setScript(script);
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
@@ -70,7 +74,7 @@ public class FormDesignerService {
     }
 
     @Transactional
-    public FormDTO putObject(FormDTO formDTO) {
+    public FormDTO putObject(FormDTO formDTO) throws Exception {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setModifiedOn(Instant.now());
         formEntity.setModifiedBy(jwtService.getUserId());
@@ -82,8 +86,10 @@ public class FormDesignerService {
         }
         formEntity.setInstanceVersion(instanceVersion);
 
-        String script = this.formJavascriptService.generateDynamicHandlersJavaScriptAndEncode(formDTO);
+        String script = this.formJavascriptService.generateDynamicScript(formDTO);
+        String scriptMin = this.formJavascriptService.minify(script);
         formEntity.setScript(script);
+        formEntity.setScriptMin(scriptMin);
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
 
