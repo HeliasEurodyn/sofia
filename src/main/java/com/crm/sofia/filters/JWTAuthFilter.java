@@ -1,7 +1,6 @@
 package com.crm.sofia.filters;
 
 import com.crm.sofia.dto.sofia.auth.JWTClaimsResponseDTO;
-import com.crm.sofia.repository.sofia.user.UserRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Base64;
-
+import java.util.Collections;
 
 @Component
 public class JWTAuthFilter extends GenericFilterBean {
@@ -36,12 +35,8 @@ public class JWTAuthFilter extends GenericFilterBean {
 
     private final JWTService jwtService;
 
-    private final UserRepository userRepository;
-
-    public JWTAuthFilter(JWTService jwtService,
-                         UserRepository userRepository) {
+    public JWTAuthFilter(JWTService jwtService) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
     }
 
     //  /**
@@ -58,47 +53,41 @@ public class JWTAuthFilter extends GenericFilterBean {
     //        .toString();
     //  }
 
-  private static String getRawToken(HttpServletRequest request) {
-    // Try to obtain the token from the headers.
-    String token = request.getHeader(HEADER_NAME);
-    if (StringUtils.isNotBlank(token)) {
-      return token.replace(HEADER_TOKEN_PREFIX, "");
+    private static String getRawToken(HttpServletRequest request) {
+        // Try to obtain the token from the headers.
+        String token = request.getHeader(HEADER_NAME);
+        if (StringUtils.isNotBlank(token)) {
+            return token.replace(HEADER_TOKEN_PREFIX, "");
+        }
+
+        // Next, try to obtain the token from a URL param.
+        token = request.getParameter(PARAM_NAME);
+        if (StringUtils.isNotBlank(token)) {
+            return token;
+        }
+
+        token = request.getParameter(WEBSOCKET_PARAM_NAME);
+        if (StringUtils.isNotBlank(token)) {
+            byte[] decodedBytes = Base64.getDecoder().decode(token);
+            return new String(decodedBytes);
+        }
+
+        // If no token found, return null.
+        return null;
     }
 
-    // Next, try to obtain the token from a URL param.
-    token = request.getParameter(PARAM_NAME);
-    if (StringUtils.isNotBlank(token)) {
-      return token;
+    private Authentication getAuthentication(HttpServletRequest request) {
+        String jwtToken = getRawToken(request);
+        final JWTClaimsResponseDTO jwtClaimsResponseDTO = jwtService.getClaims(jwtToken);
+        if (jwtClaimsResponseDTO != null && StringUtils.isNotBlank(jwtClaimsResponseDTO.getSubject())) {
+            // Create a Spring Authentication token, with the username of the user as a Principal
+            // and the User Id as credentials).
+
+            return new UsernamePasswordAuthenticationToken(jwtClaimsResponseDTO.getSubject(), jwtToken, Collections.emptyList());
+        } else {
+            return null;
+        }
     }
-
-    token = request.getParameter(WEBSOCKET_PARAM_NAME);
-    if (StringUtils.isNotBlank(token)) {
-      byte[] decodedBytes = Base64.getDecoder().decode(token);
-      return new String(decodedBytes);
-    }
-
-    // If no token found, return null.
-    return null;
-  }
-
-  private Authentication getAuthentication(HttpServletRequest request) {
-    String jwtToken = getRawToken(request);
-    final JWTClaimsResponseDTO jwtClaimsResponseDTO = jwtService.getClaims(jwtToken);
-    if (jwtClaimsResponseDTO != null && StringUtils.isNotBlank(jwtClaimsResponseDTO.getSubject())) {
-      // Create a Spring Authentication token, with the username of the user as a Principal
-      // and the User Id as credentials).
-
-//      List<GrantedAuthority> grantedAuths = null;
-//
-//      return new UsernamePasswordAuthenticationToken(jwtClaimsResponseDTO.getSubject(), jwtToken,
-//              grantedAuths);
-
-      return new UsernamePasswordAuthenticationToken(jwtClaimsResponseDTO.getSubject(), jwtToken);
-
-    } else {
-      return null;
-    }
-  }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
