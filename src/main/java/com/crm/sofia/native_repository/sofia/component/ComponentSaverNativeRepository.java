@@ -4,6 +4,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,9 +27,12 @@ import java.util.stream.Collectors;
 public class ComponentSaverNativeRepository {
 
     private final EntityManager entityManager;
+    private final JWTService jwtService;
 
-    public ComponentSaverNativeRepository(EntityManager entityManager) {
+    public ComponentSaverNativeRepository(EntityManager entityManager,
+                                          JWTService jwtService) {
         this.entityManager = entityManager;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -200,6 +206,17 @@ public class ComponentSaverNativeRepository {
         /* UPDATE Section */
         String queryString = "UPDATE " + entityName;
 
+        /* Set Default updated dates-users row log */
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getPersistEntityField().getName().equals("modified_on"))
+                .forEach(x -> x.setValue(Instant.now()));
+
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getPersistEntityField().getName().equals("modified_by"))
+                .forEach(x -> x.setValue(this.jwtService.getUserId().toString()));
+
         /* SET columns = values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
@@ -249,6 +266,17 @@ public class ComponentSaverNativeRepository {
         /* Insert into Section */
         String queryString = "INSERT INTO " + entityName;
 
+        /* Set Default created-updated dates-users row log */
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> Arrays.asList( "created_on", "modified_on").contains(x.getPersistEntityField().getName()))
+                .forEach(x -> x.setValue(Instant.now()));
+
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> Arrays.asList( "created_by", "modified_by").contains(x.getPersistEntityField().getName()))
+                .forEach(x -> x.setValue(this.jwtService.getUserId().toString()));
+
         /* Insert into Values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
@@ -276,7 +304,7 @@ public class ComponentSaverNativeRepository {
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
-                                (x.getValue() != null ? x.getValue().toString() : "")
+                                (x.getValue() != null ? x.getValue() : "")
                         ));
 
         return query;
@@ -358,7 +386,6 @@ public class ComponentSaverNativeRepository {
         }
 
         Boolean hasPrimaryKeyValue = this.hasPrimaryKeyValue(componentPersistEntity);
-
 
         if (hasPrimaryKeyValue) {
             this.updateComponentPersistEntity(
