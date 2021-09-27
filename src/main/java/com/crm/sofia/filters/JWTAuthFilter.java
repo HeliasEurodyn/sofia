@@ -31,7 +31,7 @@ public class JWTAuthFilter extends GenericFilterBean {
     private static final String PARAM_NAME = "bearer";
 
     // The name of the token when it comes as a url param.
-    private static final String WEBSOCKET_PARAM_NAME = "wst";
+    private static final String WEBSOCKET_PARAM_NAME = "wtk";
 
     private final JWTService jwtService;
 
@@ -68,8 +68,9 @@ public class JWTAuthFilter extends GenericFilterBean {
 
         token = request.getParameter(WEBSOCKET_PARAM_NAME);
         if (StringUtils.isNotBlank(token)) {
-            byte[] decodedBytes = Base64.getDecoder().decode(token);
-            return new String(decodedBytes);
+           // byte[] decodedBytes = Base64.getDecoder().decode(token);
+          //  return new String(decodedBytes);
+            return token;
         }
 
         // If no token found, return null.
