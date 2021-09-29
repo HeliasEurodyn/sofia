@@ -52,4 +52,7 @@ public class FormControlField extends BaseEntity {
             targetEntity = ComponentPersistEntityField.class)
     @JoinColumn(name = "component_persist_entity_field_id", referencedColumnName = "id")
     private ComponentPersistEntityField componentPersistEntityField;
+
+    @Column
+    private String mask;
 }
