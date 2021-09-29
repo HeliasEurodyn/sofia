@@ -49,14 +49,14 @@ public abstract class ComponentJsonMapper {
                     Object valueString = (value == null ? "" : value.toString());
                     jsonMap.put(cpef.getPersistEntityField().getName(), valueString);
                 });
-        }
 
-        /* Map Cpe */
-        if (cpe.getComponentPersistEntityList() != null) {
-            cpe.getComponentPersistEntityList().stream().forEach(cpeItem -> {
-                Map jsonCpe = this.mapCpe(cpeItem);
-                jsonMap.put(cpeItem.getCode(), jsonCpe);
-            });
+            /* Map sub containing Cpes */
+            if (cpe.getComponentPersistEntityList() != null) {
+                cpe.getComponentPersistEntityList().stream().forEach(cpeItem -> {
+                    Map jsonCpe = this.mapCpe(cpeItem);
+                    jsonMap.put(cpeItem.getCode(), jsonCpe);
+                });
+            }
         }
 
         return jsonMap;

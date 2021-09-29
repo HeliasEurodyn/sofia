@@ -20,8 +20,14 @@ public class FormDataController {
     }
 
     @GetMapping(path = "/{jsonUrl}/{id}")
-    public Map getVendorProducts(@PathVariable("jsonUrl") String jsonUrl, @PathVariable("id") String selectionId) {
+    public Map retrieveJsonData(@PathVariable("jsonUrl") String jsonUrl, @PathVariable("id") String selectionId) {
         return this.formService.retrieveJsonData(jsonUrl, selectionId);
+    }
+
+    @PostMapping(path = "/{jsonUrl}")
+    public String saveJsonData(@PathVariable("jsonUrl") String jsonUrl,
+                                 @RequestBody Map<String, Map<String, Object>> parameters) {
+        return this.formService.saveJsonData(jsonUrl, parameters);
     }
 
 }

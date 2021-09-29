@@ -250,6 +250,26 @@ public class FormService {
         return componentSaverService.save(formDTO.getComponent(), parameters);
     }
 
+    public String saveJsonData(String jsonUrl, Map<String, Map<String, Object>> parameters) {
+
+        /* Retrieve form from Database */
+        FormDTO formDTO = this.getObject(jsonUrl);
+
+        /* Retrieve Form Component field Assignments from Database */
+        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
+                        formDTO.getComponent().getComponentPersistEntityList(),
+                        "form",
+                        formDTO.getId()
+                );
+
+        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
+
+        /* Μap parameters to component And save */
+        return componentSaverService.save(formDTO.getComponent(), parameters);
+    }
+
+
     public String getJavaScript(Long formId) {
         String script = this.formRepository.getFormScript(formId);
         return script;
