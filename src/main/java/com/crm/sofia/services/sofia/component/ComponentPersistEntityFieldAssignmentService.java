@@ -27,7 +27,9 @@ public class ComponentPersistEntityFieldAssignmentService {
 
     public void saveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,String entityType, Long entityId) {
         this.deleteByIdAndEntityType(entityId,entityType);
-        this.saveFieldAssignmentsTree(componentPersistEntityList,entityType, entityId);
+        List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments =
+                generateFieldAssignmentsFromTree(componentPersistEntityList, entityType, entityId);
+        this.postObjects(fieldAssignments);
     }
 
     public List<ComponentPersistEntityDTO> retrieveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,
@@ -63,7 +65,8 @@ public class ComponentPersistEntityFieldAssignmentService {
         componentPersistEntityField.setAssignment(assignment);
     }
 
-    private void saveFieldAssignmentsTree(List<ComponentPersistEntityDTO> componentPersistEntityList,String entityType, Long entityId) {
+    private List<ComponentPersistEntityFieldAssignmentDTO> generateFieldAssignmentsFromTree(List<ComponentPersistEntityDTO> componentPersistEntityList,
+                                                                                            String entityType, Long entityId) {
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments = new ArrayList<>();
         componentPersistEntityList
                 .stream()
@@ -86,10 +89,13 @@ public class ComponentPersistEntityFieldAssignmentService {
                             );
 
                     if (persistEntity.getComponentPersistEntityList() != null) {
-                        this.saveFieldAssignmentsTree(persistEntity.getComponentPersistEntityList(),entityType, entityId);
+                        List<ComponentPersistEntityFieldAssignmentDTO> curFieldAssignments =
+                                this.generateFieldAssignmentsFromTree(persistEntity.getComponentPersistEntityList(),entityType, entityId);
+                        fieldAssignments.addAll(curFieldAssignments);
                     }
                 });
-        this.postObjects(fieldAssignments);
+
+        return fieldAssignments;
     }
 
     private void postObjects(List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentDTOs) {

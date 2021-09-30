@@ -56,20 +56,18 @@ public class FormDesignerService {
         }
         formEntity.setInstanceVersion(instanceVersion);
 
-        String script = this.formJavascriptService.generateDynamicScript(formDTO);
-        String scriptMin = this.formJavascriptService.minify(script);
-        formEntity.setScript(script);
-        formEntity.setScriptMin(scriptMin);
-
-        formEntity.setScript(script);
-
         FormEntity createdFormEntity = this.formRepository.save(formEntity);
+        FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
 
         this.componentPersistEntityFieldAssignmentService
-                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(), "form",
-                        createdFormEntity.getId());
+                .saveFieldAssignments(formDTO.getComponent().getComponentPersistEntityList(),
+                        "form",
+                        createdFormDTO.getId());
 
-        FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
+        String script = this.formJavascriptService.generateDynamicScript(createdFormDTO);
+        String scriptMin = this.formJavascriptService.minify(script);
+        this.formRepository.updateScripts(createdFormDTO.getId(),script, scriptMin );
+
         return createdFormDTO;
     }
 

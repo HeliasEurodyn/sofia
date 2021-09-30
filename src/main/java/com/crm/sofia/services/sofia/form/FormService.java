@@ -168,7 +168,17 @@ public class FormService {
         return formUiDTO;
     }
 
-    public ComponentUiDTO retrieveData(Long formId, String selectionId) {
+    public ComponentUiDTO retrieveClonedData(Long formId, String selectionId) {
+        ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
+        return componentUiMapper.clearIdsAndMapToUi(componentDTO);
+    }
+
+    public ComponentUiDTO retrieveUiData(Long formId, String selectionId) {
+        ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
+        return componentUiMapper.mapToUi(componentDTO);
+    }
+
+    private ComponentDTO retrieveData(Long formId, String selectionId) {
 
         /* Retrieve Component */
         FormDTO formDTO = this.getObject(formId);
@@ -186,7 +196,7 @@ public class FormService {
         /* Retrieve Data */
         componentDTO = componentRetrieverService.retrieveComponentWithData(componentDTO, selectionId);
 
-        return componentUiMapper.mapToUi(componentDTO);
+        return componentDTO;
     }
 
     public Map retrieveJsonData(String jsonUrl, String selectionId) {

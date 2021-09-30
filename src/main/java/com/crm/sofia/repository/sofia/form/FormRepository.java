@@ -46,4 +46,8 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     @Query(value = "UPDATE form SET instance_version = instance_version + 1", nativeQuery = true)
     void increaseInstanceVersions();
 
+    @Modifying
+    @Query(value = "UPDATE FormEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")
+    void updateScripts(@Param("id") Long id, @Param("script") String script , @Param("scriptMin") String scriptMin);
+
 }

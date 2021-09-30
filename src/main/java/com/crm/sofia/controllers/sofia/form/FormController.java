@@ -37,7 +37,13 @@ public class FormController {
     @GetMapping(path = "data")
     ComponentUiDTO getData(@RequestParam("id") Long formId,
                            @RequestParam("selection-id") String selectionId) {
-        return this.formService.retrieveData(formId, selectionId);
+        return this.formService.retrieveUiData(formId, selectionId);
+    }
+
+    @GetMapping(path = "clone-data")
+    ComponentUiDTO getCloneData(@RequestParam("id") Long formId,
+                           @RequestParam("selection-id") String selectionId) {
+        return this.formService.retrieveClonedData(formId, selectionId);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")
