@@ -24,7 +24,7 @@ public class XlsImport extends BaseEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column

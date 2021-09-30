@@ -121,9 +121,13 @@ public class XlsImportService {
             /* Retrieve saveOnUpdateField */
             String saveOnUpdateFieldValue = this.calcSaveOnUpdateFieldValue(componentDTO.getComponentPersistEntityList(), rowMap);
 
+            if(saveOnUpdateFieldValue == null){
+                saveOnUpdateFieldValue = "";
+            }
+
             /*  Decide if component should be saved */
             Boolean saveCurrent = false;
-            if (saveOnUpdateFieldValue == null && rowNum > Math.toIntExact(firstLineNum)) {
+            if (saveOnUpdateFieldValue.equals("") && rowNum > Math.toIntExact(firstLineNum)) {
                 saveCurrent = true;
             } else if (!saveOnUpdateFieldValue.equals(prevSaveOnUpdateFieldValue) && rowNum > Math.toIntExact(firstLineNum)) {
                 saveCurrent = true;
@@ -314,7 +318,7 @@ public class XlsImportService {
                             .stream()
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> cpef.getAssignment().getDefaultValue().contains("importColumn("))
-                            .filter(cpef -> cpef.getAssignment().getEditor().equals("SAVEONUPDATE"))
+                            .filter(cpef -> (cpef.getAssignment().getEditor() == null?"":cpef.getAssignment().getEditor()).equals("SAVEONUPDATE"))
                             .findFirst();
 
             if (optionalCpef.isPresent()) {
