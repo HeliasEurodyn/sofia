@@ -53,8 +53,14 @@ public class ListController {
 
     @GetMapping(path = "/results")
     ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
-        return this.listService.getObjectDataByParameters(parameters, id);
+        return this.listService.getObjectDataByParameters(parameters,0L, id);
     }
+
+    @GetMapping(path = "/results/page/{page}")
+    ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters, @PathVariable("page") Long page, @RequestParam("id") Long id) {
+        return this.listService.getObjectDataByParameters(parameters,page, id);
+    }
+
 
     @GetMapping(path = "/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
@@ -90,21 +96,5 @@ public class ListController {
     String getFormCssScript(@PathVariable("id") Long id) {
         return this.listService.getCssScript(id);
     }
-
-
-//    @GetMapping(path = "/jasper-test-pdf")
-//    void doJasperTest() throws FileNotFoundException, JRException {
-//        this.listService.doJasperPdfTest();
-//    }
-//
-//    @GetMapping(path = "/jasper-test-pdf-n")
-//    void doJasperTestNew(HttpServletResponse response) throws IOException, JRException, SQLException {
-//        this.listService.doJasperPdfTestN(response);
-//    }
-//
-//    @GetMapping(path = "/jasper-test-excel")
-//    void doJasperTestExcel() throws FileNotFoundException, JRException {
-//        this.listService.doJasperExcelTestExcel();
-//    }
 
 }

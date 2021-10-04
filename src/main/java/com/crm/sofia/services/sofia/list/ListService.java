@@ -192,8 +192,9 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long id) {
+    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, Long id) {
         ListDTO listDTO = this.getListObject(id);
+        listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         ListResultsDataDTO listResultsDataDTO = this.getListObject(listDTO);
         return listResultsDataDTO;

@@ -41,14 +41,14 @@ public class ListNativeRepository {
         String queryString = this.generateSelectPart(listDTO);
 
         /*
-         * Identify formPersistEntities
+         * Identify Persist Entities
          */
-        List<ComponentPersistEntityDTO> fromPersistEntities = this.identifyFromPersistEntities(listDTO);
+        List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
 
         /*
          * From clause
          */
-        queryString += this.generateFromPart(fromPersistEntities);
+        queryString += this.generateFromPart(persistEntities);
 
         /*
          * Where clause
@@ -164,25 +164,25 @@ public class ListNativeRepository {
         String queryString = "SELECT COUNT(*) AS TOTALROWS ";
 
         /*
-         * Identify formPersistEntities
+         * Identify Persist Entities
          */
-        List<ComponentPersistEntityDTO> fromPersistEntities = this.identifyFromPersistEntities(listDTO);
+        List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
 
         /*
          * From clause
          */
-        queryString += this.generateFromPart(fromPersistEntities);
+        queryString += this.generateFromPart(persistEntities);
 
 
         /*
          * Where clause
          */
-        this.generateCountWherePart(listDTO);
+        queryString += this.generateWherePart(listDTO);
 
         /*
          * Generate Query
          */
-        Query query = this.generateCountQuery(listDTO, queryString);
+        Query query = this.createQueryAndReplaceParameters(listDTO, queryString);
 
         /*
          * Execute Query
@@ -470,6 +470,7 @@ public class ListNativeRepository {
         List<ListComponentFieldDTO> filtersList = new ArrayList<>();
         filtersList.addAll(listDTO.getListComponentFilterFieldList());
         filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
+        filtersList.addAll(listDTO.getListComponentColumnFieldList());
 
         /* Check for empty required Fields */
         Optional<ListComponentFieldDTO> optionalRequiredFieldEmpty =
@@ -652,6 +653,7 @@ public class ListNativeRepository {
     }
 
     private Query generateCountQuery(ListDTO listDTO, String queryString) {
+
         Map<String, String> filterParts = new HashMap<>();
         Query query = entityManager.createNativeQuery(queryString);
 
@@ -662,8 +664,8 @@ public class ListNativeRepository {
                 });
 
         List<ListComponentFieldDTO> filtersList = new ArrayList<>();
-        filtersList.addAll( listDTO.getListComponentFilterFieldList());
-        filtersList.addAll( listDTO.getListComponentLeftGroupFieldList());
+        filtersList.addAll(listDTO.getListComponentFilterFieldList());
+        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
 
         filtersList = filtersList
                 .stream()
