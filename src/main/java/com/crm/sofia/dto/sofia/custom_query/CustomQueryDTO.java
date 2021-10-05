@@ -16,6 +16,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CustomQueryDTO  extends BaseDTO {
 
+    private String code;
+
     private String name;
 
     private String query;

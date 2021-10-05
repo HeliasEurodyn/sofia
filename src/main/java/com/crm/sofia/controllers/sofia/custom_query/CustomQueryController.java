@@ -29,6 +29,11 @@ public class CustomQueryController {
         return customQueryService.getObject(id);
     }
 
+    @GetMapping(path = "/data")
+    Object getData(@RequestParam("id") Long id) {
+        return customQueryService.getData(id);
+    }
+
     @PostMapping
     public CustomQueryDTO postObject(@RequestBody CustomQueryDTO customQueryDto) throws IOException {
         return customQueryService.postObject(customQueryDto);
@@ -43,6 +48,5 @@ public class CustomQueryController {
     public void deleteObject(@RequestParam("id") Long id) {
         customQueryService.deleteObject(id);
     }
-
 
 }

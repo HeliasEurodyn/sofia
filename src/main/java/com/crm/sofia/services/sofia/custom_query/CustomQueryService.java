@@ -5,24 +5,34 @@ import com.crm.sofia.mapper.sofia.custom_query.CustomQueryMapper;
 import com.crm.sofia.model.sofia.custom_query.CustomQuery;
 import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomQueryService {
-    @Autowired
-    private CustomQueryMapper customQueryMapper;
-    @Autowired
-    private CustomQueryRepository customQueryRepository;
-    @Autowired
-    private JWTService jwtService;
 
+
+    private final CustomQueryMapper customQueryMapper;
+    private final CustomQueryRepository customQueryRepository;
+    private final JWTService jwtService;
+    private final EntityManager entityManager;
+
+    public CustomQueryService(CustomQueryMapper customQueryMapper,
+                              CustomQueryRepository customQueryRepository,
+                              JWTService jwtService,
+                              EntityManager entityManager) {
+        this.customQueryMapper = customQueryMapper;
+        this.customQueryRepository = customQueryRepository;
+        this.jwtService = jwtService;
+        this.entityManager = entityManager;
+    }
 
     public List<CustomQueryDTO> getObject() {
         List<CustomQuery> entites = customQueryRepository.findAll();
@@ -38,6 +48,16 @@ public class CustomQueryService {
         CustomQueryDTO dto = customQueryMapper.map(entity);
         return dto;
     }
+
+    public Object getData(Long id) {
+        CustomQueryDTO dto = this.getObject(id);
+        String queryString = dto.getQuery();
+        queryString = queryString.replace("##userid##", this.jwtService.getUserId().toString());
+        Query query = entityManager.createNativeQuery(queryString);
+        return query.getResultList();
+    }
+
+
     public CustomQueryDTO postObject(CustomQueryDTO customQueryDto) {
 
         CustomQuery customQuery = customQueryMapper.map(customQueryDto);
@@ -59,7 +79,5 @@ public class CustomQueryService {
         }
         customQueryRepository.deleteById(optionalEntity.get().getId());
     }
-
-
 
 }

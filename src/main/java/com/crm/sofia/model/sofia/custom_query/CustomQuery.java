@@ -19,6 +19,9 @@ import javax.persistence.Table;
 public class CustomQuery extends BaseEntity {
 
     @Column
+    private String code;
+
+    @Column
     private String name;
 
     @Column(columnDefinition = "TEXT")
