@@ -586,7 +586,7 @@ public class ListNativeRepository {
         if (fields.size() == 0) {
             return "";
         } else {
-            return "GROUP BY " + String.join(",", fields);
+            return " GROUP BY " + String.join(",", fields);
         }
     }
 
@@ -859,7 +859,8 @@ public class ListNativeRepository {
 
             for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
-                String currentValue = dataRow[i].toString();
+                String currentValue = (dataRow[i]==null?"":dataRow[i].toString());
+
                 GroupEntryDTO entry = currentGroupEntries.stream()
                         .filter(storedEntry -> currentValue.equals(storedEntry.getValue()))
                         .findAny()
