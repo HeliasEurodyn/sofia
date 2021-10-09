@@ -6,6 +6,7 @@ import com.crm.sofia.model.sofia.expression.expressionUnits.*;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +17,13 @@ import java.util.stream.Collectors;
 public class ExpressionService {
 
     private final JWTService jwtService;
+    private final EntityManager entityManager;
     private Map<String, Object> dataset;
 
-    public ExpressionService(JWTService jwtService) {
+    public ExpressionService(JWTService jwtService,
+                             EntityManager entityManager) {
         this.jwtService = jwtService;
+        this.entityManager = entityManager;
     }
 
     public ExprResponce create(String expression) {
@@ -194,7 +198,8 @@ public class ExpressionService {
                     exprUnit instanceof ExprYyyyMmDdHhMmStringToDate ||
                     exprUnit instanceof ExprYyyyMmDdStringToDate ||
                     exprUnit instanceof ExprSystemParameter ||
-                    exprUnit instanceof ExprImportColumnParameter )
+                    exprUnit instanceof ExprImportColumnParameter ||
+                    exprUnit instanceof ExprRunSqlParameter )
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
             ) {
@@ -274,6 +279,7 @@ public class ExpressionService {
 
             if (exprUnit == null) exprUnit = ExprOpenBracket.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprCloseBracket.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprComma.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDateNowPlus.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDatePlus.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDateNowPlus.exrtactExprUnit(expression, i);
@@ -293,6 +299,7 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, importDataset);
+            if (exprUnit == null) exprUnit = ExprRunSqlParameter.exrtactExprUnit(expression, i, entityManager);
 
             if (exprUnit == null) {
                 return null;

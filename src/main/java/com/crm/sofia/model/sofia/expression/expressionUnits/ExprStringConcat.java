@@ -6,7 +6,6 @@ public class ExprStringConcat extends ExprUnit {
 
     static private Integer exprUnitLength = 12;
     static private String exprUnitString = "stringConcat";
-//    private AppConstants.Types.ExprUnitReturningType exprUnitReturningType = AppConstants.Types.ExprUnitReturningType.String ;
 
     public static ExprStringConcat exrtactExprUnit(String expression, Integer expressionPosition) {
 

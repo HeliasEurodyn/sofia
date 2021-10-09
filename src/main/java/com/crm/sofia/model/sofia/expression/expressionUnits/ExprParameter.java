@@ -9,7 +9,6 @@ public class ExprParameter extends ExprUnit {
     private Integer currentExprUnitLength = 0;
     private String currentExprUnitString = "";
     Object parameterValue;
-//    private AppConstants.Types.ExprUnitReturningType exprUnitReturningType = AppConstants.Types.ExprUnitReturningType.Any ;
 
     public static ExprParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
