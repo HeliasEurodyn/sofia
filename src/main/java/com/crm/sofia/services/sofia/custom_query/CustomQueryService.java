@@ -7,12 +7,14 @@ import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -49,10 +51,13 @@ public class CustomQueryService {
         return dto;
     }
 
-    public Object getData(Long id) {
+    public Object getData(Long id, Map<String, String> parameters) {
         CustomQueryDTO dto = this.getObject(id);
         String queryString = dto.getQuery();
         queryString = queryString.replace("##userid##", this.jwtService.getUserId().toString());
+        for (Map.Entry<String,String> entry : parameters.entrySet()){
+            queryString = queryString.replace("##"+entry.getKey()+"##", entry.getValue().toString());
+        }
         Query query = entityManager.createNativeQuery(queryString);
         return query.getResultList();
     }

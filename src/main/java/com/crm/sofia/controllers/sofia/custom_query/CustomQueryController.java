@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,8 +31,8 @@ public class CustomQueryController {
     }
 
     @GetMapping(path = "/data")
-    Object getData(@RequestParam("id") Long id) {
-        return customQueryService.getData(id);
+    Object getData(@RequestParam("id") Long id, @RequestParam Map<String, String> parameters) {
+        return customQueryService.getData(id, parameters);
     }
 
     @PostMapping
