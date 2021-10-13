@@ -14,7 +14,6 @@ public class ListJavascriptService {
         String script = this.generateDynamicHandlersScript(listDTO);
         byte[] encodedBytes = Base64.getEncoder().encode(script.getBytes());
         String encodedScript = new String(encodedBytes);
-
         return encodedScript;
     }
 
