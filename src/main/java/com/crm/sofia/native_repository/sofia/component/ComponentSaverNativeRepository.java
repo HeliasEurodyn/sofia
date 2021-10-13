@@ -75,6 +75,10 @@ public class ComponentSaverNativeRepository {
     private ComponentPersistEntityDTO saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
 
+        if(!(componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())){
+            return componentPersistEntity;
+        }
+
         List<String> existingPrimaryKeys = new ArrayList<>();
         List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
         List<ComponentPersistEntityDataLineDTO> insertableLines = new ArrayList<>();
