@@ -97,4 +97,10 @@ public class ListController {
         return this.listService.getCssScript(id);
     }
 
+    @Transactional
+    @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getFormJavaScripty() {
+        return this.listService.getJavaScriptFactory();
+    }
+
 }
