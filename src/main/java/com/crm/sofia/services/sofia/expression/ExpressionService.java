@@ -282,8 +282,6 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprComma.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDateNowPlus.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDatePlus.exrtactExprUnit(expression, i);
-            if (exprUnit == null) exprUnit = ExprDateNowPlus.exrtactExprUnit(expression, i);
-            if (exprUnit == null) exprUnit = ExprDatePlus.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleNumberAddition.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleNumberDivision.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleNumberMultiplication.exrtactExprUnit(expression, i);
