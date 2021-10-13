@@ -36,6 +36,7 @@ public class ListComponentFieldDTO extends BaseDTO {
     private String bclass;
     private String css;
     private Object fieldValue;
+    private String formulaType;
     private List<ListComponentFieldDTO> listComponentActionFieldList;
 
 }

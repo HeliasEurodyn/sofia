@@ -42,4 +42,9 @@ public interface ListRepository extends BaseRepository<ListEntity> {
             " WHERE l.id =:id ")
     public List<String> getCssScriptsById(@Param("id") Long id);
 
+
+    @Query(" SELECT DISTINCT l.id FROM ListEntity l ")
+    public List<Long> getListIds();
+
+
 }

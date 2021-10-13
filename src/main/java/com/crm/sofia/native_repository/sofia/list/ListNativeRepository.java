@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -211,13 +210,21 @@ public class ListNativeRepository {
 
         listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql"))
                 .forEach(x -> {
-                    String field = "( " +
-                            x.getEditor().substring(10, x.getEditor().length() - 2) +
-                            ") as " + x.getCode();
+                    String field = "( " + x.getEditor() + ") as " + x.getCode();
                     selectionFields.add(field);
                 });
+
+//        listDTO.getListComponentColumnFieldList()
+//                .stream()
+//                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
+//                .forEach(x -> {
+//                    String field = "( " +
+//                            x.getEditor().substring(10, x.getEditor().length() - 2) +
+//                            ") as " + x.getCode();
+//                    selectionFields.add(field);
+//                });
 
         return " SELECT " + String.join(",", selectionFields);
     }
@@ -268,12 +275,12 @@ public class ListNativeRepository {
 
         entityIds.forEach(id -> {
 
-        ComponentPersistEntityDTO persistEntity =
-                componentPersistEntityList
-                        .stream()
-                        .filter(x -> x.getId() == id)
-                        .findFirst()
-                        .orElse(null);
+            ComponentPersistEntityDTO persistEntity =
+                    componentPersistEntityList
+                            .stream()
+                            .filter(x -> x.getId() == id)
+                            .findFirst()
+                            .orElse(null);
 
             this.identifyFromPersistEntitiesByJoins(persistEntity,
                     entityIds,
@@ -281,19 +288,19 @@ public class ListNativeRepository {
             );
         });
 
-       return componentPersistEntityList
+        return componentPersistEntityList
                 .stream()
                 .filter(x -> x != null)
                 .filter(x -> entityIds.contains(x.getId()))
-              .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     /*
      * Iterate to Generate FROM Tables & Relashionships part
      */
     private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
-                                                                                    List<Long> entityIds,
-                                                                                    List<ComponentPersistEntityDTO> componentPersistEntityList) {
+                                                    List<Long> entityIds,
+                                                    List<ComponentPersistEntityDTO> componentPersistEntityList) {
 
         List<String> componentPersistEntityCodes = new ArrayList<>();
 
@@ -314,13 +321,13 @@ public class ListNativeRepository {
                         .map(x -> x.getLocateStatement())
                         .collect(Collectors.toList());
 
-                locateStatemens
-                        .stream()
-                        .forEach(x -> {
-                            String[] joinParts = x.split("\\.");
-                            String cpeCode = joinParts[0].replace("#", "");
-                            componentPersistEntityCodes.add(cpeCode);
-                        });
+        locateStatemens
+                .stream()
+                .forEach(x -> {
+                    String[] joinParts = x.split("\\.");
+                    String cpeCode = joinParts[0].replace("#", "");
+                    componentPersistEntityCodes.add(cpeCode);
+                });
 
 
 //        String selector = (persistEntity.getSelector() == null ? "" : persistEntity.getSelector());
@@ -354,7 +361,7 @@ public class ListNativeRepository {
                     this.identifyFromPersistEntitiesByJoins(x, entityIds, componentPersistEntityList);
                 });
 
-      //  return entityIds;
+        //  return entityIds;
     }
 
     /*
@@ -448,7 +455,7 @@ public class ListNativeRepository {
         filtersList =
                 filtersList
                         .stream()
-                        .filter(field -> field.getComponentPersistEntity() != null)
+                        //.filter(field -> field.getComponentPersistEntity() != null)
                         .filter(x -> x.getFieldValue() != null)
                         .filter(x -> !x.getFieldValue().equals(""))
                         .collect(Collectors.toList());
@@ -506,14 +513,26 @@ public class ListNativeRepository {
         List<String> whereClauseParts = new ArrayList<>();
 
         /* Iterate and create Where parts */
-        filtersList.stream().forEach(x -> {
-            String whereClause =
-                    x.getComponentPersistEntity().getCode() + "." +
-                            x.getComponentPersistEntityField().getPersistEntityField().getName() + " " +
-                            x.getOperator() + " :filter_" + x.getCode();
+        filtersList
+                .stream()
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals(""))
+                .forEach(x -> {
+                    String whereClause =
+                            x.getComponentPersistEntity().getCode() + "." +
+                                    x.getComponentPersistEntityField().getPersistEntityField().getName() + " " +
+                                    x.getOperator() + " :filter_" + x.getCode();
+                    whereClauseParts.add(whereClause);
+                });
 
-            whereClauseParts.add(whereClause);
-        });
+        filtersList
+                .stream()
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql"))
+                .forEach(x -> {
+                    String whereClause =
+                             "( " +  x.getEditor() + " )" +
+                                    x.getOperator() + " :filter_" + x.getCode();
+                    whereClauseParts.add(whereClause);
+                });
 
         if (whereClauseParts.size() == 0) {
             return "";
@@ -553,6 +572,7 @@ public class ListNativeRepository {
         /* Iterate and create Where parts for not empty field values*/
         filtersList
                 .stream()
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals(""))
                 .filter(x -> !(x.getFieldValue() == null ? "" : x.getFieldValue()).equals(""))
                 .forEach(x -> {
 
@@ -563,6 +583,18 @@ public class ListNativeRepository {
 
                     whereClauseParts.put(x.getCode(), whereClause);
                 });
+
+        filtersList
+                .stream()
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql"))
+                .filter(x -> !(x.getFieldValue() == null ? "" : x.getFieldValue()).equals(""))
+                .forEach(x -> {
+                    String whereClause =
+                            "( " +  x.getEditor() + " )" +
+                                    x.getOperator() + " :filter_" + x.getCode();
+                    whereClauseParts.put(x.getCode(), whereClause);
+                });
+
 
         /* Replace Where in custom field srtucture */
         whereClauseParts.forEach((k, v) -> {
@@ -734,7 +766,7 @@ public class ListNativeRepository {
                 filtersList.stream()
                         .filter(x -> x.getFieldValue() != null)
                         .filter(x -> !x.getFieldValue().equals(""))
-                        .filter(field -> field.getComponentPersistEntity() != null)
+                     //   .filter(field -> field.getComponentPersistEntity() != null)
                         .collect(Collectors.toList());
 
         /* Iterate and create Where parts */
@@ -778,9 +810,14 @@ public class ListNativeRepository {
                 .filter(x -> x.getComponentPersistEntityField() != null)
                 .collect(Collectors.toList());
 
+//        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
+//                .stream()
+//                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
+//                .collect(Collectors.toList());
+
         List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql"))
                 .collect(Collectors.toList());
 
         List<Object[]> dataList = query.getResultList();
@@ -859,7 +896,7 @@ public class ListNativeRepository {
 
             for (ListComponentFieldDTO listComponentFieldDTO : listDTO.getListComponentLeftGroupFieldList()) {
 
-                String currentValue = (dataRow[i]==null?"":dataRow[i].toString());
+                String currentValue = (dataRow[i] == null ? "" : dataRow[i].toString());
 
                 GroupEntryDTO entry = currentGroupEntries.stream()
                         .filter(storedEntry -> currentValue.equals(storedEntry.getValue()))

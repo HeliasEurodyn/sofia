@@ -386,4 +386,20 @@ public class ListService {
         });
         return String.join("\n\n", decodedScripts);
     }
+
+    public String getJavaScriptFactory() {
+        List<Long> formIds = this.listRepository.getListIds();
+        List<String> scriptLines = new ArrayList<>();
+        scriptLines.add("function newListDynamicScript(id) {");
+        formIds.forEach(id -> {
+            String ifClause =
+                    String.join("",
+                            "if (id == " , id.toString(),
+                            " ) return new ListDynamicScript",id.toString() , "();" );
+            scriptLines.add(ifClause);
+        });
+        scriptLines.add("}");
+
+        return String.join("\n", scriptLines);
+    }
 }
