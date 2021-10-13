@@ -55,9 +55,7 @@ public class FormJavascriptService {
         return scriptMin;
     }
 
-
     private String generateUserFormScripts(FormDTO formDTO) {
-
         List<String> decodedScripts = new ArrayList<>();
         formDTO.getFormScripts().forEach(formScript -> {
             byte[] decodedBytes = Base64.getDecoder().decode(formScript.getScript());
@@ -138,13 +136,32 @@ public class FormJavascriptService {
         });
 
         /* Header Buttons */
-        formDTO.getFormActionButtons().forEach(formActionButton -> {
+        formDTO.getFormActionButtons()
+                .stream()
+                .filter(formActionButton ->  formActionButton.getCode() != null)
+                .filter(formActionButton ->  !formActionButton.getCode().equals(""))
+                .filter(formActionButton -> userScriptsString.contains("btn_" + formActionButton.getCode() + "_click("))
+                .forEach(formActionButton -> {
             nativeButtonClickHandlerLines.
                     add("if((btnCode == '" + formActionButton.getCode() + "') && " +
                             "(typeof this.btn_" + formActionButton.getCode() + "_click == \"function\")) " +
                             "this.btn_" + formActionButton.getCode() + "_click();");
 
         });
+
+        /* Tabs' Buttons */
+        formDTO.getFormTabs()
+                .stream()
+                .filter(formTab ->  formTab.getCode() != null)
+                .filter(formTab ->  !formTab.getCode().equals(""))
+                .filter(formTab -> userScriptsString.contains("btn_" + formTab.getCode() + "_click("))
+                .forEach(formTab -> {
+                    nativeButtonClickHandlerLines.
+                            add("if((btnCode == '" + formTab.getCode() + "') && " +
+                                    "(typeof this.btn_" + formTab.getCode() + "_click == \"function\")) " +
+                                    "this.btn_" + formTab.getCode() + "_click();");
+
+                });
 
         nativeButtonClickHandlerLines.add("}");
         return String.join("\n", nativeButtonClickHandlerLines);
@@ -408,6 +425,8 @@ public class FormJavascriptService {
         pointerVarLines.add("setFieldValueRef = null;");
         pointerVarLines.add("getComponentDataRef = null;");
         pointerVarLines.add("appendLineToTableRef = null;");
+        pointerVarLines.add("clearTableLinesRef = null;");
+        pointerVarLines.add("getFormDatasetRef = null;");
         pointerVarLines.add("setFieldEditableRef = null;");
         pointerVarLines.add("getFromBackendRef = null;");
         pointerVarLines.add("setFormTitleRef = null;");
@@ -456,6 +475,12 @@ public class FormJavascriptService {
 
         pointerVarLines.add("defineAppendLineToTable(myCallback){this.appendLineToTableRef = myCallback;}");
         pointerVarLines.add("appendLineToTable(code){return this.appendLineToTableRef(code, this.formRef);}");
+
+        pointerVarLines.add("defineClearTableLines(myCallback){this.clearTableLinesRef = myCallback;}");
+        pointerVarLines.add("clearTableLines(code){return this.clearTableLinesRef(code, this.formRef);}");
+
+        pointerVarLines.add("defineGetFormDataset(myCallback){this.getFormDatasetRef = myCallback;}");
+        pointerVarLines.add("getFormDataset(){return this.getFormDatasetRef(this.formRef);}");
 
         pointerVarLines.add("defineAppendLineToComponent(myCallback){this.appendLineToComponentRef = myCallback;}");
         pointerVarLines.add("appendLineToComponent(componentPersistEntity){return this.appendLineToComponentRef(componentPersistEntity, this.formRef);}");

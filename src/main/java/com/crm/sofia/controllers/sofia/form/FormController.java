@@ -73,7 +73,7 @@ public class FormController {
     @Transactional
     @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScriptFactory() {
-        return this.formService.getFormJavaScriptFactory();
+        return this.formService.getJavaScriptFactory();
     }
 
 

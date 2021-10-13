@@ -290,7 +290,7 @@ public class FormService {
         return script;
     }
 
-    public String getFormJavaScriptFactory() {
+    public String getJavaScriptFactory() {
         List<Long> formIds = this.formRepository.getFormIds();
         List<String> scriptLines = new ArrayList<>();
         scriptLines.add("function newFormDynamicScript(id) {");
@@ -304,7 +304,6 @@ public class FormService {
         scriptLines.add("}");
 
         return String.join("\n", scriptLines);
-
     }
 
     public String getCssScript(Long formId) {
