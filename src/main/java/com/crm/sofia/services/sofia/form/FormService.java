@@ -103,7 +103,6 @@ public class FormService {
         return formDTO;
     }
 
-
     public FormDTO getObject(String jsonUrl) {
 
         /* Retrieve */
