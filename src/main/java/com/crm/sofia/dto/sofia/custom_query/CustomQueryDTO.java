@@ -24,8 +24,8 @@ public class CustomQueryDTO  extends BaseDTO {
 
     private String query;
 
-    private List<CustomQueryField> filters;
+    private List<CustomQueryFieldDTO> filters;
 
-    private List<CustomQueryField> columns;
+    private List<CustomQueryFieldDTO> columns;
 
 }

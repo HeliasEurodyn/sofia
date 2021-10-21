@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CustomQueryField extends BaseDTO {
+public class CustomQueryFieldDTO extends BaseDTO {
 
     private String name;
 
