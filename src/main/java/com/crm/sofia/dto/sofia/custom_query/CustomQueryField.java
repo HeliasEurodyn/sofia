@@ -8,24 +8,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CustomQueryDTO  extends BaseDTO {
-
-    private String code;
+public class CustomQueryField extends BaseDTO {
 
     private String name;
 
-    private String query;
+    private String type;
 
-    private List<CustomQueryField> filters;
-
-    private List<CustomQueryField> columns;
-
+    private Boolean required;
 }
