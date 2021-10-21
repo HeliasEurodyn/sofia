@@ -48,7 +48,7 @@ public abstract class ComponentUiMapper {
                 .forEach(cpe -> {
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
-                            .filter(x -> x.getPersistEntityField().getPrimaryKey())
+                            .filter(x -> (x.getPersistEntityField().getPrimaryKey() == null? false: x.getPersistEntityField().getPrimaryKey()))
                             .forEach(x -> x.setValue(null));
                 });
 
@@ -58,7 +58,7 @@ public abstract class ComponentUiMapper {
                 .forEach(cpe -> {
                     cpe.getDefaultComponentPersistEntityFieldList()
                             .stream()
-                            .filter(x -> x.getPersistEntityField().getPrimaryKey())
+                            .filter(x -> (x.getPersistEntityField().getPrimaryKey()== null? false: x.getPersistEntityField().getPrimaryKey()))
                             .forEach(x -> x.setValue(null));
                 });
 
