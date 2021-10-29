@@ -361,18 +361,14 @@ public class ListService {
         return this.listRepository.getInstanceVersion(id);
     }
 
-    public String getJavaScript(Long id) {
-        List<String> decodedScripts = new ArrayList<>();
-        List<String> scripts = this.listRepository.getJavaScriptsById(id);
-        String scriptWithHandlers = this.listRepository.getListScript(id);
-        scripts.add(scriptWithHandlers);
+    public String getMinJavaScript(Long id) {
+        String script = this.listRepository.getListMinScript(id);
+        return script;
+    }
 
-        scripts.forEach(formScript -> {
-            byte[] decodedBytes = Base64.getDecoder().decode(formScript);
-            String decodedScript = new String(decodedBytes);
-            decodedScripts.add(decodedScript);
-        });
-        return String.join("\n\n", decodedScripts);
+    public String getJavaScript(Long id) {
+        String script = this.listRepository.getListScript(id);
+        return script;
     }
 
     public String getCssScript(Long id) {

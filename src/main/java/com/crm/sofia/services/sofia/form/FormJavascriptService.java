@@ -40,7 +40,7 @@ public class FormJavascriptService {
         String nativeTableFieldEventsHandlerString = this.generateNativeTableFieldEventsHandler(formDTO, userScriptsString);
         nativeHandlerLines.add(nativeTableFieldEventsHandlerString);
 
-        String classEndString = this.generateClassEnd(formDTO);
+        String classEndString = this.generateClassEnd();
         nativeHandlerLines.add(classEndString);
 
         return String.join("\n", nativeHandlerLines);
@@ -83,17 +83,7 @@ public class FormJavascriptService {
         return String.join("\n", classLines);
     }
 
-    private String generateClassEnd(FormDTO formDTO) {
-//        List<String> classLines = new ArrayList<>();
-//        classLines.add("}");
-//        List<String> classInstanceLines = new ArrayList<>();
-//        classInstanceLines.add("formDynamicScriptInstance = new ");
-//        classInstanceLines.add("FormDynamicScript");
-//        classInstanceLines.add(formDTO.getId().toString());
-//        classInstanceLines.add("();");
-//        String classInstance = String.join("", classInstanceLines);
-//        classLines.add(classInstance);
-//        return String.join("\n", classLines);
+    private String generateClassEnd() {
         return "}";
     }
 

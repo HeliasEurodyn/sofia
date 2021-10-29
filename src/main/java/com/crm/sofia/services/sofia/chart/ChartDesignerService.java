@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.sofia.chart.ChartMapper;
 import com.crm.sofia.model.sofia.chart.Chart;
 import com.crm.sofia.native_repository.sofia.chart.ChartNativeRepository;
 import com.crm.sofia.repository.sofia.chart.ChartRepository;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,25 +21,32 @@ public class ChartDesignerService {
     private final ChartRepository chartRepository;
     private final ChartMapper chartMapper;
     private final ChartNativeRepository chartNativeRepository;
+    private final JWTService jwtService;
 
     public ChartDesignerService(ChartRepository chartRepository,
                                 ChartMapper chartMapper,
-                                ChartNativeRepository chartNativeRepository) {
+                                ChartNativeRepository chartNativeRepository,
+                                JWTService jwtService) {
         this.chartRepository = chartRepository;
         this.chartMapper = chartMapper;
         this.chartNativeRepository = chartNativeRepository;
+        this.jwtService = jwtService;
     }
 
     @Transactional
     public List<ChartFieldDTO> generateDataFields(String sql) {
         List<ChartFieldDTO> chartFieldList = this.chartNativeRepository.generateFields(sql);
+
         return this.chartNativeRepository.getData(chartFieldList, sql);
     }
 
     @Transactional
     public List<ChartFieldDTO> getData(Long id) {
         ChartDTO chartDTO = this.getObject(id);
-        return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), chartDTO.getQuery());
+        String query = chartDTO.getQuery();
+        query = query.replace("##asset_id##", this.jwtService.getUserId().toString());
+
+        return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), query);
     }
 
     public List<ChartDTO> getObject() {

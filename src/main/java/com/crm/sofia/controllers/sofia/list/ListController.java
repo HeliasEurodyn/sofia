@@ -85,9 +85,13 @@ public class ListController {
         return this.listService.getInstanceVersion(formId);
     }
 
-    @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getFormJavaScript(@PathVariable("id") Long id) {
+    String getMinJavaScript(@PathVariable("id") Long id) {
+        return this.listService.getMinJavaScript(id);
+    }
+
+    @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
+    String getJavaScript(@PathVariable("id") Long id) {
         return this.listService.getJavaScript(id);
     }
 

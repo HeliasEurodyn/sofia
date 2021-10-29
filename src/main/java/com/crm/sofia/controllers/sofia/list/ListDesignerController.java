@@ -36,13 +36,13 @@ public class ListDesignerController {
     }
 
     @PostMapping
-    public ListDTO postObject(@RequestBody ListDTO dto) {
+    public ListDTO postObject(@RequestBody ListDTO dto) throws Exception {
         ListDTO createdDTO = this.listDesignerService.postObject(dto);
         return createdDTO;
     }
 
     @PutMapping
-    public ListDTO putObject(@RequestBody ListDTO dto) {
+    public ListDTO putObject(@RequestBody ListDTO dto) throws Exception {
         ListDTO createdDTO = this.listDesignerService.putObject(dto);
         return createdDTO;
     }

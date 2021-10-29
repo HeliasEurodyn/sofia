@@ -163,8 +163,11 @@ public class ListEntity extends BaseEntity {
     @Column
     private String jsonUrl;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String script;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String scriptMin;
 
     @OneToMany(
             fetch = FetchType.LAZY,

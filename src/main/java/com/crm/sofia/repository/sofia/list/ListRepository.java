@@ -36,6 +36,9 @@ public interface ListRepository extends BaseRepository<ListEntity> {
             " WHERE l.id =:id ")
     public String getListScript(@Param("id") Long id);
 
+    @Query(" SELECT DISTINCT l.scriptMin FROM ListEntity l " +
+            " WHERE l.id =:id ")
+    String getListMinScript(Long id);
 
     @Query(" SELECT DISTINCT ls.script FROM ListEntity l " +
             " INNER JOIN l.listCssList ls " +
@@ -46,5 +49,7 @@ public interface ListRepository extends BaseRepository<ListEntity> {
     @Query(" SELECT DISTINCT l.id FROM ListEntity l ")
     public List<Long> getListIds();
 
-
+    @Modifying
+    @Query(value = "UPDATE ListEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")
+    void updateScripts(@Param("id") Long id, @Param("script") String script , @Param("scriptMin") String scriptMin);
 }

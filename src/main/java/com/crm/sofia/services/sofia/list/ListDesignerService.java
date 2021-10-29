@@ -37,7 +37,7 @@ public class ListDesignerService {
     }
 
     @Transactional
-    public ListDTO postObject(ListDTO listDTO) {
+    public ListDTO postObject(ListDTO listDTO) throws Exception {
         ListEntity listEntity = this.listMapper.map(listDTO);
         listEntity.setCreatedOn(Instant.now());
         listEntity.setModifiedOn(Instant.now());
@@ -51,15 +51,18 @@ public class ListDesignerService {
         }
         listEntity.setInstanceVersion(instanceVersion);
 
-        String script = this.listJavascriptService.generate(listDTO);
-        listEntity.setScript(script);
-
         ListEntity createdListEntity = this.listRepository.save(listEntity);
-        return this.listMapper.map(createdListEntity);
+        ListDTO createdListDTO =  this.listMapper.map(createdListEntity);
+
+        String script = this.listJavascriptService.generateDynamicScript(createdListDTO);
+        String scriptMin = this.listJavascriptService.minify(script);
+        this.listRepository.updateScripts(createdListDTO.getId(),script, scriptMin);
+
+        return createdListDTO;
     }
 
     @Transactional
-    public ListDTO putObject(ListDTO listDTO) {
+    public ListDTO putObject(ListDTO listDTO) throws Exception {
         ListEntity listEntity = this.listMapper.map(listDTO);
         listEntity.setModifiedOn(Instant.now());
         listEntity.setModifiedBy(jwtService.getUserId());
@@ -71,12 +74,18 @@ public class ListDesignerService {
         }
         listEntity.setInstanceVersion(instanceVersion);
 
-        String script = this.listJavascriptService.generate(listDTO);
-        listEntity.setScript(script);
+//        String script = this.listJavascriptService.generateDynamicScript(listDTO);
+//        listEntity.setScript(script);
 
         ListEntity createdListEntity = this.listRepository.save(listEntity);
         listCacheingService.clearUiObject(createdListEntity.getId());
-        return this.listMapper.map(createdListEntity);
+        ListDTO createdListDTO = this.listMapper.map(createdListEntity);
+
+        String script = this.listJavascriptService.generateDynamicScript(createdListDTO);
+        String scriptMin = this.listJavascriptService.minify(script);
+        this.listRepository.updateScripts(createdListDTO.getId(),script, scriptMin);
+
+        return createdListDTO;
     }
 
     public List<ListDTO> getObject() {
