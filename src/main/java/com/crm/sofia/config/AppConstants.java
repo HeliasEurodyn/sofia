@@ -20,13 +20,6 @@ public class AppConstants {
             deleted
         }
 
-
-        public enum FormulaTypes  {
-            column,
-            sql,
-            command
-        }
-
     }
 
 }

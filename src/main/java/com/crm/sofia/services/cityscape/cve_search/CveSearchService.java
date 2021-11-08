@@ -3,7 +3,7 @@ package com.crm.sofia.services.cityscape.cve_search;
 import com.crm.sofia.dto.cityscape.cve_search.VendorDTO;
 import com.crm.sofia.dto.cityscape.cve_search.VendorProductCpeDTO;
 import com.crm.sofia.dto.cityscape.cve_search.VendorProductDTO;
-import com.crm.sofia.rest_call.cityscape.CveSearchRestTemplate;
+import com.crm.sofia.rest_template.cityscape.CveSearchRestTemplate;
 import org.springframework.stereotype.Service;
 
 @Service

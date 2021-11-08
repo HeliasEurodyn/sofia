@@ -54,6 +54,7 @@ public class FormDesignerService {
         } else {
             instanceVersion += 1L;
         }
+
         formEntity.setInstanceVersion(instanceVersion);
 
         FormEntity createdFormEntity = this.formRepository.save(formEntity);

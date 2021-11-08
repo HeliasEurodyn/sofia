@@ -3,6 +3,7 @@ package com.crm.sofia.model.sofia.user;
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.menu.Menu;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -10,6 +11,10 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -24,7 +29,13 @@ public class User extends BaseEntity {
     @Column(updatable = false, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "PROVIDER_USER_ID")
+    private String providerUserId;
+
+    @Column(name = "enabled", columnDefinition = "BIT", length = 1)
+    private boolean enabled;
+
+    @Column
     private String email;
 
     @Column(nullable = false)
@@ -51,4 +62,21 @@ public class User extends BaseEntity {
     @Column
     private String searchNavCommand;
 
+    @Column
+    private String provider;
+
+
+    // bi-directional many-to-many association to Role
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
+    private List<Role> roles;
+
+    public Set<Role> getRolesSet(){
+        return new HashSet<>(roles);
+    }
+
+    public void setRolesSet(Set<Role> rolesSet){
+        this.roles = new ArrayList(rolesSet);
+    }
 }

@@ -1,4 +1,4 @@
-package com.crm.sofia.rest_call.cityscape;
+package com.crm.sofia.rest_template.cityscape;
 
 import com.crm.sofia.dto.cityscape.cve_search.VendorDTO;
 import com.crm.sofia.dto.cityscape.cve_search.VendorProductCpeDTO;
@@ -8,7 +8,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 

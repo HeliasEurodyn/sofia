@@ -5,12 +5,15 @@ import com.crm.sofia.dto.sofia.search.SearchDTO;
 import com.crm.sofia.mapper.sofia.search.SearchMapper;
 import com.crm.sofia.model.sofia.search.Search;
 import com.crm.sofia.repository.sofia.search.SearchRepository;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +22,17 @@ public class SearchDesignerService {
     
     private final SearchRepository searchRepository;
     private final SearchMapper searchMapper;
+    private final JWTService jwtService;
+    private final EntityManager entityManager;
 
     public SearchDesignerService(SearchRepository searchRepository,
-                                 SearchMapper searchMapper) {
+                                 SearchMapper searchMapper,
+                                 JWTService jwtService,
+                                 EntityManager entityManager) {
         this.searchRepository = searchRepository;
         this.searchMapper = searchMapper;
+        this.jwtService = jwtService;
+        this.entityManager = entityManager;
     }
 
     public List<SearchDTO> getObject() {
@@ -54,4 +63,5 @@ public class SearchDesignerService {
         }
         this.searchRepository.deleteById(optionalSearch.get().getId());
     }
+
 }

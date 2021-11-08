@@ -407,10 +407,12 @@ public class FormJavascriptService {
         pointerVarLines.add("setSelectedTabNumberRef = null;");
         pointerVarLines.add("textInputDialogRef = null;");
         pointerVarLines.add("textDialogRef = null;");
+        pointerVarLines.add("notificationDialogRef = null;");
         pointerVarLines.add("openPopupRef = null;");
         pointerVarLines.add("closePopupRef = null;");
         pointerVarLines.add("printReportRef = null;");
         pointerVarLines.add("dataSet = null;");
+        pointerVarLines.add("getFormFieldsByCodeRef = null;");
         pointerVarLines.add("getFieldValueRef = null;");
         pointerVarLines.add("setFieldValueRef = null;");
         pointerVarLines.add("getComponentDataRef = null;");
@@ -445,6 +447,9 @@ public class FormJavascriptService {
         pointerVarLines.add("defineSelectedTextDialog(myCallback){this.textDialogRef = myCallback;}");
         pointerVarLines.add("textDialog(title, description){return this.textDialogRef(title, description, this.formRef);}");
 
+        pointerVarLines.add("defineNotificationDialog(myCallback){this.notificationDialogRef = myCallback;}");
+        pointerVarLines.add("notificationDialog(title, description){return this.notificationDialogRef(horizontalPosition, verticalPosition, type, icon, message);}");
+
         pointerVarLines.add("defineSelectedOpenPopupDialog(myCallback){this.openPopupRef = myCallback;}");
         pointerVarLines.add("openPopup(code){return this.openPopupRef(code, this.formRef);}");
 
@@ -456,6 +461,11 @@ public class FormJavascriptService {
 
         pointerVarLines.add("defineGetFieldValue(myCallback){this.getFieldValueRef = myCallback;}");
         pointerVarLines.add("getFieldValue(fieldCode){return this.getFieldValueRef(fieldCode, this.formRef);}");
+
+
+        pointerVarLines.add("defineGetFormFieldsByCode(myCallback){this.getFormFieldsByCodeRef = myCallback;}");
+        pointerVarLines.add("getFormFieldsByCode(fieldCode){return this.getFormFieldsByCodeRef(fieldCode, this.formRef);}");
+
 
         pointerVarLines.add("defineSetFieldValue(myCallback){this.setFieldValueRef = myCallback;}");
         pointerVarLines.add("setFieldValue(fieldCode, fieldValue){return this.setFieldValueRef(fieldCode, fieldValue, this.formRef);}");

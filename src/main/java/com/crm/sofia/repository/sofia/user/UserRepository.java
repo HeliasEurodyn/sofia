@@ -3,8 +3,10 @@ package com.crm.sofia.repository.sofia.user;
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.repository.common.BaseRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +34,19 @@ public interface UserRepository extends BaseRepository<User> {
             " WHERE u.id = :id ")
    String findPasswordById(@Param("id") Long id);
 
+    User findByEmail(String email);
+
+    User findByProviderAndProviderUserId(String provider, String providerId);
+
+    boolean existsByEmail(String email);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE user SET" +
+            " header_menu_id = 23," +
+            " sidebar_menu_id = 25," +
+            " login_nav_command = 'STATICPAGE[NAME:dashboard,LOCATE:(ID=1)]'," +
+            " search_nav_command = 'POPUPPAGE[NAME:search,LOCATE:(ID=1),SEARCH-DEFAULT:#SEARCH-VALUE#,FOCUS:search-field-box]' " +
+            " WHERE id = :id ", nativeQuery = true)
+    void initiateUserInfo(@Param("id") Long id);
 }

@@ -455,7 +455,6 @@ public class ListNativeRepository {
         filtersList =
                 filtersList
                         .stream()
-                        //.filter(field -> field.getComponentPersistEntity() != null)
                         .filter(x -> x.getFieldValue() != null)
                         .filter(x -> !x.getFieldValue().equals(""))
                         .collect(Collectors.toList());
@@ -597,11 +596,13 @@ public class ListNativeRepository {
 
 
         /* Replace Where in custom field srtucture */
-        whereClauseParts.forEach((k, v) -> {
-            filterFieldStructure.replaceAll("$" + k, v);
-        });
+        for (Map.Entry<String, String> entry : whereClauseParts.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            filterFieldStructure = filterFieldStructure.replaceAll("\\$" + k, v);
+        }
 
-        return filterFieldStructure;
+        return " WHERE " + filterFieldStructure;
     }
 
     /*
@@ -790,7 +791,9 @@ public class ListNativeRepository {
         });
 
         filterParts.forEach((k, v) -> {
-            query.setParameter(k, v);
+            if(queryString.contains(":"+ k)){
+                query.setParameter(k, v);
+            }
         });
 
         return query;

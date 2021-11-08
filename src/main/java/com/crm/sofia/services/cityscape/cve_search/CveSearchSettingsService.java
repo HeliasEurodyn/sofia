@@ -5,7 +5,7 @@ import com.crm.sofia.dto.cityscape.cve_search.VendorDTO;
 import com.crm.sofia.mapper.cityscape.cve_search.CveSearchSettingsMapper;
 import com.crm.sofia.model.cityscape.cve_search.CveSearchSettings;
 import com.crm.sofia.repository.cityscape.cve_search.CveSearchSettingsRepository;
-import com.crm.sofia.rest_call.cityscape.CveSearchRestTemplate;
+import com.crm.sofia.rest_template.cityscape.CveSearchRestTemplate;
 import com.crm.sofia.services.sofia.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
