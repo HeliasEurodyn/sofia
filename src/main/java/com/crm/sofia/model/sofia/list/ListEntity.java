@@ -45,6 +45,12 @@ public class ListEntity extends BaseEntity {
     private String icon;
 
     @Column
+    private String groupingTitle;
+
+    @Column(length=1024)
+    private String groupingDescription;
+
+    @Column
     private String selector;
 
     @Column(columnDefinition = "TEXT")

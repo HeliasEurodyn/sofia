@@ -25,6 +25,8 @@ public class ListDTO extends BaseDTO {
     private String headerIcon;
     private String title;
     private String description;
+    private String groupingTitle;
+    private String groupingDescription;
     private String icon;
     private String selector;
     private String filterFieldStructure;
