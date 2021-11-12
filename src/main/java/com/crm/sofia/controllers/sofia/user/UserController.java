@@ -62,7 +62,7 @@ public class UserController {
      */
     @PostMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public JWTResponseDTO authenticate(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginDTO loginDTO) {
         return userService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
     }
 

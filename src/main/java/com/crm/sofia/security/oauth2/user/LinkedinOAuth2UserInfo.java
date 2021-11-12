@@ -32,4 +32,10 @@ public class LinkedinOAuth2UserInfo extends OAuth2UserInfo {
     public String getImageUrl() {
         return (String) attributes.get("pictureUrl");
     }
+
+    @Override
+    public String getRealName() {
+        return "";
+    }
+
 }

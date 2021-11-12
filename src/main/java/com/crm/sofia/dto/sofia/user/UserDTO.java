@@ -44,4 +44,5 @@ public class UserDTO extends BaseDTO {
 
     private String searchNavCommand;
 
+    private String provider;
 }

@@ -2,18 +2,16 @@ package com.crm.sofia.services.sofia.user;
 
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.sofia.auth.JWTResponseDTO;
-import com.crm.sofia.dto.sofia.user.SignUpRequest;
-import com.crm.sofia.dto.sofia.user.SocialProvider;
-import com.crm.sofia.dto.sofia.user.UserDTO;
+import com.crm.sofia.dto.sofia.user.*;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
 import com.crm.sofia.mapper.sofia.user.UserMapper;
-import com.crm.sofia.model.sofia.menu.Menu;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.model.sofia.user.Role;
 import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.repository.sofia.user.RoleRepository;
 import com.crm.sofia.repository.sofia.user.UserRepository;
+import com.crm.sofia.security.jwt.TokenProvider;
 import com.crm.sofia.security.oauth2.user.OAuth2UserInfo;
 import com.crm.sofia.security.oauth2.user.OAuth2UserInfoFactory;
 import com.crm.sofia.services.sofia.auth.JWTService;
@@ -21,6 +19,12 @@ import com.crm.sofia.services.sofia.menu.MenuFieldService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -29,12 +33,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
+import java.nio.charset.Charset;
 import java.time.Instant;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -46,19 +48,25 @@ public class UserService {
     private final JWTService jwtService;
     private final MenuFieldService menuFieldService;
     private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
                        PasswordEncoder passwordEncoder,
                        JWTService jwtService,
                        MenuFieldService menuFieldService,
-                       RoleRepository roleRepository) {
+                       RoleRepository roleRepository,
+                       AuthenticationManager authenticationManager,
+                       TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.menuFieldService = menuFieldService;
         this.roleRepository = roleRepository;
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
     }
 
     public List<UserDTO> getAllUsers() {
@@ -100,16 +108,45 @@ public class UserService {
 
     }
 
+    @Transactional
+    public ResponseEntity<?> authenticate(@NotBlank String username, @NotBlank String enteredPassword) {
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (passwordEncoder.matches(enteredPassword, user.getPassword())) {
+
+                UserDetails userDetails =
+                        new LocalUser(user.getEmail(), user.getPassword(),
+                                user.isEnabled(), true, true,
+                                true,
+                                GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()), user);
+
+
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(username, enteredPassword)
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String jwt = tokenProvider.createToken(authentication);
+                LocalUser localUser = (LocalUser) authentication.getPrincipal();
+
+                UserDTO userDTO = this.userMapper.mapUserToDtoWithMenu(localUser.getUser());
+                return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, userDTO));
+            }
+        }
+
+        return new ResponseEntity<>(new ApiResponse(false, "Login error!"), HttpStatus.BAD_REQUEST);
+    }
+
     public UserDTO putUser(UserDTO userDTO) {
-
         User user = userMapper.map(userDTO);
-
         if ((userDTO.getPassword()==null?"":userDTO.getPassword()).equals("") && (userDTO.getRepeatPassword()==null?"":userDTO.getRepeatPassword()).equals("")) {
             String password = userRepository.findPasswordById(user.getId());
             user.setPassword(password);
         } else if (!userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Password error!!");
         } else {
+            user.setEnabled(true);
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
@@ -124,42 +161,11 @@ public class UserService {
         responseUserDTO.setPassword("");
 
         return responseUserDTO;
-
     }
 
     public Boolean delete(Long id) {
         userRepository.deleteById(id);
         return true;
-    }
-
-    /**
-     * Attempts to authenticate a user.
-     *
-     * @param username        The email to authenticate with.
-     * @param enteredPassword The password to authenticate with.
-     * @return Returns a JWT if authentication was successful, or null otherwise.
-     */
-    @Transactional
-    public JWTResponseDTO authenticate(@NotBlank String username, @NotBlank String enteredPassword) {
-//
-//        String jwt = "";
-//        Optional<User> userOptional = userRepository.findByUsername(username);
-//        if (userOptional.isPresent()) {
-//            User user = userOptional.get();
-//            if (verifyPassword(user, enteredPassword)) {
-//                jwt = jwtService.generateJwt(user.getUsername(), userOptional.get().getId());
-//                UserDTO userDTO = userMapper.mapUserToDtoWithMenu(user);
-//
-//                return new JWTResponseDTO(jwt, userDTO);
-//            }
-//        }
-//
-//        return new JWTResponseDTO().setJwt(jwt);
-        return null;
-    }
-
-    private boolean verifyPassword(User user, String enteredPassword) {
-        return passwordEncoder.matches(enteredPassword, user.getPassword());
     }
 
     public UserDTO getCurrentUser() {
@@ -214,11 +220,6 @@ public class UserService {
     @Transactional
     public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) throws UserAlreadyExistAuthenticationException {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
-//        if (StringUtils.isEmpty(oAuth2UserInfo.getName())) {
-//            throw new OAuth2AuthenticationProcessingException("Name not found from OAuth2 provider");
-//        } else if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
-//            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
-//        }
         SignUpRequest userDetails = toUserRegistrationObject(registrationId, oAuth2UserInfo);
         User user = findUserByProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getId());
         if (user != null) {
@@ -240,11 +241,15 @@ public class UserService {
     }
 
     private SignUpRequest toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
+        byte[] array = new byte[10]; // length is bounded by 7
+        new Random().nextBytes(array);
+        String passwordString = new String(array, Charset.forName("UTF-8"));
+
         return SignUpRequest.getBuilder()
                 .addProviderUserID(oAuth2UserInfo.getId())
                 .addDisplayName(oAuth2UserInfo.getName())
                 .addEmail(oAuth2UserInfo.getEmail())
-                .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword("changeit").build();
+                .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword(passwordString).build();
     }
 
 

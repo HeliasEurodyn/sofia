@@ -13,9 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 
-
-
-
 @Slf4j
 @Service("localUserDetailService")
 public class LocalUserDetailService implements UserDetailsService {
@@ -25,10 +22,10 @@ public class LocalUserDetailService implements UserDetailsService {
 
     @Override
     @Transactional
-    public LocalUser loadUserByUsername(final String email) throws UsernameNotFoundException {
-        User user = userService.findUserByUsername(email);
+    public LocalUser loadUserByUsername(final String username) throws UsernameNotFoundException {
+        User user = userService.findUserByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User " + email + " was not found in the database");
+            throw new UsernameNotFoundException("User " + username + " was not found in the database");
         }
         return createLocalUser(user);
     }

@@ -40,4 +40,9 @@ public class FacebookOAuth2UserInfo extends OAuth2UserInfo {
         }
         return null;
     }
+
+    @Override
+    public String getRealName() {
+        return (String) attributes.get("name");
+    }
 }

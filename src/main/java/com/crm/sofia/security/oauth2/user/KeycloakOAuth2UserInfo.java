@@ -10,7 +10,7 @@ public class KeycloakOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getId() {
-        return (String) attributes.get("sid");
+        return (String) attributes.get("sub");
     }
 
     @Override
@@ -20,7 +20,7 @@ public class KeycloakOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        return (String) attributes.get("preferred_username");
+        return (String) attributes.get("email");
     }
 
     @Override
@@ -31,5 +31,10 @@ public class KeycloakOAuth2UserInfo extends OAuth2UserInfo {
     @Override
     public String getImageUrl() {
         return (String) attributes.get("picture");
+    }
+
+    @Override
+    public String getRealName() {
+        return (String) attributes.get("given_name") + " " +  attributes.get("family_name") ;
     }
 }

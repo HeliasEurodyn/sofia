@@ -46,5 +46,4 @@ public class NodeGraphController {
         this.nodeGraphService.saveAssetPositions(dto, type);
     }
 
-
 }

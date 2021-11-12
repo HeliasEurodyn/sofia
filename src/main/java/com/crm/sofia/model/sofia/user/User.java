@@ -26,7 +26,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @Column(name = "PROVIDER_USER_ID")
