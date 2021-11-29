@@ -22,6 +22,7 @@ public class ExprImportColumnParameter extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprImportColumnParameter exprUnit = new ExprImportColumnParameter();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setDataset(dataset);
             return exprUnit;

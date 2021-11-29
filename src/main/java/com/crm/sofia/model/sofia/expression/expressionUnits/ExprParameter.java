@@ -41,6 +41,7 @@ public class ExprParameter extends ExprUnit {
 
         if(expressionClosedNormally){
             ExprParameter exprUnit = new ExprParameter();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setCurrentExprUnitLength(expressionPart.length());
             exprUnit.setCurrentExprUnitString(expressionPart);

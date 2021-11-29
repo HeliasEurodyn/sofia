@@ -41,12 +41,7 @@ public class ReportController {
         return createdDTO;
     }
 
-    @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
-        this.reportService.deleteObject(id);
-    }
-
-    @PostMapping(value = "/fileReport")
+    @PostMapping(value = "/report-file")
     public ReportDTO postObject(
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("report") String reportBase64Str) throws IOException {
@@ -54,9 +49,19 @@ public class ReportController {
         return createdDTO;
     }
 
+    @DeleteMapping
+    public void deleteObject(@RequestParam("id") Long id) {
+        this.reportService.deleteObject(id);
+    }
+
     @PostMapping(path = "/print")
-    void print(HttpServletResponse response,@RequestParam("id") Long id, @RequestBody Map<String, Object> parameters) throws IOException, JRException, SQLException {
+    void print(HttpServletResponse response,@RequestParam("id") Long id, @RequestBody Map<String, Object> parameters) throws Throwable {
         this.reportService.print(response, id, parameters);
+    }
+
+    @GetMapping(value = "/report-file")
+    public void getFileReport(HttpServletResponse response, @RequestParam("id") Long id ) throws IOException {
+        this.reportService.getFileReport(response, id);
     }
 
     @GetMapping(path = "/type")
@@ -64,51 +69,5 @@ public class ReportController {
         String reportType = this.reportService.getReportType(id);
         return "{\"type\":\""+reportType+"\"}";
     }
-
-//    @GetMapping(path = "/jasper-test-pdf")
-//    void doJasperTest() throws FileNotFoundException, JRException {
-//        this.reportService.doJasperPdfTest();
-//    }
-//
-//    @GetMapping(path = "/jasper-test-pdf-n")
-//    void doJasperTestNew(HttpServletResponse response) throws IOException, JRException, SQLException {
-//        this.reportService.doJasperPdfTestN(response);
-//    }
-//
-//    @GetMapping(path = "/jasper-test-excel")
-//    void doJasperTestExcel() throws FileNotFoundException, JRException {
-//        this.reportService.doJasperExcelTestExcel();
-//    }
-
-//    @PostMapping(value = "/ttestt")
-//    public void uploadFilesByTag(
-//            @RequestParam("file") MultipartFile multipartFile,
-//            @RequestParam("report") String reportBase64Str
-//    ) throws IOException {
-//
-//        // 1. File to bytes
-//        InputStream initialStream = multipartFile.getInputStream();
-//        byte[] targetArray = new byte[initialStream.available()];
-//        initialStream.read(targetArray);
-//
-//        // 2. Get multipart filename & extension
-//        String filename = multipartFile.getOriginalFilename();
-//        String extension  = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
-//
-//        // 3. Temp folder
-//        String tmpdir = System.getProperty("java.io.tmpdir");
-//        tmpdir += filename;
-//
-//        // 4. Save file to temp path
-//        Path path = Paths.get(tmpdir);
-//        Files.write(path, targetArray);
-//
-//        // 5. Decode Base64
-//        byte[] reportBytes = Base64.getDecoder().decode(reportBase64Str);
-//
-//        // 6. report bytes json Map to Object
-//        ObjectMapper mapper = new ObjectMapper();
-//        ReportDTO reportDTO = mapper.readValue(new String(reportBytes), ReportDTO.class);
-//    }
 
 }

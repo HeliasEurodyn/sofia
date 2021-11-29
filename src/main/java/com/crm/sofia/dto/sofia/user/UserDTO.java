@@ -3,11 +3,13 @@ package com.crm.sofia.dto.sofia.user;
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.menu.MenuDTO;
+import com.crm.sofia.model.sofia.user.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,4 +47,6 @@ public class UserDTO extends BaseDTO {
     private String searchNavCommand;
 
     private String provider;
+
+    private List<RoleDTO> roles;
 }

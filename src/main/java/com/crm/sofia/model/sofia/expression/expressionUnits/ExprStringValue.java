@@ -37,6 +37,7 @@ public class ExprStringValue extends ExprUnit {
 
         if(expressionClosedNormally){
             ExprStringValue exprUnit = new ExprStringValue();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setCurrentExprUnitLength(expressionPart.length());
             exprUnit.setCurrentExprUnitString(expressionPart);

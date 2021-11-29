@@ -19,6 +19,7 @@ public class ExprNumberTrim extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprNumberTrim exprUnit = new ExprNumberTrim();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
         }

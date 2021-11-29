@@ -139,6 +139,22 @@ public class FormJavascriptService {
 
         });
 
+        formDTO.getFormActionButtons()
+                .forEach(parentFormActionButton -> {
+                    parentFormActionButton.getFormActionButtons().stream()
+                            .filter(formActionButton ->  formActionButton.getCode() != null)
+                            .filter(formActionButton ->  !formActionButton.getCode().equals(""))
+                            .filter(formActionButton -> userScriptsString.contains("btn_" + formActionButton.getCode() + "_click("))
+                            .forEach(formActionButton -> {
+                                nativeButtonClickHandlerLines.
+                                        add("if((btnCode == '" + formActionButton.getCode() + "') && " +
+                                                "(typeof this.btn_" + formActionButton.getCode() + "_click == \"function\")) " +
+                                                "this.btn_" + formActionButton.getCode() + "_click();");
+
+                            });
+
+                });
+
         /* Tabs' Buttons */
         formDTO.getFormTabs()
                 .stream()

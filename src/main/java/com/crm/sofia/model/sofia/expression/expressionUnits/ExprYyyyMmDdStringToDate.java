@@ -23,6 +23,7 @@ public class ExprYyyyMmDdStringToDate extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprYyyyMmDdStringToDate exprUnit = new ExprYyyyMmDdStringToDate();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
         }

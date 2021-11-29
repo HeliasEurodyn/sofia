@@ -45,5 +45,4 @@ public class DownloadController {
         downloadService.deleteObject(id);
     }
 
-
 }

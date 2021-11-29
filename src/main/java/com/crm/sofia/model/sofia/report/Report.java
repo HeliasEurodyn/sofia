@@ -1,5 +1,6 @@
 package com.crm.sofia.model.sofia.report;
 
+import com.crm.sofia.dto.sofia.report.ReportDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -48,5 +49,15 @@ public class Report extends BaseEntity {
 
     @Column
     private String reportType;
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE})
+    @JoinTable(
+            name = "subreports_to_report",
+            joinColumns = @JoinColumn(name = "report_id"),
+            inverseJoinColumns = {
+                    @JoinColumn(name = "subreport_id", referencedColumnName = "id")
+            }
+    )
+    private List<Report> subreports;
 
 }

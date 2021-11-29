@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
 
 @Slf4j
 @Service("localUserDetailService")
@@ -40,7 +39,8 @@ public class LocalUserDetailService implements UserDetailsService {
      * @param user
      * @return
      */
-    private LocalUser createLocalUser(User user) {
-        return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()), user);
+    public LocalUser createLocalUser(User user) {
+        return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true,
+                true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()), user, user.getRoles());
     }
 }

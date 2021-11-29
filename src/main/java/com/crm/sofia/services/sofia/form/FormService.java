@@ -15,6 +15,7 @@ import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
 import com.crm.sofia.services.sofia.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.sofia.component.ComponentService;
+import com.crm.sofia.services.sofia.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.sofia.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.sofia.component.crud.ComponentSaverService;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ public class FormService {
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
     private final FormCacheingService formCacheingService;
+    private final ComponentDeleterService componentDeleterService;
 
     public FormService(FormRepository formRepository,
                        FormMapper formMapper,
@@ -47,7 +49,8 @@ public class FormService {
                        ComponentService componentService,
                        ComponentUiMapper componentUiMapper,
                        ComponentJsonMapper componentJsonMapper,
-                       FormCacheingService formCacheingService) {
+                       FormCacheingService formCacheingService,
+                       ComponentDeleterService componentDeleterService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
         this.formUiMapper = formUiMapper;
@@ -58,6 +61,7 @@ public class FormService {
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
         this.formCacheingService = formCacheingService;
+        this.componentDeleterService = componentDeleterService;
     }
 
     public FormDTO getObject(Long id) {
@@ -257,6 +261,14 @@ public class FormService {
 
         /* Μap parameters to component And save */
         return componentSaverService.save(formDTO.getComponent(), parameters);
+    }
+
+    public void delete(Long formId, String selectionId) {
+
+        /* Retrieve form from Database */
+        FormDTO formDTO = this.getObject(formId);
+
+        this.componentDeleterService.retrieveComponentAndDelete(formDTO.getComponent(), selectionId);
     }
 
     public String saveJsonData(String jsonUrl, Map<String, Map<String, Object>> parameters) {

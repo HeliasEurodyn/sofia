@@ -57,6 +57,17 @@ public class FormController {
         return this.formService.save(formId, parameters);
     }
 
+    @PutMapping
+    public String putObjectData(@RequestParam("id") Long formId,
+                                 @RequestBody Map<String, Map<String, Object>> parameters) {
+        return this.formService.save(formId, parameters);
+    }
+
+    @DeleteMapping
+    public void deleteObjectData(@RequestParam("id") Long formId, @RequestParam("selection-id") String selectionId) {
+        this.formService.delete(formId, selectionId);
+    }
+
     @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScript(@PathVariable("id") Long formId) {
@@ -82,4 +93,5 @@ public class FormController {
     String getFormCssScript(@PathVariable("id") Long formId) {
         return this.formService.getCssScript(formId);
     }
+
 }

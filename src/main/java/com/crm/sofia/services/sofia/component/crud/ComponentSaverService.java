@@ -34,7 +34,6 @@ public class ComponentSaverService {
 
         /* Save */
         return this.save(componentDTO);
-       // return this.componentSaverNativeRepository.save(componentDTO);
     }
 
     public String save(ComponentDTO componentDTO) {

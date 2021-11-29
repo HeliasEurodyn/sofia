@@ -17,6 +17,7 @@ public class ExprStringReplace extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprStringReplace exprUnit = new ExprStringReplace();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
         }

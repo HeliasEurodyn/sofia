@@ -11,6 +11,7 @@ public abstract class ExprUnit {
 
     private Integer expressionPosition;
 
+    protected String expressionPart = "'";
     protected Integer priority;
     protected Boolean isOnTree = false;
 

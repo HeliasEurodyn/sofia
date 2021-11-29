@@ -49,6 +49,7 @@ public class ExprIntegerValue extends ExprUnit {
 
         if(expressionPart.length() > 0){
             ExprIntegerValue exprUnit = new ExprIntegerValue();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setCurrentExprUnitLength(expressionPart.length());
             exprUnit.setCurrentExprUnitString(expressionPart);

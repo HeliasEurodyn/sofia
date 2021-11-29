@@ -514,7 +514,8 @@ public class ListNativeRepository {
         /* Iterate and create Where parts */
         filtersList
                 .stream()
-                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals(""))
+                .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("") ||
+                        (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("column") )
                 .forEach(x -> {
                     String whereClause =
                             x.getComponentPersistEntity().getCode() + "." +
@@ -546,6 +547,7 @@ public class ListNativeRepository {
     private String generateCustomWhereColumnsPart(List<ListComponentFieldDTO> filtersList, String filterFieldStructure) {
 
         Map<String, String> whereClauseParts = new HashMap<>();
+        String dynamicFilterFieldStructure = "";
 
         /* Check for empty required Fields */
         Optional<ListComponentFieldDTO> optionalRequiredFieldEmpty =
@@ -599,10 +601,15 @@ public class ListNativeRepository {
         for (Map.Entry<String, String> entry : whereClauseParts.entrySet()) {
             String k = entry.getKey();
             String v = entry.getValue();
-            filterFieldStructure = filterFieldStructure.replaceAll("\\$" + k, v);
+
+            if (filterFieldStructure.contains("$" + k)) {
+                filterFieldStructure = filterFieldStructure.replaceAll("\\$" + k, v);
+            } else{
+                dynamicFilterFieldStructure += " AND " + v;
+            }
         }
 
-        return " WHERE " + filterFieldStructure;
+        return " WHERE ( " + filterFieldStructure + " ) " + dynamicFilterFieldStructure;
     }
 
     /*

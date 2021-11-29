@@ -1,5 +1,6 @@
 package com.crm.sofia.services.sofia.expression;
 
+import com.crm.sofia.dto.sofia.expression.ExprUnitDTO;
 import com.crm.sofia.model.sofia.expression.ExprResponce;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
 import com.crm.sofia.model.sofia.expression.expressionUnits.*;
@@ -140,6 +141,54 @@ public class ExpressionService {
         for (ExprUnit exprUnit : exprUnits) {
 
             /*
+             * On those Types of ExprUnits at least 5 expr units must follow
+             * 1. The first parameter, 2. Comma, 3.The second parameter, 4, 5
+             * So they get on the same code section
+             */
+            if ((exprUnit instanceof ExprIf)
+                    && !exprUnit.getIsOnTree()
+                    && exprUnit.getPriority().equals(currentPriority)
+            ) {
+
+                /*
+                 * On those Types of ExprUnits at least 5 expr units must follow
+                 * 1. The first parameter, 2. Comma, 3.The second parameter, 4. Comma, 5.The third parameter
+                 * If not return error on tree creation
+                 */
+                if ((listPosition + 5) > exprUnits.size()) return false;
+
+                /*
+                 * Run createTree for the next Priority level
+                 * (inside the brackets of the current expression there is a higher priority)
+                 * It must be executed first
+                 */
+                boolean treeCreationResult = this.createTree(exprUnits, exprUnits.get(listPosition + 1).getPriority());
+                if (!treeCreationResult) return false;
+
+                /*
+                 * Set ChildExprUnit on the current exprUnit
+                 */
+                exprUnit.setChildExprUnit(exprUnits.get(listPosition + 1).getTopParrent());
+                exprUnits.get(listPosition + 1).getTopParrent().setParentExprUnit(exprUnit);
+
+                /*
+                 * Set LeftChildExprUnit on the current exprUnit
+                 */
+                int leftChildPosition = this.traceNextChildPosition(exprUnits, listPosition+2, currentPriority);
+                if (leftChildPosition == 0) return false;
+                exprUnit.setLeftChildExprUnit(exprUnits.get(leftChildPosition).getTopParrent());
+                exprUnit.setIsOnTree(true);
+
+                /*
+                 * Set RightChildExprUnit on the current exprUnit
+                 */
+                int rightChildPosition = this.traceNextChildPosition(exprUnits, leftChildPosition+1, currentPriority);
+                if (rightChildPosition == 0) return false;
+                exprUnit.setRightChildExprUnit(exprUnits.get(rightChildPosition).getTopParrent());
+                exprUnit.setIsOnTree(true);
+            }
+
+            /*
              * On those Types of ExprUnits at least 3 expr units must follow
              * 1. The first parameter, 2. Comma, 3.The second parameter
              * So they get on the same code section
@@ -153,7 +202,11 @@ public class ExpressionService {
                     exprUnit instanceof ExprNumberTrim ||
                     exprUnit instanceof ExprStringConcat ||
                     exprUnit instanceof ExprStringReplace ||
-                    exprUnit instanceof ExprStringReplace)
+                    exprUnit instanceof ExprStringReplace ||
+                    exprUnit instanceof ExprGreaterThan ||
+                    exprUnit instanceof ExprMinorThan ||
+                    exprUnit instanceof ExprEqualsTo ||
+                    exprUnit instanceof ExprStrEqualsTo)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
             ) {
@@ -182,13 +235,12 @@ public class ExpressionService {
                 /*
                  * Set RightChildExprUnit on the current exprUnit
                  */
-                int rightChildPosition = this.traceRightChildPosition(exprUnits, listPosition);
+                int rightChildPosition = this.traceNextChildPosition(exprUnits, listPosition+2, currentPriority);
                 if (rightChildPosition == 0) return false;
                 exprUnit.setRightChildExprUnit(exprUnits.get(rightChildPosition).getTopParrent());
-                exprUnits.get(rightChildPosition).getTopParrent().setParentExprUnit(exprUnit);
-
                 exprUnit.setIsOnTree(true);
             }
+
 
             /*
              * On those Types of ExprUnits at least 1 expr unit must follow
@@ -233,17 +285,31 @@ public class ExpressionService {
         return true;
     }
 
-    private int traceRightChildPosition(List<ExprUnit> exprUnits, int listPosition) {
+    private int traceNextChildPosition(List<ExprUnit> exprUnits, int listPosition, int currentPriority) {
+        /*
+         * We search for the commaExprUnit on the same priority, after that we have the second parameter
+         * We search  from listPosition+2 because
+         * +1 is be the first parameter of the current exprUnit , only after that can be the comma
+         */
+        for (int i = listPosition; i < exprUnits.size(); i++) {
+            if (exprUnits.get(i) instanceof ExprComma && exprUnits.get(i).getPriority().equals(currentPriority)) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
+    private int traceLeftBeforeExprChildPosition(List<ExprUnit> exprUnits, int listPosition) {
 
         int currentPriority = exprUnits.get(listPosition).getPriority();
         /*
          * We search for the commaExprUnit on the same priority, after that we have the second parameter
          * We search  from listPosition+2 because
-         * +1 is be the firt parameter of the current exprUnit , only after that can be the comma
+         * +1 is be the first parameter of the current exprUnit , only after that can be the comma
          */
-        for (int i = listPosition + 2; i < exprUnits.size(); i++) {
-            if (exprUnits.get(i) instanceof ExprComma && exprUnits.get(i).getPriority().equals(currentPriority)) {
-                return i + 1;
+        for (int i = listPosition - 1; i >= 0; i--) {
+            if (exprUnits.get(i).getPriority().equals(currentPriority)) {
+                return i;
             }
         }
         return 0;
@@ -298,6 +364,12 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, importDataset);
             if (exprUnit == null) exprUnit = ExprRunSqlParameter.exrtactExprUnit(expression, i, entityManager);
+            if (exprUnit == null) exprUnit = ExprGreaterThan.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprMinorThan.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprEqualsTo.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprIf.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprStrEqualsTo.exrtactExprUnit(expression, i);
+
 
             if (exprUnit == null) {
                 return null;
@@ -340,6 +412,29 @@ public class ExpressionService {
         exprResponce.setExpression("");
         exprResponce.setExprUnit(new ExprEmptyValue());
         return exprResponce;
+    }
+
+    public void map(ExprUnit exprUnit, ExprUnitDTO exprUnitDTO) {
+        exprUnitDTO.setExpressionPart(exprUnit.getExpressionPart());
+        exprUnitDTO.setType(exprUnit.getClass().getSimpleName());
+
+        if(exprUnit.getChildExprUnit() != null){
+            ExprUnitDTO childExprUnit = new ExprUnitDTO();
+            exprUnitDTO.setChildExprUnit(childExprUnit);
+            this.map(exprUnit.getChildExprUnit(),childExprUnit);
+        }
+
+        if(exprUnit.getLeftChildExprUnit() != null){
+            ExprUnitDTO leftChildExprUnit = new ExprUnitDTO();
+            exprUnitDTO.setLeftChildExprUnit(leftChildExprUnit);
+            this.map(exprUnit.getLeftChildExprUnit(), leftChildExprUnit);
+        }
+
+        if(exprUnit.getRightChildExprUnit() != null){
+            ExprUnitDTO rightChildExprUnit = new ExprUnitDTO();
+            exprUnitDTO.setRightChildExprUnit(rightChildExprUnit);
+            this.map(exprUnit.getRightChildExprUnit(), rightChildExprUnit);
+        }
     }
 
 }

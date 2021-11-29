@@ -20,6 +20,7 @@ public class ExprDateNowPlus extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprDateNowPlus exprUnit = new ExprDateNowPlus();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
         }

@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.form.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,8 @@ public class FormDTO extends BaseDTO {
 
     private String description;
 
+    private Boolean accessControlEnabled;
+
     private ComponentDTO component;
 
     private List<FormTabDTO> formTabs;
@@ -40,4 +43,6 @@ public class FormDTO extends BaseDTO {
     private List<FormActionButtonDTO> formActionButtons;
 
     private Long instanceVersion;
+
+    private List<AccessControlDTO> accessControls;
 }

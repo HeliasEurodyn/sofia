@@ -54,6 +54,7 @@ public class ExprDoubleValue extends ExprUnit {
 
         if(expressionPart.length() > 0){
             ExprDoubleValue exprUnit = new ExprDoubleValue();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             if(isPossitive) exprUnit.setCurrentExprUnitLength(expressionPart.length());
             else exprUnit.setCurrentExprUnitLength(expressionPart.length()+1);
@@ -64,24 +65,6 @@ public class ExprDoubleValue extends ExprUnit {
 
         return null;
     }
-
-
-
-//    public static ExprDoubleValue exrtactExprUnit(String expression, Integer expressionPosition) {
-//
-//        if (expression.length() < expressionPosition + exprUnitLength) {
-//            return null;
-//        }
-//
-//        String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
-//        if (expressionPart.equals(exprUnitString)) {
-//            ExprDoubleValue exprUnit = new ExprDoubleValue();
-//            exprUnit.setExpressionPosition(expressionPosition);
-//            return exprUnit;
-//        }
-//
-//        return null;
-//    }
 
     @Override
     public Integer getExprUnitLength() {

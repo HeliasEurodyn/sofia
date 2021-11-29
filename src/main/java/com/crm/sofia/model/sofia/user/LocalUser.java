@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class LocalUser extends org.springframework.security.core.userdetails.User implements OAuth2User, OidcUser {
@@ -16,17 +17,18 @@ public class LocalUser extends org.springframework.security.core.userdetails.Use
     private final OidcUserInfo userInfo;
     private Map<String, Object> attributes;
     private User user;
+    private List<Role> roles;
 
     public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
-                     final boolean accountNonLocked, final Collection<? extends GrantedAuthority> authorities, final User user) {
-        this(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, user, null, null);
+                     final boolean accountNonLocked, final Collection<? extends GrantedAuthority> authorities, final User user, List<Role> roles) {
+        this(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, user, null, null, roles);
     }
 
     public LocalUser(final String userID, final String password, final boolean enabled, final boolean accountNonExpired, final boolean credentialsNonExpired,
                      final boolean accountNonLocked, final Collection<? extends GrantedAuthority> authorities, final User user, OidcIdToken idToken,
-                     OidcUserInfo userInfo) {
+                     OidcUserInfo userInfo, List<Role> roles) {
         super(userID, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-
+        this.roles = roles;
         this.user = user;
         this.idToken = idToken;
         this.userInfo = userInfo;
@@ -34,7 +36,7 @@ public class LocalUser extends org.springframework.security.core.userdetails.Use
 
     public static LocalUser create(User user, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) {
         LocalUser localUser = new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()),
-                user, idToken, userInfo);
+                user, idToken, userInfo, user.getRoles());
         localUser.setAttributes(attributes);
         return localUser;
     }
@@ -70,6 +72,10 @@ public class LocalUser extends org.springframework.security.core.userdetails.Use
 
     public User getUser() {
         return user;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
     }
 
 }

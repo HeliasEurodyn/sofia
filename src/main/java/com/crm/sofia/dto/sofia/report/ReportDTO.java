@@ -29,4 +29,6 @@ public class ReportDTO extends BaseDTO {
     private String reportFilename;
 
     private String reportType;
+
+    private List<ReportDTO> subreports;
 }

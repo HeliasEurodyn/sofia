@@ -6,6 +6,7 @@ import com.crm.sofia.services.sofia.user.LocalUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -77,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/auth/**",
                         "/api/all",
                         "/api/auth/**",
+                        "/health-page",
                         "/oauth2/**", "/api/oauth2/**",
                         "/list/dynamic-cssscript/**",
                         "/list/dynamic-javascripts/**",
@@ -85,6 +87,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/form/dynamic-javascripts/**",
                         "/form/dynamic-javascript/**"
                 ).permitAll()
+                .antMatchers(HttpMethod.GET,"/form/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/form/clone-data/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/form/ui/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/form/data/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.POST,"/form").hasAnyAuthority("unrestricted_role", "create_role")
+                .antMatchers(HttpMethod.PUT,"/form").hasAnyAuthority("unrestricted_role", "update_role")
+                .antMatchers(HttpMethod.DELETE,"/form").hasAnyAuthority("unrestricted_role", "delete_role")
                 .anyRequest()
                 .authenticated()
                 .and()

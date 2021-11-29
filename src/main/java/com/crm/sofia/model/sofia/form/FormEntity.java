@@ -1,6 +1,8 @@
 package com.crm.sofia.model.sofia.form;
 
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
 import com.crm.sofia.model.sofia.list.ListActionButton;
 import lombok.Data;
@@ -30,6 +32,9 @@ public class FormEntity extends BaseEntity {
 
     @Column
     private String icon;
+
+    @Column
+    private Boolean accessControlEnabled;
 
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = com.crm.sofia.model.sofia.component.Component.class)
@@ -87,4 +92,13 @@ public class FormEntity extends BaseEntity {
     )
     @JoinColumn(name = "form_id")
     private List<FormActionButton> formActionButtons;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<AccessControl> accessControls;
+
 }

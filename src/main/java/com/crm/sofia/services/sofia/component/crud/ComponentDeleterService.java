@@ -26,12 +26,16 @@ public class ComponentDeleterService {
         /* Retrieve component from Database */
         ComponentDTO componentDTO = componentService.getObject(componentId);
 
+        this.retrieveComponentAndDelete(componentDTO, selectionId);
+    }
+
+    public void retrieveComponentAndDelete(ComponentDTO componentDTO, String selectionId) {
+
         /* Retrieve component data from Database */
         this.componentRetrieverNativeRepository.retrieveComponentData(componentDTO, selectionId);
 
         /* delete */
         this.componentDeleterNativeRepository.delete(componentDTO);
-
     }
 
 

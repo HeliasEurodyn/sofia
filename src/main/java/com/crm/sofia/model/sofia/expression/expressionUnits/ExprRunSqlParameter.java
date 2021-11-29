@@ -25,6 +25,7 @@ public class ExprRunSqlParameter extends ExprUnit {
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
             ExprRunSqlParameter exprUnit = new ExprRunSqlParameter();
+            exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             exprUnit.setEntityManager(entityManager);
             return exprUnit;

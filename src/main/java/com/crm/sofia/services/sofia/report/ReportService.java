@@ -14,9 +14,11 @@ import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRSaver;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +33,11 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 
@@ -87,6 +89,7 @@ public class ReportService {
         String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
         String reportUuid = UUID.randomUUID().toString();
 
+
         // If type != jrxml Throw exception
         if (!extension.equals("jrxml")) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wrong file type");
@@ -95,15 +98,16 @@ public class ReportService {
         // Get Bytes of File
         byte[] reportFileData = this.getFileBytes(multipartFile);
 
-        // Serialized ReportDTO to Object
+        // Deserialized ReportDTO to Object
         ReportDTO reportDTO = this.base64JsonStringToReportDTO(reportBase64Str);
 
-        // File system updates
-        this.writeReportToFileSystem(reportFileData, reportUuid);
-        this.deleteReportFromFileSystem(reportDTO.getId());
+        // Save Report
+        ReportDTO createdReportDTO = this.postObject(filename, extension, reportUuid, reportFileData, reportDTO);
 
-        // Save
-        return this.postObject(filename, extension, reportUuid, reportFileData, reportDTO);
+        // Clear files structure from filesystem
+        this.deleteReportFolderFromFileSystemIfExists(reportUuid);
+
+        return createdReportDTO;
     }
 
 
@@ -118,13 +122,18 @@ public class ReportService {
             }
 
             // Save
-            return this.postObject(
+            ReportDTO createdReportDTO = this.postObject(
                     optionalEntity.get().getReportFilename(),
                     optionalEntity.get().getReportExtension(),
                     optionalEntity.get().getReportUuid(),
                     optionalEntity.get().getReportFileData(),
                     reportDTO);
+
+            this.deleteReportFolderFromFileSystemIfExists(optionalEntity.get().getReportUuid());
+
+            return createdReportDTO;
         }
+
     }
 
     private ReportDTO postObject(
@@ -138,12 +147,21 @@ public class ReportService {
         report.setReportFilename(filename);
         report.setReportExtension(extension);
         report.setReportFileData(reportFileData);
-        report.setReportUuid(reportUuid);
+        if ((report.getReportUuid() == null ? "" : report.getReportUuid()).equals("")) {
+            report.setReportUuid(reportUuid);
+        }
 
         if (report.getId() == null) report.setCreatedOn(Instant.now());
         if (report.getId() == null) report.setCreatedBy(jwtService.getUserId());
         report.setModifiedOn(Instant.now());
         report.setModifiedBy(jwtService.getUserId());
+
+        List<Report> subreports = new ArrayList<>();
+        report.getSubreports().forEach(subReport -> {
+            Report subreport = this.reportRepository.findById(subReport.getId()).get();
+            subreports.add(subreport);
+        });
+        report.setSubreports(subreports);
 
         Report createdReport = this.reportRepository.save(report);
         return this.reportMapper.map(createdReport);
@@ -158,20 +176,39 @@ public class ReportService {
     }
 
     @Transactional
-    public void print(HttpServletResponse response, long id, Map<String, Object> parameters) throws JRException, SQLException, IOException {
-        String uuid = this.reportRepository.findUuid(id);
-        this.writeReportToFileSystemIfNotExists(id,uuid);
-        Map<String, Object> combinedParameters = combineParameters(id,parameters);
+    public void print(HttpServletResponse response, long id, Map<String, Object> parameters) throws Throwable {
 
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        tmpdir += uuid + ".jrxml";
-        File file = new File(tmpdir);
-        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        Optional<Report> optionalReport = reportRepository.findById(id);
+        if (!optionalReport.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Report does not exist");
+        }
+        Report report = optionalReport.get();
+        this.writeReportToFileSystemIfNotExists(report);
+
+        Map<String, Object> combinedParameters = combineParameters(id, parameters);
+
+        String folderPathStr = System.getProperty("java.io.tmpdir");
+        folderPathStr += report.getReportUuid() + "/";
+
+        String reportFilePathStr = folderPathStr + report.getReportFilename();
+
+        File reportFilePath = new File(reportFilePathStr);
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportFilePath.getAbsolutePath());
+
+        for (Report subreport : report.getSubreports()) {
+            String subreportFilePathStr = folderPathStr + subreport.getReportFilename();
+            File subreportFilePath = new File(subreportFilePathStr);
+            JasperReport jasperSubReport = JasperCompileManager.compileReport(subreportFilePath.getAbsolutePath());
+            JRSaver.saveObject(jasperSubReport, folderPathStr + subreport.getReportFilename().replace(".jrxml", ".jasper"));
+            combinedParameters.put(subreport.getReportFilename().replace(".jrxml", ""),
+                    folderPathStr + subreport.getReportFilename().replace(".jrxml", ".jasper"));
+        }
+
         Connection connection = dataSource.getConnection();
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, combinedParameters, connection);
-        JRXlsExporter a ;
+        JRXlsExporter a;
         String reportType = this.reportRepository.findType(id);
-        switch(reportType) {
+        switch (reportType) {
             case "pdf":
                 response.addHeader("Content-disposition", "attachment; filename=file.pdf");
                 JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
@@ -231,67 +268,80 @@ public class ReportService {
         connection.close();
     }
 
+    public void getFileReport(HttpServletResponse response, Long id) throws IOException {
+        Optional<Report> optionalReport = reportRepository.findById(id);
+        if (!optionalReport.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Report does not exist");
+        }
+        Report report = optionalReport.get();
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename="+ report.getName());
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        OutputStream outputStream = response.getOutputStream();
+        outputStream.write(report.getReportFileData());
+        outputStream.flush();
+    }
+
     private Map<String, Object> combineParameters(Long id, Map<String, Object> parameters) throws IOException {
         List<ReportParameter> storedParameters = this.reportRepository.getReportParametersById(id);
-        storedParameters.forEach( storedParameter -> {
-            if(parameters.containsKey(storedParameter.getCode())){
+        storedParameters.forEach(storedParameter -> {
+            if (parameters.containsKey(storedParameter.getCode())) {
                 storedParameter.setValue(parameters.get(storedParameter.getCode()).toString());
             }
         });
 
         Map<String, Object> combinedParameters = new HashMap<>();
         combinedParameters.put("userId", this.jwtService.getUserId().toString());
-        storedParameters.forEach( storedParameter -> {
-            combinedParameters.put(storedParameter.getCode(),storedParameter.getValue());
+        storedParameters.forEach(storedParameter -> {
+            combinedParameters.put(storedParameter.getCode(), storedParameter.getValue());
         });
 
         return combinedParameters;
     }
 
-    private void writeReportToFileSystemIfNotExists(Long id, String uuid) throws IOException {
-        Boolean exits = checkIfReportExistsInFileSystem(uuid);
-        if(!exits){
-            byte[] fileData = reportRepository.findReportFileData(id);
-            this.writeReportToFileSystem(fileData,uuid);
-        }
-    }
-
-    private void writeReportToFileSystem(byte[] reportFileData, String uuid) throws IOException {
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        tmpdir += uuid + ".jrxml";
-        Path path = Paths.get(tmpdir);
-        if (!Files.exists(path)) {
-            Files.write(path, reportFileData);
-        }
-    }
-
-    private void deleteReportFromFileSystem(Long reportId) throws IOException {
-        if (reportId == null) {
+    private void deleteReportFolderFromFileSystemIfExists(String uuid) throws IOException {
+        if ((uuid == null ? "" : uuid).equals("")) {
             return;
         }
 
-        Optional<Report> optionalEntity = this.reportRepository.findById(reportId);
-        if (!optionalEntity.isPresent()) {
-            return;
-        }
-
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        tmpdir += optionalEntity.get().getReportUuid() + ".jrxml";
-
-        Path path = Paths.get(tmpdir);
-        if (Files.exists(path)) {
-            Files.delete(path);
+        String folderPathStr = System.getProperty("java.io.tmpdir");
+        folderPathStr += uuid + "/";
+        File folderPath = new File(folderPathStr);
+        if (folderPath.exists()) {
+           // Files.delete(folderPath.toPath());
+            FileUtils.deleteDirectory(folderPath);
         }
     }
 
-    private Boolean checkIfReportExistsInFileSystem(String uuid) {
-        String tmpdir = System.getProperty("java.io.tmpdir");
-        tmpdir += uuid + ".jrxml";
-        Path path = Paths.get(tmpdir);
-        if (!Files.exists(path)) {
-            return false;
+    private void writeReportToFileSystemIfNotExists(Report report) throws IOException {
+
+        // Create folder if does not exist
+        String folderPathStr = System.getProperty("java.io.tmpdir");
+        folderPathStr += report.getReportUuid() + "/";
+        File folderPath = new File(folderPathStr);
+        if (!folderPath.exists()) {
+            folderPath.mkdir();
         }
-        return true;
+
+        // Create report jrxml file if does not exist
+        String reportFilePathStr = folderPathStr + report.getReportFilename();
+        Path reportFilePath = Paths.get(reportFilePathStr);
+        if (!Files.exists(reportFilePath)) {
+            byte[] fileData = report.getReportFileData();
+            Files.write(reportFilePath, fileData);
+        }
+
+        // Create subreports jrxml files if does not exist
+        for (Report subreport : report.getSubreports()) {
+            String subreportFilePathStr = folderPathStr + subreport.getReportFilename();
+            Path subreportFilePath = Paths.get(subreportFilePathStr);
+            if (!Files.exists(subreportFilePath)) {
+                byte[] fileData = subreport.getReportFileData();
+                Files.write(subreportFilePath, fileData);
+            }
+        }
     }
 
     private ReportDTO base64JsonStringToReportDTO(String reportBase64Str) throws JsonProcessingException {
@@ -308,90 +358,5 @@ public class ReportService {
 
         return byteArray;
     }
-
-//    public ReportDTO postObject(ReportDTO dto) {
-//        Report component = this.reportMapper.map(dto);
-//        component.setCreatedOn(Instant.now());
-//        component.setModifiedOn(Instant.now());
-//        component.setCreatedBy(jwtService.getUserId());
-//        component.setModifiedBy(jwtService.getUserId());
-//
-//        Report createdComponent = this.reportRepository.save(component);
-//        return this.reportMapper.map(createdComponent);
-//    }
-
-
-//    public void doJasperPdfTestN(HttpServletResponse response) throws JRException, SQLException, IOException {
-//        File file = ResourceUtils.getFile("classpath:hrep.jrxml");
-//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("id", "1");
-//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
-//        JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
-//    }
-//
-//    public void doJasperPdfTest() throws FileNotFoundException, JRException {
-//
-//        List<JasperModelClass> entities = new ArrayList<>();
-//        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
-//        entities.add(entity);
-//        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
-//        entities.add(entity);
-//        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
-//        entities.add(entity);
-//
-//        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
-//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-//        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("createdBy", "Helias");
-//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-//
-//        JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\helias\\Desktop\\cv new\\test.pdf");
-//
-//    }
-//
-//    public void doJasperExcelTestExcel() throws FileNotFoundException, JRException {
-//
-//        List<JasperModelClass> entities = new ArrayList<>();
-//        JasperModelClass entity = new JasperModelClass(1, "Helias", "Designation 1", 19000, "hello");
-//        entities.add(entity);
-//        entity = new JasperModelClass(2, "Nikos", "Designation 2", 19000, "Nick");
-//        entities.add(entity);
-//        entity = new JasperModelClass(3, "Kostas", "Designation 3", 29000, "Kostas");
-//        entities.add(entity);
-//
-//        File file = ResourceUtils.getFile("classpath:ListDataExport.jrxml");
-//        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-//        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(entities);
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("createdBy", "Helias");
-//
-//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-//
-//        JRXlsxExporter exporter = new JRXlsxExporter();
-//
-//        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-//        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:\\Users\\helias\\Desktop\\cv new\\testexcel.xlsx"));
-//
-//        SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
-//        reportConfig.setSheetNames(new String[]{"Sofia output data"});
-//        reportConfig.setRemoveEmptySpaceBetweenRows(true);
-//        reportConfig.setWhitePageBackground(false);
-//        reportConfig.setDetectCellType(true);
-//        reportConfig.setOnePagePerSheet(true);
-//        exporter.setConfiguration(reportConfig);
-//
-//
-//        try {
-//            exporter.exportReport();
-//        } catch (JRException ex) {
-////            Logger.getLogger(SimpleReportFiller.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//
-//        //JasperExportManager.exportReportToPdfFile(jasperPrint,);
-//    }
-
 
 }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="asset_to_asset" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="4981af29-b460-4b61-a775-b987aee5e4ce">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MySql On Docker"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[98]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT ata.asset_relationship, rela.code AS rela_code, rela.name AS rela_name 
+FROM asset a 
+LEFT OUTER JOIN asset_to_asset ata ON ata.asset_id = a.id 
+LEFT OUTER JOIN asset rela ON ata.related_asset_id = rela.id 
+WHERE a.id = $P{id}]]>
+	</queryString>
+	<field name="asset_relationship" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="asset_relationship"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="asset_to_asset"/>
+	</field>
+	<field name="rela_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="rela_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="asset"/>
+	</field>
+	<field name="rela_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="rela_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="asset"/>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="35">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="2" y="12" width="545" height="17" uuid="3dcdc8f9-4138-4cf0-a85c-37153787cc38">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Related Assets"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#BDBDBD" uuid="3f4a9006-eefb-4fd1-8b45-e9868d2b2586"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="185" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="7330613e-b8dc-4ad8-89f1-627a2d4d1322">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9a761a15-c0ea-47de-b1ac-9db9446f0669"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Relationship]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="185" y="0" width="185" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="0ed66321-e10f-4aa5-b55f-121f1b5898e1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da5597da-af5b-4631-a509-8d6721045b46"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="370" y="0" width="185" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="6415c77f-961f-49d7-9ab2-28a7797ac133">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9d7ac04-9813-4013-adb1-f428aac13277"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" forecolor="#DEDEDE" uuid="8dee1139-4903-41e4-949e-fe11cd6b1fad"/>
+			</line>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="0" width="185" height="20" uuid="bf028d17-a4a0-47ba-bc99-141d3101cf3b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9a761a15-c0ea-47de-b1ac-9db9446f0669"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asset_relationship}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="185" y="0" width="185" height="20" uuid="47290068-becd-441d-a470-6dcf61ae693a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da5597da-af5b-4631-a509-8d6721045b46"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rela_code}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="370" y="0" width="185" height="20" uuid="bb00f5a6-cb6c-4cf1-9bea-f4f583ab603b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9d7ac04-9813-4013-adb1-f428aac13277"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rela_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
