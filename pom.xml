@@ -11,13 +11,12 @@
     <groupId>com.javachinna</groupId>
     <artifactId>sofia</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+    <name>rita</name>
+    <description>Rita engine</description>
 
     <properties>
         <java.version>11</java.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

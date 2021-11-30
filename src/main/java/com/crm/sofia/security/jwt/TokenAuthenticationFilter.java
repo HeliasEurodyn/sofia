@@ -58,6 +58,18 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     type = "form";
                 }
 
+                if (contextPath.startsWith("/api/list")) {
+                    type = "list";
+                }
+
+                if (contextPath.startsWith("/api/component")) {
+                    type = "component";
+                }
+
+                if (contextPath.startsWith("/api/menu")) {
+                    type = "menu";
+                }
+
                 if (!type.equals("") && parameters.containsKey("id")) {
                     String entityId = parameters.get("id")[0];
 

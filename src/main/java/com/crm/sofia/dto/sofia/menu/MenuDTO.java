@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.menu;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -17,5 +18,9 @@ public class MenuDTO extends BaseDTO {
 
     private String name;
 
+    private Boolean accessControlEnabled;
+
     private List<MenuFieldDTO> menuFieldList;
+
+    private List<AccessControlDTO> accessControls;
 }

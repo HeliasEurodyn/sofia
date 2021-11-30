@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.list;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
 import com.crm.sofia.model.sofia.form.FormCss;
 import com.crm.sofia.model.sofia.form.FormScript;
@@ -101,6 +102,9 @@ public class ListEntity extends BaseEntity {
     @Column
     private String rowNavigation;
 
+    @Column
+    private Boolean accessControlEnabled;
+
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.sofia.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
@@ -190,5 +194,14 @@ public class ListEntity extends BaseEntity {
     )
     @JoinColumn(name = "list_id")
     private List<ListCss> listCssList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_id")
+    private List<AccessControl> accessControls;
+
 
 }

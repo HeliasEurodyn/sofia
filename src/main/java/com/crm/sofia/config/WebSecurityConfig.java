@@ -94,6 +94,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/form").hasAnyAuthority("unrestricted_role", "create_role")
                 .antMatchers(HttpMethod.PUT,"/form").hasAnyAuthority("unrestricted_role", "update_role")
                 .antMatchers(HttpMethod.DELETE,"/form").hasAnyAuthority("unrestricted_role", "delete_role")
+
+                .antMatchers(HttpMethod.GET,"/list/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/list/results/**").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/list/ui/**").hasAnyAuthority("unrestricted_role", "read_role")
+
+                .antMatchers(HttpMethod.DELETE,"/component").hasAnyAuthority("unrestricted_role", "delete_role")
+                .antMatchers(HttpMethod.GET,"/component/by-id").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.POST,"/component").hasAnyAuthority("unrestricted_role", "create_role")
+
+                .antMatchers(HttpMethod.GET,"/menu/by-id").hasAnyAuthority("unrestricted_role", "read_role")
+
                 .anyRequest()
                 .authenticated()
                 .and()
