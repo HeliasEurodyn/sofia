@@ -9,7 +9,7 @@ node
     url: 'https://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@github.com/HeliasEurodyn/sofia.git'
     dir('')
     {
-        stage("Compile")
+        stage("Build")
         {
             sh "chmod +x mvnw"
             sh "./mvnw clean install -DskipTests"
@@ -28,10 +28,10 @@ node
             {
                 remote.user = USERNAME
                 remote.password = PASSWORD
-                sshCommand remote: remote, command: "docker-compose down -f /root/dev-rita-docker/docker-compose.yml"
-                sshRemove remote: remote, path: '/root/dev-rita-docker/rita-backend/sofia-0.0.1.jar'
-                sshPut remote: remote, from: './target/sofia-0.0.1.jar', into: '/root/dev-rita-docker/rita-backend/'
-                sshCommand remote: remote, command: "docker-compose up -f /root/dev-rita-docker/docker-compose.yml -build -d"
+                sshCommand remote: remote, command: "docker-compose down -f /root/rita-docker/docker-compose.yml"
+                sshRemove remote: remote, path: '/root/rita-docker/rita-backend/sofia-0.0.1.jar'
+                sshPut remote: remote, from: './target/sofia-0.0.1.jar', into: '/root/rita-docker/rita-backend/'
+                sshCommand remote: remote, command: "docker-compose up -f /root/rita-docker/docker-compose.yml -build -d"
             }
         }
     }
