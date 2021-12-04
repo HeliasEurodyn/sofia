@@ -46,10 +46,10 @@ public class ListController {
         return listDTO;
     }
 
-    @GetMapping
-    List<ListDTO> getObject() {
-        return this.listService.getObject();
-    }
+//    @GetMapping
+//    List<ListDTO> getObject() {
+//        return this.listService.getObject();
+//    }
 
     @GetMapping(path = "/results")
     ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {

@@ -39,7 +39,6 @@ public class MenuController {
     @PutMapping
     public MenuDTO putObject(@RequestBody MenuDTO dto) {
         MenuDTO createdDTO = this.menuService.putObject(dto);
-        //List<CustomComponentFieldDTO> fields = this.componentService.putNewObjectFields(componentDTO);
         return createdDTO;
     }
 
