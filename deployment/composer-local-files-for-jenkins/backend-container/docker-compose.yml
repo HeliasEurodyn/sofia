@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  rita-backend:
+    build:
+      context: ./rita-backend
+      args:
+        DB_IP: rita-db
+        DB_PORT: 3306
+        DB_NAME: rita
+        DB_USERNAME: root
+        DB_PASSWORD: root
+        KEYCLOAK_URL: http://localhost:8888/auth/realms/master/protocol/openid-connect/
+        KEYCLOAK_CLIENT_NAME: rita
+        KEYCLOAK_CLIENT_ID: rita
+        KEYCLOAK_CLIENT_SECRET: 3e140e26-1a8d-4207-a5b6-693043cf41c8
+      dockerfile: Dockerfile
+    image: rita-backend
+    container_name: rita-backend
+    ports:
+      - "15502:15502"
+    restart: unless-stopped
+    networks:
+      - rita-network
+networks:
+  rita-network:
+    external: true
+    name: rita-network
+    driver: bridge
