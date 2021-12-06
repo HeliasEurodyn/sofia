@@ -28,10 +28,10 @@ node
             {
                 remote.user = USERNAME
                 remote.password = PASSWORD
-                sshCommand remote: remote, command: "cd /root/rita-docker;docker-compose down"
-                sshRemove remote: remote, path: '/root/rita-docker/rita-backend/sofia-0.0.1.jar'
-                sshPut remote: remote, from: './target/sofia-0.0.1.jar', into: '/root/rita-docker/rita-backend/'
-                sshCommand remote: remote, command: "cd /root/rita-docker;docker-compose up --build -d"
+                sshCommand remote: remote, command: "cd /root/rita-docker/backend-container;docker-compose down"
+                sshRemove remote: remote, path: '/root/rita-docker/backend-container/rita-backend/sofia-0.0.1.jar'
+                sshPut remote: remote, from: './target/sofia-0.0.1.jar', into: '/root/rita-docker/backend-container/rita-backend/'
+                sshCommand remote: remote, command: "cd /root/rita-docker/backend-container;docker-compose up --build -d"
             }
         }
     }
