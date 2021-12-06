@@ -21,8 +21,8 @@ import java.util.Optional;
 @Service
 public class CustomQueryService {
 
-
-    private final CustomQueryMapper customQueryMapper;
+    @Autowired
+    private CustomQueryMapper customQueryMapper;
 
     @Autowired
     private  CustomQueryRepository customQueryRepository;
@@ -30,10 +30,8 @@ public class CustomQueryService {
     private final JWTService jwtService;
     private final EntityManager entityManager;
 
-    public CustomQueryService(CustomQueryMapper customQueryMapper,
-                              JWTService jwtService,
+    public CustomQueryService(JWTService jwtService,
                               EntityManager entityManager) {
-        this.customQueryMapper = customQueryMapper;
         this.jwtService = jwtService;
         this.entityManager = entityManager;
     }
