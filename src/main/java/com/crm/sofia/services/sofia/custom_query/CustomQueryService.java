@@ -5,6 +5,7 @@ import com.crm.sofia.mapper.sofia.custom_query.CustomQueryMapper;
 import com.crm.sofia.model.sofia.custom_query.CustomQuery;
 import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,16 +23,17 @@ public class CustomQueryService {
 
 
     private final CustomQueryMapper customQueryMapper;
-    private final CustomQueryRepository customQueryRepository;
+
+    @Autowired
+    private  CustomQueryRepository customQueryRepository;
+
     private final JWTService jwtService;
     private final EntityManager entityManager;
 
     public CustomQueryService(CustomQueryMapper customQueryMapper,
-                              CustomQueryRepository customQueryRepository,
                               JWTService jwtService,
                               EntityManager entityManager) {
         this.customQueryMapper = customQueryMapper;
-        this.customQueryRepository = customQueryRepository;
         this.jwtService = jwtService;
         this.entityManager = entityManager;
     }
