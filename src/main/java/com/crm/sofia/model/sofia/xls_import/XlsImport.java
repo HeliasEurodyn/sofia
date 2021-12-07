@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.xls_import;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -47,4 +48,15 @@ public class XlsImport extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.sofia.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
     private Component component;
+
+    @Column
+    private Boolean accessControlEnabled;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "xls_import_id")
+    private List<AccessControl> accessControls;
 }

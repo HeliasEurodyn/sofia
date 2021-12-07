@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.xls_import;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -33,4 +34,8 @@ public class XlsImportDTO extends BaseDTO {
     private List<XlsImportLineDTO> xlsImportLineList;
 
     private ComponentDTO component;
+
+    private Boolean accessControlEnabled;
+
+    private List<AccessControlDTO> accessControls;
 }

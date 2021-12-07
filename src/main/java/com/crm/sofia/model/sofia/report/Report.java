@@ -2,6 +2,7 @@ package com.crm.sofia.model.sofia.report;
 
 import com.crm.sofia.dto.sofia.report.ReportDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -59,5 +60,16 @@ public class Report extends BaseEntity {
             }
     )
     private List<Report> subreports;
+
+    @Column
+    private Boolean accessControlEnabled;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "report_id")
+    private List<AccessControl> accessControls;
 
 }

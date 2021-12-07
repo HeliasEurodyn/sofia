@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.dashboard;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,4 +23,7 @@ public class DashboardDTO extends BaseDTO {
 
     private List<DashboardAreaDTO> dashboardAreaList;
 
+    private Boolean accessControlEnabled;
+
+    private List<AccessControlDTO> accessControls;
 }

@@ -105,6 +105,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET,"/menu/by-id").hasAnyAuthority("unrestricted_role", "read_role")
 
+                .antMatchers(HttpMethod.GET,"/dashboard/by-id").hasAnyAuthority("unrestricted_role", "read_role")
+
+                .antMatchers(HttpMethod.GET,"/report/type").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.POST,"/report/print").hasAnyAuthority("unrestricted_role", "read_role")
+
+                .antMatchers(HttpMethod.POST,"/xls-import").hasAnyAuthority("unrestricted_role", "read_role")
+                .antMatchers(HttpMethod.GET,"/xls-import/by-id").hasAnyAuthority("unrestricted_role", "read_role")
+
+                .antMatchers(HttpMethod.GET,"/search/data").hasAnyAuthority("unrestricted_role", "read_role")
+
+                .antMatchers(HttpMethod.GET,"/custom-query/data").hasAnyAuthority("unrestricted_role", "read_role")
+
                 .anyRequest()
                 .authenticated()
                 .and()

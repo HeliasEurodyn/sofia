@@ -47,7 +47,7 @@ public class CustomQueryControllerTest {
     private JWTAuthFilter filter;
 
     @InjectMocks
-    private CustomQueryController customQueryController ;
+    private CustomQueryDesignerController customQueryDesignerController;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +57,7 @@ public class CustomQueryControllerTest {
         dto.setQuery("what is the query");
         this.customQueryDTOList.add(dto);
 
-        mvc = MockMvcBuilders.standaloneSetup(customQueryController)
+        mvc = MockMvcBuilders.standaloneSetup(customQueryDesignerController)
                 .build();
     }
 

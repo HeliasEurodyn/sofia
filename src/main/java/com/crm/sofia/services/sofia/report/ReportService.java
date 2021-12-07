@@ -60,119 +60,8 @@ public class ReportService {
         this.dataSource = dataSource;
     }
 
-
-    public List<ReportDTO> getObject() {
-        List<Report> entites = this.reportRepository.findAll();
-        return this.reportMapper.map(entites);
-    }
-
-    public ReportDTO getObject(Long id) {
-        Optional<Report> optionalEntity = this.reportRepository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-        }
-        Report entity = optionalEntity.get();
-        ReportDTO dto = this.reportMapper.map(entity);
-        return dto;
-    }
-
     public String getReportType(Long id) {
         return this.reportRepository.findType(id);
-    }
-
-    public ReportDTO postObject(
-            @RequestParam("file") MultipartFile multipartFile,
-            @RequestParam("report") String reportBase64Str) throws IOException {
-
-        // Get filename & extension from MultipartFile
-        String filename = multipartFile.getOriginalFilename();
-        String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
-        String reportUuid = UUID.randomUUID().toString();
-
-
-        // If type != jrxml Throw exception
-        if (!extension.equals("jrxml")) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wrong file type");
-        }
-
-        // Get Bytes of File
-        byte[] reportFileData = this.getFileBytes(multipartFile);
-
-        // Deserialized ReportDTO to Object
-        ReportDTO reportDTO = this.base64JsonStringToReportDTO(reportBase64Str);
-
-        // Save Report
-        ReportDTO createdReportDTO = this.postObject(filename, extension, reportUuid, reportFileData, reportDTO);
-
-        // Clear files structure from filesystem
-        this.deleteReportFolderFromFileSystemIfExists(reportUuid);
-
-        return createdReportDTO;
-    }
-
-
-    public ReportDTO postObject(ReportDTO reportDTO) throws IOException {
-        if (reportDTO.getId() == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File cannot be empty");
-        } else {
-
-            Optional<Report> optionalEntity = this.reportRepository.findById(reportDTO.getId());
-            if (!optionalEntity.isPresent()) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-            }
-
-            // Save
-            ReportDTO createdReportDTO = this.postObject(
-                    optionalEntity.get().getReportFilename(),
-                    optionalEntity.get().getReportExtension(),
-                    optionalEntity.get().getReportUuid(),
-                    optionalEntity.get().getReportFileData(),
-                    reportDTO);
-
-            this.deleteReportFolderFromFileSystemIfExists(optionalEntity.get().getReportUuid());
-
-            return createdReportDTO;
-        }
-
-    }
-
-    private ReportDTO postObject(
-            String filename,
-            String extension,
-            String reportUuid,
-            byte[] reportFileData,
-            ReportDTO reportDTO) throws IOException {
-
-        Report report = this.reportMapper.map(reportDTO);
-        report.setReportFilename(filename);
-        report.setReportExtension(extension);
-        report.setReportFileData(reportFileData);
-        if ((report.getReportUuid() == null ? "" : report.getReportUuid()).equals("")) {
-            report.setReportUuid(reportUuid);
-        }
-
-        if (report.getId() == null) report.setCreatedOn(Instant.now());
-        if (report.getId() == null) report.setCreatedBy(jwtService.getUserId());
-        report.setModifiedOn(Instant.now());
-        report.setModifiedBy(jwtService.getUserId());
-
-        List<Report> subreports = new ArrayList<>();
-        report.getSubreports().forEach(subReport -> {
-            Report subreport = this.reportRepository.findById(subReport.getId()).get();
-            subreports.add(subreport);
-        });
-        report.setSubreports(subreports);
-
-        Report createdReport = this.reportRepository.save(report);
-        return this.reportMapper.map(createdReport);
-    }
-
-    public void deleteObject(Long id) {
-        Optional<Report> optionalEntity = this.reportRepository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-        }
-        this.reportRepository.deleteById(optionalEntity.get().getId());
     }
 
     @Transactional
@@ -268,22 +157,6 @@ public class ReportService {
         connection.close();
     }
 
-    public void getFileReport(HttpServletResponse response, Long id) throws IOException {
-        Optional<Report> optionalReport = reportRepository.findById(id);
-        if (!optionalReport.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Report does not exist");
-        }
-        Report report = optionalReport.get();
-
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename="+ report.getName());
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        OutputStream outputStream = response.getOutputStream();
-        outputStream.write(report.getReportFileData());
-        outputStream.flush();
-    }
-
     private Map<String, Object> combineParameters(Long id, Map<String, Object> parameters) throws IOException {
         List<ReportParameter> storedParameters = this.reportRepository.getReportParametersById(id);
         storedParameters.forEach(storedParameter -> {
@@ -301,19 +174,6 @@ public class ReportService {
         return combinedParameters;
     }
 
-    private void deleteReportFolderFromFileSystemIfExists(String uuid) throws IOException {
-        if ((uuid == null ? "" : uuid).equals("")) {
-            return;
-        }
-
-        String folderPathStr = System.getProperty("java.io.tmpdir");
-        folderPathStr += uuid + "/";
-        File folderPath = new File(folderPathStr);
-        if (folderPath.exists()) {
-           // Files.delete(folderPath.toPath());
-            FileUtils.deleteDirectory(folderPath);
-        }
-    }
 
     private void writeReportToFileSystemIfNotExists(Report report) throws IOException {
 
@@ -342,21 +202,6 @@ public class ReportService {
                 Files.write(subreportFilePath, fileData);
             }
         }
-    }
-
-    private ReportDTO base64JsonStringToReportDTO(String reportBase64Str) throws JsonProcessingException {
-        byte[] reportBytes = Base64.getDecoder().decode(reportBase64Str);
-        ObjectMapper mapper = new ObjectMapper();
-        ReportDTO reportDTO = mapper.readValue(new String(reportBytes), ReportDTO.class);
-        return reportDTO;
-    }
-
-    private byte[] getFileBytes(MultipartFile multipartFile) throws IOException {
-        InputStream inputStream = multipartFile.getInputStream();
-        byte[] byteArray = new byte[inputStream.available()];
-        inputStream.read(byteArray);
-
-        return byteArray;
     }
 
 }

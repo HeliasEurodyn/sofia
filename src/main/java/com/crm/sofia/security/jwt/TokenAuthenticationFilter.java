@@ -70,6 +70,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     type = "menu";
                 }
 
+                if (contextPath.startsWith("/api/dashboard")) {
+                    type = "dashboard";
+                }
+
+                if (contextPath.startsWith("/api/report")) {
+                    type = "report";
+                }
+
+                if (contextPath.startsWith("/api/xls-import")) {
+                    type = "xls_import";
+                }
+
+                if (contextPath.startsWith("/api/search")) {
+                    type = "search";
+                }
+
+                if (contextPath.startsWith("/api/custom-query")) {
+                    type = "custom_query";
+                }
+
                 if (!type.equals("") && parameters.containsKey("id")) {
                     String entityId = parameters.get("id")[0];
 

@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.dashboard;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -28,4 +29,14 @@ public class Dashboard extends BaseEntity {
     @JoinColumn(name = "dashboard_id")
     private List<DashboardArea> dashboardAreaList;
 
+    @Column
+    private Boolean accessControlEnabled;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "dashboard_id")
+    private List<AccessControl> accessControls;
 }

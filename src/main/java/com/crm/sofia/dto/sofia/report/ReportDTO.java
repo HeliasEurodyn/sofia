@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.report;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,4 +32,8 @@ public class ReportDTO extends BaseDTO {
     private String reportType;
 
     private List<ReportDTO> subreports;
+
+    private Boolean accessControlEnabled;
+
+    private List<AccessControlDTO> accessControls;
 }

@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.custom_query;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,4 +29,7 @@ public class CustomQueryDTO  extends BaseDTO {
 
     private List<CustomQueryFieldDTO> columns;
 
+    private Boolean accessControlEnabled;
+
+    private List<AccessControlDTO> accessControls;
 }
