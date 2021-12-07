@@ -14,40 +14,15 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/customquery")
+@RequestMapping("/custom-query")
 public class CustomQueryController {
 
     @Autowired
     private CustomQueryService customQueryService;
 
-    @GetMapping
-    List<CustomQueryDTO> getObject() {
-        return customQueryService.getObject();
-    }
-
-    @GetMapping(path = "/by-id")
-    CustomQueryDTO getObject(@RequestParam("id") Long id) {
-        return customQueryService.getObject(id);
-    }
-
     @GetMapping(path = "/data")
     Object getData(@RequestParam("id") Long id, @RequestParam Map<String, String> parameters) {
         return customQueryService.getData(id, parameters);
-    }
-
-    @PostMapping
-    public CustomQueryDTO postObject(@RequestBody CustomQueryDTO customQueryDto) throws IOException {
-        return customQueryService.postObject(customQueryDto);
-    }
-
-    @PutMapping
-    public CustomQueryDTO putObject(@RequestBody CustomQueryDTO customQueryDto) {
-        return customQueryService.postObject(customQueryDto);
-    }
-
-    @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
-        customQueryService.deleteObject(id);
     }
 
 }
