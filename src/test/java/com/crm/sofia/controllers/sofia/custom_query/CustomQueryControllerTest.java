@@ -65,7 +65,7 @@ public class CustomQueryControllerTest {
     void getObjectTest() throws Exception {
 
         given(customQueryService.getObject()).willReturn(customQueryDTOList);
-        MockHttpServletResponse response = mvc.perform(get("/customquery")
+        MockHttpServletResponse response = mvc.perform(get("/custom-query-designer")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$[0].name")  ,"Query");
@@ -74,7 +74,7 @@ public class CustomQueryControllerTest {
     @Test
     void getDownloadByIdTest() throws Exception {
         given(customQueryService.getObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(get("/customquery/by-id?id=0")
+        MockHttpServletResponse response = mvc.perform(get("/custom-query-designer/by-id?id=0")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$.name")  ,"Query");
@@ -83,7 +83,7 @@ public class CustomQueryControllerTest {
     @Test
     void postObjectTest() throws Exception {
         given(customQueryService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(post("/customquery")
+        MockHttpServletResponse response = mvc.perform(post("/custom-query-designer")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -95,7 +95,7 @@ public class CustomQueryControllerTest {
     @Test
     void putObjectTest() throws Exception {
         given(customQueryService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(put("/customquery")
+        MockHttpServletResponse response = mvc.perform(put("/custom-query-designer")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -106,7 +106,7 @@ public class CustomQueryControllerTest {
     @Test
     void deleteObjectTest() throws Exception {
         doNothing().when(customQueryService).deleteObject(any());
-        MockHttpServletResponse response = mvc.perform(delete("/customquery?id=0")
+        MockHttpServletResponse response = mvc.perform(delete("/custom-query-designer?id=0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
