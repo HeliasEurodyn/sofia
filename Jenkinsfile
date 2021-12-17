@@ -6,7 +6,7 @@ node
 {
     stage 'Clone the project'
     git branch: 'master',
-    url: 'https://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@github.com/HeliasEurodyn/sofia.git'
+    url: 'https://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@github.com/HeliasEurodyn/sofia.git'
     dir('')
     {
         stage("Build")
