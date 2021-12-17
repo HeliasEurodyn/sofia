@@ -34,7 +34,7 @@ public class ListController {
 
     @GetMapping(path = "by-id")
     ListDTO getObject(@RequestParam("id") Long id) {
-        ListDTO listDTO = this.listService.getListObject(id);
+        ListDTO listDTO = this.listService.getObjectWithDefaults(id);
         listDTO.setComponent(null);
         return listDTO;
     }
@@ -69,7 +69,7 @@ public class ListController {
 
     @PostMapping(path = "/data-excel")
     public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
-        ListResultsDataDTO resultsDataDTO = this.listService.getListObject(dto);
+        ListResultsDataDTO resultsDataDTO = this.listService.getListResultsDataDTO(dto);
         ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
@@ -105,6 +105,14 @@ public class ListController {
     @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScripty() {
         return this.listService.getJavaScriptFactory();
+    }
+
+    @PutMapping(path = "/update-field")
+    void updateField(@RequestParam("id") Long id,
+                     @RequestParam("field") String field,
+                     @RequestParam("field-value") Object fieldValue,
+                     @RequestParam("rel") Object rel ) {
+        this.listService.updateField(id, field, fieldValue, rel);
     }
 
 }

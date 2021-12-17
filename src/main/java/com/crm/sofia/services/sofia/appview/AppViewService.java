@@ -5,6 +5,7 @@ import com.crm.sofia.dto.sofia.appview.AppViewFieldDTO;
 import com.crm.sofia.mapper.sofia.appview.AppViewMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.sofia.persistEntity.PersistEntityRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class AppViewService {
+
+    @Value("${sofia.db.name}")
+    private String sofiaDatabase;
 
     private PersistEntityRepository appViewRepository;
     private AppViewMapper appViewMapper;
@@ -71,7 +75,7 @@ public class AppViewService {
 
     @Transactional
     public List<String> getViews() {
-        Query query = entityManager.createNativeQuery("SELECT view_name FROM information_schema.views WHERE view_schema='sofia';");
+        Query query = entityManager.createNativeQuery("SELECT view_name FROM information_schema.views WHERE view_schema='"+sofiaDatabase+"';");
         List<String> viewNames = query.getResultList();
         return viewNames;
     }
@@ -79,7 +83,7 @@ public class AppViewService {
 
     @Transactional
     public List<String> getViewFields(String viewName) {
-        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + viewName + " FROM sofia;");
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + viewName + " FROM "+sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();
         List<String> fieldNames = fields.stream().map(f -> f[0].toString()).collect(Collectors.toList());
 
@@ -113,7 +117,7 @@ public class AppViewService {
         String uuid = UUID.randomUUID().toString().replace("-", "_");
         this.createView(uuid, sql);
 
-        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + uuid + " FROM sofia;");
+        Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + uuid + " FROM "+sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();
 
         for (Object[] field : fields) {
@@ -143,20 +147,20 @@ public class AppViewService {
 
 
     public void dropView(String name) {
-        String sql = "DROP VIEW IF EXISTS sofia." + name;
+        String sql = "DROP VIEW IF EXISTS "+sofiaDatabase+"." + name;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
 
     public void alterView(String name, String queryStr) {
-        String sql = "ALTER VIEW IF EXISTS sofia." + name + " AS " + queryStr;
+        String sql = "ALTER VIEW IF EXISTS "+sofiaDatabase+"." + name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }
 
 
     public void createView(String name, String queryStr) {
-        String sql = "CREATE VIEW IF NOT EXISTS sofia." + name + " AS " + queryStr;
+        String sql = "CREATE VIEW IF NOT EXISTS "+sofiaDatabase+"." + name + " AS " + queryStr;
         Query query = entityManager.createNativeQuery(sql);
         query.executeUpdate();
     }

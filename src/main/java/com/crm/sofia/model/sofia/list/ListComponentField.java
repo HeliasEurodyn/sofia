@@ -26,11 +26,13 @@ public class ListComponentField extends BaseEntity {
     private String editor;
 
     @Column
+    private String mask;
+
+    @Column
     private String description;
 
     @Column
     private String type;
-
 
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = ComponentPersistEntity.class)
@@ -47,6 +49,12 @@ public class ListComponentField extends BaseEntity {
 
     @Column
     private Boolean editable;
+
+    @Column
+    private Boolean headerEditable;
+
+    @Column
+    private String editableRelFieldCode;
 
     @Column
     private Boolean headerFilter;

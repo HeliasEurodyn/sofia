@@ -22,10 +22,13 @@ public class ListComponentFieldDTO extends BaseDTO {
     private String editor;
     private String description;
     private String type;
+    private String mask;
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
     private Boolean visible;
     private Boolean editable;
+    private Boolean headerEditable;
+    private String editableRelFieldCode;
     private Boolean headerFilter;
     private Boolean required ;
     private String defaultValue;

@@ -206,7 +206,8 @@ public class ExpressionService {
                     exprUnit instanceof ExprGreaterThan ||
                     exprUnit instanceof ExprMinorThan ||
                     exprUnit instanceof ExprEqualsTo ||
-                    exprUnit instanceof ExprStrEqualsTo)
+                    exprUnit instanceof ExprStrEqualsTo ||
+                    exprUnit instanceof ExprAtListPosParameter)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
             ) {
@@ -251,7 +252,8 @@ public class ExpressionService {
                     exprUnit instanceof ExprYyyyMmDdStringToDate ||
                     exprUnit instanceof ExprSystemParameter ||
                     exprUnit instanceof ExprImportColumnParameter ||
-                    exprUnit instanceof ExprRunSqlParameter )
+                    exprUnit instanceof ExprGetSqlParameter ||
+                    exprUnit instanceof ExprGetSqlValParameter)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
             ) {
@@ -363,7 +365,9 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, importDataset);
-            if (exprUnit == null) exprUnit = ExprRunSqlParameter.exrtactExprUnit(expression, i, entityManager);
+            if (exprUnit == null) exprUnit = ExprGetSqlValParameter.exrtactExprUnit(expression, i, entityManager);
+            if (exprUnit == null) exprUnit = ExprGetSqlParameter.exrtactExprUnit(expression, i, entityManager);
+            if (exprUnit == null) exprUnit = ExprAtListPosParameter.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprGreaterThan.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprMinorThan.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprEqualsTo.exrtactExprUnit(expression, i);

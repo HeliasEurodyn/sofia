@@ -51,10 +51,10 @@ public class ExprYyyyMmDdStringToDate extends ExprUnit {
         String dateString = (String) dateStringObject;
 
         DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
-                .appendPattern("yyyyMMdd")
+                .appendPattern("yyyyMMddHHmm")
                 .toFormatter()
                 .withZone(ZoneOffset.UTC);
-        return dateTimeFormatter.parse(dateString, Instant::from);
+        return dateTimeFormatter.parse(dateString+"0000", Instant::from);
     }
 
 }

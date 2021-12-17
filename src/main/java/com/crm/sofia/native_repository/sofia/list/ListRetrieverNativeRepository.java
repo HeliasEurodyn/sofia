@@ -19,11 +19,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ListNativeRepository {
+public class ListRetrieverNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ListNativeRepository(EntityManager entityManager) {
+    public ListRetrieverNativeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -141,7 +141,7 @@ public class ListNativeRepository {
         /*
          * Generate Query
          */
-        Query query = this.generateGroupQuery(listDTO, queryString);
+        Query query = this.generateGroupQuery(filtersList, queryString);
 
         /*
          * Execute Query
@@ -215,16 +215,6 @@ public class ListNativeRepository {
                     String field = "( " + x.getEditor() + ") as " + x.getCode();
                     selectionFields.add(field);
                 });
-
-//        listDTO.getListComponentColumnFieldList()
-//                .stream()
-//                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
-//                .forEach(x -> {
-//                    String field = "( " +
-//                            x.getEditor().substring(10, x.getEditor().length() - 2) +
-//                            ") as " + x.getCode();
-//                    selectionFields.add(field);
-//                });
 
         return " SELECT " + String.join(",", selectionFields);
     }
@@ -784,7 +774,7 @@ public class ListNativeRepository {
             if (x.getType().equals("datetime")) {
                 Instant valueInstant = Instant.parse(x.getFieldValue().toString());
                 filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
-            } else if (x.getType().equals("varchar") || x.getType().equals("text")) {
+            } else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field")) {
                 if (x.getOperator().equals("like")) {
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
                 } else {
@@ -851,14 +841,9 @@ public class ListNativeRepository {
         return listContent;
     }
 
-    private Query generateGroupQuery(ListDTO listDTO, String queryString) {
+    private Query generateGroupQuery(List<ListComponentFieldDTO> filtersList, String queryString) {
         Map<String, String> filterParts = new HashMap<>();
         Query query = entityManager.createNativeQuery(queryString);
-
-        List<ListComponentFieldDTO> filtersList = listDTO.getListComponentFilterFieldList()
-                .stream()
-                .filter(field -> field.getComponentPersistEntity() != null)
-                .collect(Collectors.toList());
 
         /* Iterate and create Where parts */
         filtersList.forEach(x -> {
