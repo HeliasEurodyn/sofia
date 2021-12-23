@@ -8,7 +8,6 @@ import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
@@ -25,7 +24,7 @@ public class CustomQueryService {
     private CustomQueryMapper customQueryMapper;
 
     @Autowired
-    private  CustomQueryRepository customQueryRepository;
+    private CustomQueryRepository customQueryRepository;
 
     private final JWTService jwtService;
     private final EntityManager entityManager;
