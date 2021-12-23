@@ -50,6 +50,7 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
     @Mapping(ignore = true, target = "rowNavigation")
     @Mapping(ignore = true, target = "jsonUrl")
     @Mapping(ignore = true, target = "instanceVersion")
+    @Mapping(ignore = true, target = "translations")
     @Mapping(ignore = true, target = "component.componentPersistEntityList")
     public abstract ListDTO mapEntityForList(ListEntity entity);
 

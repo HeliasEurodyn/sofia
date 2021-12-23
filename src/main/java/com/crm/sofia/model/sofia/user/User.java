@@ -1,7 +1,9 @@
 package com.crm.sofia.model.sofia.user;
 
 import com.crm.sofia.config.AppConstants;
+import com.crm.sofia.dto.sofia.language.LanguageDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.language.Language;
 import com.crm.sofia.model.sofia.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -65,8 +67,6 @@ public class User extends BaseEntity {
     @Column
     private String provider;
 
-
-    // bi-directional many-to-many association to Role
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
@@ -79,4 +79,16 @@ public class User extends BaseEntity {
     public void setRolesSet(Set<Role> rolesSet){
         this.roles = new ArrayList(rolesSet);
     }
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Language.class)
+    @JoinColumn(name = "default_language_id", referencedColumnName = "id")
+    private Language defaultLanguage;
+
+    @ManyToMany
+    @JoinTable(name = "user_language", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "language_id") })
+    private List<Language> languages;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Language.class)
+    @JoinColumn(name = "current_language_id", referencedColumnName = "id")
+    private Language currentLanguage;
 }

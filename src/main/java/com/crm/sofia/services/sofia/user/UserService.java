@@ -101,12 +101,12 @@ public class UserService {
         user.setModifiedBy(this.jwtService.getUserId());
         user.setModifiedOn(Instant.now());
         user.setEnabled(true);
+        user.setCurrentLanguage(user.getDefaultLanguage());
         User createdUser = userRepository.save(user);
         UserDTO responseUserDTO = userMapper.map(createdUser);
         responseUserDTO.setPassword("");
 
         return responseUserDTO;
-
     }
 
     @Transactional
@@ -156,6 +156,7 @@ public class UserService {
         user.setModifiedBy(this.jwtService.getUserId());
         user.setModifiedOn(Instant.now());
         user.setEnabled(true);
+        user.setCurrentLanguage(user.getDefaultLanguage());
         User createdUser = userRepository.save(user);
 
         UserDTO responseUserDTO = userMapper.map(createdUser);
@@ -229,18 +230,11 @@ public class UserService {
                 throw new OAuth2AuthenticationProcessingException(
                         "Looks like you're signed up with " + user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
             }
-          //  user = updateExistingUser(user, oAuth2UserInfo);
         } else {
             user = registerNewUser(userDetails);
         }
-
         return LocalUser.create(user, attributes, idToken, userInfo);
     }
-
-//    private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-//        existingUser.setUsername(oAuth2UserInfo.getName());
-//        return userRepository.save(existingUser);
-//    }
 
     private SignUpRequest toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
         byte[] array = new byte[10]; // length is bounded by 7
@@ -254,7 +248,6 @@ public class UserService {
                 .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword(passwordString).build();
     }
 
-
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -267,6 +260,5 @@ public class UserService {
             return optionalUser.get();
         }
     }
-
 
 }

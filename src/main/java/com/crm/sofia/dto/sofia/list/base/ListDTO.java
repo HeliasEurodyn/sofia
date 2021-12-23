@@ -3,6 +3,7 @@ package com.crm.sofia.dto.sofia.list.base;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
+import com.crm.sofia.dto.sofia.list.base.translation.ListTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -53,6 +54,8 @@ public class ListDTO extends BaseDTO {
     private List<AccessControlDTO> accessControls;
     private List<ListScriptDTO> listScripts;
     private List<ListCssDTO> listCssList;
+
+    private List<ListTranslationDTO> translations;
 
     private List<ListActionButtonDTO> listActionButtons;
     private List<ListComponentFieldDTO> listComponentColumnFieldList;

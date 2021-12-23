@@ -3,6 +3,7 @@ package com.crm.sofia.dto.sofia.list.base;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.sofia.list.base.translation.ListComponentFieldTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -41,5 +42,5 @@ public class ListComponentFieldDTO extends BaseDTO {
     private Object fieldValue;
     private String formulaType;
     private List<ListComponentFieldDTO> listComponentActionFieldList;
-
+    private List<ListComponentFieldTranslationDTO> translations;
 }

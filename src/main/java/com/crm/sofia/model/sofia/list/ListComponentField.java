@@ -1,8 +1,10 @@
 package com.crm.sofia.model.sofia.list;
 
+import com.crm.sofia.dto.sofia.list.base.translation.ListComponentFieldTranslationDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
+import com.crm.sofia.model.sofia.list.translation.ListComponentFieldTranslation;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -93,5 +95,13 @@ public class ListComponentField extends BaseEntity {
     )
     @JoinColumn(name = "parent_id")
     private List<ListComponentFieldChild> listComponentActionFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_component_field_id")
+    private List<ListComponentFieldTranslation> translations;
 
 }
