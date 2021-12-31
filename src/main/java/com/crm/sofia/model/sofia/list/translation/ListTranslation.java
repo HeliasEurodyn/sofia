@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @DynamicInsert
 @Entity(name = "ListTranslation")
 @Table(name = "list_translation")
-public class ListTranslation extends BaseEntity {
+public class ListTranslation extends BaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Language.class)
     @JoinColumn(name = "language_id", referencedColumnName = "id")

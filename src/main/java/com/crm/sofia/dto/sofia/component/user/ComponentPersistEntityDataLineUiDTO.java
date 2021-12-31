@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
 @Accessors(chain = true)
-public class ComponentPersistEntityDataLineUiDTO {
+public class ComponentPersistEntityDataLineUiDTO implements Serializable {
 
     private List<ComponentPersistEntityDataLineFieldUiDTO> componentPersistEntityFieldList;
 

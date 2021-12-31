@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @Entity(name = "ListCss")
 @Table(name = "list_css")
-public class ListCss extends BaseEntity {
+public class ListCss extends BaseEntity implements Serializable {
 
     @Column
     private String name;

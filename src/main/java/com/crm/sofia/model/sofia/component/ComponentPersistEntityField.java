@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 @Data
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @DynamicInsert
 @Entity(name = "ComponentPersistEntityField")
 @javax.persistence.Table(name = "component_persist_entity_field")
-public class ComponentPersistEntityField extends BaseEntity {
+public class ComponentPersistEntityField extends BaseEntity implements Serializable {
 
     @Column
     private String description;

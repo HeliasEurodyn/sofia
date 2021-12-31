@@ -1,10 +1,12 @@
 package com.crm.sofia.model.sofia.persistEntity;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -17,7 +19,7 @@ import javax.persistence.*;
 //@DiscriminatorValue("ViewField")
 //@DiscriminatorValue("AppViewField"
 //@DiscriminatorValue("TableField")
-public class PersistEntityField extends BaseEntity {
+public class PersistEntityField extends BaseEntity implements Serializable {
 
     @Column
     private String name;
@@ -55,6 +57,4 @@ public class PersistEntityField extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "persist_entity_id")
     private PersistEntity persistEntity;
-
-
 }

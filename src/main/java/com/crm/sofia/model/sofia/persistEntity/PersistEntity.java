@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ import java.util.List;
 //@DiscriminatorValue("View")
 //@DiscriminatorValue("AppView")
 //@DiscriminatorValue("Table")
-public class PersistEntity extends BaseEntity {
+public class PersistEntity extends BaseEntity implements Serializable {
 
     @Column
     private String name;

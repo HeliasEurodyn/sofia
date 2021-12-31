@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @DynamicInsert
 @Entity(name = "AccessControl")
 @Table(name = "access_control")
-public class AccessControl extends BaseEntity {
+public class AccessControl extends BaseEntity implements Serializable {
 
     @Column
     private String type;

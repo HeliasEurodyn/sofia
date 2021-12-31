@@ -13,6 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -21,7 +22,9 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "ListEntity")
 @Table(name = "list")
-public class ListEntity extends BaseEntity {
+public class ListEntity extends BaseEntity implements Serializable {
+
+    public static final String HASH_KEY = "listEntity";
 
     @Column
     private String code;

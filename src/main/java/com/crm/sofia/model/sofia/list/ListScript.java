@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @Accessors(chain = true)
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @Entity(name = "ListScript")
 @Table(name = "list_script")
-public class ListScript extends BaseEntity {
+public class ListScript extends BaseEntity implements Serializable {
 
     @Column
     private String name;

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
 @Accessors(chain = true)
-public class ComponentUiDTO {
+public class ComponentUiDTO implements Serializable {
 
     private Long id;
 

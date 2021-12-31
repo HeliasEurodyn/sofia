@@ -18,6 +18,7 @@ import com.crm.sofia.services.sofia.component.ComponentService;
 import com.crm.sofia.services.sofia.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.sofia.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.sofia.component.crud.ComponentSaverService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +29,6 @@ import java.util.*;
 public class FormService {
 
     private final FormRepository formRepository;
-
     private final FormMapper formMapper;
     private final FormUiMapper formUiMapper;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
@@ -37,7 +37,6 @@ public class FormService {
     private final ComponentService componentService;
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
-    private final FormCacheingService formCacheingService;
     private final ComponentDeleterService componentDeleterService;
 
     public FormService(FormRepository formRepository,
@@ -49,7 +48,6 @@ public class FormService {
                        ComponentService componentService,
                        ComponentUiMapper componentUiMapper,
                        ComponentJsonMapper componentJsonMapper,
-                       FormCacheingService formCacheingService,
                        ComponentDeleterService componentDeleterService) {
         this.formRepository = formRepository;
         this.formMapper = formMapper;
@@ -60,7 +58,6 @@ public class FormService {
         this.componentService = componentService;
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
-        this.formCacheingService = formCacheingService;
         this.componentDeleterService = componentDeleterService;
     }
 
@@ -119,11 +116,10 @@ public class FormService {
         return this.getObject(formEntityIdsList.get(0));
     }
 
+    @Cacheable(value = "form_ui_cache", key = "#id")
     public FormUiDTO getUiObject(Long id) {
 
-        if (this.formCacheingService.hasUiObject(id)) {
-            return this.formCacheingService.getUiObject(id);
-        }
+        System.out.println("Get UiForm object from Database");
 
         /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
@@ -163,9 +159,6 @@ public class FormService {
         });
 
         formUiDTO.getFormActionButtons().sort(Comparator.comparingLong(FormActionButtonUiDTO::getShortOrder));
-
-        /* Cache */
-        this.formCacheingService.putUiObject(id, formUiDTO);
 
         /* Return */
         return formUiDTO;

@@ -41,9 +41,7 @@ public class ListController {
 
     @GetMapping(path = "ui")
     ListUiDTO getUiObject(@RequestParam("id") Long id) {
-        ListUiDTO listDTO = this.listService.getUiListObject(id);
-        listDTO.setComponent(null);
-        return listDTO;
+       return this.listService.getUiListObject(id);
     }
 
     @GetMapping
@@ -60,7 +58,6 @@ public class ListController {
     ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters, @PathVariable("page") Long page, @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters,page, id);
     }
-
 
     @GetMapping(path = "/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {

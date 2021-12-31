@@ -21,15 +21,14 @@ import java.util.List;
         "version","operator",
         "shortLocation",
         "decimals","componentPersistEntity",
-        "componentPersistEntityField" })
-public class ListComponentFieldUiDTO extends BaseDTO implements Serializable {
+        "componentPersistEntityField" }
+)
+public class ListComponentSubFieldUiDTO extends BaseDTO implements Serializable {
     private String code;
     private String editor;
     private String description;
     private String type;
     private String mask;
-    private ComponentPersistEntityUiDTO componentPersistEntity;
-    private ComponentPersistEntityFieldUiDTO componentPersistEntityField;
     private Boolean visible;
     private Boolean editable;
     private Boolean headerEditable;
@@ -44,5 +43,4 @@ public class ListComponentFieldUiDTO extends BaseDTO implements Serializable {
     private String bclass;
     private String css;
     private Object fieldValue;
-    private List<ListComponentSubFieldUiDTO> listComponentActionFieldList;
 }

@@ -7,6 +7,7 @@ import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.repository.sofia.form.FormRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import com.crm.sofia.services.sofia.component.ComponentPersistEntityFieldAssignmentService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,6 @@ public class FormDesignerService {
     private final FormMapper formMapper;
     private final JWTService jwtService;
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-    private final FormCacheingService formCacheingService;
     private final FormJavascriptService formJavascriptService;
 
     public FormDesignerService(FormRepository formRepository,
@@ -36,7 +36,6 @@ public class FormDesignerService {
         this.formMapper = formMapper;
         this.jwtService = jwtService;
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-        this.formCacheingService = formCacheingService;
         this.formJavascriptService = formJavascriptService;
     }
 
@@ -73,6 +72,7 @@ public class FormDesignerService {
     }
 
     @Transactional
+    @CacheEvict(value = "form_ui_cache", key = "#formDTO.id")
     public FormDTO putObject(FormDTO formDTO) throws Exception {
         FormEntity formEntity = this.formMapper.map(formDTO);
         formEntity.setModifiedOn(Instant.now());
@@ -97,7 +97,6 @@ public class FormDesignerService {
                         createdFormEntity.getId());
 
         FormDTO createdFormDTO = this.formMapper.map(createdFormEntity);
-        this.formCacheingService.clearUiObject(createdFormDTO.getId());
 
         return createdFormDTO;
     }
@@ -173,7 +172,6 @@ public class FormDesignerService {
     }
 
     public boolean clearCache() {
-        this.formCacheingService.clear();
         this.formRepository.increaseInstanceVersions();
         return true;
     }

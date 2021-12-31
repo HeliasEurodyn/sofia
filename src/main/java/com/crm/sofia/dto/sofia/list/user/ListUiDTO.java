@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -28,7 +29,7 @@ import java.util.List;
         )
 
 @Accessors(chain = true)
-public class ListUiDTO extends BaseDTO {
+public class ListUiDTO extends BaseDTO implements Serializable {
 
     private String code;
     private String name;
@@ -58,7 +59,7 @@ public class ListUiDTO extends BaseDTO {
     private Boolean HeaderFilters;
     private String rowNavigation;
     private String jsonUrl;
-    private ComponentUiDTO component;
+   // private ComponentUiDTO component;
     private Long instanceVersion;
 
     private List<ListActionButtonUiDTO> listActionButtons;

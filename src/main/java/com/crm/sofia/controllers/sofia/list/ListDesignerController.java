@@ -22,12 +22,12 @@ public class ListDesignerController {
 
     @GetMapping
     List<ListDTO> getObject() {
-        return this.listDesignerService.getObject();
+        return this.listDesignerService.getById();
     }
 
     @GetMapping(path = "/by-id")
     ListDTO getObject(@RequestParam("id") Long id) {
-        return this.listDesignerService.getObject(id);
+        return this.listDesignerService.getById(id);
     }
 
     @GetMapping(path = "/by-name")
@@ -54,7 +54,7 @@ public class ListDesignerController {
 
     @RequestMapping(value = "/clear-cache", method = RequestMethod.GET)
     boolean clearCache() {
-        return this.listDesignerService.clearCache();
+        return this.listDesignerService.clearCacheForUi();
     }
 
 }

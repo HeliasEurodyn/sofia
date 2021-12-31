@@ -8,13 +8,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ComponentPersistEntityFieldAssignmentUiDTO {
+public class ComponentPersistEntityFieldAssignmentUiDTO implements Serializable {
 
     private Long id;
 

@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "ListActionButton")
 @Table(name = "list_action_button")
-public class ListActionButton extends BaseEntity {
+public class ListActionButton extends BaseEntity implements Serializable {
 
     @Column
     private String code;

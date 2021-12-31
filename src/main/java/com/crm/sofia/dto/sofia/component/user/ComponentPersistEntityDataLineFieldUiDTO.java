@@ -7,13 +7,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version"})
 @Accessors(chain = true)
-public class ComponentPersistEntityDataLineFieldUiDTO {
+public class ComponentPersistEntityDataLineFieldUiDTO implements Serializable {
 
     private Long id;
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Accessors(chain = true)
 @Entity(name = "ComponentPersistEntity")
 @Table(name = "component_persist_entity")
-public class ComponentPersistEntity extends BaseEntity {
+public class ComponentPersistEntity extends BaseEntity implements Serializable {
     
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.sofia.persistEntity.PersistEntity.class)
     @JoinColumn(name = "persist_entity_id", referencedColumnName = "id")

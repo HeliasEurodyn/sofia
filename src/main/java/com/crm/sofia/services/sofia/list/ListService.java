@@ -6,6 +6,7 @@ import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
 import com.crm.sofia.dto.sofia.list.user.ListComponentFieldUiDTO;
+import com.crm.sofia.dto.sofia.list.user.ListComponentSubFieldUiDTO;
 import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
@@ -15,6 +16,7 @@ import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,7 +37,6 @@ public class ListService {
     private final ListUiMapper listUiMapper;
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
-    private final ListCacheingService listCacheingService;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
 
     public ListService(ListRepository listRepository,
@@ -43,14 +44,12 @@ public class ListService {
                        ListUiMapper listUiMapper,
                        ExpressionService expressionService,
                        ListRetrieverNativeRepository listRetrieverNativeRepository,
-                       ListCacheingService listCacheingService,
                        ListUpdaterNativeRepository listUpdaterNativeRepository) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.listUiMapper = listUiMapper;
         this.expressionService = expressionService;
         this.listRetrieverNativeRepository = listRetrieverNativeRepository;
-        this.listCacheingService = listCacheingService;
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
     }
 
@@ -79,7 +78,6 @@ public class ListService {
     public ListDTO getObjectWithDefaults(Long id) {
 
         ListDTO listDTO = this.getObject(id);
-
         listDTO.getListComponentFilterFieldList()
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
@@ -105,16 +103,13 @@ public class ListService {
                     }
         });
 
-
         return listDTO;
     }
 
+    @Cacheable(value = "list_ui_cache", key = "#id")
     public ListUiDTO getUiListObject(Long id) {
 
-        /* Try Retrieve Cached */
-        if (this.listCacheingService.hasUiObject(id)) {
-            return this.listCacheingService.getUiObject(id);
-        }
+        System.out.println("Get UiList object from Database");
 
         /* Retrieve */
         Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
@@ -134,7 +129,7 @@ public class ListService {
         listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentActionFieldList().forEach(af -> {
            if( af.getListComponentActionFieldList() != null) {
-               af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
+               af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentSubFieldUiDTO::getShortOrder));
            }
         });
 
@@ -158,12 +153,8 @@ public class ListService {
                     filterDto.setFieldValue(fieldValue);
                     filterDto.setDefaultValue(fieldValue.toString());
                 }
-
             }
         }
-
-        /* Cache */
-        this.listCacheingService.putUiObject(id, listUiDTO);
 
         /* Return */
         return listUiDTO;

@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Component")
 @Table(name = "component")
-public class Component extends BaseEntity {
+public class Component extends BaseEntity implements Serializable {
 
     @Column
     private String name;
