@@ -1,8 +1,7 @@
 package com.crm.sofia.dto.sofia.list.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
-import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
+import com.crm.sofia.dto.sofia.list.user.translation.ListTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -27,7 +26,6 @@ import java.util.List;
         "jsonUrl",
         "component"}
         )
-
 @Accessors(chain = true)
 public class ListUiDTO extends BaseDTO implements Serializable {
 
@@ -59,7 +57,6 @@ public class ListUiDTO extends BaseDTO implements Serializable {
     private Boolean HeaderFilters;
     private String rowNavigation;
     private String jsonUrl;
-   // private ComponentUiDTO component;
     private Long instanceVersion;
 
     private List<ListActionButtonUiDTO> listActionButtons;
@@ -69,4 +66,6 @@ public class ListUiDTO extends BaseDTO implements Serializable {
     private List<ListComponentFieldUiDTO> listComponentTopGroupFieldList;
     private List<ListComponentFieldUiDTO> listComponentOrderByFieldList;
     private List<ListComponentFieldUiDTO> listComponentActionFieldList;
+
+    private List<ListTranslationDTO> translations;
 }

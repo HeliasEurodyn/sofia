@@ -3,6 +3,7 @@ package com.crm.sofia.dto.sofia.list.user;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentPersistEntityFieldUiDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentPersistEntityUiDTO;
+import com.crm.sofia.dto.sofia.list.base.translation.ListComponentFieldTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -45,4 +46,5 @@ public class ListComponentFieldUiDTO extends BaseDTO implements Serializable {
     private String css;
     private Object fieldValue;
     private List<ListComponentSubFieldUiDTO> listComponentActionFieldList;
+    private List<ListComponentFieldTranslationDTO> translations;
 }

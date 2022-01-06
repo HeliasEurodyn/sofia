@@ -11,11 +11,13 @@ import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
 import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.language.Language;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
+import com.crm.sofia.services.sofia.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,19 +40,21 @@ public class ListService {
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
+    private final UserService userService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ListUiMapper listUiMapper,
                        ExpressionService expressionService,
                        ListRetrieverNativeRepository listRetrieverNativeRepository,
-                       ListUpdaterNativeRepository listUpdaterNativeRepository) {
+                       ListUpdaterNativeRepository listUpdaterNativeRepository, UserService userService) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.listUiMapper = listUiMapper;
         this.expressionService = expressionService;
         this.listRetrieverNativeRepository = listRetrieverNativeRepository;
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
+        this.userService = userService;
     }
 
     public ListDTO getObject(Long id) {
@@ -112,13 +116,11 @@ public class ListService {
         System.out.println("Get UiList object from Database");
 
         /* Retrieve */
-        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
-        if (!optionalListEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-        }
+        ListEntity listEntity = this.listRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist"));
 
         /* Map */
-        ListUiDTO listUiDTO = this.listUiMapper.map(optionalListEntity.get());
+        ListUiDTO listUiDTO = this.listUiMapper.map(listEntity);
 
         /* Short */
         listUiDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
@@ -128,9 +130,9 @@ public class ListService {
         listUiDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
         listUiDTO.getListComponentActionFieldList().forEach(af -> {
-           if( af.getListComponentActionFieldList() != null) {
-               af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentSubFieldUiDTO::getShortOrder));
-           }
+            if( af.getListComponentActionFieldList() != null) {
+                af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentSubFieldUiDTO::getShortOrder));
+            }
         });
 
         List<ListComponentFieldUiDTO> filtersList = Stream.concat(listUiDTO.getListComponentFilterFieldList().stream(),

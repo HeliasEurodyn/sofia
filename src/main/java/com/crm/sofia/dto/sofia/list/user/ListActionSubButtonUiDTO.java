@@ -1,6 +1,8 @@
 package com.crm.sofia.dto.sofia.list.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.list.base.translation.ListActionButtonTranslationDTO;
+import com.crm.sofia.dto.sofia.list.user.translation.ListActionSubButtonTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -22,4 +24,5 @@ public class ListActionSubButtonUiDTO extends BaseDTO {
     private String editor;
     private String cssClass;
     private Boolean visible;
+    private List<ListActionSubButtonTranslationDTO> translations;
 }

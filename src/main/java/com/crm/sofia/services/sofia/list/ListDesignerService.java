@@ -113,10 +113,6 @@ public class ListDesignerService {
         return listDTO;
     }
 
-//    public ListEntity getObject(Long id) {
-//        return this.listRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist"));
-//    }
-
     public ListDTO getObjectByName(String name) {
         ListEntity listEntity = this.listRepository.findFirstByName(name);
         if (listEntity == null) {

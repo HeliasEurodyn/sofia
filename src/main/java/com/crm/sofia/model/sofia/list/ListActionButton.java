@@ -1,9 +1,7 @@
 package com.crm.sofia.model.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.base.ListActionButtonDTO;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.list.translation.ListActionButtonTranslation;
-import com.crm.sofia.model.sofia.list.translation.ListTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
