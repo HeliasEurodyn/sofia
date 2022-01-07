@@ -51,6 +51,7 @@ services:
     networks:
       - rita-network
   redis:
+    container_name: redis
     image: "redis:alpine"
     command: redis-server --requirepass sOmE_sEcUrE_pAsS
     ports:
