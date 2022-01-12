@@ -20,6 +20,7 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
+               // .paths(Predicates.or(PathSelectors.ant("/rtm/**"), PathSelectors.ant("/appview/**")))
                 .paths(PathSelectors.ant("/rtm/**"))
                 .build().apiInfo(apiEndPointsInfo());
     }

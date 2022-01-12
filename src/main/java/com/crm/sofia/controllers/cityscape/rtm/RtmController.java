@@ -18,15 +18,15 @@ public class RtmController {
         this.rtmService = rtmService;
     }
 
-    @PostMapping
-    public RtmDTO postObject(@RequestBody RtmDTO dto) {
-        return this.rtmService.postObject(dto);
-    }
-
-    @PostMapping(path = "/risk-assessment")
-    public RtmDTO postObject2(@RequestBody RtmDTO dto) {
-        return this.rtmService.postObject2(dto);
-    }
+//    @PostMapping
+//    public RtmDTO postObject(@RequestBody RtmDTO dto) {
+//        return this.rtmService.postObject(dto);
+//    }
+//
+//    @PostMapping(path = "/risk-assessment")
+//    public RtmDTO postObject2(@RequestBody RtmDTO dto) {
+//        return this.rtmService.postObject2(dto);
+//    }
 
 //    @PostMapping(path = "/run-risk-assessment")
 //    public void runRiskAssessment(@RequestParam("id") Long id) {

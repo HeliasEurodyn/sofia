@@ -10,7 +10,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
-@ApiIgnore
 @Slf4j
 @RestController
 @Validated
