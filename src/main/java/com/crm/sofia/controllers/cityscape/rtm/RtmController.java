@@ -28,6 +28,11 @@ public class RtmController {
         return this.rtmService.postObject2(dto);
     }
 
+//    @PostMapping(path = "/run-risk-assessment")
+//    public void runRiskAssessment(@RequestParam("id") Long id) {
+//        this.rtmService.runRiskAssessment(id);
+//    }
+
     @GetMapping
     public RtmDTO getObject(@RequestBody RtmDTO dto) {
         return this.rtmService.getObject(dto);

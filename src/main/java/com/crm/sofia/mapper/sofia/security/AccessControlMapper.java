@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public abstract class SecurityMapper extends BaseMapper<SecurityDTO, Security> {
+public abstract class AccessControlMapper extends BaseMapper<SecurityDTO, Security> {
 }

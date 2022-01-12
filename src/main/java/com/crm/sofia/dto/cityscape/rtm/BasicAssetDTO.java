@@ -17,35 +17,25 @@ import java.util.List;
 @Accessors(chain = true)
 public class BasicAssetDTO {
 
-    private String basic_asset_name;
+    private Long id;
 
-    private String basic_asset_type;
+    private String name;
 
-    private String basic_asset_type_id;
+    private String description;
 
-    private String basic_asset_part;
+    private String type_id;
 
-    private String basic_asset_vendor;
+    private String type;
 
-    private String basic_asset_product;
+    private String category;
 
-    private String basic_asset_version;
+    private String vendor;
 
-    private String basic_asset_update;
+    private String product;
 
-    private String basic_asset_edition;
+    private String version;
 
-    private String basic_asset_language;
-
-    private String basic_asset_sw_edition;
-
-    private String basic_asset_target_sw;
-
-    private String basic_asset_target_hw;
-
-    private String basic_asset_other;
-
-    private ImpactDTO impact;
+    private String cpe;
 
     private List<ThreatDTO> threats;
 }

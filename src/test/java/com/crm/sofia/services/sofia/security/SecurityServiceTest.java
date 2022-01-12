@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.security;
 
 import com.crm.sofia.dto.sofia.security.SecurityDTO;
-import com.crm.sofia.mapper.sofia.security.SecurityMapper;
+import com.crm.sofia.mapper.sofia.security.AccessControlMapper;
 import com.crm.sofia.model.sofia.security.Security;
 import com.crm.sofia.repository.sofia.security.SecurityRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
@@ -37,7 +37,7 @@ public class SecurityServiceTest {
     private SecurityDTO securityDto;
 
     @Mock(answer = Answers.CALLS_REAL_METHODS)
-    private SecurityMapper securityMapper;
+    private AccessControlMapper accessControlMapper;
 
     @BeforeEach
     void setUp() {
@@ -81,7 +81,7 @@ public class SecurityServiceTest {
     @Test
     public void postObjectTest(){
         given(securityRepository.save(ArgumentMatchers.any(Security.class))).willReturn(security);
-        given(securityMapper.map(ArgumentMatchers.any(SecurityDTO.class))).willReturn(security);
+        given(accessControlMapper.map(ArgumentMatchers.any(SecurityDTO.class))).willReturn(security);
         securityService.postObject(securityDto);
     }
 

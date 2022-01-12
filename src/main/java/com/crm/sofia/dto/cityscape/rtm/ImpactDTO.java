@@ -17,10 +17,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class ImpactDTO {
 
-    private String confidentiality;
+    private Integer confidentiality;
 
-    private String integrity;
+    private Integer integrity;
 
-    private String availability;
+    private Integer availability;
 
 }

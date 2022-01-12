@@ -13,12 +13,16 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CveDTO {
+public class CompositeAssetCommunicationLinkDTO {
 
-    private String cve_id;
+    private Long id;
 
-    private String cve_description;
+    private Long composite_id_source;
 
-    private String cvss_score;
+    private Long basic_asset_id_source;
+
+    private Long composite_id_destination;
+
+    private Long basic_asset_id_destination;
 
 }

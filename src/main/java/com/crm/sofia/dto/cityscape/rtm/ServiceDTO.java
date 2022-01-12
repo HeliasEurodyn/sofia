@@ -17,12 +17,14 @@ import java.util.List;
 @Accessors(chain = true)
 public class ServiceDTO {
 
-    private String service_id;
+    private Long id;
 
-    private String service_name;
+    private String name;
 
     private ImpactDTO impact;
 
-    private List<CompositeAssetDTO> composite_asset;
+    private List<ServiceCommunicationLinkDTO> communication_links;
+
+    private List<CompositeAssetDTO> composite_assets;
 
 }

@@ -17,16 +17,16 @@ import java.util.List;
 @Accessors(chain = true)
 public class ThreatDTO {
 
-    private String threat_id;
+    private Long id;
 
-    private String threat_name;
+    private String name;
 
-    private String threat_description;
+    private String description;
 
-    private String probability_of_occurrence;
+    private Double probability_of_occurrence;
 
-    private ImpactDTO impact;
+    private ThreatImpactSelectionDTO impact;
 
-    private List<CveDTO> cves;
+    private List<RiskDTO> risks;
 
 }

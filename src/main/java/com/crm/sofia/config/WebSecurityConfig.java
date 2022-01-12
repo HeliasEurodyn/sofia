@@ -85,7 +85,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/list/dynamic-javascript/**",
                         "/form/dynamic-cssscript/**",
                         "/form/dynamic-javascripts/**",
-                        "/form/dynamic-javascript/**"
+                        "/form/dynamic-javascript/**",
+                        "/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET,"/form/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
                 .antMatchers(HttpMethod.GET,"/form/clone-data/**").hasAnyAuthority("unrestricted_role", "read_role")

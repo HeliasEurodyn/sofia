@@ -5,10 +5,12 @@ import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
 public interface FormRepository extends BaseRepository<FormEntity> {
     List<FormEntity> findAll();
 
@@ -40,6 +42,11 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     @Query(" SELECT f.id FROM FormEntity f " +
             " WHERE f.jsonUrl =:jsonUrl ")
     public List<Long> getIdsByJsonUrl(@Param("jsonUrl") String jsonUrl);
+
+    @Query(" SELECT f FROM FormEntity f " +
+            " WHERE f.jsonUrl <> '' AND f.jsonUrl is not null ")
+    public List<FormEntity> getIdsByExistingJsonUrls();
+
 
     @Modifying
     @Transactional

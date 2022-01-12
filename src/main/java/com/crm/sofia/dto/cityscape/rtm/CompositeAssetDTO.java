@@ -17,36 +17,12 @@ import java.util.List;
 @Accessors(chain = true)
 public class CompositeAssetDTO {
 
-    private String composite_id;
+    private Long id;
 
-    private String composite_name;
+    private String name;
 
-    private String composite_asset_part;
+    private List<CompositeAssetCommunicationLinkDTO> communication_links;
 
-    private String composite_asset_vendor;
-
-    private String composite_asset_product;
-
-    private String composite_asset_version;
-
-    private String composite_asset_update;
-
-    private String composite_asset_edition;
-
-    private String composite_asset_language;
-
-    private String composite_asset_sw_edition;
-
-    private String composite_asset_target_sw;
-
-    private String composite_asset_target_hw;
-
-    private String composite_asset_other;
-
-    private ImpactDTO impact;
-
-    private List<CommunicationLinkDTO> communication_links;
-
-    private List<BasicAssetDTO> basic_asset;
+    private List<BasicAssetDTO> basic_assets;
 
 }

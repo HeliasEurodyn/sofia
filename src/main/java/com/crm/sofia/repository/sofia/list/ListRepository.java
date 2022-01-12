@@ -1,5 +1,6 @@
 package com.crm.sofia.repository.sofia.list;
 
+import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -54,4 +55,8 @@ public interface ListRepository extends BaseRepository<ListEntity> {
     @Modifying
     @Query(value = "UPDATE ListEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")
     void updateScripts(@Param("id") Long id, @Param("script") String script , @Param("scriptMin") String scriptMin);
+
+    @Query(" SELECT l FROM ListEntity l " +
+            " WHERE l.jsonUrl <> '' AND l.jsonUrl is not null ")
+    public List<ListEntity> getIdsByExistingJsonUrls();
 }

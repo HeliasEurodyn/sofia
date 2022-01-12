@@ -7,19 +7,18 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class EcosystemDTO {
+public class ThreatImpactSelectionDTO {
 
-    private String ecosystem_id;
+    private Boolean confidentiality;
 
-    private String ecosystem_name;
+    private Boolean integrity;
 
-    private List<ServiceDTO> service;
+    private Boolean availability;
+
 }

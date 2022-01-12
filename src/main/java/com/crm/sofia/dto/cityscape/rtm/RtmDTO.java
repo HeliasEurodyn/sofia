@@ -17,10 +17,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class RtmDTO {
 
-    private String api_key;
+    private Long id;
 
-    private String risk_analysis;
+    private String name;
 
-    private List<EcosystemDTO> ecosystem;
+    private List<ServiceDTO> services;
 
 }

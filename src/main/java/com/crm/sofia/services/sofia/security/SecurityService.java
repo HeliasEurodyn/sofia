@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.security;
 
 import com.crm.sofia.dto.sofia.security.SecurityDTO;
-import com.crm.sofia.mapper.sofia.security.SecurityMapper;
+import com.crm.sofia.mapper.sofia.security.AccessControlMapper;
 import com.crm.sofia.model.sofia.security.Security;
 import com.crm.sofia.repository.sofia.security.SecurityRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class SecurityService {
 
     @Autowired
-    private SecurityMapper securityMapper;
+    private AccessControlMapper accessControlMapper;
     @Autowired
     private SecurityRepository securityRepository;
     @Autowired
@@ -28,7 +28,7 @@ public class SecurityService {
 
     public List<SecurityDTO> getObject() {
         List<Security> entities = securityRepository.findAll();
-        return securityMapper.map(entities);
+        return accessControlMapper.map(entities);
     }
     public SecurityDTO getObject(Long id) {
         Optional<Security> optionalEntity = securityRepository.findById(id);
@@ -36,13 +36,13 @@ public class SecurityService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
         Security entity = optionalEntity.get();
-        SecurityDTO dto = securityMapper.map(entity);
+        SecurityDTO dto = accessControlMapper.map(entity);
         return dto;
     }
 
     public SecurityDTO postObject(SecurityDTO securityDto) {
 
-        Security security = securityMapper.map(securityDto);
+        Security security = accessControlMapper.map(securityDto);
         if (securityDto.getId() == null) {
             security.setCreatedOn(Instant.now());
             security.setCreatedBy(jwtService.getUserId());
@@ -51,7 +51,7 @@ public class SecurityService {
         security.setModifiedBy(jwtService.getUserId());
         Security savedData = securityRepository.save(security);
 
-        return securityMapper.map(savedData);
+        return accessControlMapper.map(savedData);
     }
 
     public void deleteObject(Long id) {

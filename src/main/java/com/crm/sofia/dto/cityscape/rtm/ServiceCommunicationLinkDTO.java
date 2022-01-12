@@ -7,18 +7,26 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CommunicationLinkDTO {
+public class ServiceCommunicationLinkDTO {
 
-    private String name;
+    private Long id;
 
-    private List<CompositeAssetDTO> composite_asset;
+    private Long service_id_source;
+
+    private Long composite_id_source;
+
+    private Long basic_asset_id_source;
+
+    private Long service_id_destination;
+
+    private Long composite_id_destination;
+
+    private Long basic_asset_id_destination;
 
 }
