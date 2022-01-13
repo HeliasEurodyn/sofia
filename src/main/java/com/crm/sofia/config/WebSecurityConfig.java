@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
+//               .antMatchers("*").permitAll();
                 .antMatchers("/", "/error",
                         "/all",
                         "/auth/**",
@@ -91,7 +92,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/configuration/security",
                         "/swagger-ui.html",
-                        "/webjars/**"
+                        "/webjars/**",
+                        "/v3/api-docs",
+                        "/v3/api-docs.yaml"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET,"/form/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
                 .antMatchers(HttpMethod.GET,"/form/clone-data/**").hasAnyAuthority("unrestricted_role", "read_role")
