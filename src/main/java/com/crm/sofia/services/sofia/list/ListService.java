@@ -86,7 +86,7 @@ public class ListService {
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
-                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+               // .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
                 .forEach(x -> {
                     ExprResponce exprResponce = expressionService.create(x.getDefaultValue());
                     if (!exprResponce.getError()) {
@@ -245,7 +245,7 @@ public class ListService {
         filtersList
                 .stream()
                 .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
-                .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
+               // .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> !x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -256,7 +256,7 @@ public class ListService {
         filtersList
                 .stream()
                 .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
-                .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
+              //  .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {

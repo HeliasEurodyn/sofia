@@ -746,9 +746,7 @@ public class ListRetrieverNativeRepository {
 
     private Query createQueryAndReplaceParameters(ListDTO listDTO, String queryString) {
 
-        Map<String, String> filterParts = new HashMap<>();
         Query query = entityManager.createNativeQuery(queryString);
-
         listDTO.getListComponentLeftGroupFieldList()
                 .forEach(x -> {
                     x.setOperator("=");
@@ -784,13 +782,12 @@ public class ListRetrieverNativeRepository {
                 filterPart = x.getFieldValue().toString();
             }
 
-            filterParts.put("filter_" + x.getCode(), filterPart);
-        });
-
-        filterParts.forEach((k, v) -> {
-            if(queryString.contains(":"+ k)){
-                query.setParameter(k, v);
+            if (x.getOperator().equals("in")) {
+                query.setParameter("filter_" + x.getCode(), Arrays.asList(filterPart.split(","))); //new Integer[]{152,163});
+            } else {
+                query.setParameter("filter_" + x.getCode(), filterPart);
             }
+
         });
 
         return query;
@@ -809,11 +806,6 @@ public class ListRetrieverNativeRepository {
                 .stream()
                 .filter(x -> x.getComponentPersistEntityField() != null)
                 .collect(Collectors.toList());
-
-//        List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
-//                .stream()
-//                .filter(x -> Pattern.compile("^SqlField\\('.+'\\)$").matcher((x.getEditor() == null ? "" : x.getEditor())).matches())
-//                .collect(Collectors.toList());
 
         List<ListComponentFieldDTO> sqlFieldColumns = listDTO.getListComponentColumnFieldList()
                 .stream()
