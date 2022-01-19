@@ -20,10 +20,10 @@ public class RtmController {
         this.rtmService = rtmService;
     }
 
-    @GetMapping(path = "/test")
-    public RtmDTO getObject(@RequestBody RtmDTO dto) {
-        return this.rtmService.getObject(dto);
-    }
+//    @GetMapping(path = "/test")
+//    public RtmDTO getObject(@RequestBody RtmDTO dto) {
+//        return this.rtmService.getObject(dto);
+//    }
 
     @GetMapping(path = "/list")
     public List<RtmDTO> getObjectById() {
