@@ -52,15 +52,15 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, userDTO));
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        try {
-            userService.registerNewUser(signUpRequest);
-        } catch (UserAlreadyExistAuthenticationException e) {
-            log.error("Exception Ocurred", e);
-            return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"), HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok().body(new ApiResponse(true, "User registered successfully"));
-    }
+//    @PostMapping("/signup")
+//    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        try {
+//            userService.registerNewUser(signUpRequest);
+//        } catch (UserAlreadyExistAuthenticationException e) {
+//            log.error("Exception Ocurred", e);
+//            return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"), HttpStatus.BAD_REQUEST);
+//        }
+//        return ResponseEntity.ok().body(new ApiResponse(true, "User registered successfully"));
+//    }
 
 }
