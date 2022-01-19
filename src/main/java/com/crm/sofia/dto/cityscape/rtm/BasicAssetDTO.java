@@ -23,7 +23,7 @@ public class BasicAssetDTO {
 
     private String description;
 
-    private String type_id;
+    private Long type_id;
 
     private String type;
 

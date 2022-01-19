@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @Validated
@@ -18,23 +20,20 @@ public class RtmController {
         this.rtmService = rtmService;
     }
 
-//    @PostMapping
-//    public RtmDTO postObject(@RequestBody RtmDTO dto) {
-//        return this.rtmService.postObject(dto);
-//    }
-//
-//    @PostMapping(path = "/risk-assessment")
-//    public RtmDTO postObject2(@RequestBody RtmDTO dto) {
-//        return this.rtmService.postObject2(dto);
-//    }
-
-//    @PostMapping(path = "/run-risk-assessment")
-//    public void runRiskAssessment(@RequestParam("id") Long id) {
-//        this.rtmService.runRiskAssessment(id);
-//    }
-
-    @GetMapping
+    @GetMapping(path = "/test")
     public RtmDTO getObject(@RequestBody RtmDTO dto) {
         return this.rtmService.getObject(dto);
     }
+
+    @GetMapping(path = "/list")
+    public List<RtmDTO> getObjectById() {
+        return this.rtmService.runRiskAssessmentList();
+    }
+
+    @GetMapping(value = "/{id}")
+    public RtmDTO getObjectById(@PathVariable("id") Long id) {
+        return this.rtmService.runRiskAssessment(id);
+    }
+
+
 }

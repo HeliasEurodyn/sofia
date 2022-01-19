@@ -7,24 +7,21 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ServiceCommunicationLinkDTO {
+public class CompositeAssetEconomicValuesDTO {
 
-    private Long id;
+    private Double pessimistic;
 
-    private String type;
+    private Double common;
 
-    private Long composite_id_source;
-
-    private Long basic_id_source;
-
-    private Long composite_id_destination;
-
-    private Long basic_id_destination;
+    private Double optimistic;
 
 }

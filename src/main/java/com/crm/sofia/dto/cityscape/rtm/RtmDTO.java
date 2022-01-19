@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -21,6 +22,7 @@ public class RtmDTO {
 
     private String name;
 
-    private List<ServiceDTO> services;
+    Instant created_on;
 
+    private List<ServiceDTO> services;
 }

@@ -21,6 +21,8 @@ public class CompositeAssetDTO {
 
     private String name;
 
+    private CompositeAssetEconomicValuesDTO economic;
+
     private List<CompositeAssetCommunicationLinkDTO> communication_links;
 
     private List<BasicAssetDTO> basic_assets;

@@ -17,12 +17,10 @@ public class CompositeAssetCommunicationLinkDTO {
 
     private Long id;
 
-    private Long composite_id_source;
+    private String type;
 
-    private Long basic_asset_id_source;
+    private Long basic_id_source;
 
-    private Long composite_id_destination;
-
-    private Long basic_asset_id_destination;
+    private Long basic_id_destination;
 
 }
