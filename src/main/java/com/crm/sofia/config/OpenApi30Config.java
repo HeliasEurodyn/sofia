@@ -8,10 +8,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 
 @Configuration
@@ -23,7 +26,17 @@ import org.springframework.util.StringUtils;
         scheme = "bearer"
 )
 public class OpenApi30Config {
+    @Bean
+    public OpenAPI customOpenAPI() {
+        Server server = new Server();
+        server.setUrl("https://cityscape-rita.eurodyn.com/api");
+        Server server2 = new Server();
+        server2.setUrl("http://localhost:15502/api");
+        return new OpenAPI().servers(List.of(server, server2));
+    }
 }
+
+
 
 //@Configuration
 //public class OpenApi30Config {
