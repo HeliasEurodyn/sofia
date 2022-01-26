@@ -390,8 +390,9 @@ public class RmtService {
             }
 
             ThreatDTO threat = new ThreatDTO();
-            threat.setId(field[14]==null?null:((BigInteger)field[14]).longValue());
-            threat.setName(field[15]==null?null:(String)field[15]);
+            //threat.setId(field[14]==null?null:((BigInteger)field[14]).longValue());
+            threat.setId(field[15]==null?null:(String)field[15]);
+            threat.setName(field[16]==null?null:(String)field[16]);
             threat.setDescription(field[17]==null?null:(String)field[17]);
             threat.setProbability_of_occurrence(field[24]==null?null:(Double)field[24]);
             ThreatImpactSelectionDTO impact = new ThreatImpactSelectionDTO();

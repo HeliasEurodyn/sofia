@@ -17,7 +17,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class ThreatDTO {
 
-    private Long id;
+    private String id;
 
     private String name;
 
