@@ -357,7 +357,7 @@ public class RmtService {
                         "LEFT OUTER JOIN asset_type aty ON a.type_id = aty.id "+
                         "LEFT OUTER JOIN asset_category act ON a.asset_category_id = act.id "+
                         "LEFT OUTER JOIN cve_search_vendor vd ON a.vendor_id = vd.id "+
-                        "LEFT OUTER JOIN asset_to_composite_asset_threat acat ON aca.id = acat.asset_to_composite_asset_id "+
+                        "LEFT OUTER JOIN asset_to_composite_asset_threat acat ON aca.id = acat.asset_to_composite_asset_id AND acat.active = 1 "+
                         "INNER JOIN threat t ON t.id = acat.threat_id "+
                         "WHERE aca.composite_asset_id = :id  "+
                         "ORDER BY aca.id, a.id, t.id ";

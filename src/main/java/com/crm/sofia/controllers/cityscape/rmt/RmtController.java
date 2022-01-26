@@ -1,4 +1,4 @@
-package com.crm.sofia.controllers.cityscape.rtm;
+package com.crm.sofia.controllers.cityscape.rmt;
 
 import com.crm.sofia.dto.cityscape.rtm.RmtDTO;
 import com.crm.sofia.services.cityscape.rtm.RmtService;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
