@@ -156,9 +156,14 @@ public class ListJavascriptService {
         pointerVarLines.add("listRef = null;");
         pointerVarLines.add("");
         pointerVarLines.add("navigateRef = null;");
+        pointerVarLines.add("getFromBackendRef = null;");
         pointerVarLines.add("");
         pointerVarLines.add("defineListNavigator(myCallback){this.navigateRef = myCallback;}");
         pointerVarLines.add("navigate(command){return this.navigateRef(command);}");
+
+        pointerVarLines.add("defineGetFromBackend(myCallback){this.getFromBackendRef = myCallback;}");
+        pointerVarLines.add("getFromBackend(url, callback){return this.getFromBackendRef(url, callback);}");
+
         pointerVarLines.add("");
         return String.join("\n", pointerVarLines);
     }
