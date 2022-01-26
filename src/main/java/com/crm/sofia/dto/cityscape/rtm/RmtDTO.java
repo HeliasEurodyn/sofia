@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class RtmDTO {
+public class RmtDTO {
 
     private Long id;
 

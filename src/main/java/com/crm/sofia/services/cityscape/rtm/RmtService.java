@@ -1,26 +1,29 @@
 package com.crm.sofia.services.cityscape.rtm;
 
 import com.crm.sofia.dto.cityscape.rtm.*;
+import com.crm.sofia.dto.sofia.auth.RmtLoginResponseDTO;
 import com.crm.sofia.rest_template.cityscape.RtmRestTemplate;
 import com.crm.sofia.services.sofia.user.UserService;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class RtmService {
+public class RmtService {
 
     private final RtmRestTemplate rtmRestTemplate;
     private final EntityManager entityManager;
     private final UserService userService;
 
-    public RtmService(RtmRestTemplate rtmRestTemplate,
+    public RmtService(RtmRestTemplate rtmRestTemplate,
                       EntityManager entityManager,
                       UserService userService) {
         this.rtmRestTemplate = rtmRestTemplate;
@@ -28,12 +31,12 @@ public class RtmService {
         this.userService = userService;
     }
 
-    public RtmDTO getObject(RtmDTO dto) {
+    public RmtDTO getObject(RmtDTO dto) {
         return dto;
     }
 
-    public List<RtmDTO> runRiskAssessmentList() {
-        List<RtmDTO> rtms = this.retrieveRiskAssessments();
+    public List<RmtDTO> runRiskAssessmentList() {
+        List<RmtDTO> rtms = this.retrieveRiskAssessments();
         rtms.forEach(rtm -> {
             List<ServiceDTO> services = this.retrieveBusinessServices(rtm.getId());
             rtm.setServices(services);
@@ -62,8 +65,21 @@ public class RtmService {
         return rtms;
     }
 
-    public RtmDTO runRiskAssessment(Long id) {
-        RtmDTO rtm = this.retrieveRiskAssessment(id);
+    public RmtDTO sendToRmt(Long id){
+        RmtDTO rmtDTO = this.retrieveRiskAssessmentById(id);
+        RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
+        this.rtmRestTemplate.analysis(rmtDTO, rmtLoginResponseDTO.getAccess_token());
+        return rmtDTO;
+    }
+
+    public byte[] downloadJsonObjectBytesById(Long id){
+        RmtDTO rmtDTO = this.retrieveRiskAssessmentById(id);
+        Gson gson = new Gson();
+        return gson.toJson(rmtDTO).getBytes(StandardCharsets.UTF_8);
+    }
+
+    public RmtDTO retrieveRiskAssessmentById(Long id) {
+        RmtDTO rtm = this.retrieveRiskAssessment(id);
 
         List<ServiceDTO> services = this.retrieveBusinessServices(id);
         rtm.setServices(services);
@@ -91,8 +107,8 @@ public class RtmService {
         return rtm;
     }
 
-    private RtmDTO retrieveRiskAssessment(Long id) {
-        RtmDTO rtm = new RtmDTO();
+    private RmtDTO retrieveRiskAssessment(Long id) {
+        RmtDTO rtm = new RmtDTO();
 
         String queryString =
                 "SELECT " +
@@ -124,8 +140,8 @@ public class RtmService {
         return rtm;
     }
 
-    private List<RtmDTO> retrieveRiskAssessments() {
-        List<RtmDTO> rtms = new ArrayList<>();
+    private List<RmtDTO> retrieveRiskAssessments() {
+        List<RmtDTO> rtms = new ArrayList<>();
 
         String queryString =
                 "SELECT " +
@@ -148,7 +164,7 @@ public class RtmService {
 
         List<Object[]> fields = query.getResultList();
         for (Object[] field : fields) {
-            RtmDTO rtm = new RtmDTO();
+            RmtDTO rtm = new RmtDTO();
             rtm.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
             rtm.setName(field[1]==null?null:(String) field[1]);
             rtm.setCreated_on(field[3]==null?null:((Timestamp)field[3]).toInstant());
