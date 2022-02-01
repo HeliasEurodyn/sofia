@@ -79,7 +79,6 @@ public class ListRetrieverNativeRepository {
 
     public List<GroupEntryDTO> executeListAndGetGroupingData(ListDTO listDTO) {
         List<GroupEntryDTO> groupContent = new ArrayList<>();
-        // ListComponentDTO listComponentDTO = dto.getListComponentList().get(0);
 
         if (listDTO.getListComponentLeftGroupFieldList().size() == 0) {
             return groupContent;
@@ -100,21 +99,10 @@ public class ListRetrieverNativeRepository {
          */
         queryString += this.generateFromPart(fromPersistEntities);
 
+
         /*
-         * Where clause
+         * Define Filters List For Grouping
          */
-        /* Check for empty required Fields */
-        Optional<ListComponentFieldDTO> optionalRequiredFieldEmpty =
-                listDTO.getListComponentFilterFieldList()
-                        .stream()
-                        .filter(x -> (x.getFieldValue() == null ? "" : x.getFieldValue()).equals("") && x.getRequired())
-                        .findFirst();
-
-        if (optionalRequiredFieldEmpty.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Required filter "
-                    + optionalRequiredFieldEmpty.get().getCode() + " should not be empty!");
-        }
-
         List<ListComponentFieldDTO> filtersList = listDTO.getListComponentFilterFieldList()
                 .stream()
                 .filter(x -> x.getFieldValue() != null)
@@ -122,11 +110,10 @@ public class ListRetrieverNativeRepository {
                 .filter(field -> field.getComponentPersistEntity() != null)
                 .collect(Collectors.toList());
 
-        if (!listDTO.getCustomFilterFieldStructure()) {
-            queryString += this.generateWherePart(filtersList);
-        } else {
-            queryString += this.generateCustomWhereColumnsPart(filtersList, listDTO.getFilterFieldStructure());
-        }
+        /*
+         * Where clause
+         */
+        queryString += this.generateWherePart(filtersList);
 
         /*
          * Group By clause
@@ -136,7 +123,7 @@ public class ListRetrieverNativeRepository {
         /*
          * Order By clause
          */
-        queryString += this.generateOrderByLeftGroupPart(listDTO);
+        queryString += this.generateOrderByPart(listDTO);
 
         /*
          * Generate Query
@@ -834,7 +821,6 @@ public class ListRetrieverNativeRepository {
     }
 
     private Query generateGroupQuery(List<ListComponentFieldDTO> filtersList, String queryString) {
-        Map<String, String> filterParts = new HashMap<>();
         Query query = entityManager.createNativeQuery(queryString);
 
         /* Iterate and create Where parts */
@@ -853,11 +839,11 @@ public class ListRetrieverNativeRepository {
                 filterPart = x.getFieldValue().toString();
             }
 
-            filterParts.put("filter_" + x.getCode(), filterPart);
-        });
-
-        filterParts.forEach((k, v) -> {
-            query.setParameter(k, v);
+            if (x.getOperator().equals("in")) {
+                query.setParameter("filter_" + x.getCode(), Arrays.asList(filterPart.split(","))); //new Integer[]{152,163});
+            } else {
+                query.setParameter("filter_" + x.getCode(), filterPart);
+            }
         });
 
         return query;

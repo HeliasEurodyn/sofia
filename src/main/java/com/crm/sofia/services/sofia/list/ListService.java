@@ -271,37 +271,10 @@ public class ListService {
         return listDTO;
     }
 
-    public List<GroupEntryDTO> getObjectLeftGroupingData(ListDTO dto) {
-        List<GroupEntryDTO> groupContent = this.listRetrieverNativeRepository.executeListAndGetGroupingData(dto);
-        return groupContent;
-    }
-
     public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, Long id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
-
-        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
-                listDTO.getListComponentLeftGroupFieldList().stream())
-                .collect(Collectors.toList());
-
-        for (ListComponentFieldDTO listComponentFieldDTO : filtersList) {
-            if (listComponentFieldDTO.getEditable() && listComponentFieldDTO.getVisible()) {
-                if (parameters.containsKey(listComponentFieldDTO.getCode())) {
-                    String fieldValue = parameters.get(listComponentFieldDTO.getCode());
-
-                    if (listComponentFieldDTO.getType().equals("datetime")) {
-                        Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
-                                DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
-                                .atZone(ZoneOffset.UTC)
-                                .toInstant();
-                        listComponentFieldDTO.setFieldValue(fieldValueInstant);
-                    } else {
-                        listComponentFieldDTO.setFieldValue(fieldValue);
-                    }
-                }
-            }
-        }
-
-        return this.getObjectLeftGroupingData(listDTO);
+        listDTO = this.mapParametersToListDto(listDTO, parameters);
+        return this.listRetrieverNativeRepository.executeListAndGetGroupingData(listDTO);
     }
 
     public String getInstanceVersion(Long id) {
