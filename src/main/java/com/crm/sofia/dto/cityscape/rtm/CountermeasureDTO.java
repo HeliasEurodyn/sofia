@@ -15,22 +15,18 @@ import java.util.List;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ThreatDTO {
+public class CountermeasureDTO {
 
     private Long id;
 
     private String code;
 
-    private String name;
+    private String title;
 
-    private String description;
+   // private String description;
 
-    private Double probability_of_occurrence;
+    private String security_function;
 
-    private ThreatImpactSelectionDTO impact;
-
-    private List<CountermeasureDTO> countermeasures;
-
-    private List<RiskDTO> risks;
+    private String cis_asset_type;
 
 }

@@ -25,35 +25,27 @@ public class RmtController {
         this.rmtService = rmtService;
     }
 
-    @Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get List (Returns generic model list containing, Risk Assessments - Services - Composite Assets)", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/list")
     public List<RmtDTO> getObjectById() {
         return this.rmtService.runRiskAssessmentList();
     }
 
-    @Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get Page (Returns generic model list containing, Risk Assessments - Services - Composite Assets)", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/list/page/{page}/size/{size}")
+    public List<RmtDTO> getObjectById(@PathVariable("page") Long page, @PathVariable("size") Long size) {
+        return this.rmtService.runRiskAssessmentPage(page, size);
+    }
+
+    @Operation(summary = "Get By Id (Returns fully detailed model containing, Risk Assessment - Services - Composite Assets - Assets - Threats - Coutermeasures)", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}")
     public RmtDTO getObjectById(@PathVariable("id") Long id) {
         return this.rmtService.retrieveRiskAssessmentById(id);
     }
 
-    @Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Run Rmt analysis for Risk Assesment Id", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/analysis/{id}")
     public RmtDTO sendToRmt(@PathVariable("id") Long id) {
         return this.rmtService.sendToRmt(id);
     }
-
-    @Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/json-file/{id}")
-    public ResponseEntity<byte[]> downloadJsonObjectById(@PathVariable("id") Long id) {
-        byte[] rmtJsonBytes = this.rmtService.downloadJsonObjectBytesById(id);
-
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=rmt.json")
-                .contentType(MediaType.APPLICATION_JSON)
-                .contentLength(rmtJsonBytes.length)
-                .body(rmtJsonBytes);
-    }
-
 }
