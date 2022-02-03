@@ -17,6 +17,10 @@ public class RiskDTO {
 
     private String cve_id;
 
+    private String description;
+
+    private String link;
+
     private Double risk_score;
 
 }

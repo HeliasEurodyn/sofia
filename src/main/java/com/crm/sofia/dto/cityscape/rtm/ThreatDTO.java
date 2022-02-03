@@ -31,6 +31,6 @@ public class ThreatDTO {
 
     private List<CountermeasureDTO> countermeasures;
 
-    private List<RiskDTO> risks;
+    private List<RiskDTO> risk;
 
 }

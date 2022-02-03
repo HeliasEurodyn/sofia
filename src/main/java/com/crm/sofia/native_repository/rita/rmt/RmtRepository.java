@@ -131,10 +131,6 @@ public class RmtRepository {
     }
 
     public List<ServiceDTO> retrieveBusinessServices(Long id) {
-        Map<Integer,Integer> metricRelations = Stream.of(
-                new Integer[][] {{ 0, 0 }, { 1, 3 }, { 2, 7 }, { 3, 10 }})
-                .collect(Collectors.toMap(data -> data[0], data -> data[1]));
-
         String queryString =
                 "SELECT " +
                         "b.id, " +
@@ -154,22 +150,14 @@ public class RmtRepository {
         List<Object[]> fields = query.getResultList();
         List<ServiceDTO> services = new ArrayList<>();
 
-
         for (Object[] field : fields) {
             ServiceDTO serviceDTO = new ServiceDTO();
             serviceDTO.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
             serviceDTO.setName(field[1]==null?null:(String)field[1]);
             ImpactDTO impact = new ImpactDTO();
-
-            Integer impactMetric = (field[4]==null?0:(Integer) field[4]);
-            impact.setConfidentiality(metricRelations.get(impactMetric));
-
-            impactMetric = (field[5]==null?0:(Integer)field[5]);
-            impact.setIntegrity(metricRelations.get(impactMetric));
-
-            impactMetric = (field[6]==null?0:(Integer)field[6]);
-            impact.setAvailability(metricRelations.get(impactMetric));
-
+            impact.setConfidentiality(field[4]==null?0:(Integer) field[4]);
+            impact.setIntegrity(field[5]==null?0:(Integer)field[5]);
+            impact.setAvailability(field[6]==null?0:(Integer)field[6]);
             serviceDTO.setImpact(impact);
             services.add(serviceDTO);
         }
@@ -390,7 +378,7 @@ public class RmtRepository {
             threat.setId(field[14]==null?null:((BigInteger)field[14]).longValue());
             threat.setCode(field[15]==null?null:(String)field[15]);
             threat.setName(field[16]==null?null:(String)field[16]);
-            threat.setDescription(field[17]==null?null:(String)field[17]);
+            threat.setDescription(field[13]==null?"":((BigInteger)field[13]).toString());
             threat.setProbability_of_occurrence(field[24]==null?null:(Double)field[24]);
             ThreatImpactSelectionDTO impact = new ThreatImpactSelectionDTO();
             threat.setImpact(impact);
@@ -404,4 +392,30 @@ public class RmtRepository {
         return assets;
     }
 
+    public void saveRisk(String assetToCompositeAssetThreatId, RiskDTO risk) {
+        Query query =
+                entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, risk_score, asset_to_composite_asset_threat_id) " +
+                        "VALUES (:cve_id, :description, :link, :risk_score, :asset_to_composite_asset_threat_id);");
+        query.setParameter("cve_id",risk.getCve_id());
+        query.setParameter("description",risk.getDescription());
+        query.setParameter("link",risk.getLink());
+        query.setParameter("risk_score",risk.getRisk_score());
+        query.setParameter("asset_to_composite_asset_threat_id",Double.valueOf(assetToCompositeAssetThreatId));
+        query.executeUpdate();
+    }
+
+    public void saveOveralRisk(Long riskAssessmentId, Double overalRisk) {
+        Query query =
+                entityManager.createNativeQuery("UPDATE `risk_assessment` SET analyzed='0', overal_risk=:overal_risk WHERE id = :id ");
+        query.setParameter("overal_risk",overalRisk);
+        query.setParameter("id",riskAssessmentId);
+        query.executeUpdate();
+    }
+
+    public void deleteExistingRisksForRiskAssesment(Long id) {
+        Query query =
+                entityManager.createNativeQuery("DELETE FROM `risk` WHERE risk_assessment_id = :risk_assessment_id ");
+        query.setParameter("risk_assessment_id",id);
+        query.executeUpdate();
+    }
 }

@@ -5,10 +5,12 @@ import com.crm.sofia.dto.sofia.auth.RmtLoginResponseDTO;
 import com.crm.sofia.native_repository.rita.rmt.RmtRepository;
 import com.crm.sofia.rest_template.cityscape.RtmRestTemplate;
 import com.crm.sofia.services.sofia.user.UserService;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.*;
@@ -58,10 +60,56 @@ public class RmtService {
         return rtms;
     }
 
+    @Transactional
+    @Modifying
     public RmtDTO sendToRmt(Long id){
-        RmtDTO rmtDTO = this.retrieveRiskAssessmentById(id);
+        RmtDTO rmt = this.retrieveRiskAssessmentById(id);
         RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
-        return this.rtmRestTemplate.analysis(rmtDTO, rmtLoginResponseDTO.getAccess_token());
+        RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
+        this.saveRmtResponse(rmtResponse);
+        this.calculateOveralRisk(rmtResponse);
+
+        return rmtResponse;
+    }
+
+    public void saveRmtResponse(RmtDTO rmt){
+        this.rmtRepository.deleteExistingRisksForRiskAssesment(rmt.getId());
+        rmt.getServices().forEach(service -> {
+            service.getComposite_assets().forEach(compositeAsset -> {
+                compositeAsset.getBasic_assets().forEach(basicAsset -> {
+                    basicAsset.getThreats().forEach(threat -> {
+                        threat.getRisk().forEach(risk -> {
+                            this.rmtRepository.saveRisk(threat.getDescription(), risk);
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    public void calculateOveralRisk(RmtDTO rmt){
+
+        List<Double> overalRiskList = new ArrayList<>(Arrays.asList(0.0));
+
+        rmt.getServices().forEach(service -> {
+            service.getComposite_assets().forEach(compositeAsset -> {
+                compositeAsset.getBasic_assets().forEach(basicAsset -> {
+                    basicAsset.getThreats().forEach(threat -> {
+                        threat.getRisk().forEach(risk -> {
+                            System.out.println();
+                            Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
+                            Double riskScore =  risk.getRisk_score();
+                            Double riskValue = (probabilityOfOccurrence / 100.0) * riskScore;
+                            if(riskValue > overalRiskList.get(0)){
+                                overalRiskList.set(0,riskValue);
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
+        this.rmtRepository.saveOveralRisk(rmt.getId(), overalRiskList.get(0));
     }
 
     public RmtDTO retrieveRiskAssessmentById(Long id) {
