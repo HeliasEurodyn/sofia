@@ -232,6 +232,9 @@ public class ListRetrieverNativeRepository {
      */
     private List<ComponentPersistEntityDTO> identifyFromPersistEntities(ListDTO listDTO) {
 
+        /*
+        * Unite All Fields
+        * */
         List<ListComponentFieldDTO> fields = new ArrayList<>();
         fields.addAll(listDTO.getListComponentColumnFieldList());
         fields.addAll(listDTO.getListComponentActionFieldList());
@@ -240,106 +243,116 @@ public class ListRetrieverNativeRepository {
         fields.addAll(listDTO.getListComponentOrderByFieldList());
         fields.addAll(listDTO.getListComponentTopGroupFieldList());
 
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
-
-        List<Long> entityIds =
+        List<Long> fieldCpeIds =
                 fields.stream()
                         .filter(x -> x.getComponentPersistEntity() != null)
                         .map(x -> x.getComponentPersistEntity().getId())
                         .distinct()
                         .collect(Collectors.toList());
 
-        entityIds.forEach(id -> {
+        List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
+        for (Long id : fieldCpeIds) {
+            List<ComponentPersistEntityDTO> cpesUpToId = this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(), id);
 
-            ComponentPersistEntityDTO persistEntity =
-                    componentPersistEntityList
-                            .stream()
-                            .filter(x -> x.getId() == id)
-                            .findFirst()
-                            .orElse(null);
+            List<ComponentPersistEntityDTO> newCpes =
+                    cpesUpToId.stream()
+                            .filter(x -> !cpes.contains(x))
+                            .collect(Collectors.toList());
 
-            this.identifyFromPersistEntitiesByJoins(persistEntity,
-                    entityIds,
-                    componentPersistEntityList
-            );
-        });
+            cpes.addAll(newCpes);
+        }
 
-        return componentPersistEntityList
-                .stream()
-                .filter(x -> x != null)
-                .filter(x -> entityIds.contains(x.getId()))
-                .collect(Collectors.toList());
+        return cpes;
+//        /*
+//         * Get Persist Entities List From Tree
+//         * */
+//        List<ComponentPersistEntityDTO> allCpeList =
+//                this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
+//
+//        /*
+//         * Get Persist Entities ids By Fields's Persist Entities
+//         * */
+//        List<Long> entityIds =
+//                fields.stream()
+//                        .filter(x -> x.getComponentPersistEntity() != null)
+//                        .map(x -> x.getComponentPersistEntity().getId())
+//                        .distinct()
+//                        .collect(Collectors.toList());
+//
+//        /*
+//         * Iterate Persist Entities ids To find Other Persist Entities By Joins
+//         * */
+//        entityIds.forEach(id -> {
+//            ComponentPersistEntityDTO cpe =
+//                    allCpeList
+//                            .stream()
+//                            .filter(x -> x.getId() == id)
+//                            .findFirst()
+//                            .orElse(null);
+//
+//            this.identifyFromPersistEntitiesByJoins(
+//                    cpe,
+//                    entityIds,
+//                    allCpeList
+//            );
+//        });
+
+//        return allCpeList
+//                .stream()
+//                .filter(x -> x != null)
+//                .filter(x -> entityIds.contains(x.getId()))
+//                .collect(Collectors.toList());
     }
 
-    /*
-     * Iterate to Generate FROM Tables & Relashionships part
-     */
-    private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
-                                                    List<Long> entityIds,
-                                                    List<ComponentPersistEntityDTO> componentPersistEntityList) {
-
-        List<String> componentPersistEntityCodes = new ArrayList<>();
-
-//        ComponentPersistEntityDTO persistEntity =
-//                componentPersistEntityList
+//    /*
+//     * Iterate to Generate FROM Tables & Relashionships part
+//     */
+//    private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO cpe,
+//                                                    List<Long> entityIds,
+//                                                    List<ComponentPersistEntityDTO> allCpeList) {
+//
+//        List<String> cpeCodes = new ArrayList<>();
+//
+//        /*
+//        * Find locate statements of Cpe
+//        * */
+//        List<String> locateStatemens =
+//                cpe.getComponentPersistEntityFieldList()
 //                        .stream()
-//                        .filter(x -> x.getId() == entityId)
-//                        .findFirst()
-//                        .orElse(null);
-
-        List<String> locateStatemens =
-                persistEntity.getComponentPersistEntityFieldList()
-                        .stream()
-                        .filter(x -> x.getLocateStatement() != null)
-                        .filter(x -> x.getLocateStatement() != "")
-                        .filter(x -> x.getLocateStatement().contains("."))
-                        .filter(x -> x.getLocateStatement().startsWith("#"))
-                        .map(x -> x.getLocateStatement())
-                        .collect(Collectors.toList());
-
-        locateStatemens
-                .stream()
-                .forEach(x -> {
-                    String[] joinParts = x.split("\\.");
-                    String cpeCode = joinParts[0].replace("#", "");
-                    componentPersistEntityCodes.add(cpeCode);
-                });
-
-
-//        String selector = (persistEntity.getSelector() == null ? "" : persistEntity.getSelector());
-//        String selectorStatement = selector.replaceAll("\\[.+\\]", "");
-//        selectorStatement = selectorStatement.replaceAll("and/i", "");
-//        selectorStatement = selectorStatement.replaceAll("or/i", "");
-//        selectorStatement = selectorStatement.replaceAll("\\(", "");
-//        selectorStatement = selectorStatement.replaceAll("\\)", "");
-//        selectorStatement = selectorStatement.replaceAll(" {2,}", " ");
-//        String[] selectorStatementParts = selectorStatement.split(" ");
-
-//        selectorStatementParts =
-//                selectorStatementParts
-//                        .stream()
-//                        .filter(x -> x.contains("."))
-//                        .filter(x -> x.startsWith("#"))
+//                        .filter(x -> x.getLocateStatement() != null)
+//                        .filter(x -> x.getLocateStatement() != "")
+//                        .filter(x -> x.getLocateStatement().contains("."))
+//                        .filter(x -> x.getLocateStatement().startsWith("#"))
+//                        .map(x -> x.getLocateStatement())
 //                        .collect(Collectors.toList());
-
-//        Arrays.stream(selectorStatementParts)
+//
+//        /*
+//         * Iterate Locate statements of retrive child Cpe codes
+//         * */
+//        locateStatemens
+//                .stream()
 //                .forEach(x -> {
 //                    String[] joinParts = x.split("\\.");
-//                    componentPersistEntityCodes.add(joinParts[0]);
+//                    String cpeCode = joinParts[0].replace("#", "");
+//                    cpeCodes.add(cpeCode);
 //                });
-
-        componentPersistEntityList
-                .stream()
-                .filter(x -> componentPersistEntityCodes.contains(x.getCode()))
-                .filter(x -> !entityIds.contains(x.getId()))
-                .forEach(x -> {
-                    entityIds.add(x.getId());
-                    this.identifyFromPersistEntitiesByJoins(x, entityIds, componentPersistEntityList);
-                });
-
-        //  return entityIds;
-    }
+//
+//        /*
+//         * Iterate child Cpes that are not on the List
+//         * */
+//        allCpeList
+//                .stream()
+//                .filter(x -> cpeCodes.contains(x.getCode()))
+//                .filter(x -> !entityIds.contains(x.getId()))
+//                .forEach(x -> {
+//                  //  entityIds.add(x.getId());
+//                    this.identifyFromPersistEntitiesByJoins(
+//                            x,
+//                            entityIds,
+//                            allCpeList);
+//                });
+//
+//    }
 
     /*
      * Iterate to Generate FROM Tables & Relashionships part
@@ -904,25 +917,54 @@ public class ListRetrieverNativeRepository {
         return groupEntries;
     }
 
-    private List<ComponentPersistEntityDTO> getComponentPersistEntitiesTreeToList(List<ComponentPersistEntityDTO> initialComponentPersistEntityList) {
-        List<ComponentPersistEntityDTO> allComponentPersistEntityList = new ArrayList<>();
-        allComponentPersistEntityList.addAll(initialComponentPersistEntityList);
+//    private List<ComponentPersistEntityDTO> getComponentPersistEntitiesTreeToList(List<ComponentPersistEntityDTO> initialComponentPersistEntityList) {
+//        List<ComponentPersistEntityDTO> allComponentPersistEntityList = new ArrayList<>();
+//        allComponentPersistEntityList.addAll(initialComponentPersistEntityList);
+//
+//        initialComponentPersistEntityList
+//                .stream()
+//                .filter(x -> x.getComponentPersistEntityList() != null)
+//                .filter(x -> x.getComponentPersistEntityList().size() > 0)
+//                .forEach(x -> {
+//
+//                    List<ComponentPersistEntityDTO> componentPersistEntityList =
+//                            this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
+//                    if (componentPersistEntityList.size() > 0) {
+//                        allComponentPersistEntityList.addAll(componentPersistEntityList);
+//                    }
+//
+//                });
+//
+//        return allComponentPersistEntityList;
+//    }
 
-        initialComponentPersistEntityList
+    private List<ComponentPersistEntityDTO> getCpeTreeToListUpToId(List<ComponentPersistEntityDTO> cpeList, Long id) {
+
+        ComponentPersistEntityDTO cpe =
+                            cpeList
+                            .stream()
+                            .filter(x -> x.getId() == id)
+                            .findFirst()
+                            .orElse(null);
+
+        List<ComponentPersistEntityDTO> selectedCpes = new ArrayList<>();
+        if(cpe != null){
+            selectedCpes.add(cpe);
+            return selectedCpes;
+        } else {
+            selectedCpes.addAll(cpeList);
+        }
+
+        cpeList
                 .stream()
                 .filter(x -> x.getComponentPersistEntityList() != null)
                 .filter(x -> x.getComponentPersistEntityList().size() > 0)
                 .forEach(x -> {
-
-                    List<ComponentPersistEntityDTO> componentPersistEntityList =
-                            this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
-                    if (componentPersistEntityList.size() > 0) {
-                        allComponentPersistEntityList.addAll(componentPersistEntityList);
-                    }
-
+                    List<ComponentPersistEntityDTO> selectedChildCpes = this.getCpeTreeToListUpToId(x.getComponentPersistEntityList(), id);
+                    selectedCpes.addAll(selectedChildCpes);
                 });
 
-        return allComponentPersistEntityList;
+        return selectedCpes;
     }
 
 }
