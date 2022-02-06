@@ -149,7 +149,7 @@ public class ListService {
             if (!exprResponce.getError()) {
                 Object fieldValue = exprResponce.getExprUnit().getResult();
                 if(filterDto.getType().equals("list")){
-                    List<List<Object>> response = (List<List<Object>>) fieldValue;
+                    // List<List<Object>> response = (List<List<Object>>) fieldValue;
                     filterDto.setDefaultValue(fieldValue.toString());
                 }else {
                     filterDto.setFieldValue(fieldValue);
@@ -210,8 +210,39 @@ public class ListService {
         ListDTO listDTO = this.getObjectWithDefaults(id);
         listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
+        this.mapUserDefinedShordOrder(listDTO, parameters);
         ListResultsDataDTO listResultsDataDTO = this.getListResultsDataDTO(listDTO);
         return listResultsDataDTO;
+    }
+
+    private void mapUserDefinedShordOrder(ListDTO listDTO, Map<String, String> parameters) {
+
+        if(!parameters.containsKey("sel-sort-code") || !parameters.containsKey("sel-sort-order") ){
+            return;
+        }
+
+        String selectedSortOrder = parameters.get("sel-sort-order");
+        String selectedSortCode = parameters.get("sel-sort-code");
+
+
+        listDTO.getListComponentColumnFieldList()
+                .stream()
+                .filter(x -> x.getCode().equals(selectedSortCode))
+                .forEach(x -> {
+                    ListComponentFieldDTO field = new ListComponentFieldDTO();
+                    field.setCode(x.getCode());
+                    field.setFormulaType(x.getFormulaType());
+                    if(selectedSortOrder.equals("desc")) {
+                        field.setEditor("DESC");
+                    } else {
+                        field.setEditor("ASC");
+                    }
+                    field.setType(x.getType());
+                    field.setComponentPersistEntity(x.getComponentPersistEntity());
+                    field.setComponentPersistEntityField(x.getComponentPersistEntityField());
+                    listDTO.getListComponentOrderByFieldList().add(0,field);
+                });
+
     }
 
     private ListDTO mapParametersToListDto(ListDTO listDTO, Map<String, String> parameters) {

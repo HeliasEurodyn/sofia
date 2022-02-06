@@ -210,18 +210,22 @@ public class ListRetrieverNativeRepository {
      * Iterate to Generate SELECT Columns part
      */
     private String generateSelectLeftGroupPart(ListDTO listDTO) {
-
-        String queryString = "SELECT ";
         List<String> selectParts = new ArrayList<>();
 
         listDTO.getListComponentLeftGroupFieldList()
                 .stream()
                 .forEach(x -> {
-                    String selectPart =
-                            x.getComponentPersistEntity().getCode() + "." +
-                                    x.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + x.getCode();
+                    String selectPart = "";
+                    if((x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql")){
+                        selectPart = "( " + x.getEditor() + ") as " + x.getCode();
+                    } else {
+                        selectPart =
+                                x.getComponentPersistEntity().getCode() + "." +
+                                        x.getComponentPersistEntityField().getPersistEntityField().getName() + " as " + x.getCode();
+                    }
                     selectParts.add(selectPart);
                 });
+
         selectParts.add("count(*) AS total");
 
         return "SELECT " + String.join(",", selectParts);
@@ -626,8 +630,15 @@ public class ListRetrieverNativeRepository {
     private String generateOrderByPart(ListDTO listDTO) {
         List<String> orderByParts = new ArrayList<>();
         listDTO.getListComponentOrderByFieldList().forEach(x -> {
-            String orderByPart = x.getComponentPersistEntity().getCode() + "." +
-                    x.getComponentPersistEntityField().getPersistEntityField().getName();
+            String orderByPart = "";
+
+            if((x.getFormulaType()==null?"":x.getFormulaType()).equals("sql")){
+                orderByPart = x.getCode();
+            } else {
+                orderByPart = x.getComponentPersistEntity().getCode() + "." +
+                        x.getComponentPersistEntityField().getPersistEntityField().getName();
+            }
+
             String editor = (x.getEditor() == null ? "" : x.getEditor());
             if (editor.equals("ASC") || editor.equals("DESC")) {
                 orderByPart += " " + editor;

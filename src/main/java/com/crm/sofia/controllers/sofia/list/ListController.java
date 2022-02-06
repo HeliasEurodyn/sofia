@@ -55,7 +55,9 @@ public class ListController {
     }
 
     @GetMapping(path = "/results/page/{page}")
-    ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters, @PathVariable("page") Long page, @RequestParam("id") Long id) {
+    ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
+                                     @PathVariable("page") Long page,
+                                     @RequestParam("id") Long id) {
         return this.listService.getObjectDataByParameters(parameters,page, id);
     }
 
