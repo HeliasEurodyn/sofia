@@ -73,6 +73,7 @@ public class RmtRepository {
                         "description " +
                         "FROM risk_assessment " +
                         "WHERE created_by = :user_id " +
+                        "AND analyzed = 0 " +
                         "ORDER BY created_on DESC " +
                         "LIMIT :size OFFSET :offset";
 
@@ -110,6 +111,7 @@ public class RmtRepository {
                         "description " +
                         "FROM risk_assessment " +
                         "WHERE created_by = :user_id " +
+                        "AND analyzed = 0 " +
                         "ORDER BY created_on DESC ";
 
         Query query = entityManager.createNativeQuery(queryString);
