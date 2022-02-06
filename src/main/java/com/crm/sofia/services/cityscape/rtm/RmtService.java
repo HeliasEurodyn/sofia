@@ -4,18 +4,11 @@ import com.crm.sofia.dto.cityscape.rtm.*;
 import com.crm.sofia.dto.sofia.auth.RmtLoginResponseDTO;
 import com.crm.sofia.native_repository.rita.rmt.RmtRepository;
 import com.crm.sofia.rest_template.cityscape.RtmRestTemplate;
-import com.crm.sofia.services.sofia.user.UserService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class RmtService {
@@ -79,7 +72,12 @@ public class RmtService {
                 compositeAsset.getBasic_assets().forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
                         threat.getRisk().forEach(risk -> {
-                            this.rmtRepository.saveRisk(threat.getDescription(), risk);
+                            Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
+                            Double riskScore =  risk.getRisk_score();
+                            Double riskValue = probabilityOfOccurrence * riskScore;
+                            Double riskValueR = (Math.round(riskValue) / 100.0);
+                            risk.setRisk(riskValueR);
+                            this.rmtRepository.saveRisk(threat.getDescription(),rmt.getId(), risk);
                         });
                     });
                 });
@@ -99,9 +97,10 @@ public class RmtService {
                             System.out.println();
                             Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
                             Double riskScore =  risk.getRisk_score();
-                            Double riskValue = (probabilityOfOccurrence / 100.0) * riskScore;
-                            if(riskValue > overalRiskList.get(0)){
-                                overalRiskList.set(0,riskValue);
+                            Double riskValue = probabilityOfOccurrence * riskScore;
+                            Double riskValueR = (Math.round(riskValue) / 100.0);
+                            if(riskValueR > overalRiskList.get(0)){
+                                overalRiskList.set(0,riskValueR);
                             }
                         });
                     });
@@ -134,8 +133,8 @@ public class RmtService {
 
                 basicAssets.forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
-                        List<CountermeasureDTO> cisControls = this.rmtRepository.retrieveCisControls(compositeAsset.getId(), basicAsset.getId(), threat.getId());
-                        threat.setCountermeasures(cisControls);
+                        List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(), basicAsset.getId(), threat.getId());
+                        threat.setCountermeasures(counterMeasures);
                     });
                 });
             });

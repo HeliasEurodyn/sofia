@@ -23,4 +23,5 @@ public class RiskDTO {
 
     private Double risk_score;
 
+    private Double risk;
 }

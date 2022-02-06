@@ -10,9 +10,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class RmtRepository {
@@ -234,7 +231,7 @@ public class RmtRepository {
         return links;
     }
 
-    public List<CountermeasureDTO> retrieveCisControls(Long compositeAssetId, Long assetId, Long threatId) {
+    public List<CountermeasureDTO> retrieveCounterMeasures(Long compositeAssetId, Long assetId, Long threatId) {
 
         String queryString =
                 "SELECT "+
@@ -244,11 +241,15 @@ public class RmtRepository {
                         "cc.security_function, "+
                         "cc.cis_control_category_id, "+
                         "cc.asset_type_group_id, "+
-                        "cc.cis_asset_type "+
+                        "cc.cis_asset_type, "+
+                        "cm.id AS cmid, "+
+                        "cm.code AS cmcode, "+
+                        "cm.name AS cmname "+
                         "FROM composite_asset ca "+
                         "INNER JOIN asset_to_composite_asset aca ON aca.composite_asset_id = ca.id "+
                         "INNER JOIN asset_to_composite_asset_threat acat ON acat.asset_to_composite_asset_id = aca.id "+
                         "INNER JOIN asset_to_composite_asset_threat_counter_measure acatc ON acatc.asset_to_composite_asset_threat_id = acat.id "+
+                        "INNER JOIN countermeasure cm on cm.id = acatc.counter_measure_id "+
                         "INNER JOIN cis_control_to_countermeasure ccm on ccm.countermeasure_id = acatc.counter_measure_id "+
                         "INNER JOIN cis_control cc on cc.id = ccm.cis_control_id "+
                         "WHERE ca.id = :composite_asset_id "+
@@ -262,15 +263,27 @@ public class RmtRepository {
         List<Object[]> fields = query.getResultList();
 
         List<CountermeasureDTO> countermeasures = new ArrayList<>();
+        Long counterMeasureId = 0L;
+        CountermeasureDTO countermeasure = new CountermeasureDTO();
         for (Object[] field : fields) {
-            CountermeasureDTO countermeasure = new CountermeasureDTO();
 
-            countermeasure.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
-            countermeasure.setCode(field[1]==null?null:(String)field[1]);
-            countermeasure.setTitle(field[2]==null?null:(String)field[2]);
-            countermeasure.setSecurity_function(field[3]==null?null:(String)field[3]);
-            countermeasure.setCis_asset_type(field[6]==null?null:(String)field[6]);
-            countermeasures.add(countermeasure);
+            Long curCounterMeasureId = (field[7]==null?null:((BigInteger)field[7]).longValue());
+            if(!curCounterMeasureId.equals(counterMeasureId)){
+                countermeasure = new CountermeasureDTO();
+                countermeasure.setId(field[7]==null?null:((BigInteger)field[7]).longValue());
+                countermeasure.setCode(field[8]==null?null:(String)field[8]);
+                countermeasure.setName(field[9]==null?null:(String)field[9]);
+                countermeasure.setCisControls(new ArrayList<>());
+                countermeasures.add(countermeasure);
+            }
+
+            CisControlDTO cisControl = new CisControlDTO();
+            cisControl.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
+            cisControl.setCode(field[1]==null?null:(String)field[1]);
+            cisControl.setTitle(field[2]==null?null:(String)field[2]);
+            cisControl.setSecurity_function(field[3]==null?null:(String)field[3]);
+            cisControl.setCis_asset_type(field[6]==null?null:(String)field[6]);
+            countermeasure.getCisControls().add(cisControl);
         }
 
         return countermeasures;
@@ -392,14 +405,16 @@ public class RmtRepository {
         return assets;
     }
 
-    public void saveRisk(String assetToCompositeAssetThreatId, RiskDTO risk) {
+    public void saveRisk(String assetToCompositeAssetThreatId,  Long risk_assessment_id, RiskDTO risk) {
         Query query =
-                entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, risk_score, asset_to_composite_asset_threat_id) " +
-                        "VALUES (:cve_id, :description, :link, :risk_score, :asset_to_composite_asset_threat_id);");
+                entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, risk_score, asset_to_composite_asset_threat_id, risk, risk_assessment_id) " +
+                        "VALUES (:cve_id, :description, :link, :risk_score, :asset_to_composite_asset_threat_id, :risk, :risk_assessment_id);");
         query.setParameter("cve_id",risk.getCve_id());
         query.setParameter("description",risk.getDescription());
         query.setParameter("link",risk.getLink());
         query.setParameter("risk_score",risk.getRisk_score());
+        query.setParameter("risk",risk.getRisk());
+        query.setParameter("risk_assessment_id",risk_assessment_id);
         query.setParameter("asset_to_composite_asset_threat_id",Double.valueOf(assetToCompositeAssetThreatId));
         query.executeUpdate();
     }

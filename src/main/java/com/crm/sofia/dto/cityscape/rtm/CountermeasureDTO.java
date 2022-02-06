@@ -21,12 +21,7 @@ public class CountermeasureDTO {
 
     private String code;
 
-    private String title;
+    private String name;
 
-   // private String description;
-
-    private String security_function;
-
-    private String cis_asset_type;
-
+    private List<CisControlDTO> cisControls;
 }
