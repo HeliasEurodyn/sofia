@@ -1,7 +1,7 @@
 package com.crm.sofia.native_repository.sofia.info_card;
 
 import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
-import org.springframework.beans.factory.annotation.Value;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -11,19 +11,19 @@ import java.util.List;
 @Service
 public class InfoCardNativeRepository {
 
-    @Value("${sofia.db.name}")
-    private String sofiaDatabase;
-
+    private final JWTService jwtService;
     private final EntityManager entityManager;
 
 
-    public InfoCardNativeRepository(EntityManager entityManager) {
+    public InfoCardNativeRepository(JWTService jwtService, EntityManager entityManager) {
+        this.jwtService = jwtService;
         this.entityManager = entityManager;
     }
 
     public InfoCardTextResponceDTO getData(String sql) {
-
+        sql = sql.replace("##asset_id##", this.jwtService.getUserId().toString());
         Query query = entityManager.createNativeQuery(sql);
+
         List<Object> queryResults = query.getResultList();
 
         if (queryResults.isEmpty()) {
