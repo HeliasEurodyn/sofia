@@ -435,4 +435,38 @@ public class RmtRepository {
         query.setParameter("risk_assessment_id",id);
         query.executeUpdate();
     }
+
+    public List<RiskDTO> retrieveRisks(Long riskAssessmentId, Long assetToCompositeAssetThreatId) {
+        String queryString =
+                "SELECT " +
+                        "r.id, " +
+                        "r.cve_id, " +
+                        "r.description, " +
+                        "r.link, " +
+                        "r.risk_score, " +
+                        "r.asset_to_composite_asset_threat_id, " +
+                        "r.risk_assessment_id, " +
+                        "r.risk " +
+                        "FROM risk r " +
+                        "WHERE r.asset_to_composite_asset_threat_id = :asset_to_composite_asset_threat_id " +
+                        "AND r.risk_assessment_id = :risk_assessment_id ";
+
+        Query query = entityManager.createNativeQuery(queryString);
+        query.setParameter("risk_assessment_id", riskAssessmentId);
+        query.setParameter("asset_to_composite_asset_threat_id", assetToCompositeAssetThreatId);
+
+        List<Object[]> fields = query.getResultList();
+        List<RiskDTO> risks = new ArrayList<>();
+        for (Object[] field : fields) {
+            RiskDTO risk = new RiskDTO();
+            risk.setCve_id(field[1]==null?null:(String)field[1]);
+            risk.setDescription(field[2]==null?null:(String)field[2]);
+            risk.setLink(field[3]==null?null:(String)field[3]);
+            risk.setRisk_score(field[4]==null?null:(Double)field[4]);
+            risk.setRisk(field[7]==null?null:(Double)field[7]);
+            risks.add(risk);
+        }
+
+        return risks;
+    }
 }

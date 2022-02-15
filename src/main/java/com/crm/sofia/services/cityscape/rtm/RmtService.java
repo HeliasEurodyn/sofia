@@ -56,7 +56,37 @@ public class RmtService {
     @Transactional
     @Modifying
     public RmtDTO sendToRmt(Long id){
-        RmtDTO rmt = this.retrieveRiskAssessmentById(id);
+
+        RmtDTO rmt = this.rmtRepository.retrieveRiskAssessment(id);
+
+        List<ServiceDTO> services = this.rmtRepository.retrieveBusinessServices(id);
+        rmt.setServices(services);
+
+        services.forEach(service -> {
+            List<CompositeAssetDTO> compositeAssets = this.rmtRepository.retrieveCompositeAssets(service.getId());
+            service.setComposite_assets(compositeAssets);
+
+            List<ServiceCommunicationLinkDTO> serviceLinks = this.rmtRepository.retrieveServiceLinks(service.getId());
+            service.setCommunication_links(serviceLinks);
+
+            compositeAssets.forEach(compositeAsset -> {
+                List<BasicAssetDTO> basicAssets = this.rmtRepository.retrieveAssetsWithThreats(Long.valueOf(compositeAsset.getId()));
+                compositeAsset.setBasic_assets(basicAssets);
+
+                List<CompositeAssetCommunicationLinkDTO> compositeLinks = this.rmtRepository.retrieveCompositeAssetLinks(Long.valueOf(compositeAsset.getId()));
+                compositeAsset.setCommunication_links(compositeLinks);
+
+                basicAssets.forEach(basicAsset -> {
+                    basicAsset.getThreats().forEach(threat -> {
+
+                        List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(), basicAsset.getId(), threat.getId());
+                        threat.setCountermeasures(counterMeasures);
+
+                    });
+                });
+            });
+        });
+
         RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
         RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
         this.saveRmtResponse(rmtResponse);
@@ -94,7 +124,6 @@ public class RmtService {
                 compositeAsset.getBasic_assets().forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
                         threat.getRisk().forEach(risk -> {
-                            System.out.println();
                             Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
                             Double riskScore =  risk.getRisk_score();
                             Double riskValue = probabilityOfOccurrence * riskScore;
@@ -133,8 +162,13 @@ public class RmtService {
 
                 basicAssets.forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
+
+                        List<RiskDTO> risks = this.rmtRepository.retrieveRisks(id, Long.valueOf(threat.getDescription()));
+                        threat.setRisk(risks);
+
                         List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(), basicAsset.getId(), threat.getId());
                         threat.setCountermeasures(counterMeasures);
+
                     });
                 });
             });
