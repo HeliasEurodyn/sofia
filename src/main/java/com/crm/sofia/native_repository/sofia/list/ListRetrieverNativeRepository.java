@@ -438,7 +438,8 @@ public class ListRetrieverNativeRepository {
         Optional<ListComponentFieldDTO> optionalRequiredFieldEmpty =
                 filtersList
                         .stream()
-                        .filter(x -> (x.getFieldValue() == null ? "" : x.getFieldValue()).equals("") && x.getRequired())
+                        .filter(x -> (x.getFieldValue() == null ? "" : x.getFieldValue()).equals("") &&
+                                        (x.getRequired() == null ? false : x.getRequired()))
                         .findFirst();
 
         if (optionalRequiredFieldEmpty.isPresent()) {

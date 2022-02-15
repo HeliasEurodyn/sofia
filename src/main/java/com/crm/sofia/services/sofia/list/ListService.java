@@ -11,7 +11,6 @@ import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
 import com.crm.sofia.model.sofia.expression.ExprResponce;
-import com.crm.sofia.model.sofia.language.Language;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
@@ -162,7 +161,7 @@ public class ListService {
         return listUiDTO;
     }
 
-    public ListResultsDataDTO getListResultsDataDTO(ListDTO listDTO) {
+    public ListResultsDataDTO getListResultsData(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
 
         List<Map<String, Object>> listContent = this.listRetrieverNativeRepository.executeListAndGetData(listDTO);
@@ -186,7 +185,6 @@ public class ListService {
             if (pageSizeOffset > 0) totalPages += 1;
             listResultsDataDTO.setPageSize(pageSize);
             listResultsDataDTO.setTotalPages(totalPages);
-
         }
 
         return listResultsDataDTO;
@@ -202,7 +200,16 @@ public class ListService {
 
         ListDTO listDTO = this.getObjectWithDefaults(ids.get(0));
         listDTO = this.mapParametersToListDto(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getListResultsDataDTO(listDTO);
+        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
+        return listResultsDataDTO;
+    }
+
+    public ListResultsDataDTO getPivotObjectDataByParameters(Map<String, String> parameters, Long id) {
+        ListDTO listDTO = this.getObjectWithDefaults(id);
+        listDTO.setCurrentPage(0L);
+        listDTO = this.mapParametersToListDto(listDTO, parameters);
+        this.mapPivotColumns(listDTO);
+        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
         return listResultsDataDTO;
     }
 
@@ -211,8 +218,16 @@ public class ListService {
         listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         this.mapUserDefinedShordOrder(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getListResultsDataDTO(listDTO);
+        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
         return listResultsDataDTO;
+    }
+
+    private void mapPivotColumns(ListDTO listDTO) {
+        listDTO.getListComponentColumnFieldList().addAll(listDTO.getListComponentLeftGroupFieldList());
+        listDTO.getListComponentColumnFieldList().addAll(listDTO.getListComponentTopGroupFieldList());
+
+        listDTO.setListComponentLeftGroupFieldList(new ArrayList<>());
+        listDTO.setListComponentTopGroupFieldList(new ArrayList<>());
     }
 
     private void mapUserDefinedShordOrder(ListDTO listDTO, Map<String, String> parameters) {
@@ -242,7 +257,6 @@ public class ListService {
                     field.setComponentPersistEntityField(x.getComponentPersistEntityField());
                     listDTO.getListComponentOrderByFieldList().add(0,field);
                 });
-
     }
 
     private ListDTO mapParametersToListDto(ListDTO listDTO, Map<String, String> parameters) {

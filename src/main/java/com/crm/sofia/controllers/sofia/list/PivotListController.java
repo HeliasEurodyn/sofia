@@ -23,12 +23,12 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/list")
-public class ListController {
+@RequestMapping("/pivot-list")
+public class PivotListController {
 
     private final ListService listService;
 
-    public ListController(ListService listService) {
+    public PivotListController(ListService listService) {
         this.listService = listService;
     }
 
@@ -41,7 +41,7 @@ public class ListController {
 
     @GetMapping(path = "ui")
     ListUiDTO getUiObject(@RequestParam("id") Long id) {
-       return this.listService.getUiListObject(id);
+        return this.listService.getUiListObject(id);
     }
 
     @GetMapping
@@ -51,32 +51,7 @@ public class ListController {
 
     @GetMapping(path = "/results")
     ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
-        return this.listService.getObjectDataByParameters(parameters,0L, id);
-    }
-
-    @GetMapping(path = "/results/page/{page}")
-    ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
-                                     @PathVariable("page") Long page,
-                                     @RequestParam("id") Long id) {
-        return this.listService.getObjectDataByParameters(parameters,page, id);
-    }
-
-    @GetMapping(path = "/left-grouping/results")
-    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
-        return this.listService.getObjectLeftGroupingDataByParameters(parameters, id);
-    }
-
-    @PostMapping(path = "/data-excel")
-    public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
-        ListResultsDataDTO resultsDataDTO = this.listService.getListResultsData(dto);
-        ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new InputStreamResource(in));
+        return this.listService.getPivotObjectDataByParameters(parameters, id);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")
@@ -106,12 +81,5 @@ public class ListController {
         return this.listService.getJavaScriptFactory();
     }
 
-    @PutMapping(path = "/update-field")
-    void updateField(@RequestParam("id") Long id,
-                     @RequestParam("field") String field,
-                     @RequestParam("field-value") Object fieldValue,
-                     @RequestParam("rel") Object rel ) {
-        this.listService.updateField(id, field, fieldValue, rel);
-    }
 
 }
