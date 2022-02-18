@@ -25,7 +25,7 @@ public class ThreatDTO {
 
     private String description;
 
-    private Double probability_of_occurrence;
+    private Double occurrence;
 
     private ThreatImpactSelectionDTO impact;
 

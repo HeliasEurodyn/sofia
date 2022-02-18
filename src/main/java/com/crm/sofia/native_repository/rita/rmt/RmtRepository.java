@@ -394,7 +394,7 @@ public class RmtRepository {
             threat.setCode(field[15]==null?null:(String)field[15]);
             threat.setName(field[16]==null?null:(String)field[16]);
             threat.setDescription(field[13]==null?"":((BigInteger)field[13]).toString());
-            threat.setProbability_of_occurrence(field[24]==null?null:(Double)field[24]);
+            threat.setOccurrence(field[24]==null?null:(Double)field[24]);
             ThreatImpactSelectionDTO impact = new ThreatImpactSelectionDTO();
             threat.setImpact(impact);
             impact.setConfidentiality(field[20]==null?false: ((Integer)field[20] != 0));
@@ -407,24 +407,46 @@ public class RmtRepository {
         return assets;
     }
 
-    public void saveRisk(String assetToCompositeAssetThreatId,  Long risk_assessment_id, RiskDTO risk) {
+    public void saveRisk(String assetToCompositeAssetThreatId,
+                         Long risk_assessment_id,
+                         RiskDTO risk,
+                         Double confidentialityScore,
+                         Double integrityScore,
+                         Double availabilityScore,
+                         Double sumScore) {
+
         Query query =
-                entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, risk_score, asset_to_composite_asset_threat_id, risk, risk_assessment_id) " +
-                        "VALUES (:cve_id, :description, :link, :risk_score, :asset_to_composite_asset_threat_id, :risk, :risk_assessment_id);");
+                entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, asset_to_composite_asset_threat_id, risk_assessment_id, " +
+                        "confidentiality, integrity, availability, confidentiality_score, integrity_score, availability_score, score_sum) " +
+                        "VALUES (:cve_id, :description, :link, :asset_to_composite_asset_threat_id, :risk_assessment_id, " +
+                        ":confidentiality, :integrity, :availability, :confidentiality_score, :integrity_score, :availability_score, :score_sum);");
         query.setParameter("cve_id",risk.getCve_id());
         query.setParameter("description",risk.getDescription());
         query.setParameter("link",risk.getLink());
-        query.setParameter("risk_score",risk.getRisk_score());
-        query.setParameter("risk",risk.getRisk());
-        query.setParameter("risk_assessment_id",risk_assessment_id);
         query.setParameter("asset_to_composite_asset_threat_id",Double.valueOf(assetToCompositeAssetThreatId));
+        query.setParameter("risk_assessment_id",risk_assessment_id);
+
+        query.setParameter("confidentiality",risk.getRisk_score().getConfidentiality());
+        query.setParameter("integrity",risk.getRisk_score().getIntegrity());
+        query.setParameter("availability",risk.getRisk_score().getAvailability());
+
+        query.setParameter("confidentiality_score",confidentialityScore);
+        query.setParameter("integrity_score",integrityScore);
+        query.setParameter("availability_score",availabilityScore);
+
+        query.setParameter("score_sum",sumScore);
+
         query.executeUpdate();
     }
 
-    public void saveOveralRisk(Long riskAssessmentId, Double overalRisk) {
+    public void saveOveralRisk(Long riskAssessmentId) {
         Query query =
-                entityManager.createNativeQuery("UPDATE `risk_assessment` SET analyzed='0', overal_risk=:overal_risk WHERE id = :id ");
-        query.setParameter("overal_risk",overalRisk);
+                entityManager.createNativeQuery(
+                        " UPDATE risk_assessment ra "+
+                        " SET ra.overal_risk = "+
+                                " (SELECT r.score_sum FROM risk r WHERE r.risk_assessment_id = ra.id ORDER BY r.score_sum DESC LIMIT 1) "+
+                        " WHERE id = :id "
+                );
         query.setParameter("id",riskAssessmentId);
         query.executeUpdate();
     }
@@ -439,14 +461,21 @@ public class RmtRepository {
     public List<RiskDTO> retrieveRisks(Long riskAssessmentId, Long assetToCompositeAssetThreatId) {
         String queryString =
                 "SELECT " +
-                        "r.id, " +
+                        "r.id, " + //0
                         "r.cve_id, " +
                         "r.description, " +
                         "r.link, " +
-                        "r.risk_score, " +
                         "r.asset_to_composite_asset_threat_id, " +
-                        "r.risk_assessment_id, " +
-                        "r.risk " +
+                        "r.risk_assessment_id, " + //5
+
+                        "r.confidentiality, " + //6
+                        "r.integrity, " +
+                        "r.availability, " +
+                        "r.confidentiality_score, " +
+                        "r.integrity_score, " +
+                        "r.availability_score, " +
+                        "r.score_sum " +
+
                         "FROM risk r " +
                         "WHERE r.asset_to_composite_asset_threat_id = :asset_to_composite_asset_threat_id " +
                         "AND r.risk_assessment_id = :risk_assessment_id ";
@@ -462,8 +491,12 @@ public class RmtRepository {
             risk.setCve_id(field[1]==null?null:(String)field[1]);
             risk.setDescription(field[2]==null?null:(String)field[2]);
             risk.setLink(field[3]==null?null:(String)field[3]);
-            risk.setRisk_score(field[4]==null?null:(Double)field[4]);
-            risk.setRisk(field[7]==null?null:(Double)field[7]);
+//            risk.setRisk(field[7]==null?null:(Double)field[7]);
+            RiskScoreDTO riskScore = new RiskScoreDTO();
+            riskScore.setConfidentiality(field[9]==null?null:(Double)field[9]);
+            riskScore.setIntegrity(field[10]==null?null:(Double)field[10]);
+            riskScore.setAvailability(field[11]==null?null:(Double)field[11]);
+
             risks.add(risk);
         }
 

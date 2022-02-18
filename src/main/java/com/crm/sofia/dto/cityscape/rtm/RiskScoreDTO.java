@@ -13,15 +13,20 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class RiskDTO {
+public class RiskScoreDTO {
 
-    private String cve_id;
+    private Double confidentiality;
 
-    private String description;
+    private Double integrity;
 
-    private String link;
+    private Double availability;
 
-    private RiskScoreDTO risk_score;
+//    private Double confidentiality_score;
+//
+//    private Double integrity_score;
+//
+//    private Double availability_score;
+//
+//    private Double score_sum;
 
-//    private Double risk;
 }

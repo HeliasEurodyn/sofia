@@ -55,7 +55,7 @@ public class RmtService {
 
     @Transactional
     @Modifying
-    public RmtDTO sendToRmt(Long id){
+    public RmtDTO sendToRmt(Long id) {
 
         RmtDTO rmt = this.rmtRepository.retrieveRiskAssessment(id);
 
@@ -90,54 +90,54 @@ public class RmtService {
         RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
         RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
         this.saveRmtResponse(rmtResponse);
-        this.calculateOveralRisk(rmtResponse);
+        this.rmtRepository.saveOveralRisk(rmt.getId());
 
         return rmtResponse;
     }
 
-    public void saveRmtResponse(RmtDTO rmt){
+    public void saveRmtResponse(RmtDTO rmt) {
         this.rmtRepository.deleteExistingRisksForRiskAssesment(rmt.getId());
         rmt.getServices().forEach(service -> {
             service.getComposite_assets().forEach(compositeAsset -> {
                 compositeAsset.getBasic_assets().forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
                         threat.getRisk().forEach(risk -> {
-                            Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
-                            Double riskScore =  risk.getRisk_score();
-                            Double riskValue = probabilityOfOccurrence * riskScore;
-                            Double riskValueR = (Math.round(riskValue) / 100.0);
-                            risk.setRisk(riskValueR);
-                            this.rmtRepository.saveRisk(threat.getDescription(),rmt.getId(), risk);
+
+                            Double occurrence = threat.getOccurrence();
+
+                            Double confidentiality = risk.getRisk_score().getConfidentiality();
+                            Double integrity = risk.getRisk_score().getIntegrity();
+                            Double availability = risk.getRisk_score().getAvailability();
+
+                            Integer serviceConfidentiality = service.getImpact().getConfidentiality();
+                            Integer serviceIntegrity = service.getImpact().getIntegrity();
+                            Integer serviceAvailability = service.getImpact().getAvailability();
+
+                            Double confidentialityScore = confidentiality * serviceConfidentiality * occurrence;
+                            Double integrityScore = integrity * serviceIntegrity * occurrence;
+                            Double availabilityScore = availability * serviceAvailability * occurrence;
+                            Double sumScore = confidentialityScore + integrityScore + availabilityScore;
+
+                            Double confidentialityScoreR = (Math.round((confidentialityScore*100)) / 100.0);
+                            Double integrityScoreR = (Math.round((integrityScore*100)) / 100.0);
+                            Double availabilityScoreR = (Math.round((availabilityScore*100)) / 100.0);
+                            Double sumScoreR = (Math.round((sumScore*100)) / 100.0);
+
+                            this.rmtRepository.saveRisk(
+                                    threat.getDescription(),
+                                    rmt.getId(),
+                                    risk,
+                                    confidentialityScoreR,
+                                    integrityScoreR,
+                                    availabilityScoreR,
+                                    sumScoreR
+                                    );
+
                         });
                     });
                 });
             });
         });
-    }
-
-    public void calculateOveralRisk(RmtDTO rmt){
-
-        List<Double> overalRiskList = new ArrayList<>(Arrays.asList(0.0));
-
-        rmt.getServices().forEach(service -> {
-            service.getComposite_assets().forEach(compositeAsset -> {
-                compositeAsset.getBasic_assets().forEach(basicAsset -> {
-                    basicAsset.getThreats().forEach(threat -> {
-                        threat.getRisk().forEach(risk -> {
-                            Double probabilityOfOccurrence =  threat.getProbability_of_occurrence();
-                            Double riskScore =  risk.getRisk_score();
-                            Double riskValue = probabilityOfOccurrence * riskScore;
-                            Double riskValueR = (Math.round(riskValue) / 100.0);
-                            if(riskValueR > overalRiskList.get(0)){
-                                overalRiskList.set(0,riskValueR);
-                            }
-                        });
-                    });
-                });
-            });
-        });
-
-        this.rmtRepository.saveOveralRisk(rmt.getId(), overalRiskList.get(0));
     }
 
     public RmtDTO retrieveRiskAssessmentById(Long id) {

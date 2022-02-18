@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -36,8 +37,7 @@ public class RtmRestTemplate {
 
             return responce;
         }catch(Exception ex){
-            log.error("Exception Ocurred on runRiskAssessment Rest Template", ex);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
     }
 
