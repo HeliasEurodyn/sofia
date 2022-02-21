@@ -118,19 +118,14 @@ public class RmtService {
                             Double availabilityScore = availability * serviceAvailability * occurrence;
                             Double sumScore = confidentialityScore + integrityScore + availabilityScore;
 
-                            Double confidentialityScoreR = (Math.round((confidentialityScore*100)) / 100.0);
-                            Double integrityScoreR = (Math.round((integrityScore*100)) / 100.0);
-                            Double availabilityScoreR = (Math.round((availabilityScore*100)) / 100.0);
-                            Double sumScoreR = (Math.round((sumScore*100)) / 100.0);
-
                             this.rmtRepository.saveRisk(
                                     threat.getDescription(),
                                     rmt.getId(),
                                     risk,
-                                    confidentialityScoreR,
-                                    integrityScoreR,
-                                    availabilityScoreR,
-                                    sumScoreR
+                                    confidentialityScore,
+                                    integrityScore,
+                                    availabilityScore,
+                                    sumScore
                                     );
 
                         });
