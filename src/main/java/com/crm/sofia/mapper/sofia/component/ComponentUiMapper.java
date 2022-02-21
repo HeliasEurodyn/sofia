@@ -85,6 +85,16 @@ public abstract class ComponentUiMapper {
                     this.clearIds(cpe.getDefaultComponentPersistEntityList());
                 });
 
+        componentPersistEntityList
+                .stream()
+                .filter(cpe -> cpe.getComponentPersistEntityDataLines() != null)
+                .filter(cpe -> (cpe.getMultiDataLine() == null ? false : cpe.getMultiDataLine()) == true)
+                .forEach(cpe -> {
+                    cpe.getComponentPersistEntityDataLines().forEach(cpeDl -> {
+                        this.clearIds(cpeDl.getComponentPersistEntityList());
+                    });
+                });
+
         return componentPersistEntityList;
     }
 
