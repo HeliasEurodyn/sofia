@@ -252,8 +252,7 @@ public class RmtRepository {
                         "INNER JOIN asset_to_composite_asset_threat acat ON acat.asset_to_composite_asset_id = aca.id "+
                         "INNER JOIN asset_to_composite_asset_threat_counter_measure acatc ON acatc.asset_to_composite_asset_threat_id = acat.id "+
                         "INNER JOIN countermeasure cm on cm.id = acatc.counter_measure_id "+
-                        "INNER JOIN cis_control_to_countermeasure ccm on ccm.countermeasure_id = acatc.counter_measure_id "+
-                        "INNER JOIN cis_control cc on cc.id = ccm.cis_control_id "+
+                        "INNER JOIN cis_control cc on cc.id = cm.cis_control_id "+
                         "WHERE ca.id = :composite_asset_id "+
                         "AND aca.asset_id = :asset_id "+
                         "AND acat.threat_id = :threat_id";
@@ -265,27 +264,20 @@ public class RmtRepository {
         List<Object[]> fields = query.getResultList();
 
         List<CountermeasureDTO> countermeasures = new ArrayList<>();
-        Long counterMeasureId = 0L;
-        CountermeasureDTO countermeasure = new CountermeasureDTO();
         for (Object[] field : fields) {
-
-            Long curCounterMeasureId = (field[7]==null?null:((BigInteger)field[7]).longValue());
-            if(!curCounterMeasureId.equals(counterMeasureId)){
-                countermeasure = new CountermeasureDTO();
+                CountermeasureDTO countermeasure = new CountermeasureDTO();
                 countermeasure.setId(field[7]==null?null:((BigInteger)field[7]).longValue());
                 countermeasure.setCode(field[8]==null?null:(String)field[8]);
                 countermeasure.setName(field[9]==null?null:(String)field[9]);
-                countermeasure.setCisControls(new ArrayList<>());
-                countermeasures.add(countermeasure);
-            }
 
-            CisControlDTO cisControl = new CisControlDTO();
-            cisControl.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
-            cisControl.setCode(field[1]==null?null:(String)field[1]);
-            cisControl.setTitle(field[2]==null?null:(String)field[2]);
-            cisControl.setSecurity_function(field[3]==null?null:(String)field[3]);
-            cisControl.setCis_asset_type(field[6]==null?null:(String)field[6]);
-            countermeasure.getCisControls().add(cisControl);
+                CisControlDTO cisControl = new CisControlDTO();
+                cisControl.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
+                cisControl.setCode(field[1]==null?null:(String)field[1]);
+                cisControl.setTitle(field[2]==null?null:(String)field[2]);
+                cisControl.setSecurity_function(field[3]==null?null:(String)field[3]);
+                cisControl.setCis_asset_type(field[6]==null?null:(String)field[6]);
+                countermeasure.setCisControl(cisControl);
+                countermeasures.add(countermeasure);
         }
 
         return countermeasures;

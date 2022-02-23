@@ -23,5 +23,5 @@ public class CountermeasureDTO {
 
     private String name;
 
-    private List<CisControlDTO> cisControls;
+    private CisControlDTO cisControl;
 }
