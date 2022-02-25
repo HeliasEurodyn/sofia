@@ -169,9 +169,11 @@ public class RmtRepository {
                 "SELECT " +
                         "acal.id, " +
                         "acal.type, " +
-                        "acal.asset_id_source, " +
-                        "acal.asset_id_destination " +
+                        "aca_source.id AS aca_source_id, " +
+                        "aca_dest.id  AS aca_dest_id " +
                         "FROM asset_to_composite_asset_link acal " +
+                        "INNER JOIN asset_to_composite_asset aca_source ON aca_source.composite_asset_id = acal.composite_asset_id AND aca_source.asset_id = acal.asset_id_source "+
+                        "INNER JOIN asset_to_composite_asset aca_dest ON aca_dest.composite_asset_id = acal.composite_asset_id AND aca_dest.asset_id = acal.asset_id_destination "+
                         "WHERE acal.composite_asset_id = :id " +
                         "AND IFNULL(acal.asset_id_source,0) > 0 " +
                         "AND IFNULL(acal.asset_id_destination,0) > 0 ";
@@ -368,7 +370,7 @@ public class RmtRepository {
             if(!curAssetToCompositeAssetId.equals(assetToCompositeAssetId)){
                 asset = new BasicAssetDTO();
                 asset.setThreats(new ArrayList<>());
-                asset.setId(field[0]==null?null:((BigInteger)field[0]).longValue());
+                asset.setId(field[23]==null?null:((BigInteger)field[23]).longValue());
                 asset.setName(field[1]==null?null:(String)field[1]);
                 asset.setDescription(field[3]==null?null:(String)field[3]);
                 asset.setType_id(field[4]==null?null:((BigInteger)field[4]).longValue());
