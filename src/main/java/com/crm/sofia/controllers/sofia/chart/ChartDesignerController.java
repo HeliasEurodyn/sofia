@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+class QueryDTO{
+    public String query;
+}
+
 @Slf4j
 @RestController
 @Validated
@@ -46,10 +50,12 @@ public class ChartDesignerController {
         this.chartDesignerService.deleteObject(id);
     }
 
-    @GetMapping(path = "/generate-data-fields")
-    List<ChartFieldDTO> generateDataFields(@RequestParam("query") String query) {
-        return this.chartDesignerService.generateDataFields(query);
+    @PostMapping(path = "/generate-data-fields")
+    List<ChartFieldDTO> generateDataFields(@RequestBody QueryDTO dto) {
+        return this.chartDesignerService.generateDataFields(dto.query);
     }
+
+
 
     @GetMapping(path = "/data")
     List<ChartFieldDTO> getData(@RequestParam("id") Long id) {
