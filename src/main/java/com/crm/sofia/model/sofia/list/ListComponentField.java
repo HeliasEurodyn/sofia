@@ -65,7 +65,7 @@ public class ListComponentField extends BaseEntity implements Serializable {
     @Column
     private Boolean required;
 
-    @Column
+    @Column(length=3000)
     private String defaultValue;
 
     @Column
