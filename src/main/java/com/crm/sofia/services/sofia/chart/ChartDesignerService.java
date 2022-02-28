@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,7 +39,7 @@ public class ChartDesignerService {
     public List<ChartFieldDTO> generateDataFields(String sql) {
         List<ChartFieldDTO> chartFieldList = this.chartNativeRepository.generateFields(sql);
 
-        return this.chartNativeRepository.getData(chartFieldList, sql);
+        return this.chartNativeRepository.getData(chartFieldList, sql, new HashMap<String, String>());
     }
 
     @Transactional
@@ -46,7 +48,7 @@ public class ChartDesignerService {
         String query = chartDTO.getQuery();
         query = query.replace("##asset_id##", this.jwtService.getUserId().toString());
 
-        return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), query);
+        return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), query,  new HashMap<String, String>());
     }
 
     public List<ChartDTO> getObject() {

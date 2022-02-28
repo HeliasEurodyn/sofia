@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.chart;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.sofia.list.ListComponentField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -54,5 +55,13 @@ public class Chart extends BaseEntity {
 
     @Column
     private Integer executionInterval;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "chart_id")
+    private List<ListComponentField> filterList;
 
 }

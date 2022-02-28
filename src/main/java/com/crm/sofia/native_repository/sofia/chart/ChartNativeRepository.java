@@ -1,6 +1,7 @@
 package com.crm.sofia.native_repository.sofia.chart;
 
 import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,14 +21,28 @@ public class ChartNativeRepository {
     private String sofiaDatabase;
 
     private final EntityManager entityManager;
+    private final JWTService jwtService;
 
-    public ChartNativeRepository(EntityManager entityManager) {
+    public ChartNativeRepository(EntityManager entityManager,
+                                 JWTService jwtService) {
         this.entityManager = entityManager;
+        this.jwtService = jwtService;
     }
 
-    public List<ChartFieldDTO> getData(List<ChartFieldDTO> chartFieldList, String sql) {
+    public List<ChartFieldDTO> getData(List<ChartFieldDTO> chartFieldList, String sql, Map<String, String> parameters) {
+        sql = sql.replaceAll("##user_id##", this.jwtService.getUserId().toString());
         Query query = entityManager.createNativeQuery(sql);
+
+        String finalSql = sql;
+        parameters.entrySet()
+                .stream()
+                .filter(x -> finalSql.contains(":" + x.getKey()))
+                .forEach(x -> {
+                    query.setParameter(x.getKey(),x.getValue());
+                });
+
         List<Object[]> queryResults = query.getResultList();
+
         chartFieldList.forEach(chartField -> chartField.setDataset(new ArrayList<>()));
         for (Object[] queryResult : queryResults) {
             int i = 0;

@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.sofia.chart;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,4 +41,5 @@ public class ChartDTO extends BaseDTO {
 
     private Integer executionInterval;
 
+    private List<ListComponentFieldDTO> filterList;
 }
