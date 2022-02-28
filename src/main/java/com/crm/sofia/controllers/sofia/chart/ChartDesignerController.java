@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 
 class QueryDTO{
@@ -52,10 +53,8 @@ public class ChartDesignerController {
 
     @PostMapping(path = "/generate-data-fields")
     List<ChartFieldDTO> generateDataFields(@RequestBody QueryDTO dto) {
-        return this.chartDesignerService.generateDataFields(dto.query);
+        return this.chartDesignerService.generateDataFields(new String(Base64.getDecoder().decode(dto.query)));
     }
-
-
 
     @GetMapping(path = "/data")
     List<ChartFieldDTO> getData(@RequestParam("id") Long id) {
