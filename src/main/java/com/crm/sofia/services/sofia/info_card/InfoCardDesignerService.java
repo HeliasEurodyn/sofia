@@ -10,9 +10,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -59,7 +61,7 @@ public class InfoCardDesignerService {
         this.infoCardRepository.deleteById(optionalInfoCard.get().getId());
     }
 
-    public InfoCardTextResponceDTO getData(String sql) {
-        return this.infoCardNativeRepository.getData(sql);
+    public InfoCardTextResponceDTO getData(String sql, Map<String, String> parameters) {
+        return this.infoCardNativeRepository.getData(sql, parameters);
     }
 }

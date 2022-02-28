@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class InfoCardNativeRepository {
@@ -20,9 +22,17 @@ public class InfoCardNativeRepository {
         this.entityManager = entityManager;
     }
 
-    public InfoCardTextResponceDTO getData(String sql) {
-        sql = sql.replace("##asset_id##", this.jwtService.getUserId().toString());
+    public InfoCardTextResponceDTO getData(String sql, Map<String, String> parameters) {
+        sql = sql.replace("##user_id##", this.jwtService.getUserId().toString());
         Query query = entityManager.createNativeQuery(sql);
+
+        String finalSql = sql;
+        parameters.entrySet()
+                .stream()
+                .filter(x -> finalSql.contains(":" + x.getKey()))
+                .forEach(x -> {
+                    query.setParameter(x.getKey(),x.getValue());
+                });
 
         List<Object> queryResults = query.getResultList();
 

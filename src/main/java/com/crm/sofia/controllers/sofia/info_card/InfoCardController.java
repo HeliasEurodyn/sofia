@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @Validated
@@ -22,8 +24,9 @@ public class InfoCardController {
     }
 
     @GetMapping(path = "/by-id")
-    InfoCardDTO getObject(@RequestParam("id") Long id) {
-        return this.infoCardService.getObject(id);
+    InfoCardDTO getObject(@RequestParam("id") Long id,
+                          @RequestParam Map<String, String> parameters) {
+        return this.infoCardService.getObject(id, parameters);
     }
 
 }
