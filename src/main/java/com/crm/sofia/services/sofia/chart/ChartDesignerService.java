@@ -12,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 public class ChartDesignerService {
@@ -61,11 +59,19 @@ public class ChartDesignerService {
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
         }
-        return this.chartMapper.map(optionalchart.get());
+
+        ChartDTO chart = this.chartMapper.map(optionalchart.get());
+        String encQuery = Base64.getEncoder().encodeToString(chart.getQuery().getBytes(StandardCharsets.UTF_8));
+        chart.setQuery(encQuery);
+        return chart;
     }
 
     @Transactional
     public ChartDTO postObject(ChartDTO dto) {
+
+        String decQuery = new String(Base64.getDecoder().decode(dto.getQuery()));
+        dto.setQuery(decQuery);
+
         Chart chart = this.chartMapper.map(dto);
         Chart createdChart = this.chartRepository.save(chart);
         return this.chartMapper.map(createdChart);
