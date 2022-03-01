@@ -103,31 +103,21 @@ public class RmtService {
                     basicAsset.getThreats().forEach(threat -> {
                         threat.getRisk().forEach(risk -> {
 
-                            Double occurrence = threat.getOccurrence();
-
                             Double confidentiality = risk.getRisk_score().getConfidentiality();
                             Double integrity = risk.getRisk_score().getIntegrity();
                             Double availability = risk.getRisk_score().getAvailability();
 
-                            Integer serviceConfidentiality = service.getImpact().getConfidentiality();
-                            Integer serviceIntegrity = service.getImpact().getIntegrity();
-                            Integer serviceAvailability = service.getImpact().getAvailability();
-
-                            Double confidentialityScore = confidentiality * serviceConfidentiality * occurrence;
-                            Double integrityScore = integrity * serviceIntegrity * occurrence;
-                            Double availabilityScore = availability * serviceAvailability * occurrence;
-                            Double sumScore = confidentialityScore + integrityScore + availabilityScore;
+                            Double sumScore = confidentiality + integrity + availability;
 
                             this.rmtRepository.saveRisk(
                                     threat.getDescription(),
                                     rmt.getId(),
                                     risk,
-                                    confidentialityScore,
-                                    integrityScore,
-                                    availabilityScore,
+                                    confidentiality,
+                                    integrity,
+                                    availability,
                                     sumScore
                                     );
-
                         });
                     });
                 });
