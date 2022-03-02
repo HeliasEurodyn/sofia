@@ -2,6 +2,7 @@ package com.crm.sofia.controllers.sofia.chart;
 
 import com.crm.sofia.dto.sofia.chart.ChartDTO;
 import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
+import com.crm.sofia.dto.sofia.chart.ChartQueryDTO;
 import com.crm.sofia.services.sofia.chart.ChartDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -9,10 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.List;
-
-class QueryDTO{
-    public String query;
-}
 
 @Slf4j
 @RestController
@@ -52,7 +49,7 @@ public class ChartDesignerController {
     }
 
     @PostMapping(path = "/generate-data-fields")
-    List<ChartFieldDTO> generateDataFields(@RequestBody QueryDTO dto) {
+    List<ChartFieldDTO> generateDataFields(@RequestBody ChartQueryDTO dto) {
         return this.chartDesignerService.generateDataFields(new String(Base64.getDecoder().decode(dto.query)));
     }
 

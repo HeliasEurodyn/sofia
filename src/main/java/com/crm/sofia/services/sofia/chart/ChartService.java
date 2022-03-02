@@ -12,6 +12,7 @@ import com.crm.sofia.services.sofia.auth.JWTService;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
@@ -34,7 +35,7 @@ public class ChartService {
         this.expressionService = expressionService;
     }
 
-    public ChartDTO getObject(Long id) {
+    public ChartDTO getObject(Long id, Map<String, String> parameters) {
         Optional<Chart> optionalchart = this.chartRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
@@ -63,7 +64,6 @@ public class ChartService {
         }
 
         /* Define Parameters */
-        Map<String, String> parameters = new HashMap<>();
         chartDTO.getFilterList()
                 .stream()
                 .filter(filter -> !filter.getCode().equals(""))
@@ -77,7 +77,7 @@ public class ChartService {
                 chartDTO.getQuery(),
                 parameters);
         chartDTO.setChartFieldList(chartFieldDTOS);
-
+        chartDTO.setQuery("");
         return chartDTO;
     }
 
