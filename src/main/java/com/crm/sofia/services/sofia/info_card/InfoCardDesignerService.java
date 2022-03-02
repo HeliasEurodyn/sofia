@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +36,9 @@ public class InfoCardDesignerService {
 
     public List<InfoCardDTO> getObject() {
         List<InfoCard> infoCards = this.infoCardRepository.findAll();
-        return this.infoCardMapper.map(infoCards);
+        List<InfoCardDTO> infoCardDTOS = this.infoCardMapper.map(infoCards);
+        infoCardDTOS.forEach(infoCardDTO -> infoCardDTO.setQuery(""));
+        return infoCardDTOS;
     }
 
     public InfoCardDTO getObject(Long id) {
@@ -42,12 +46,19 @@ public class InfoCardDesignerService {
         if (!optionalInfoCard.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Info card does not exist");
         }
-        return this.infoCardMapper.map(optionalInfoCard.get());
+        InfoCardDTO infoCardDTO = this.infoCardMapper.map(optionalInfoCard.get());
+        String encQuery = Base64.getEncoder().encodeToString(infoCardDTO.getQuery().getBytes(StandardCharsets.UTF_8));
+        infoCardDTO.setQuery(encQuery);
+        return infoCardDTO;
     }
 
     @Transactional
     @Modifying
     public InfoCardDTO postObject(InfoCardDTO dto) {
+
+        String decQuery = new String(Base64.getDecoder().decode(dto.getQuery()));
+        dto.setQuery(decQuery);
+
         InfoCard infoCard = this.infoCardMapper.map(dto);
         InfoCard createdInfoCard = this.infoCardRepository.save(infoCard);
         return this.infoCardMapper.map(createdInfoCard);

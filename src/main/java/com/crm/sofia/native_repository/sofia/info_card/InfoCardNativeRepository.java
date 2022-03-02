@@ -43,12 +43,19 @@ public class InfoCardNativeRepository {
         if ( queryResults.get(0) instanceof Object[]) {
             for (Object queryResultArray : queryResults) {
                 Object[] queryResult = (Object[]) queryResultArray;
-                return new InfoCardTextResponceDTO(queryResult[0].toString());
+                InfoCardTextResponceDTO infoCardTextResponceDTO = new InfoCardTextResponceDTO();
+                infoCardTextResponceDTO.setCardText(queryResult[0].toString());
+                infoCardTextResponceDTO.setTitle(queryResult[1].toString());
+                infoCardTextResponceDTO.setIcon(queryResult[2].toString());
+                infoCardTextResponceDTO.setIconColor(queryResult[3].toString());
+                return infoCardTextResponceDTO;
             }
         }
         else {
             for (Object queryResult : queryResults) {
-                return new InfoCardTextResponceDTO(queryResult.toString());
+                InfoCardTextResponceDTO infoCardTextResponceDTO = new InfoCardTextResponceDTO();
+                infoCardTextResponceDTO.setCardText(queryResult.toString());
+                return infoCardTextResponceDTO;
             }
         }
 

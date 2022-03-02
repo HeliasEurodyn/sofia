@@ -20,6 +20,8 @@ public class InfoCardDTO extends BaseDTO {
 
     private String icon;
 
+    private String iconColor;
+
     private String description;
 
     private String cardText;

@@ -10,5 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InfoCardTextResponceDTO {
+
     private String cardText;
+
+    private String title;
+
+    private String icon;
+
+    private String iconColor;
+
 }

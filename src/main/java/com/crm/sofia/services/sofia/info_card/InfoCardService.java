@@ -37,6 +37,10 @@ public class InfoCardService {
         InfoCardDTO infoCardDTO = this.infoCardMapper.map(optionalInfoCard.get());
         InfoCardTextResponceDTO infoCardTextResponceDTO = this.infoCardNativeRepository.getData(infoCardDTO.getQuery(), parameters);
         infoCardDTO.setCardText(infoCardTextResponceDTO.getCardText());
+        infoCardDTO.setTitle(infoCardTextResponceDTO.getTitle());
+        infoCardDTO.setIcon(infoCardTextResponceDTO.getIcon());
+        infoCardDTO.setIconColor(infoCardTextResponceDTO.getIconColor());
+        infoCardDTO.setQuery("");
         return infoCardDTO;
     }
 
