@@ -36,7 +36,7 @@ public class ListDesignerService {
 
     @Transactional
     public ListDTO postObject(ListDTO listDTO) throws Exception {
-        ListEntity listEntity = this.listMapper.map(listDTO);
+        ListEntity listEntity = this.listMapper.mapListDTO(listDTO);
         listEntity.setCreatedOn(Instant.now());
         listEntity.setModifiedOn(Instant.now());
         listEntity.setCreatedBy(jwtService.getUserId());
@@ -62,7 +62,7 @@ public class ListDesignerService {
     @Transactional
     @CacheEvict(value = "list_ui_cache", key = "#listDTO.id")
     public ListDTO putObject(ListDTO listDTO) throws Exception {
-        ListEntity listEntity = this.listMapper.map(listDTO);
+        ListEntity listEntity = this.listMapper.mapListDTO(listDTO);
         listEntity.setModifiedOn(Instant.now());
         listEntity.setModifiedBy(jwtService.getUserId());
         Long instanceVersion = listEntity.getInstanceVersion();

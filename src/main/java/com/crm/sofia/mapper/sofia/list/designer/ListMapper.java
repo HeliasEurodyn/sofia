@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,5 +56,36 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
     @Mapping(ignore = true, target = "component.componentPersistEntityList")
     public abstract ListDTO mapEntityForList(ListEntity entity);
 
+    public ListEntity mapListDTO(ListDTO dto){
 
+        if (dto.getListComponentColumnFieldList() != null) {
+            dto.getListComponentColumnFieldList().forEach(x -> {
+                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                x.setEditor(dec);
+            });
+        }
+
+        if (dto.getListComponentFilterFieldList() != null) {
+            dto.getListComponentFilterFieldList().forEach(x -> {
+                    String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                    x.setEditor(dec);
+            });
+        }
+
+        if (dto.getListComponentLeftGroupFieldList() != null) {
+            dto.getListComponentLeftGroupFieldList().forEach(x -> {
+                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                x.setEditor(dec);
+            });
+        }
+
+        if (dto.getListComponentTopGroupFieldList() != null) {
+            dto.getListComponentTopGroupFieldList().forEach(x -> {
+                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                x.setEditor(dec);
+            });
+        }
+
+       return this.map(dto);
+    }
 }
