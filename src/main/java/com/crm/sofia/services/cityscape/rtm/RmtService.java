@@ -32,7 +32,6 @@ public class RmtService {
                 List<CompositeAssetDTO> compositeAssets = this.rmtRepository.retrieveCompositeAssets(service.getId());
                 service.setComposite_assets(compositeAssets);
             });
-
         });
         return rtms;
     }
@@ -47,7 +46,6 @@ public class RmtService {
                 List<CompositeAssetDTO> compositeAssets = this.rmtRepository.retrieveCompositeAssets(service.getId());
                 service.setComposite_assets(compositeAssets);
             });
-
         });
 
         return rtms;
@@ -79,7 +77,9 @@ public class RmtService {
                 basicAssets.forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
 
-                        List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(), basicAsset.getId(), threat.getId());
+                        List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(),
+                                basicAsset.getId()
+                                , threat.getId());
                         threat.setCountermeasures(counterMeasures);
 
                     });
@@ -90,8 +90,10 @@ public class RmtService {
         RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
         RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
         this.saveRmtResponse(rmtResponse);
-        this.rmtRepository.saveOveralRisk(rmt.getId());
-
+        this.rmtRepository.saveRiskAssessmentOveralRisk(rmt.getId());
+        rmt.getServices().forEach(service -> {
+            this.rmtRepository.saveServiceOverallRisk(rmt.getId(), service.getId());
+        });
         return rmtResponse;
     }
 
@@ -112,6 +114,7 @@ public class RmtService {
                             this.rmtRepository.saveRisk(
                                     threat.getDescription(),
                                     rmt.getId(),
+                                    service.getId(),
                                     risk,
                                     confidentiality,
                                     integrity,

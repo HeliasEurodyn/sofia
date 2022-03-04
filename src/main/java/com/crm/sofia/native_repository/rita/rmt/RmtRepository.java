@@ -132,7 +132,7 @@ public class RmtRepository {
     public List<ServiceDTO> retrieveBusinessServices(Long id) {
         String queryString =
                 "SELECT " +
-                        "b.id, " +
+                        "br.id, " +
                         "b.code, " +
                         "b.name, " +
                         "b.description, " +
@@ -206,9 +206,10 @@ public class RmtRepository {
                         "acad.composite_asset_id AS caid, " +
                         "acad.asset_id AS aid " +
                         "FROM composite_asset_to_business_service_link cbsl " +
+                        "INNER JOIN business_service_to_risk_assessment bsra ON bsra.business_service_id = cbsl.business_service_id " +
                         "INNER JOIN asset_to_composite_asset acas ON cbsl.asset_to_composite_asset_id_source = acas.id " +
                         "INNER JOIN asset_to_composite_asset acad ON cbsl.asset_to_composite_asset_id_destination = acad.id " +
-                        "WHERE cbsl.business_service_id = :id " +
+                        "WHERE bsra.id = :id " +
                         "AND IFNULL(acas.composite_asset_id,0) > 0 " +
                         "AND IFNULL(acas.asset_id,0) > 0 " +
                         "AND IFNULL(acad.composite_asset_id,0) > 0 " +
@@ -297,8 +298,9 @@ public class RmtRepository {
                         "ca.common_economic_value, " +
                         "ca.optimistic_economic_value " +
                         "FROM composite_asset_to_business_service cbs " +
+                        "INNER JOIN business_service_to_risk_assessment bsra ON bsra.business_service_id = cbs.business_service_id " +
                         "INNER JOIN composite_asset ca ON cbs.composite_asset_id = ca.id " +
-                        "WHERE cbs.business_service_id = :id ";
+                        "WHERE bsra.id = :id ";
 
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("id", businessServiceId);
@@ -403,6 +405,7 @@ public class RmtRepository {
 
     public void saveRisk(String assetToCompositeAssetThreatId,
                          Long risk_assessment_id,
+                         Long bsToRiskAssessmentId,
                          RiskDTO risk,
                          Double confidentialityScore,
                          Double integrityScore,
@@ -411,14 +414,17 @@ public class RmtRepository {
 
         Query query =
                 entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, asset_to_composite_asset_threat_id, risk_assessment_id, " +
+                        "business_service_to_risk_assessment_id, " +
                         "confidentiality, integrity, availability, confidentiality_score, integrity_score, availability_score, score_sum) " +
                         "VALUES (:cve_id, :description, :link, :asset_to_composite_asset_threat_id, :risk_assessment_id, " +
+                        ":business_service_to_risk_assessment_id, " +
                         ":confidentiality, :integrity, :availability, :confidentiality_score, :integrity_score, :availability_score, :score_sum);");
         query.setParameter("cve_id",risk.getCve_id());
         query.setParameter("description",risk.getDescription());
         query.setParameter("link",risk.getLink());
         query.setParameter("asset_to_composite_asset_threat_id",Double.valueOf(assetToCompositeAssetThreatId));
         query.setParameter("risk_assessment_id",risk_assessment_id);
+        query.setParameter("business_service_to_risk_assessment_id",bsToRiskAssessmentId);
 
         query.setParameter("confidentiality",risk.getRisk_score().getConfidentiality());
         query.setParameter("integrity",risk.getRisk_score().getIntegrity());
@@ -433,15 +439,33 @@ public class RmtRepository {
         query.executeUpdate();
     }
 
-    public void saveOveralRisk(Long riskAssessmentId) {
+    public void saveRiskAssessmentOveralRisk(Long riskAssessmentId) {
         Query query =
                 entityManager.createNativeQuery(
                         " UPDATE risk_assessment ra "+
                         " SET ra.overal_risk = "+
-                                " (SELECT r.score_sum FROM risk r WHERE r.risk_assessment_id = ra.id ORDER BY r.score_sum DESC LIMIT 1) "+
+                                " (SELECT r.score_sum FROM risk r WHERE r.risk_assessment_id = ra.id ORDER BY r.score_sum DESC LIMIT 1) , " +
+                                "ra.analyzed = 0 "+
                         " WHERE id = :id "
                 );
         query.setParameter("id",riskAssessmentId);
+        query.executeUpdate();
+    }
+
+    public void saveServiceOverallRisk(Long riskAssessmentId, Long bsToRiskAssessment) {
+        Query query =
+                entityManager.createNativeQuery(
+                        " UPDATE business_service bs "+
+                                " INNER JOIN business_service_to_risk_assessment bsra ON bsra.business_service_id = bs.id "+
+                                " SET bs.overal_risk = "+
+                                " ( SELECT r.score_sum FROM risk r " +
+                                " WHERE r.risk_assessment_id = :ra_id AND r.business_service_to_risk_assessment_id = :bsra_id " +
+                                " ORDER BY r.score_sum DESC LIMIT 1 ) "+
+                                " WHERE bsra.id = :bsra_id ");
+
+        query.setParameter("ra_id", riskAssessmentId);
+        query.setParameter("bsra_id", bsToRiskAssessment);
+
         query.executeUpdate();
     }
 
