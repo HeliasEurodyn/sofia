@@ -256,7 +256,7 @@ public class RmtRepository {
                         "INNER JOIN countermeasure cm on cm.id = acatc.counter_measure_id "+
                         "INNER JOIN cis_control cc on cc.id = cm.cis_control_id "+
                         "WHERE ca.id = :composite_asset_id "+
-                        "AND aca.asset_id = :asset_id "+
+                        "AND aca.id = :asset_id "+
                         "AND acat.threat_id = :threat_id";
 
         Query query = entityManager.createNativeQuery(queryString);
