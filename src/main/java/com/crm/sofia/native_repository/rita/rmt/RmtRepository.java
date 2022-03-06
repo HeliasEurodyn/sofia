@@ -455,9 +455,8 @@ public class RmtRepository {
     public void saveServiceOverallRisk(Long riskAssessmentId, Long bsToRiskAssessment) {
         Query query =
                 entityManager.createNativeQuery(
-                        " UPDATE business_service bs "+
-                                " INNER JOIN business_service_to_risk_assessment bsra ON bsra.business_service_id = bs.id "+
-                                " SET bs.overal_risk = "+
+                        " UPDATE business_service_to_risk_assessment bsra "+
+                                " SET bsra.overal_risk = "+
                                 " ( SELECT r.score_sum FROM risk r " +
                                 " WHERE r.risk_assessment_id = :ra_id AND r.business_service_to_risk_assessment_id = :bsra_id " +
                                 " ORDER BY r.score_sum DESC LIMIT 1 ) "+
