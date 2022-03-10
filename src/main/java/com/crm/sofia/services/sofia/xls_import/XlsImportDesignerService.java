@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,8 +57,34 @@ public class XlsImportDesignerService {
         return dto;
     }
 
+    private List<ComponentPersistEntityDTO> treeToList(List<ComponentPersistEntityDTO> cpeList) {
+        if (cpeList == null) {
+            return null;
+        }
+
+        List<ComponentPersistEntityDTO> newCpeList = new ArrayList<>();
+        newCpeList.addAll(cpeList);
+
+        List<ComponentPersistEntityDTO> newChildCpeList = new ArrayList<>();
+        newCpeList.forEach(newCpe -> {
+                    List<ComponentPersistEntityDTO> childCpeList = this.treeToList(newCpe.getComponentPersistEntityList());
+        newChildCpeList.addAll(childCpeList);
+      });
+
+        newCpeList.addAll(newChildCpeList);
+        return newCpeList;
+    }
+
     @Transactional
     public XlsImportDTO postObject(XlsImportDTO dto) {
+        List<ComponentPersistEntityDTO> cpeList = this.treeToList(dto.getComponent().getComponentPersistEntityList());
+        cpeList.forEach(cpe -> {
+            cpe.getComponentPersistEntityFieldList().forEach(cpef -> {
+                String decDefaultValue = new String(Base64.getDecoder().decode(cpef.getAssignment().getDefaultValue()));
+                cpef.getAssignment().setDefaultValue(decDefaultValue);
+            });
+        });
+
         XlsImport chart = this.xlsImportMapper.map(dto);
         XlsImport savedChart = this.xlsImportRepository.save(chart);
 
