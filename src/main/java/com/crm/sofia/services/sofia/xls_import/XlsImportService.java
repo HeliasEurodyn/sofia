@@ -79,7 +79,7 @@ public class XlsImportService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wrong file type");
         }
 
-        /* Retrieve SxlsImportDTO */
+        /* Retrieve xlsImportDTO */
         XlsImportDTO xlsImportDTO = this.getObject(id);
 
         /* Map Excel Data to Components And Save */
@@ -95,7 +95,6 @@ public class XlsImportService {
         }.getType();
 
         String prevSaveOnUpdateFieldValue = null;
-        Boolean linesForSaving = false;
 
         Long firstLineNum = (xlsImportDTO.getFirstLine() == null ? 0 : xlsImportDTO.getFirstLine());
         Workbook wb = WorkbookFactory.create(multipartFile.getInputStream());
@@ -104,7 +103,13 @@ public class XlsImportService {
         ComponentDTO componentDTO =
                 gson.fromJson(gson.toJson(xlsImportDTO.getComponent()), componentType);
 
-        for (int rowNum = Math.toIntExact(firstLineNum); rowNum < sheet.getLastRowNum(); rowNum++) {
+        /* Retrieve saveOnUpdateField */
+        Boolean saveEveryLine = false;
+        if(this.retrieveSaveOnUpdateField(componentDTO.getComponentPersistEntityList()) == null){
+            saveEveryLine = true;
+        }
+
+        for (int rowNum = Math.toIntExact(firstLineNum); rowNum <= sheet.getLastRowNum(); rowNum++) {
 
             // Generate rowMap from cells of row
             Row row = sheet.getRow(rowNum);
@@ -118,25 +123,18 @@ public class XlsImportService {
                 );
             }
 
-            /* Retrieve saveOnUpdateField */
+            /* Retrieve saveOnUpdateFieldValue */
             String saveOnUpdateFieldValue = this.calcSaveOnUpdateFieldValue(componentDTO.getComponentPersistEntityList(), rowMap);
 
             if(saveOnUpdateFieldValue == null){
                 saveOnUpdateFieldValue = "";
             }
 
-            /*  Decide if component should be saved */
-            Boolean saveCurrent = false;
-            if (saveOnUpdateFieldValue.equals("") && rowNum > Math.toIntExact(firstLineNum)) {
-                saveCurrent = true;
-            } else if (!saveOnUpdateFieldValue.equals(prevSaveOnUpdateFieldValue) && rowNum > Math.toIntExact(firstLineNum)) {
-                saveCurrent = true;
-            }
-
-            /*  Save And Clone new Component */
-            if (saveCurrent) {
+            /*  Decide if component should saved previous lines */
+            if (!saveEveryLine &&
+                    !saveOnUpdateFieldValue.equals(prevSaveOnUpdateFieldValue)
+                    && rowNum > Math.toIntExact(firstLineNum)) {
                 this.componentSaverService.save(componentDTO);
-                linesForSaving = false;
                 componentDTO =
                         gson.fromJson(gson.toJson(xlsImportDTO.getComponent()), componentType);
             }
@@ -144,14 +142,16 @@ public class XlsImportService {
             /* Map rowMap to component */
             this.mapImportRowMapToComponentPersistEntities(componentDTO.getComponentPersistEntityList(), rowMap);
 
-            /* After Mapping there are remaining lines to be saved */
-            linesForSaving = true;
-
+            if (saveEveryLine) {
+                this.componentSaverService.save(componentDTO);
+                componentDTO =
+                        gson.fromJson(gson.toJson(xlsImportDTO.getComponent()), componentType);
+            }
 
             prevSaveOnUpdateFieldValue = saveOnUpdateFieldValue;
         }
 
-        if (linesForSaving) {
+        if(!saveEveryLine){
             this.componentSaverService.save(componentDTO);
         }
     }
@@ -310,12 +310,15 @@ public class XlsImportService {
 //        return null;
 //    }
 
+
+
     private ComponentPersistEntityFieldDTO retrieveSaveOnUpdateField(List<ComponentPersistEntityDTO> componentPersistEntityList) {
 
         for (ComponentPersistEntityDTO cpe : componentPersistEntityList) {
             Optional<ComponentPersistEntityFieldDTO> optionalCpef =
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
+                            .filter(cpef -> cpef.getAssignment() != null)
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> cpef.getAssignment().getDefaultValue().contains("importColumn("))
                             .filter(cpef -> (cpef.getAssignment().getEditor() == null?"":cpef.getAssignment().getEditor()).equals("SAVEONUPDATE"))
