@@ -53,7 +53,7 @@ public class ChartService {
             if (!exprResponce.getError()) {
                 Object defaultFieldValue = exprResponce.getExprUnit().getResult();
                 if(filterDto.getType().equals("list")) {
-                    filterDto.setDefaultValue(defaultFieldValue.toString());
+                    filterDto.setDefaultValue((defaultFieldValue==null?"":defaultFieldValue.toString()));
                     Object fieldValue = this.tryRetrieveSqlListValue(defaultFieldValue);
                     filterDto.setFieldValue(fieldValue);
                 } else {
@@ -82,6 +82,11 @@ public class ChartService {
     }
 
     public Object tryRetrieveSqlListValue(Object fieldValue){
+
+        if(fieldValue == null){
+            return null;
+        }
+
         if ( Collection.class.isAssignableFrom( fieldValue.getClass() ) ){
             List<ArrayList> dataLines = (List<ArrayList>) fieldValue;
             if ( dataLines.size() == 0 ){
