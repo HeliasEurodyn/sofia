@@ -7,23 +7,18 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CountermeasureDTO {
+public class CountermeasureEfficiencyDTO {
 
-    private Long id;
+    private Long confidentiality;
 
-    private String code;
+    private Long integrity;
 
-    private String name;
+    private Long availability;
 
-    private CisControlDTO cisControl;
-
-    private CountermeasureEfficiencyDTO efficiency;
 }
