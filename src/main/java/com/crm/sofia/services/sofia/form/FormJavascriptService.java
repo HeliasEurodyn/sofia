@@ -313,6 +313,9 @@ public class FormJavascriptService {
                         if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "resize")))  nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize"));
                         if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "listselected")))  nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected"));
                         if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "listcleared"))) nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared"));
+                        if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "list_component_refreshed"))) nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "list_component_refreshed"));
+
+
                         assignedFields.add(fieldCode);
                     });
         });
@@ -405,6 +408,7 @@ public class FormJavascriptService {
                                     if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "resize"))) nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "resize"));
                                     if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "listselected"))) nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listselected"));
                                     if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "listcleared")))  nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "listcleared"));
+                                    if(userScriptsString.contains(fieldFunctionDef.replace("%%type%%", "list_component_refreshed")))  nativeFieldEventHandlerLines.add(statement.replace("%%type%%", "list_component_refreshed"));
 
                                     assignedFields.add(fieldCode);
                                 });
