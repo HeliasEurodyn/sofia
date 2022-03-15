@@ -136,9 +136,9 @@ public class RmtRepository {
                         "b.code, " +
                         "b.name, " +
                         "b.description, " +
-                        "b.so_confidentiality, " +
-                        "b.so_integrity, " +
-                        "b.so_availability " +
+                        "br.so_confidentiality, " +
+                        "br.so_integrity, " +
+                        "br.so_availability " +
                         "FROM business_service_to_risk_assessment br  " +
                         "INNER JOIN business_service b ON br.business_service_id = b.id " +
                         "WHERE br.risk_assessment_id = :id ";
