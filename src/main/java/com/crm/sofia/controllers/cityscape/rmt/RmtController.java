@@ -5,9 +5,6 @@ import com.crm.sofia.services.cityscape.rtm.RmtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +42,13 @@ public class RmtController {
 
     @Operation(summary = "Run Rmt analysis for Risk Assesment Id", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/analysis/{id}")
-    public RmtDTO sendToRmt(@PathVariable("id") Long id) {
-        return this.rmtService.sendToRmt(id);
+    public RmtDTO sendToRmtById(@PathVariable("id") Long id) {
+        return this.rmtService.sendToRmtById(id);
+    }
+
+    @Operation(summary = "Run Rmt analysis for Risk Assesment Object", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/analyze")
+    public RmtDTO sendToRmt(@RequestBody RmtDTO rmt) {
+        return this.rmtService.sendToRmt(rmt);
     }
 }

@@ -53,7 +53,7 @@ public class RmtService {
 
     @Transactional
     @Modifying
-    public RmtDTO sendToRmt(Long id) {
+    public RmtDTO sendToRmtById(Long id) {
 
         RmtDTO rmt = this.rmtRepository.retrieveRiskAssessment(id);
 
@@ -87,13 +87,19 @@ public class RmtService {
             });
         });
 
-        RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
-        RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
+        RmtDTO rmtResponse = this.sendToRmt(rmt);
         this.saveRmtResponse(rmtResponse);
         this.rmtRepository.saveRiskAssessmentOveralRisk(rmt.getId());
         rmt.getServices().forEach(service -> {
             this.rmtRepository.saveServiceOverallRisk(rmt.getId(), service.getId());
         });
+
+        return rmtResponse;
+    }
+
+    public RmtDTO sendToRmt(RmtDTO rmt) {
+        RmtLoginResponseDTO rmtLoginResponseDTO = this.rtmRestTemplate.login();
+        RmtDTO rmtResponse = this.rtmRestTemplate.analysis(rmt, rmtLoginResponseDTO.getAccess_token());
         return rmtResponse;
     }
 
@@ -120,7 +126,7 @@ public class RmtService {
                                     integrity,
                                     availability,
                                     sumScore
-                                    );
+                            );
                         });
                     });
                 });
@@ -164,4 +170,6 @@ public class RmtService {
 
         return rmt;
     }
+
+
 }
