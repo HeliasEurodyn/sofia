@@ -196,6 +196,28 @@ public class RmtRepository {
         return links;
     }
 
+    public List<String> retrieveIntangibleAssets(Long businessServiceId) {
+        String queryString =
+                "SELECT " +
+                        "ia.id, " +
+                        "ia.code " +
+                        "FROM intangible_asset_to_composite_asset iaca " +
+                        "INNER JOIN intangible_asset ia ON ia.id = iaca.intangible_asset_id " +
+                        "WHERE iaca.composite_asset_id = :id ";
+
+        Query query = entityManager.createNativeQuery(queryString);
+        query.setParameter("id", businessServiceId);
+
+        List<Object[]> fields = query.getResultList();
+
+        List<String> intangibleAssets = new ArrayList<>();
+        for (Object[] field : fields) {
+            intangibleAssets.add(field[1] == null ? null : (String) field[1]);
+        }
+
+        return intangibleAssets;
+    }
+
     public List<ServiceCommunicationLinkDTO> retrieveServiceLinks(Long businessServiceId) {
         String queryString =
                 "SELECT " +

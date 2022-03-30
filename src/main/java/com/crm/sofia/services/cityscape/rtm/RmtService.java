@@ -71,6 +71,9 @@ public class RmtService {
                 List<BasicAssetDTO> basicAssets = this.rmtRepository.retrieveAssetsWithThreats(Long.valueOf(compositeAsset.getId()));
                 compositeAsset.setBasic_assets(basicAssets);
 
+                List<String> intangibleAssets = this.rmtRepository.retrieveIntangibleAssets(Long.valueOf(compositeAsset.getId()));
+                compositeAsset.setIntangible_assets(intangibleAssets);
+
                 List<CompositeAssetCommunicationLinkDTO> compositeLinks = this.rmtRepository.retrieveCompositeAssetLinks(Long.valueOf(compositeAsset.getId()));
                 compositeAsset.setCommunication_links(compositeLinks);
 
@@ -150,6 +153,9 @@ public class RmtService {
             compositeAssets.forEach(compositeAsset -> {
                 List<BasicAssetDTO> basicAssets = this.rmtRepository.retrieveAssetsWithThreats(Long.valueOf(compositeAsset.getId()));
                 compositeAsset.setBasic_assets(basicAssets);
+
+                List<String> intangibleAssets = this.rmtRepository.retrieveIntangibleAssets(Long.valueOf(compositeAsset.getId()));
+                compositeAsset.setIntangible_assets(intangibleAssets);
 
                 List<CompositeAssetCommunicationLinkDTO> compositeLinks = this.rmtRepository.retrieveCompositeAssetLinks(Long.valueOf(compositeAsset.getId()));
                 compositeAsset.setCommunication_links(compositeLinks);

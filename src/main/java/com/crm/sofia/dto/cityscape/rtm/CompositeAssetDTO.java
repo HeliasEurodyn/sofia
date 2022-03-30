@@ -27,4 +27,5 @@ public class CompositeAssetDTO {
 
     private List<BasicAssetDTO> basic_assets;
 
+    private List<String> intangible_assets;
 }
