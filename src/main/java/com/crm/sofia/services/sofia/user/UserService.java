@@ -139,6 +139,13 @@ public class UserService {
         return new ResponseEntity<>(new ApiResponse(false, "Login error!"), HttpStatus.BAD_REQUEST);
     }
 
+    @Transactional
+    public void updateCurrentLanguage(Long languageId) {
+        Long userId = this.jwtService.getUserId();
+
+       this.userRepository.updateCurrentLanguage(userId, languageId);
+    }
+
     public UserDTO putUser(UserDTO userDTO) {
         User user = userMapper.map(userDTO);
         if ((userDTO.getPassword()==null?"":userDTO.getPassword()).equals("") && (userDTO.getRepeatPassword()==null?"":userDTO.getRepeatPassword()).equals("")) {

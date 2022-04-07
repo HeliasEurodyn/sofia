@@ -54,6 +54,11 @@ public class UserController {
         return this.userService.delete(id);
     }
 
+    @PutMapping(value = "/current-language")
+    public void updateCurrentLanguage(@RequestParam("language-id") Long languageId) {
+        this.userService.updateCurrentLanguage(languageId);
+    }
+
     /**
      * Authenticates a user and returns a JWT if authentication was successful.
      *

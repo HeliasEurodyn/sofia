@@ -49,4 +49,11 @@ public interface UserRepository extends BaseRepository<User> {
             " search_nav_command = 'POPUPPAGE[NAME:search,LOCATE:(ID=1),SEARCH-DEFAULT:#SEARCH-VALUE#,FOCUS:search-field-box]' " +
             " WHERE id = :id ", nativeQuery = true)
     void initiateUserInfo(@Param("id") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE User u SET" +
+            " u.currentLanguage.id = :language_id " +
+            " WHERE u.id = :id ")
+    void updateCurrentLanguage(@Param("id") Long id, @Param("language_id") Long languageId);
+
 }

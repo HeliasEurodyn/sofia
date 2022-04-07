@@ -40,8 +40,9 @@ public class ListController {
     }
 
     @GetMapping(path = "ui")
-    ListUiDTO getUiObject(@RequestParam("id") Long id) {
-       return this.listService.getUiListObject(id);
+    ListUiDTO getUiObject(@RequestParam("id") Long id,
+                          @RequestParam(defaultValue = "0", name = "language-id") Long languageId) {
+       return this.listService.getUiListObject(id, languageId);
     }
 
     @GetMapping

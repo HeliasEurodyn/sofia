@@ -16,7 +16,6 @@ import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
-import com.crm.sofia.services.sofia.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,21 +38,19 @@ public class ListService {
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
-    private final UserService userService;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
                        ListUiMapper listUiMapper,
                        ExpressionService expressionService,
                        ListRetrieverNativeRepository listRetrieverNativeRepository,
-                       ListUpdaterNativeRepository listUpdaterNativeRepository, UserService userService) {
+                       ListUpdaterNativeRepository listUpdaterNativeRepository) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
         this.listUiMapper = listUiMapper;
         this.expressionService = expressionService;
         this.listRetrieverNativeRepository = listRetrieverNativeRepository;
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
-        this.userService = userService;
     }
 
     public ListDTO getObject(Long id) {
@@ -109,8 +106,8 @@ public class ListService {
         return listDTO;
     }
 
-    @Cacheable(value = "list_ui_cache", key = "#id")
-    public ListUiDTO getUiListObject(Long id) {
+    @Cacheable(value = "list_ui_cache", key="{ #id, #languageId }")
+    public ListUiDTO getUiListObject(Long id, Long languageId) {
 
         System.out.println("Get UiList object from Database");
 
@@ -119,7 +116,8 @@ public class ListService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist"));
 
         /* Map */
-        ListUiDTO listUiDTO = this.listUiMapper.map(listEntity);
+        ListUiDTO listUiDTO = this.listUiMapper.mapList(listEntity, languageId);
+
 
         /* Short */
         listUiDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldUiDTO::getShortOrder));
