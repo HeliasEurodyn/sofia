@@ -3,6 +3,8 @@ package com.crm.sofia.model.sofia.list;
 import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
+import com.crm.sofia.model.sofia.list.translation.ListComponentFieldChildTranslation;
+import com.crm.sofia.model.sofia.list.translation.ListComponentFieldTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -62,5 +64,12 @@ public class ListComponentFieldChild extends BaseEntity implements Serializable 
     @Column
     private String formulaType;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "list_component_field_child_id")
+    private List<ListComponentFieldChildTranslation> translations;
 
 }

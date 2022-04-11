@@ -16,6 +16,8 @@ import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,9 @@ public class ListService {
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
+
+    @Autowired
+    CacheManager cacheManager;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,

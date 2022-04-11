@@ -34,6 +34,15 @@ public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
                     });
         }
 
+        entity.getListActionButtons().forEach(column -> {
+            column.getTranslations()
+                    .stream()
+                    .filter(translation -> translation.getLanguage().getId() == languageId)
+                    .forEach(translation -> {
+                        column.setDescription(translation.getDescription());
+                    });
+        });
+
         List<ListComponentField> fields = new ArrayList<>();
         fields.addAll(entity.getListComponentColumnFieldList());
         fields.addAll(entity.getListComponentActionFieldList());
@@ -49,6 +58,18 @@ public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
                         column.setDescription(translation.getDescription());
                     });
         });
+
+        entity.getListComponentActionFieldList().forEach(column -> {
+            column.getListComponentActionFieldList().forEach(subColumn -> {
+                subColumn.getTranslations()
+                        .stream()
+                        .filter(translation -> translation.getLanguage().getId() == languageId)
+                        .forEach(translation -> {
+                            subColumn.setDescription(translation.getDescription());
+                        });
+            });
+        });
+
 
 
         /*

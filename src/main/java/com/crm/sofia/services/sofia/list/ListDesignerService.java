@@ -7,6 +7,8 @@ import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ListDesignerService {
@@ -23,6 +26,9 @@ public class ListDesignerService {
     private final ListMapper listMapper;
     private final JWTService jwtService;
     private final ListJavascriptService listJavascriptService;
+
+    @Autowired
+    CacheManager cacheManager;
 
     public ListDesignerService(ListRepository listRepository,
                                ListMapper listMapper,
@@ -60,8 +66,9 @@ public class ListDesignerService {
     }
 
     @Transactional
-    @CacheEvict(value = "list_ui_cache", key = "#listDTO.id")
+   // @CacheEvict(value = "list_ui_cache", key = "#listDTO.id")
     public ListDTO putObject(ListDTO listDTO) throws Exception {
+
         ListEntity listEntity = this.listMapper.mapListDTO(listDTO);
         listEntity.setModifiedOn(Instant.now());
         listEntity.setModifiedBy(jwtService.getUserId());
@@ -79,6 +86,12 @@ public class ListDesignerService {
         String script = this.listJavascriptService.generateDynamicScript(createdListDTO);
         String scriptMin = this.listJavascriptService.minify(script);
         this.listRepository.updateScripts(createdListDTO.getId(),script, scriptMin);
+
+        cacheManager.getCache( "list_ui_cache").evict(createdListEntity.getId());
+        cacheManager.getCache( "list_ui_cache").evict(new Object[]{createdListEntity.getId(), 0});
+        createdListEntity.getTranslations().forEach( translation -> {
+            cacheManager.getCache( "list_ui_cache").evict(new Object[]{createdListEntity.getId(), translation.getLanguage().getId()});
+        });
 
         return createdListDTO;
     }
@@ -121,13 +134,18 @@ public class ListDesignerService {
         return this.listMapper.map(listEntity);
     }
 
-    @CacheEvict(value = "list_ui_cache", key = "#id")
+//    @CacheEvict(value = "list_ui_cache", key = "#id")
     public void deleteObject(Long id) {
-        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
-        if (!optionalListEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-        }
-        this.listRepository.deleteById(optionalListEntity.get().getId());
+        ListEntity lienEntity = this.listRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "List does not exist"));
+
+        cacheManager.getCache( "list_ui_cache").evict(lienEntity.getId());
+        cacheManager.getCache( "list_ui_cache").evict(new Object[]{lienEntity.getId(), 0});
+        lienEntity.getTranslations().forEach( translation -> {
+            cacheManager.getCache( "list_ui_cache").evict(new Object[]{lienEntity.getId(), translation.getId()});
+        });
+
+        this.listRepository.deleteById(lienEntity.getId());
     }
 
     public boolean clearCacheForUi() {
