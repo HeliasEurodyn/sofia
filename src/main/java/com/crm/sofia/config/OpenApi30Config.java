@@ -18,7 +18,7 @@ import java.util.List;
 
 
 @Configuration
-@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title = "My API", version = "v3"))
+@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title = "DRAS API", version = "v3"))
 @io.swagger.v3.oas.annotations.security.SecurityScheme(
         name = "bearerAuth",
         type = SecuritySchemeType.HTTP,
