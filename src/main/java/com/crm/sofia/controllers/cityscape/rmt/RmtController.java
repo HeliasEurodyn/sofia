@@ -4,6 +4,7 @@ import com.crm.sofia.dto.cityscape.rtm.RmtDTO;
 import com.crm.sofia.services.cityscape.rtm.RmtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/rmt")
+@RequestMapping( "/rmt")
+@Tag(name = "Risk Assessment", description = "Endpoints collection to execute Risk Assessments and obtain results.")
 public class RmtController {
 
     private final RmtService rmtService;
