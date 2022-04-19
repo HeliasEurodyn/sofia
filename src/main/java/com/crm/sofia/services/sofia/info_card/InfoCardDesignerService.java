@@ -56,7 +56,7 @@ public class InfoCardDesignerService {
     @Modifying
     public InfoCardDTO postObject(InfoCardDTO dto) {
 
-        String decQuery = new String(Base64.getDecoder().decode(dto.getQuery()));
+        String decQuery = new String(Base64.getDecoder().decode(dto.getQuery().getBytes(StandardCharsets.UTF_8)));
         dto.setQuery(decQuery);
 
         InfoCard infoCard = this.infoCardMapper.map(dto);
