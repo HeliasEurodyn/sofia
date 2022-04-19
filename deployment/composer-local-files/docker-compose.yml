@@ -3,20 +3,21 @@ services:
   db:
     image: mariadb:10.5
     command: --default-authentication-plugin=mysql_native_password
-    container_name: rita-db
-    restart: always
+    container_name: dras-db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: rita
+        MYSQL_DATABASE: dras
     ports:
       - "4822:3306"
     volumes:
       - ./mysql-files:/var/lib/mysql
       - ./mysql-scripts:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - dras
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: rita-db-admin
-    restart: always
+    container_name: dras-db-admin
     environment:
       PMA_HOST: db
       PMA_USER: root
@@ -24,63 +25,67 @@ services:
       UPLOAD_LIMIT: 300M
     ports:
       - "4801:80"
+    restart: always
+    networks:
+      - dras
   dozzle:
     image: amir20/dozzle
-    container_name: rita-logs
+    container_name: dras-logs
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8081:8080"
-  rita-backend:
+    networks:
+      - dras
+  dras-backend:
     build:
-      context: ./rita-backend
+      context: dras-backend
       args:
-        DB_IP: db
+        DB_IP: dras-db
         DB_PORT: 3306
-        DB_NAME: rita
+        DB_NAME: dras
         DB_USERNAME: root
         DB_PASSWORD: root
-        KEYCLOAK_URL: http://localhost:8888/auth/realms/master/protocol/openid-connect/
-        KEYCLOAK_CLIENT_NAME: rita
-        KEYCLOAK_CLIENT_ID: rita
-        KEYCLOAK_CLIENT_SECRET: 3e140e26-1a8d-4207-a5b6-693043cf41c8
+        RMT: https://rmt.ds.unipi.gr
+        REDIS_HOST: redis
+        REDIS_PORT: 6399
+        REDIS_PASSWORD: sOmE_sEcUrE_pAsS
       dockerfile: Dockerfile
-    image: rita-backend
-    container_name: rita-backend
+    image: dras-backend
+    container_name: dras-backend
     ports:
       - "15502:15502"
     restart: always
-  rita-frontend:
+    networks:
+      - dras
+  dras-frontend:
     build:
-      context: ./rita-frontend
+      context: dras-frontend
       dockerfile: Dockerfile
       args:
-        BACKEND_URL: http://cityscape-rita-server.eurodyn.com:15502/api
-    image: rita-frontend
-    container_name: rita-frontend
+        BACKEND_URL: http://localhost:15502/api
+    image: dras-frontend
+    container_name: dras-frontend
     ports:
       - "5000:80"
     restart: always
-  keycloak:
-      image: jboss/keycloak:11.0.3
-      container_name: keycloak-server
-      environment:
-        - KEYCLOAK_USER=keycloak
-        - KEYCLOAK_PASSWORD=password
-        - PROXY_ADDRESS_FORWARDING=true
-      restart: unless-stopped
-      ports:
-        - "8889:8080"
+    networks:
+      - dras
   redis:
     image: "redis:alpine"
+    container_name: redis
     command: redis-server --requirepass sOmE_sEcUrE_pAsS
     ports:
-      - "6379:6379"
+      - "6399:6379"
     volumes:
       - $PWD/redis-data:/var/lib/redis
       - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
     networks:
-      - rita-network
+      - dras
+networks:
+  dras:
+    name: dras
+    driver: bridge
