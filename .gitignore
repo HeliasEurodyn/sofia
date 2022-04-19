@@ -33,6 +33,6 @@ build/
 ### Deployment Folder ###
 deployment/composer-dockerhub/mysql-files
 deployment/composer-local-files/mysql-files
-deployment/composer-local-files/rita-frontend/dist
-deployment/composer-local-files/rita-backend/sofia-0.0.1.jar
+deployment/composer-local-files/dras-frontend/dist
+deployment/composer-local-files/dras-backend/sofia-0.0.1.jar
 deployment/dockerfiles for dockerhub/iegsa-backend/backend.jar
