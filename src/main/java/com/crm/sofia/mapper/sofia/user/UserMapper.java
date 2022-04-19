@@ -1,6 +1,7 @@
 package com.crm.sofia.mapper.sofia.user;
 
 import com.crm.sofia.dto.sofia.menu.MenuFieldDTO;
+import com.crm.sofia.dto.sofia.menu.MenuTranslationDTO;
 import com.crm.sofia.dto.sofia.user.UserDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.user.User;
@@ -8,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,22 +17,54 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class UserMapper extends BaseMapper<UserDTO, User> {
 
-    public UserDTO mapUserToDtoWithMenu(User entity){
+    public UserDTO mapUserToDtoWithMenu(User entity) {
         UserDTO userDTO = this.mapUserToDto(entity);
-        if(userDTO.getSidebarMenu() != null && userDTO.getSidebarMenu().getMenuFieldList() != null) {
+        if (userDTO.getSidebarMenu() != null && userDTO.getSidebarMenu().getMenuFieldList() != null) {
             List<MenuFieldDTO> shorted = this.shortUserMenu(userDTO.getSidebarMenu().getMenuFieldList());
             userDTO.getSidebarMenu().setMenuFieldList(shorted);
         }
 
-        if(userDTO.getHeaderMenu() != null && userDTO.getHeaderMenu().getMenuFieldList() != null) {
+        if (userDTO.getHeaderMenu() != null && userDTO.getHeaderMenu().getMenuFieldList() != null) {
             List<MenuFieldDTO> shorted = this.shortUserMenu(userDTO.getHeaderMenu().getMenuFieldList());
             userDTO.getHeaderMenu().setMenuFieldList(shorted);
+        }
+
+        if (userDTO.getCurrentLanguage() != null){
+            this.mapUserMenuLanguageToTree(
+                    userDTO.getHeaderMenu().getMenuFieldList(),
+                    userDTO.getCurrentLanguage().getId());
+
+            this.mapUserMenuLanguageToTree(
+                    userDTO.getSidebarMenu().getMenuFieldList(),
+                    userDTO.getCurrentLanguage().getId());
         }
 
         return userDTO;
     }
 
-    private List<MenuFieldDTO> shortUserMenu(List<MenuFieldDTO> menuFieldList){
+    public void mapUserMenuLanguageToTree(List<MenuFieldDTO> menuFieldList, Long languageId) {
+        menuFieldList
+                .forEach(menuField -> {
+                    if (menuField.getTranslations() == null) {
+                        menuField.setTranslations(new ArrayList<>());
+                    }
+
+                    MenuTranslationDTO translation =
+                            menuField.getTranslations()
+                                    .stream()
+                                    .filter(x -> x.getLanguage().getId() == languageId)
+                                    .findFirst()
+                                    .orElse(null);
+
+                    if (translation != null) {
+                        menuField.setName(translation.getName());
+                    }
+
+                    this.mapUserMenuLanguageToTree(menuField.getMenuFieldList(), languageId);
+                });
+    }
+
+    private List<MenuFieldDTO> shortUserMenu(List<MenuFieldDTO> menuFieldList) {
 
         menuFieldList =
                 menuFieldList
@@ -64,7 +98,7 @@ public abstract class UserMapper extends BaseMapper<UserDTO, User> {
                 .filter(x -> x.getMenuFieldList() != null)
                 .filter(x -> x.getMenuFieldList().size() > 0)
                 .forEach(x -> {
-                    List<MenuFieldDTO> shorted = shortMenu( x.getMenuFieldList());
+                    List<MenuFieldDTO> shorted = shortMenu(x.getMenuFieldList());
                     x.setMenuFieldList(shorted);
                 });
 

@@ -46,7 +46,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
-    private final MenuFieldService menuFieldService;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
@@ -63,7 +62,6 @@ public class UserService {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.menuFieldService = menuFieldService;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
