@@ -26,8 +26,9 @@ public class MenuController {
     }
 
     @GetMapping(path="/by-id")
-    MenuDTO getObject(@RequestParam("id") Long id) {
-        return this.menuService.getObject(id);
+    MenuDTO getObject(@RequestParam("id") Long id,
+                      @RequestParam(defaultValue = "0", name = "language-id") Long languageId) {
+        return this.menuService.getObject(id, languageId);
     }
 
     @PostMapping

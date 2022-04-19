@@ -44,13 +44,14 @@ public class MenuService {
         return this.menuMapper.map(entites);
     }
 
-    public MenuDTO getObject(Long id) {
+    public MenuDTO getObject(Long id, Long languageId) {
+
         Optional<Menu> optionalEntity = this.menuRepository.findTreeById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
         Menu entity = optionalEntity.get();
-        MenuDTO dto = this.menuMapper.map(entity);
+        MenuDTO dto = this.menuMapper.mapMenu(entity, languageId);
 
         List<MenuFieldDTO> menuFieldList =
                 dto.getMenuFieldList()

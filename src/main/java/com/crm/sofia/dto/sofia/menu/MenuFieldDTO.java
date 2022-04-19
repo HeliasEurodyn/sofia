@@ -24,4 +24,6 @@ public class MenuFieldDTO extends BaseDTO {
     private String command;
 
     private List<MenuFieldDTO> menuFieldList;
+
+    private List<MenuTranslationDTO> translations;
 }

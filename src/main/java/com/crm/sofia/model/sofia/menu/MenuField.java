@@ -26,17 +26,18 @@ public class MenuField extends BaseEntity {
     @Column
     private String command;
 
-//    @Column
-//    private Long shortOrder;
-
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Menu.class)
-//    @JoinColumn(name = "menu_id", referencedColumnName = "id")
-//    private Menu menu;
-
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL})
     @JoinColumn(name = "menu_field_id")
     private List<MenuField> menuFieldList;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "menu_field_id")
+    private List<MenuFieldTranslation> translations;
 
 }
