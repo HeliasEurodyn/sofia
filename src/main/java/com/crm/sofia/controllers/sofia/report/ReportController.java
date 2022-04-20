@@ -21,12 +21,12 @@ public class ReportController {
     }
 
     @PostMapping(path = "/print")
-    void print(HttpServletResponse response,@RequestParam("id") Long id, @RequestBody Map<String, Object> parameters) throws Throwable {
+    void print(HttpServletResponse response,@RequestParam("id") String id, @RequestBody Map<String, Object> parameters) throws Throwable {
         this.reportService.print(response, id, parameters);
     }
 
     @GetMapping(path = "/type")
-    String getReportType(@RequestParam("id") Long id) {
+    String getReportType(@RequestParam("id") String id) {
         String reportType = this.reportService.getReportType(id);
         return "{\"type\":\""+reportType+"\"}";
     }

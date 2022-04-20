@@ -50,14 +50,14 @@ public class ViewController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         ViewDTO customComponentDTO = this.viewService.getObject(id);
         this.viewService.deleteObject(id);
         this.viewService.dropView(customComponentDTO.getName());
     }
 
     @GetMapping(path = "/by-id")
-    ViewDTO getObject(@RequestParam("id") Long id) {
+    ViewDTO getObject(@RequestParam("id") String id) {
         return this.viewService.getObject(id);
     }
 

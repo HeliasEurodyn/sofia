@@ -42,7 +42,7 @@ public abstract class UserMapper extends BaseMapper<UserDTO, User> {
         return userDTO;
     }
 
-    public void mapUserMenuLanguageToTree(List<MenuFieldDTO> menuFieldList, Long languageId) {
+    public void mapUserMenuLanguageToTree(List<MenuFieldDTO> menuFieldList, String languageId) {
         menuFieldList
                 .forEach(menuField -> {
                     if (menuField.getTranslations() == null) {
@@ -52,7 +52,7 @@ public abstract class UserMapper extends BaseMapper<UserDTO, User> {
                     MenuTranslationDTO translation =
                             menuField.getTranslations()
                                     .stream()
-                                    .filter(x -> x.getLanguage().getId() == languageId)
+                                    .filter(x -> x.getLanguage().getId().equals(languageId))
                                     .findFirst()
                                     .orElse(null);
 

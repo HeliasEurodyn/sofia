@@ -61,7 +61,7 @@ public class FormService {
         this.componentDeleterService = componentDeleterService;
     }
 
-    public FormDTO getObject(Long id) {
+    public FormDTO getObject(String id) {
 
         /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
@@ -104,10 +104,10 @@ public class FormService {
         return formDTO;
     }
 
-    public FormDTO getObject(String jsonUrl) {
+    public FormDTO getObjectByJsonUrl(String jsonUrl) {
 
         /* Retrieve */
-        List<Long> formEntityIdsList = this.formRepository.getIdsByJsonUrl(jsonUrl);
+        List<String> formEntityIdsList = this.formRepository.getIdsByJsonUrl(jsonUrl);
         if (formEntityIdsList.size() <= 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
@@ -117,7 +117,7 @@ public class FormService {
     }
 
     @Cacheable(value = "form_ui_cache", key = "#id")
-    public FormUiDTO getUiObject(Long id) {
+    public FormUiDTO getUiObject(String id) {
 
         System.out.println("Get UiForm object from Database");
 
@@ -164,20 +164,20 @@ public class FormService {
         return formUiDTO;
     }
 
-    public ComponentUiDTO retrieveClonedData(Long formId, String selectionId) {
+    public ComponentUiDTO retrieveClonedData(String formId, String selectionId) {
         ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
         return componentUiMapper.clearIdsAndMapToUi(componentDTO);
     }
 
-    public ComponentUiDTO retrieveUiData(Long formId, String selectionId) {
+    public ComponentUiDTO retrieveUiData(String formId, String selectionId) {
         ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
         return componentUiMapper.mapToUi(componentDTO);
     }
 
-    private ComponentDTO retrieveData(Long formId, String selectionId) {
+    private ComponentDTO retrieveData(String formId, String selectionId) {
 
         /* Retrieve Component */
-        FormDTO formDTO = this.getObject(formId);
+        FormDTO formDTO = this.getObjectByJsonUrl(formId);
         ComponentDTO componentDTO = formDTO.getComponent();
 
         /* Retrieve Form Component field Assignments from Database */
@@ -198,7 +198,7 @@ public class FormService {
     public Map retrieveJsonData(String jsonUrl, String selectionId) {
 
         /* Retrieve Component */
-        FormDTO formDTO = this.getObject(jsonUrl);
+        FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
         ComponentDTO componentDTO = formDTO.getComponent();
 
         /* Retrieve Form Component field Assignments from Database */
@@ -216,7 +216,7 @@ public class FormService {
         return componentJsonMapper.mapToJson(componentDTO);
     }
 
-    public FormDTO getObjectAndRetrieveData(Long formId, String selectionId) {
+    public FormDTO getObjectAndRetrieveData(String formId, String selectionId) {
 
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObject(formId);
@@ -237,7 +237,7 @@ public class FormService {
         return formDTO;
     }
 
-    public String save(Long formId, Map<String, Map<String, Object>> parameters) {
+    public String save(String formId, Map<String, Map<String, Object>> parameters) {
 
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObject(formId);
@@ -256,7 +256,7 @@ public class FormService {
         return componentSaverService.save(formDTO.getComponent(), parameters);
     }
 
-    public void delete(Long formId, String selectionId) {
+    public void delete(String formId, String selectionId) {
 
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObject(formId);
@@ -267,7 +267,7 @@ public class FormService {
     public String saveJsonData(String jsonUrl, Map<String, Map<String, Object>> parameters) {
 
         /* Retrieve form from Database */
-        FormDTO formDTO = this.getObject(jsonUrl);
+        FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
 
         /* Retrieve Form Component field Assignments from Database */
         List<ComponentPersistEntityDTO> componentPersistEntityList =
@@ -284,12 +284,12 @@ public class FormService {
     }
 
 
-    public String getJavaScript(Long formId) {
+    public String getJavaScript(String formId) {
         String script = this.formRepository.getFormScript(formId);
         return script;
     }
 
-    public String getMinJavaScript(Long formId) {
+    public String getMinJavaScript(String formId) {
         String script = this.formRepository.getFormMinScript(formId);
         return script;
     }
@@ -310,7 +310,7 @@ public class FormService {
         return String.join("\n", scriptLines);
     }
 
-    public String getCssScript(Long formId) {
+    public String getCssScript(String formId) {
         List<String> decodedScripts = new ArrayList<>();
         List<String> formScripts = this.formRepository.getFormCssScriptsByFormId(formId);
 
@@ -323,7 +323,7 @@ public class FormService {
     }
 
 
-    public String getInstanceVersion(Long id) {
+    public String getInstanceVersion(String id) {
         return this.formRepository.getInstanceVersion(id);
     }
 

@@ -44,7 +44,7 @@ public class UserGroupService {
         return userGroupMapper.map(entites);
     }
 
-    public UserGroupDTO getObject(Long id)  {
+    public UserGroupDTO getObject(String id)  {
         Optional<UserGroup> optionalEntity = userGroupRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -58,7 +58,7 @@ public class UserGroupService {
     public UserGroupDTO postObject(UserGroupDTO userGroupDTO) {
         UserGroup userGroup = userGroupMapper.map(userGroupDTO);
 
-        List<Long> userIds =
+        List<String> userIds =
                 userGroupDTO.getUsers()
                         .stream()
                         .filter(user -> user.getId() != null)
@@ -80,7 +80,7 @@ public class UserGroupService {
         return userGroupMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<UserGroup> optionalEntity = userGroupRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

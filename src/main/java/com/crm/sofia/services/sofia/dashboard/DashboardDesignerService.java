@@ -35,7 +35,7 @@ public class DashboardDesignerService {
         return this.dashboardMapper.map(dashboards);
     }
 
-    public DashboardDTO getObject(Long id) {
+    public DashboardDTO getObject(String id) {
         Optional<Dashboard> dashboardOptional = this.dashboardRepository.findById(id);
         if (!dashboardOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Dashboard does not exist");
@@ -43,7 +43,7 @@ public class DashboardDesignerService {
 
         DashboardDTO dashboardDTO = dashboardMapper.map(dashboardOptional.get());
 
-        List<Long> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         List<DashboardAreaDTO> dashboardAreaList = new ArrayList<>();
         for (DashboardAreaDTO area : dashboardDTO.getDashboardAreaList()) {
             if (!ids.contains(area.getId())) {
@@ -92,7 +92,7 @@ public class DashboardDesignerService {
         return this.dashboardMapper.map(createdDashboard);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Dashboard> optionalDashboard = this.dashboardRepository.findById(id);
         if (!optionalDashboard.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Dashboard does not exist");

@@ -46,7 +46,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                Long userId = tokenProvider.getUserIdFromToken(jwt);
+                String userId = tokenProvider.getUserIdFromToken(jwt);
                 UserDetails userDetails = customUserDetailsService.loadUserById(userId);
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private List<SimpleGrantedAuthority> getAuthorities(String type, String entityId, Long userId) {
+    private List<SimpleGrantedAuthority> getAuthorities(String type, String entityId, String userId) {
 
         String queryString =
                 " SELECT " +

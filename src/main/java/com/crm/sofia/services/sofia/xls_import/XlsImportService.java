@@ -49,7 +49,7 @@ public class XlsImportService {
         this.expressionService = expressionService;
     }
 
-    public XlsImportDTO getObject(Long id) {
+    public XlsImportDTO getObject(String id) {
         Optional<XlsImport> optionalchart = this.xlsImportRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -70,7 +70,7 @@ public class XlsImportService {
         return dto;
     }
 
-    public String importXls(MultipartFile multipartFile, Long id) throws IOException {
+    public String importXls(MultipartFile multipartFile, String id) throws IOException {
 
         /* Check file extension */
         String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());

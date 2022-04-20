@@ -25,7 +25,7 @@ public class XlsImportDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    XlsImportDTO getObject(@RequestParam("id") Long id) {
+    XlsImportDTO getObject(@RequestParam("id") String id) {
         return this.xlsImportDesignerService.getObject(id);
     }
 
@@ -40,7 +40,7 @@ public class XlsImportDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.xlsImportDesignerService.deleteObject(id);
     }
 

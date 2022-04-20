@@ -25,7 +25,7 @@ public class RoleController {
     }
 
     @GetMapping(path = "/by-id")
-    RoleDTO getObject(@RequestParam("id") Long id) {
+    RoleDTO getObject(@RequestParam("id") String id) {
         return roleService.getObject(id);
     }
 
@@ -40,7 +40,7 @@ public class RoleController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         roleService.deleteObject(id);
     }
 

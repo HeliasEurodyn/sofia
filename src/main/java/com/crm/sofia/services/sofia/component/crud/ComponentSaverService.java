@@ -19,7 +19,7 @@ public class ComponentSaverService {
         this.componentService = componentService;
     }
 
-    public String save(Long componentId, Map<String, Map<String, Object>> parameters) {
+    public String save(String componentId, Map<String, Map<String, Object>> parameters) {
         /* Retrieve form from Database */
         ComponentDTO componentDTO = componentService.getObject(componentId);
 

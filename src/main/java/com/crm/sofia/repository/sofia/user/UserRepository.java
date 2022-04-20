@@ -15,7 +15,7 @@ public interface UserRepository extends BaseRepository<User> {
 
     List<User> findAllByStatusIsNotLike(AppConstants.Types.UserStatus status);
 
-    List<User> findUsersByIdIn(List<Long> ids);
+    List<User> findUsersByIdIn(List<String> ids);
 
     @Query(" SELECT (count (u)>0) " +
             " FROM User u " +
@@ -32,7 +32,7 @@ public interface UserRepository extends BaseRepository<User> {
     @Query(" SELECT u.password " +
             " FROM User u " +
             " WHERE u.id = :id ")
-   String findPasswordById(@Param("id") Long id);
+   String findPasswordById(@Param("id") String id);
 
     User findByEmail(String email);
 
@@ -48,12 +48,12 @@ public interface UserRepository extends BaseRepository<User> {
             " login_nav_command = 'STATICPAGE[NAME:dashboard,LOCATE:(ID=1)]'," +
             " search_nav_command = 'POPUPPAGE[NAME:search,LOCATE:(ID=1),SEARCH-DEFAULT:#SEARCH-VALUE#,FOCUS:search-field-box]' " +
             " WHERE id = :id ", nativeQuery = true)
-    void initiateUserInfo(@Param("id") Long id);
+    void initiateUserInfo(@Param("id") String id);
 
     @Modifying
     @Query(value = "UPDATE User u SET" +
             " u.currentLanguage.id = :language_id " +
             " WHERE u.id = :id ")
-    void updateCurrentLanguage(@Param("id") Long id, @Param("language_id") Long languageId);
+    void updateCurrentLanguage(@Param("id") String id, @Param("language_id") Long languageId);
 
 }

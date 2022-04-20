@@ -37,7 +37,7 @@ public class RoleService {
         return roleMapper.map(entites);
     }
 
-    public RoleDTO getObject(Long id)  {
+    public RoleDTO getObject(String id)  {
         Optional<Role> optionalEntity = roleRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -62,7 +62,7 @@ public class RoleService {
         return roleMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Role> optionalEntity = roleRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

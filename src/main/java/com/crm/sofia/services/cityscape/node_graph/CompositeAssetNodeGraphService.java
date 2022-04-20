@@ -21,7 +21,7 @@ public class CompositeAssetNodeGraphService {
         this.entityManager = entityManager;
     }
 
-    public Object getById(Long id) {
+    public Object getById(String id) {
         String queryString = "SELECT a.id," +
                 " a.code," +
                 " a.name," +
@@ -48,7 +48,7 @@ public class CompositeAssetNodeGraphService {
         return responce;
     }
 
-    public Object getRelatedAssets(Long id) {
+    public Object getRelatedAssets(String id) {
         String queryString = " SELECT " +
                 " a.id, " +
                 " a.code," +
@@ -90,7 +90,7 @@ public class CompositeAssetNodeGraphService {
         return responceList;
     }
 
-    public Object getRelatedCompositAssets(Long id) {
+    public Object getRelatedCompositAssets(String id) {
         String queryString = " SELECT " +
                 " a.id, " +
                 " a.code," +
@@ -276,7 +276,7 @@ public class CompositeAssetNodeGraphService {
 
     @Transactional
     @Modifying
-    public void saveRelationshipProbability(Long id, String threatProbability) {
+    public void saveRelationshipProbability(String id, String threatProbability) {
         String queryString =
                 " UPDATE asset_to_composite_asset_threat SET threat_propability = :threat_propability WHERE id = :id ";
 
@@ -288,7 +288,7 @@ public class CompositeAssetNodeGraphService {
 
     @Transactional
     @Modifying
-    public void saveRelationshipActive(Long id, String active) {
+    public void saveRelationshipActive(String id, String active) {
         String queryString =
                 " UPDATE asset_to_composite_asset_threat SET active = :active WHERE id = :id ";
 

@@ -15,18 +15,18 @@ public interface ReportRepository extends BaseRepository<Report> {
 
     @Query(" SELECT r.reportUuid FROM Report r " +
             " WHERE r.id =:id ")
-    String findUuid(@Param("id")long id);
+    String findUuid(@Param("id")String id);
 
     @Query(" SELECT r.reportType FROM Report r " +
             " WHERE r.id =:id ")
-    String findType(@Param("id")long id);
+    String findType(@Param("id")String id);
 
     @Query(" SELECT r.reportFileData FROM Report r " +
             " WHERE r.id =:id ")
-    byte[] findReportFileData(long id);
+    byte[] findReportFileData(String id);
 
     @Query(" SELECT r.reportParameterList FROM Report r " +
             " WHERE r.id =:id ")
-    List<ReportParameter> getReportParametersById(long id);
+    List<ReportParameter> getReportParametersById(String id);
 
 }

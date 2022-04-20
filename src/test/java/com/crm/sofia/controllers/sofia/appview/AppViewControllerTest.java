@@ -67,7 +67,7 @@ public class AppViewControllerTest {
         dto.setEntitytype("dummy");
         dto.setQuery("select * ");
         dto.setIndexes("12");
-        dto.setCreatedBy(6l);
+        dto.setCreatedBy("6l");
         dto.setCreatedOn(Instant.now());
         this.appViewDTOList.add(dto);
 
@@ -76,7 +76,7 @@ public class AppViewControllerTest {
         appViewFieldDTO.setDescription("Demo");
         appViewFieldDTO.setName("Test");
         appViewFieldDTO.setSize(5);
-        appViewFieldDTO.setCreatedBy(5l);
+        appViewFieldDTO.setCreatedBy("5l");
         this.appViewFieldDTOList.add(appViewFieldDTO);
 
         mvc = MockMvcBuilders.standaloneSetup(appViewController)

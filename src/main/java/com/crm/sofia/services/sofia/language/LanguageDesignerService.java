@@ -31,7 +31,7 @@ public class LanguageDesignerService {
         return languageMapper.map(entites);
     }
 
-    public LanguageDTO getObject(Long id) {
+    public LanguageDTO getObject(String id) {
         Optional<Language> optionalEntity = languageRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -54,7 +54,7 @@ public class LanguageDesignerService {
         return languageMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Language> optionalEntity = languageRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

@@ -26,7 +26,7 @@ public class DataTransferController {
     }
 
     @GetMapping(path = "/by-id")
-    DataTransferDTO getObject(@RequestParam("id") Long id) {
+    DataTransferDTO getObject(@RequestParam("id") String id) {
         return dataTransferService.getObject(id);
     }
 
@@ -41,12 +41,12 @@ public class DataTransferController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         dataTransferService.deleteObject(id);
     }
 
     @GetMapping(path = "/export", produces = "text/plain")
-    byte[] export(@RequestParam("id") Long id) throws IOException, ClassNotFoundException {
+    byte[] export(@RequestParam("id") String id) throws IOException, ClassNotFoundException {
         return dataTransferService.export(id);
     }
 

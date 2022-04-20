@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Primary
-public interface BaseRepository<M extends BaseEntity> extends PagingAndSortingRepository<M, Long> {
+public interface BaseRepository<M extends BaseEntity> extends PagingAndSortingRepository<M, String> {
 
 }

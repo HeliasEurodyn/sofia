@@ -54,7 +54,7 @@ public class ViewService {
         return this.viewMapper.map(views);
     }
 
-    public ViewDTO getObject(Long id) {
+    public ViewDTO getObject(String id) {
         Optional<PersistEntity> optionalView = this.persistEntityRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");
@@ -62,7 +62,7 @@ public class ViewService {
         return this.viewMapper.map(optionalView.get());
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<PersistEntity> optionalView = this.persistEntityRepository.findById(id);
         if (!optionalView.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "View does not exist");

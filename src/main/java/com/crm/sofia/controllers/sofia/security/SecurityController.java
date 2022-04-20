@@ -22,7 +22,7 @@ public class SecurityController {
     }
 
     @GetMapping(path = "/by-id")
-    SecurityDTO getObject(@RequestParam("id") Long id) {
+    SecurityDTO getObject(@RequestParam("id") String id) {
         return securityService.getObject(id);
     }
 
@@ -37,7 +37,7 @@ public class SecurityController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         securityService.deleteObject(id);
     }
 

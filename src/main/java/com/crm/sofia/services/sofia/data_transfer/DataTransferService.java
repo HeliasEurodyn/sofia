@@ -59,7 +59,7 @@ public class DataTransferService {
         return dataTransferMapper.map(entites);
     }
 
-    public DataTransferDTO getObject(Long id) {
+    public DataTransferDTO getObject(String id) {
         Optional<DataTransfer> optionalEntity = dataTransferRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -83,25 +83,25 @@ public class DataTransferService {
         return dataTransferMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         DataTransfer entity = dataTransferRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist"));
 
         dataTransferRepository.deleteById(entity.getId());
     }
 
-    public byte[] export(Long id) throws IOException, ClassNotFoundException {
+    public byte[] export(String id) throws IOException, ClassNotFoundException {
 
         DataTransferDTO dataTransferDTO = this.getObject(id);
 
         dataTransferDTO.setLists(new ArrayList<>());
         dataTransferDTO.getListIds().forEach(listId -> {
-            try {
+//            try {
                 ListDTO listDTO = this.listDesignerService.getById(listId);
                 dataTransferDTO.getLists().add(listDTO);
-            }catch (Exception ex){
-                String a = "ss";
-            }
+//            }catch (Exception ex){
+//                String a = "ss";
+//            }
         });
 
         dataTransferDTO.setForms(new ArrayList<>());
@@ -154,7 +154,7 @@ public class DataTransferService {
 
     }
 
-    private Long getCurrentVersion(String entity, Long id){
+    private Long getCurrentVersion(String entity, String id){
 
         Query query = entityManager.
                 createQuery("Select t.version from " + entity + " t WHERE t.id = :id");

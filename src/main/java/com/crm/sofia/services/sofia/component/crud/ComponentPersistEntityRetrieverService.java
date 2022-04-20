@@ -33,7 +33,7 @@ public class ComponentPersistEntityRetrieverService {
         this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
     }
 
-    public ComponentPersistEntityDTO get(Long id, String selectionId){
+    public ComponentPersistEntityDTO get(String id, String selectionId){
         ComponentPersistEntityDTO componentPersistEntityDTO = this.getComponentPersistEntityById(id);
 
         List<ComponentPersistEntityFieldDTO> retrievalFieldList = componentPersistEntityDTO.getComponentPersistEntityFieldList()
@@ -57,7 +57,7 @@ public class ComponentPersistEntityRetrieverService {
     }
 
 
-    private ComponentPersistEntityDTO getComponentPersistEntityById(Long id) {
+    private ComponentPersistEntityDTO getComponentPersistEntityById(String id) {
         Optional<ComponentPersistEntity> optionalComponentPersistEntity = componentPersistEntityRepository.findById(id);
 
         if (!optionalComponentPersistEntity.isPresent()) {

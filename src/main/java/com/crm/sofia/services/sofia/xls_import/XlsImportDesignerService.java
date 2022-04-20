@@ -38,7 +38,7 @@ public class XlsImportDesignerService {
         return this.xlsImportMapper.map(charts);
     }
 
-    public XlsImportDTO getObject(Long id) {
+    public XlsImportDTO getObject(String id) {
         Optional<XlsImport> optionalchart = this.xlsImportRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -97,7 +97,7 @@ public class XlsImportDesignerService {
 
     @Transactional
     @Modifying
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<XlsImport> optionalChart = this.xlsImportRepository.findById(id);
         if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

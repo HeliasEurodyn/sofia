@@ -27,7 +27,7 @@ public class AppViewController {
     }
 
     @GetMapping(path = "/by-id")
-    AppViewDTO getObject(@RequestParam("id") Long id) {
+    AppViewDTO getObject(@RequestParam("id") String id) {
         return this.appViewService.getObject(id);
     }
 
@@ -42,7 +42,7 @@ public class AppViewController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.appViewService.deleteObject(id);
     }
 

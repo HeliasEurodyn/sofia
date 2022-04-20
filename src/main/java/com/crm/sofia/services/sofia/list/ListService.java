@@ -58,7 +58,7 @@ public class ListService {
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
     }
 
-    public ListDTO getObject(Long id) {
+    public ListDTO getObject(String id) {
         Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
         if (!optionalListEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
@@ -80,7 +80,7 @@ public class ListService {
         return this.listMapper.map(views);
     }
 
-    public ListDTO getObjectWithDefaults(Long id) {
+    public ListDTO getObjectWithDefaults(String id) {
 
         ListDTO listDTO = this.getObject(id);
         listDTO.getListComponentFilterFieldList()
@@ -112,7 +112,7 @@ public class ListService {
     }
 
     @Cacheable(value = "list_ui_cache", key="{ #id, #languageId }")
-    public ListUiDTO getUiListObject(Long id, Long languageId) {
+    public ListUiDTO getUiListObject(String id, String languageId) {
 
         System.out.println("Get UiList object from Database");
 
@@ -195,7 +195,7 @@ public class ListService {
 
     public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, String jsonUrl) {
 
-        List<Long> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
+        List<String> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
 
         if (ids.size() <= 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
@@ -207,7 +207,7 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getPivotObjectDataByParameters(Map<String, String> parameters, Long id) {
+    public ListResultsDataDTO getPivotObjectDataByParameters(Map<String, String> parameters, String id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
         listDTO.setCurrentPage(0L);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
@@ -216,7 +216,7 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, Long id) {
+    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, String id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
         listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
@@ -319,27 +319,27 @@ public class ListService {
         return listDTO;
     }
 
-    public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, Long id) {
+    public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, String id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         return this.listRetrieverNativeRepository.executeListAndGetGroupingData(listDTO);
     }
 
-    public String getInstanceVersion(Long id) {
+    public String getInstanceVersion(String id) {
         return this.listRepository.getInstanceVersion(id);
     }
 
-    public String getMinJavaScript(Long id) {
+    public String getMinJavaScript(String id) {
         String script = this.listRepository.getListMinScript(id);
         return script;
     }
 
-    public String getJavaScript(Long id) {
+    public String getJavaScript(String id) {
         String script = this.listRepository.getListScript(id);
         return script;
     }
 
-    public String getCssScript(Long id) {
+    public String getCssScript(String id) {
         List<String> decodedScripts = new ArrayList<>();
         List<String> scripts = this.listRepository.getCssScriptsById(id);
 
@@ -367,7 +367,7 @@ public class ListService {
         return String.join("\n", scriptLines);
     }
 
-    public void updateField(Long id, String field, Object fieldValue, Object rel) {
+    public void updateField(String id, String field, Object fieldValue, Object rel) {
         ListDTO listDTO = this.getObject(id);
         this.listUpdaterNativeRepository.updateField(listDTO, field, fieldValue, rel);
 

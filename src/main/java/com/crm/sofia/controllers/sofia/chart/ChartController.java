@@ -26,13 +26,13 @@ public class ChartController {
     }
 
     @GetMapping(path = "/by-id")
-    ChartDTO getObject(@RequestParam("id") Long id,
+    ChartDTO getObject(@RequestParam("id") String id,
                        @RequestParam Map<String, String> parameters) {
         return this.chartService.getObject(id, parameters);
     }
 
     @GetMapping(path = "/data")
-    List<ChartFieldDTO> getData(@RequestParam("id") Long id,
+    List<ChartFieldDTO> getData(@RequestParam("id") String id,
                                 @RequestParam Map<String, String> parameters) {
         return this.chartService.getData(id, parameters);
     }

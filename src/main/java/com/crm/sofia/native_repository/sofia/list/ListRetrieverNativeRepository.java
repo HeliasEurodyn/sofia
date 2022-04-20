@@ -247,7 +247,7 @@ public class ListRetrieverNativeRepository {
         fields.addAll(listDTO.getListComponentOrderByFieldList());
         fields.addAll(listDTO.getListComponentTopGroupFieldList());
 
-        List<Long> fieldCpeIds =
+        List<String> fieldCpeIds =
                 fields.stream()
                         .filter(x -> x.getComponentPersistEntity() != null)
                         .map(x -> x.getComponentPersistEntity().getId())
@@ -255,7 +255,7 @@ public class ListRetrieverNativeRepository {
                         .collect(Collectors.toList());
 
         List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
-        for (Long id : fieldCpeIds) {
+        for (String id : fieldCpeIds) {
             List<ComponentPersistEntityDTO> cpesUpToId = this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(), id);
 
             List<ComponentPersistEntityDTO> newCpes =
@@ -950,7 +950,7 @@ public class ListRetrieverNativeRepository {
 //        return allComponentPersistEntityList;
 //    }
 
-    private List<ComponentPersistEntityDTO> getCpeTreeToListUpToId(List<ComponentPersistEntityDTO> cpeList, Long id) {
+    private List<ComponentPersistEntityDTO> getCpeTreeToListUpToId(List<ComponentPersistEntityDTO> cpeList, String id) {
 
         ComponentPersistEntityDTO cpe =
                             cpeList

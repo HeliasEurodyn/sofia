@@ -33,7 +33,7 @@ public class ComponentDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    ComponentDTO getObject(@RequestParam("id") Long id) {
+    ComponentDTO getObject(@RequestParam("id") String id) {
         return this.componentDesignerService.getObject(id);
     }
 
@@ -50,12 +50,12 @@ public class ComponentDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.componentDesignerService.deleteObject(id);
     }
 
     @GetMapping(path = "/component-persist-entity/data/by-id")
-    ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") Long id,
+    ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") String id,
                                                                 @RequestParam("selection-id") String selectionId) {
         ComponentPersistEntityDTO componentPersistEntityDTO = this.componentDesignerService.getComponentPersistEntityDataById(id, selectionId);
 

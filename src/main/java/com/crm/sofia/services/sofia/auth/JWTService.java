@@ -22,13 +22,13 @@ public class JWTService {
         this.appProperties = appProperties;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
 
         String token = this.getJwt();
 
         Claims claims = Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(token).getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
 
     private String getJwt() {

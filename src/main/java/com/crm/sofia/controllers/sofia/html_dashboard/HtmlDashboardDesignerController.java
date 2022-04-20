@@ -27,7 +27,7 @@ public class HtmlDashboardDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    HtmlDashboardDTO getObject(@RequestParam("id") Long id) {
+    HtmlDashboardDTO getObject(@RequestParam("id") String id) {
         return htmlDashboardDesignerService.getObject(id);
     }
 
@@ -42,7 +42,7 @@ public class HtmlDashboardDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         htmlDashboardDesignerService.deleteObject(id);
     }
 

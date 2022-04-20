@@ -21,7 +21,7 @@ public class CustomQueryController {
     private CustomQueryService customQueryService;
 
     @GetMapping(path = "/data")
-    Object getData(@RequestParam("id") Long id, @RequestParam Map<String, String> parameters) {
+    Object getData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
         return customQueryService.getData(id, parameters);
     }
 

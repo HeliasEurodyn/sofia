@@ -22,7 +22,7 @@ public class HtmlDashboardController {
     }
 
     @GetMapping(path = "/by-id")
-    HtmlDashboardDTO getObject(@RequestParam("id") Long id) {
+    HtmlDashboardDTO getObject(@RequestParam("id") String id) {
         return htmlDashboardService.getObject(id);
     }
 }

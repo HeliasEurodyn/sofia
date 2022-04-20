@@ -29,7 +29,7 @@ public class DownloadService {
         return downloadMapper.map(entites);
     }
 
-    public DownloadDTO getObject(Long id) {
+    public DownloadDTO getObject(String id) {
         Optional<Download> optionalEntity = downloadRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -54,7 +54,7 @@ public class DownloadService {
         return downloadMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Download> optionalEntity = downloadRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

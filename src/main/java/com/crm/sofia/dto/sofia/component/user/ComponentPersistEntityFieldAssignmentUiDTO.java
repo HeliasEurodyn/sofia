@@ -18,13 +18,13 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ComponentPersistEntityFieldAssignmentUiDTO implements Serializable {
 
-    private Long id;
+    private String id;
 
     private String entityType;
 
-    private Long entityId;
+    private String entityId;
 
-    private Long fieldId;
+    private String fieldId;
 
     private String editor;
 

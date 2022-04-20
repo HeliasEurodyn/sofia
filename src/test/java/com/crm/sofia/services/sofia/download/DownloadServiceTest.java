@@ -61,15 +61,15 @@ public class DownloadServiceTest {
 
     @Test
     public void getObjectByIdTest(){
-        given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(download));
-        DownloadDTO dto = downloadService.getObject(6L);
+        given(downloadRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(download));
+        DownloadDTO dto = downloadService.getObject("6L");
     }
 
     @Test
     public void getObjectByIdWhenEmptyTest(){
-        given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(downloadRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            downloadService.getObject(6L);
+            downloadService.getObject("6L");
         });
 
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
@@ -87,16 +87,16 @@ public class DownloadServiceTest {
 
     @Test
     public void getDeleteByIdTest(){
-        given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(download));
-        downloadService.deleteObject(6L);
+        given(downloadRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(download));
+        downloadService.deleteObject("6L");
 
     }
 
     @Test
     public void getDeleteByIdWhenEmptyTest(){
-        given(downloadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(downloadRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            downloadService.deleteObject(6L);
+            downloadService.deleteObject("6L");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
         String actualMessage = exception.getMessage();

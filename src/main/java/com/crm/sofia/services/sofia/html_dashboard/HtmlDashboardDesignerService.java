@@ -35,7 +35,7 @@ public class HtmlDashboardDesignerService {
         return htmlDashboardMapper.map(entites);
     }
 
-    public HtmlDashboardDTO getObject(Long id) {
+    public HtmlDashboardDTO getObject(String id) {
         Optional<HtmlDashboard> optionalEntity = htmlDashboardRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -60,7 +60,7 @@ public class HtmlDashboardDesignerService {
         return htmlDashboardMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<HtmlDashboard> optionalEntity = htmlDashboardRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

@@ -72,7 +72,7 @@ public class UserService {
         return userMapper.mapUsersToDtos(users);
     }
 
-    public UserDTO getUser(Long id) {
+    public UserDTO getUser(String id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             return userMapper.mapUserToDto(userOptional.get());
@@ -139,7 +139,7 @@ public class UserService {
 
     @Transactional
     public void updateCurrentLanguage(Long languageId) {
-        Long userId = this.jwtService.getUserId();
+        String userId = this.jwtService.getUserId();
 
        this.userRepository.updateCurrentLanguage(userId, languageId);
     }
@@ -170,7 +170,7 @@ public class UserService {
         return responseUserDTO;
     }
 
-    public Boolean delete(Long id) {
+    public Boolean delete(String id) {
         userRepository.deleteById(id);
         return true;
     }
@@ -182,7 +182,7 @@ public class UserService {
     }
 
     public User getLoggedInUser() {
-        Long id = jwtService.getUserId();
+        String id = jwtService.getUserId();
         Optional<User> userOptional = this.userRepository.findById(id);
         if (!userOptional.isPresent()) {
             return null;
@@ -253,7 +253,7 @@ public class UserService {
                 .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword(passwordString).build();
     }
 
-    public Optional<User> findUserById(Long id) {
+    public Optional<User> findUserById(String id) {
         return userRepository.findById(id);
     }
 

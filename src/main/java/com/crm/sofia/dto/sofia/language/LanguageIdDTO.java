@@ -17,5 +17,5 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
 public class LanguageIdDTO implements Serializable {
-    private Long id;
+    private String id;
 }

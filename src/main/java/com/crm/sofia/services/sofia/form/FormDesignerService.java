@@ -106,7 +106,7 @@ public class FormDesignerService {
         return this.formMapper.mapEntitiesForList(formEntities);
     }
 
-    public FormDTO getObject(Long id) {
+    public FormDTO getObject(String id) {
 
         /* Retrieve */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
@@ -162,7 +162,7 @@ public class FormDesignerService {
 
     @Transactional
     @Modifying
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FormEntity does not exist");

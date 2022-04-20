@@ -41,7 +41,7 @@ public class InfoCardDesignerService {
         return infoCardDTOS;
     }
 
-    public InfoCardDTO getObject(Long id) {
+    public InfoCardDTO getObject(String id) {
         Optional<InfoCard> optionalInfoCard = this.infoCardRepository.findById(id);
         if (!optionalInfoCard.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Info card does not exist");
@@ -64,7 +64,7 @@ public class InfoCardDesignerService {
         return this.infoCardMapper.map(createdInfoCard);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<InfoCard> optionalInfoCard = this.infoCardRepository.findById(id);
         if (!optionalInfoCard.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "InfoCard does not exist");

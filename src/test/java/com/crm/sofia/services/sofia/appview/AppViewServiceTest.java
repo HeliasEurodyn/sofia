@@ -79,16 +79,16 @@ public class AppViewServiceTest {
 
     @Test
     public void getObjectByIdTest(){
-        given(appViewRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(persistEntity));
-        AppViewDTO dto = appViewService.getObject(6L);
+        given(appViewRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(persistEntity));
+        AppViewDTO dto = appViewService.getObject("6L");
 
     }
 
     @Test
     public void getObjectByIdWhenEmptyTest(){
-        given(appViewRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(appViewRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            appViewService.getObject(6L);
+            appViewService.getObject("6L");
         });
 
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"View does not exist\"";
@@ -98,15 +98,15 @@ public class AppViewServiceTest {
     }
     @Test
     public void getDeleteByIdTest(){
-        given(appViewRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(persistEntity));
-        appViewService.deleteObject(6L);
+        given(appViewRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(persistEntity));
+        appViewService.deleteObject("6L");
 
     }
     @Test
     public void getDeleteByIdWhenEmptyTest(){
-        given(appViewRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(appViewRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            appViewService.deleteObject(6L);
+            appViewService.deleteObject("6L");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"View does not exist\"";
         String actualMessage = exception.getMessage();

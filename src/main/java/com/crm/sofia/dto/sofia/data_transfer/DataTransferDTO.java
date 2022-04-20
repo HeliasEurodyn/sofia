@@ -26,11 +26,11 @@ public class DataTransferDTO extends BaseDTO {
 
     private Integer currentVersion;
 
-    List<Long> formIds;
+    List<String> formIds;
 
     List<FormDTO> forms;
 
-    List<Long> listIds;
+    List<String> listIds;
 
     List<ListDTO> lists;
 

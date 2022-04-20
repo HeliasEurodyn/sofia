@@ -7,6 +7,7 @@ import com.crm.sofia.dto.sofia.user.UserDTO;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.services.sofia.user.UserService;
 import com.crm.sofia.utils.GeneralUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping(path="/by-id")
-    public UserDTO getUser(@RequestParam("id") Long id) {
+    public UserDTO getUser(@RequestParam("id") String id) {
         return userService.getUser(id);
     }
 
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    public Boolean delete(@RequestParam("id") Long id) {
+    public Boolean delete(@RequestParam("id") String id) {
         return this.userService.delete(id);
     }
 

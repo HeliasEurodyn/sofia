@@ -24,7 +24,7 @@ public class InfoCardController {
     }
 
     @GetMapping(path = "/by-id")
-    InfoCardDTO getObject(@RequestParam("id") Long id,
+    InfoCardDTO getObject(@RequestParam("id") String id,
                           @RequestParam Map<String, String> parameters) {
         return this.infoCardService.getObject(id, parameters);
     }

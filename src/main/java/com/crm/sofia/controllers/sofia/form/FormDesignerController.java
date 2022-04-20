@@ -26,7 +26,7 @@ public class FormDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    FormDTO getObject(@RequestParam("id") Long id) {
+    FormDTO getObject(@RequestParam("id") String id) {
         return this.formDesignerService.getObject(id);
     }
 
@@ -43,7 +43,7 @@ public class FormDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.formDesignerService.deleteObject(id);
     }
 

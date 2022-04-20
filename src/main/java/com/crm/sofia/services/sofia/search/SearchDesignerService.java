@@ -40,7 +40,7 @@ public class SearchDesignerService {
         return this.searchMapper.map(searcies);
     }
 
-    public SearchDTO getObject(Long id) {
+    public SearchDTO getObject(String id) {
         Optional<Search> optionalSearch = this.searchRepository.findById(id);
         if (!optionalSearch.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Info card does not exist");
@@ -56,7 +56,7 @@ public class SearchDesignerService {
         return this.searchMapper.map(createdSearch);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Search> optionalSearch = this.searchRepository.findById(id);
         if (!optionalSearch.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Search does not exist");

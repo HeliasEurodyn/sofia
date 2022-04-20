@@ -20,7 +20,7 @@ public class NodeGraphService {
         this.entityManager = entityManager;
     }
 
-    public Object getAsset(Long id, String type) {
+    public Object getAsset(String id, String type) {
         String prefix = "";
         if (type.toUpperCase().equals("COMPOSIT")) {
             prefix = "composite_";
@@ -57,7 +57,7 @@ public class NodeGraphService {
         return responce;
     }
 
-    public Object getRelatedAssets(Long id) {
+    public Object getRelatedAssets(String id) {
         String queryString = " SELECT " +
                 " a.id, " +
                 " a.code," +
@@ -99,7 +99,7 @@ public class NodeGraphService {
         return responceList;
     }
 
-    public Object getRelatedCompositAssets(Long id) {
+    public Object getRelatedCompositAssets(String id) {
         String queryString = " SELECT " +
                 " a.id, " +
                 " a.code," +

@@ -21,7 +21,7 @@ public class ComponentDeleterService {
         this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
     }
 
-    public void retrieveComponentAndDelete(Long componentId, String selectionId) {
+    public void retrieveComponentAndDelete(String componentId, String selectionId) {
 
         /* Retrieve component from Database */
         ComponentDTO componentDTO = componentService.getObject(componentId);

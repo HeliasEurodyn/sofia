@@ -40,7 +40,7 @@ public class CustomQueryService {
         return customQueryMapper.map(entites);
     }
 
-    public CustomQueryDTO getObject(Long id) {
+    public CustomQueryDTO getObject(String id) {
         Optional<CustomQuery> optionalEntity = customQueryRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -50,7 +50,7 @@ public class CustomQueryService {
         return dto;
     }
 
-    public Object getData(Long id, Map<String, String> parameters) {
+    public Object getData(String id, Map<String, String> parameters) {
         CustomQueryDTO dto = this.getObject(id);
         String queryString = dto.getQuery();
         queryString = queryString.replace("##userid##", this.jwtService.getUserId().toString());
@@ -76,7 +76,7 @@ public class CustomQueryService {
         return customQueryMapper.map(savedData);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<CustomQuery> optionalEntity = customQueryRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");

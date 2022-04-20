@@ -22,7 +22,7 @@ public class DashboardController {
     }
 
     @GetMapping(path = "/by-id")
-    DashboardDTO getObject(@RequestParam("id") Long id) {
+    DashboardDTO getObject(@RequestParam("id") String id) {
         return this.dashboardService.getObject(id);
     }
 

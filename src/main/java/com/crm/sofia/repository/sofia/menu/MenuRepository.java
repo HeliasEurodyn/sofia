@@ -19,5 +19,5 @@ public interface MenuRepository extends BaseRepository<Menu> {
             " LEFT JOIN FETCH c.menuFieldList fl " +
             " WHERE c.id =:id " +
             " ORDER BY fl.shortOrder")
-    Optional<Menu> findTreeById(@Param("id") Long id);
+    Optional<Menu> findTreeById(@Param("id") String id);
 }

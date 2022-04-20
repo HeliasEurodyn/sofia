@@ -23,12 +23,12 @@ public class XlsImportController {
     @PostMapping
     public void postObject(
             @RequestParam("file") MultipartFile multipartFile,
-            @RequestParam("id") Long id) throws IOException {
+            @RequestParam("id") String id) throws IOException {
        this.xlsImportService.importXls(multipartFile, id);
     }
 
     @GetMapping(path = "/by-id")
-    XlsImportDTO getObject(@RequestParam("id") Long id) {
+    XlsImportDTO getObject(@RequestParam("id") String id) {
         return this.xlsImportService.getObject(id);
     }
 

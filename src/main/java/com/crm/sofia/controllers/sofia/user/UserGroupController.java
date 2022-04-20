@@ -24,7 +24,7 @@ public class UserGroupController {
     }
 
     @GetMapping(path = "/by-id")
-    UserGroupDTO getObject(@RequestParam("id") Long id) {
+    UserGroupDTO getObject(@RequestParam("id") String id) {
         return userGroupService.getObject(id);
     }
 
@@ -39,7 +39,7 @@ public class UserGroupController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         userGroupService.deleteObject(id);
     }
 

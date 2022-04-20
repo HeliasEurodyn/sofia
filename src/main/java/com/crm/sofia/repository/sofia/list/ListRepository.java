@@ -19,11 +19,11 @@ public interface ListRepository extends BaseRepository<ListEntity> {
 
     @Query(" SELECT DISTINCT l.instanceVersion FROM ListEntity l " +
             " WHERE l.id =:id ")
-    public String getInstanceVersion(@Param("id") Long id);
+    public String getInstanceVersion(@Param("id") String id);
 
     @Query(" SELECT l.id FROM ListEntity l " +
             " WHERE l.jsonUrl =:jsonUrl ")
-    public List<Long> getIdByJsonUrl(@Param("jsonUrl") String jsonUrl);
+    public List<String> getIdByJsonUrl(@Param("jsonUrl") String jsonUrl);
 
     @Modifying
     @Transactional
@@ -33,20 +33,20 @@ public interface ListRepository extends BaseRepository<ListEntity> {
     @Query(" SELECT DISTINCT ls.script FROM ListEntity l " +
             " INNER JOIN l.listScripts ls " +
             " WHERE l.id =:id ")
-    List<String> getJavaScriptsById(@Param("id")Long id);
+    List<String> getJavaScriptsById(@Param("id")String id);
 
     @Query(" SELECT DISTINCT l.script FROM ListEntity l " +
             " WHERE l.id =:id ")
-    public String getListScript(@Param("id") Long id);
+    public String getListScript(@Param("id") String id);
 
     @Query(" SELECT DISTINCT l.scriptMin FROM ListEntity l " +
             " WHERE l.id =:id ")
-    String getListMinScript(Long id);
+    String getListMinScript(String id);
 
     @Query(" SELECT DISTINCT ls.script FROM ListEntity l " +
             " INNER JOIN l.listCssList ls " +
             " WHERE l.id =:id ")
-    public List<String> getCssScriptsById(@Param("id") Long id);
+    public List<String> getCssScriptsById(@Param("id") String id);
 
 
     @Query(" SELECT DISTINCT l.id FROM ListEntity l ")
@@ -54,7 +54,7 @@ public interface ListRepository extends BaseRepository<ListEntity> {
 
     @Modifying
     @Query(value = "UPDATE ListEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")
-    void updateScripts(@Param("id") Long id, @Param("script") String script , @Param("scriptMin") String scriptMin);
+    void updateScripts(@Param("id") String id, @Param("script") String script , @Param("scriptMin") String scriptMin);
 
     @Query(" SELECT l FROM ListEntity l " +
             " WHERE l.jsonUrl <> '' AND l.jsonUrl is not null ")

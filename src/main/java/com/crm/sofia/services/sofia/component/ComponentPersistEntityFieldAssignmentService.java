@@ -25,7 +25,7 @@ public class ComponentPersistEntityFieldAssignmentService {
         this.componentPersistEntityFieldAssignmentMapper = componentPersistEntityFieldAssignmentMapper;
     }
 
-    public void saveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,String entityType, Long entityId) {
+    public void saveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,String entityType, String entityId) {
         this.deleteByIdAndEntityType(entityId,entityType);
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments =
                 generateFieldAssignmentsFromTree(componentPersistEntityList, entityType, entityId);
@@ -34,7 +34,7 @@ public class ComponentPersistEntityFieldAssignmentService {
 
     public List<ComponentPersistEntityDTO> retrieveFieldAssignments(List<ComponentPersistEntityDTO> componentPersistEntityList,
                                                                     String entityType,
-                                                                    Long entityId ) {
+                                                                    String entityId ) {
 
         List<ComponentPersistEntityFieldAssignment> fieldAssignments =
                 componentPersistEntityFieldAssignmentRepository.findByEntityIdAndEntityType(entityId, entityType);
@@ -48,7 +48,7 @@ public class ComponentPersistEntityFieldAssignmentService {
         return componentPersistEntityList;
     }
 
-    public void deleteByIdAndEntityType(Long entityId, String entityType) {
+    public void deleteByIdAndEntityType(String entityId, String entityType) {
         componentPersistEntityFieldAssignmentRepository.deleteComponentPersistEntityFieldAssignmentByEntityIdAndEntityType(entityId,entityType);
     }
 
@@ -66,7 +66,8 @@ public class ComponentPersistEntityFieldAssignmentService {
     }
 
     private List<ComponentPersistEntityFieldAssignmentDTO> generateFieldAssignmentsFromTree(List<ComponentPersistEntityDTO> componentPersistEntityList,
-                                                                                            String entityType, Long entityId) {
+                                                                                            String entityType,
+                                                                                            String entityId) {
         List<ComponentPersistEntityFieldAssignmentDTO> fieldAssignments = new ArrayList<>();
         componentPersistEntityList
                 .stream()
@@ -78,7 +79,7 @@ public class ComponentPersistEntityFieldAssignmentService {
                                         if (persistEntityField.getAssignment() == null) {
                                             this.createFieldAssignment(persistEntityField,entityType);
                                         }
-                                        Long fieldId = persistEntityField.getId();
+                                        String fieldId = persistEntityField.getId();
                                         ComponentPersistEntityFieldAssignmentDTO fieldAssignment =
                                                 persistEntityField.getAssignment();
                                         fieldAssignment.setEntityId(entityId);
@@ -114,7 +115,7 @@ public class ComponentPersistEntityFieldAssignmentService {
                     componentPersistEntity.getComponentPersistEntityFieldList()
                             .stream()
                             .forEach(componentPersistEntityField -> {
-                                        Long fieldId = componentPersistEntityField.getId();
+                                        String fieldId = componentPersistEntityField.getId();
                                         Optional<ComponentPersistEntityFieldAssignmentDTO> fieldAssignmentOptional =
                                                 fieldAssignmentDTOs
                                                         .stream()

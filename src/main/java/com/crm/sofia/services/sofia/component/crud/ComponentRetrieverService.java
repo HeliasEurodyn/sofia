@@ -25,7 +25,7 @@ public class ComponentRetrieverService {
         this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
     }
 
-    public ComponentDTO retrieveComponentWithData(Long componentId,
+    public ComponentDTO retrieveComponentWithData(String componentId,
                                                   String selectionId) {
 
         /* Retrieve form from Database */

@@ -41,7 +41,7 @@ public class ChartDesignerService {
     }
 
     @Transactional
-    public List<ChartFieldDTO> getData(Long id) {
+    public List<ChartFieldDTO> getData(String id) {
         ChartDTO chartDTO = this.getObject(id);
         String query = chartDTO.getQuery();
         query = query.replace("##asset_id##", this.jwtService.getUserId().toString());
@@ -54,7 +54,7 @@ public class ChartDesignerService {
         return this.chartMapper.map(charts);
     }
 
-    public ChartDTO getObject(Long id) {
+    public ChartDTO getObject(String id) {
         Optional<Chart> optionalchart = this.chartRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
@@ -77,7 +77,7 @@ public class ChartDesignerService {
         return this.chartMapper.map(createdChart);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Chart> optionalChart = this.chartRepository.findById(id);
         if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");

@@ -29,7 +29,7 @@ public class ChartDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    ChartDTO getObject(@RequestParam("id") Long id) {
+    ChartDTO getObject(@RequestParam("id") String id) {
         return this.chartDesignerService.getObject(id);
     }
 
@@ -44,7 +44,7 @@ public class ChartDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.chartDesignerService.deleteObject(id);
     }
 
@@ -54,7 +54,7 @@ public class ChartDesignerController {
     }
 
     @GetMapping(path = "/data")
-    List<ChartFieldDTO> getData(@RequestParam("id") Long id) {
+    List<ChartFieldDTO> getData(@RequestParam("id") String id) {
         return this.chartDesignerService.getData(id);
     }
 

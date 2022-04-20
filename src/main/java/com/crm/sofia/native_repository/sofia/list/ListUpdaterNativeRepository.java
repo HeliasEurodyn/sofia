@@ -118,7 +118,7 @@ public class ListUpdaterNativeRepository {
         List<ComponentPersistEntityDTO> componentPersistEntityList =
                 this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
 
-        List<Long> entityIds =
+        List<String> entityIds =
                 fields.stream()
                         .filter(x -> x.getComponentPersistEntity() != null)
                         .map(x -> x.getComponentPersistEntity().getId())
@@ -130,7 +130,7 @@ public class ListUpdaterNativeRepository {
             ComponentPersistEntityDTO persistEntity =
                     componentPersistEntityList
                             .stream()
-                            .filter(x -> x.getId() == id)
+                            .filter(x -> x.getId().equals(id))
                             .findFirst()
                             .orElse(null);
 
@@ -210,17 +210,10 @@ public class ListUpdaterNativeRepository {
      * Iterate to Generate FROM Tables & Relashionships part
      */
     private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO persistEntity,
-                                                    List<Long> entityIds,
+                                                    List<String> entityIds,
                                                     List<ComponentPersistEntityDTO> componentPersistEntityList) {
 
         List<String> componentPersistEntityCodes = new ArrayList<>();
-
-//        ComponentPersistEntityDTO persistEntity =
-//                componentPersistEntityList
-//                        .stream()
-//                        .filter(x -> x.getId() == entityId)
-//                        .findFirst()
-//                        .orElse(null);
 
         List<String> locateStatemens =
                 persistEntity.getComponentPersistEntityFieldList()
@@ -240,29 +233,6 @@ public class ListUpdaterNativeRepository {
                     componentPersistEntityCodes.add(cpeCode);
                 });
 
-
-//        String selector = (persistEntity.getSelector() == null ? "" : persistEntity.getSelector());
-//        String selectorStatement = selector.replaceAll("\\[.+\\]", "");
-//        selectorStatement = selectorStatement.replaceAll("and/i", "");
-//        selectorStatement = selectorStatement.replaceAll("or/i", "");
-//        selectorStatement = selectorStatement.replaceAll("\\(", "");
-//        selectorStatement = selectorStatement.replaceAll("\\)", "");
-//        selectorStatement = selectorStatement.replaceAll(" {2,}", " ");
-//        String[] selectorStatementParts = selectorStatement.split(" ");
-
-//        selectorStatementParts =
-//                selectorStatementParts
-//                        .stream()
-//                        .filter(x -> x.contains("."))
-//                        .filter(x -> x.startsWith("#"))
-//                        .collect(Collectors.toList());
-
-//        Arrays.stream(selectorStatementParts)
-//                .forEach(x -> {
-//                    String[] joinParts = x.split("\\.");
-//                    componentPersistEntityCodes.add(joinParts[0]);
-//                });
-
         componentPersistEntityList
                 .stream()
                 .filter(x -> componentPersistEntityCodes.contains(x.getCode()))
@@ -272,7 +242,6 @@ public class ListUpdaterNativeRepository {
                     this.identifyFromPersistEntitiesByJoins(x, entityIds, componentPersistEntityList);
                 });
 
-        //  return entityIds;
     }
 
     private List<ComponentPersistEntityDTO> getComponentPersistEntitiesTreeToList(List<ComponentPersistEntityDTO> initialComponentPersistEntityList) {

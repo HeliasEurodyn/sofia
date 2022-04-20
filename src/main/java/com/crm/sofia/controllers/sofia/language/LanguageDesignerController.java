@@ -25,7 +25,7 @@ public class LanguageDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    LanguageDTO getObject(@RequestParam("id") Long id) {
+    LanguageDTO getObject(@RequestParam("id") String id) {
         return languageDesignerService.getObject(id);
     }
 
@@ -40,7 +40,7 @@ public class LanguageDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         languageDesignerService.deleteObject(id);
     }
 

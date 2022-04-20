@@ -13,17 +13,17 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
 
-    public ListUiDTO mapList(ListEntity entity, Long languageId) {
+    public ListUiDTO mapList(ListEntity entity, String languageId) {
 
         /*
          * Do Translations on Entity
          */
-        if ((languageId == null ? 0 : languageId) > 0 &&
+        if ( !(languageId == null ? "" : languageId).equals("") &&
                 ((entity.getTranslations() == null ? 0 : entity.getTranslations().size()) > 0)) {
 
             entity.getTranslations()
                     .stream()
-                    .filter(translation -> translation.getLanguage().getId() == languageId)
+                    .filter(translation -> translation.getLanguage().getId().equals(languageId))
                     .forEach(translation -> {
                         entity.setHeaderTitle(translation.getHeaderTitle());
                         entity.setHeaderDescription(translation.getHeaderDescription());
@@ -37,7 +37,7 @@ public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
         entity.getListActionButtons().forEach(column -> {
             column.getTranslations()
                     .stream()
-                    .filter(translation -> translation.getLanguage().getId() == languageId)
+                    .filter(translation -> translation.getLanguage().getId().equals(languageId))
                     .forEach(translation -> {
                         column.setDescription(translation.getDescription());
                     });
@@ -53,7 +53,7 @@ public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
         fields.forEach(column -> {
             column.getTranslations()
                     .stream()
-                    .filter(translation -> translation.getLanguage().getId() == languageId)
+                    .filter(translation -> translation.getLanguage().getId().equals(languageId))
                     .forEach(translation -> {
                         column.setDescription(translation.getDescription());
                     });
@@ -63,7 +63,7 @@ public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
             column.getListComponentActionFieldList().forEach(subColumn -> {
                 subColumn.getTranslations()
                         .stream()
-                        .filter(translation -> translation.getLanguage().getId() == languageId)
+                        .filter(translation -> translation.getLanguage().getId().equals(languageId))
                         .forEach(translation -> {
                             subColumn.setDescription(translation.getDescription());
                         });

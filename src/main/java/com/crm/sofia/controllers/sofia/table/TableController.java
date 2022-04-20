@@ -40,13 +40,13 @@ public class TableController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         TableDTO dto = this.tableService.getObject(id);
         this.tableService.deleteObject(dto.getId());
     }
 
     @GetMapping(path = "/by-id")
-    TableDTO getObject(@RequestParam("id") Long id) {
+    TableDTO getObject(@RequestParam("id") String id) {
         return this.tableService.getObject(id);
     }
 

@@ -35,7 +35,7 @@ public class ChartService {
         this.expressionService = expressionService;
     }
 
-    public ChartDTO getObject(Long id, Map<String, String> parameters) {
+    public ChartDTO getObject(String id, Map<String, String> parameters) {
         Optional<Chart> optionalchart = this.chartRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
@@ -103,7 +103,7 @@ public class ChartService {
         return null;
     }
 
-    public List<ChartFieldDTO> getData(Long id, Map<String, String> parameters) {
+    public List<ChartFieldDTO> getData(String id, Map<String, String> parameters) {
         Optional<Chart> optionalchart = this.chartRepository.findById(id);
         if (!optionalchart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");

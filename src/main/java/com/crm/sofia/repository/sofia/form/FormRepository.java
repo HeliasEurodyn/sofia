@@ -17,7 +17,7 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formScripts fs " +
             " WHERE f.id =:id ")
-    public List<String> getFormJavaScriptsByFormId(@Param("id") Long id);
+    public List<String> getFormJavaScriptsByFormId(@Param("id") String id);
 
     @Query(" SELECT DISTINCT f.id FROM FormEntity f ")
     public List<Long> getFormIds();
@@ -25,23 +25,23 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formCssList fs " +
             " WHERE f.id =:id ")
-    public List<String> getFormCssScriptsByFormId(@Param("id") Long id);
+    public List<String> getFormCssScriptsByFormId(@Param("id") String id);
 
     @Query(" SELECT DISTINCT f.script FROM FormEntity f " +
             " WHERE f.id =:id ")
-    public String getFormScript(@Param("id") Long id);
+    public String getFormScript(@Param("id") String id);
 
     @Query(" SELECT DISTINCT f.scriptMin FROM FormEntity f " +
             " WHERE f.id =:id ")
-    public String getFormMinScript(@Param("id") Long id);
+    public String getFormMinScript(@Param("id") String id);
 
     @Query(" SELECT DISTINCT f.instanceVersion FROM FormEntity f " +
             " WHERE f.id =:id ")
-    public String getInstanceVersion(@Param("id") Long id);
+    public String getInstanceVersion(@Param("id") String id);
 
     @Query(" SELECT f.id FROM FormEntity f " +
             " WHERE f.jsonUrl =:jsonUrl ")
-    public List<Long> getIdsByJsonUrl(@Param("jsonUrl") String jsonUrl);
+    public List<String> getIdsByJsonUrl(@Param("jsonUrl") String jsonUrl);
 
     @Query(" SELECT f FROM FormEntity f " +
             " WHERE f.jsonUrl <> '' AND f.jsonUrl is not null ")
@@ -55,6 +55,6 @@ public interface FormRepository extends BaseRepository<FormEntity> {
 
     @Modifying
     @Query(value = "UPDATE FormEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")
-    void updateScripts(@Param("id") Long id, @Param("script") String script , @Param("scriptMin") String scriptMin);
+    void updateScripts(@Param("id") String id, @Param("script") String script , @Param("scriptMin") String scriptMin);
 
 }

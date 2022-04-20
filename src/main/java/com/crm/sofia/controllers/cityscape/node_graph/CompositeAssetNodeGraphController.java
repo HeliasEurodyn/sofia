@@ -17,7 +17,7 @@ public class CompositeAssetNodeGraphController {
     }
 
     @GetMapping(path = "/{id}")
-    Object getById(@PathVariable("id") Long id) {
+    Object getById(@PathVariable("id") String id) {
         return this.nodeGraphService.getById(id);
     }
 
@@ -52,13 +52,13 @@ public class CompositeAssetNodeGraphController {
     }
 
     @PutMapping(path = "/update-relationship-probability")
-    void saveRelationshipProbability(@RequestParam("id") Long id,
+    void saveRelationshipProbability(@RequestParam("id") String id,
                                      @RequestParam("threat-probability") String threatProbability) {
         this.nodeGraphService.saveRelationshipProbability(id, threatProbability);
     }
 
     @PutMapping(path = "/update-relationship-active")
-    void saveRelationshipActive(@RequestParam("id") Long id,
+    void saveRelationshipActive(@RequestParam("id") String id,
                                      @RequestParam("active") String active) {
         this.nodeGraphService.saveRelationshipActive(id, active);
     }

@@ -24,59 +24,59 @@ public class FormController {
     }
 
     @GetMapping(path = "/by-id")
-    FormDTO getObject(@RequestParam("id") Long formId,
+    FormDTO getObject(@RequestParam("id") String formId,
                       @RequestParam("selection-id") String selectionId) {
         return this.formService.getObjectAndRetrieveData(formId, selectionId);
     }
 
     @GetMapping(path = "ui")
-    FormUiDTO getUiObject(@RequestParam("id") Long formId) {
+    FormUiDTO getUiObject(@RequestParam("id") String formId) {
         return this.formService.getUiObject(formId);
     }
 
     @GetMapping(path = "data")
-    ComponentUiDTO getData(@RequestParam("id") Long formId,
+    ComponentUiDTO getData(@RequestParam("id") String formId,
                            @RequestParam("selection-id") String selectionId) {
         return this.formService.retrieveUiData(formId, selectionId);
     }
 
     @GetMapping(path = "clone-data")
-    ComponentUiDTO getCloneData(@RequestParam("id") Long formId,
+    ComponentUiDTO getCloneData(@RequestParam("id") String formId,
                            @RequestParam("selection-id") String selectionId) {
         return this.formService.retrieveClonedData(formId, selectionId);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")
-    String getInstanceVersion(@RequestParam("id") Long formId) {
+    String getInstanceVersion(@RequestParam("id") String formId) {
         return this.formService.getInstanceVersion(formId);
     }
 
     @PostMapping
-    public String postObjectData(@RequestParam("id") Long formId,
+    public String postObjectData(@RequestParam("id") String formId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.formService.save(formId, parameters);
     }
 
     @PutMapping
-    public String putObjectData(@RequestParam("id") Long formId,
+    public String putObjectData(@RequestParam("id") String formId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.formService.save(formId, parameters);
     }
 
     @DeleteMapping
-    public void deleteObjectData(@RequestParam("id") Long formId, @RequestParam("selection-id") String selectionId) {
+    public void deleteObjectData(@RequestParam("id") String formId, @RequestParam("selection-id") String selectionId) {
         this.formService.delete(formId, selectionId);
     }
 
     @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getFormJavaScript(@PathVariable("id") Long formId) {
+    String getFormJavaScript(@PathVariable("id") String formId) {
         return this.formService.getJavaScript(formId);
     }
 
     @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getFormMinJavaScript(@PathVariable("id") Long formId) {
+    String getFormMinJavaScript(@PathVariable("id") String formId) {
         return this.formService.getMinJavaScript(formId);
     }
 
@@ -90,7 +90,7 @@ public class FormController {
 
     @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
-    String getFormCssScript(@PathVariable("id") Long formId) {
+    String getFormCssScript(@PathVariable("id") String formId) {
         return this.formService.getCssScript(formId);
     }
 

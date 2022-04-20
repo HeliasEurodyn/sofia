@@ -21,7 +21,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class ComponentPersistEntityUiDTO implements Serializable {
 
-    private Long id;
+    private String id;
 
     private String code;
 

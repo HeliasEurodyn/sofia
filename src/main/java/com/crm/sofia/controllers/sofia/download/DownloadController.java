@@ -26,7 +26,7 @@ public class DownloadController {
     }
 
     @GetMapping(path = "/by-id")
-    DownloadDTO getObject(@RequestParam("id") Long id) {
+    DownloadDTO getObject(@RequestParam("id") String id) {
         return downloadService.getObject(id);
     }
 
@@ -41,7 +41,7 @@ public class DownloadController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         downloadService.deleteObject(id);
     }
 

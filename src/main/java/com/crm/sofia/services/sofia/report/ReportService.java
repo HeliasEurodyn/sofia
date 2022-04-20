@@ -60,12 +60,12 @@ public class ReportService {
         this.dataSource = dataSource;
     }
 
-    public String getReportType(Long id) {
+    public String getReportType(String id) {
         return this.reportRepository.findType(id);
     }
 
     @Transactional
-    public void print(HttpServletResponse response, long id, Map<String, Object> parameters) throws Throwable {
+    public void print(HttpServletResponse response, String id, Map<String, Object> parameters) throws Throwable {
 
         Optional<Report> optionalReport = reportRepository.findById(id);
         if (!optionalReport.isPresent()) {
@@ -157,7 +157,7 @@ public class ReportService {
         connection.close();
     }
 
-    private Map<String, Object> combineParameters(Long id, Map<String, Object> parameters) throws IOException {
+    private Map<String, Object> combineParameters(String id, Map<String, Object> parameters) throws IOException {
         List<ReportParameter> storedParameters = this.reportRepository.getReportParametersById(id);
         storedParameters.forEach(storedParameter -> {
             if (parameters.containsKey(storedParameter.getCode())) {

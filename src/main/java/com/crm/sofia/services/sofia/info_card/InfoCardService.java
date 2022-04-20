@@ -28,7 +28,7 @@ public class InfoCardService {
         this.infoCardNativeRepository = infoCardNativeRepository;
     }
 
-    public InfoCardDTO getObject(Long id,
+    public InfoCardDTO getObject(String id,
                                  Map<String, String> parameters) {
         Optional<InfoCard> optionalInfoCard = this.infoCardRepository.findById(id);
         if (!optionalInfoCard.isPresent()) {

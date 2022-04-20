@@ -17,7 +17,7 @@ public class NodeGraphController {
     }
 
     @GetMapping(path = "/asset/{id}")
-    Object getAsset(@PathVariable("id") Long id, @RequestParam("type") String type) {
+    Object getAsset(@PathVariable("id") String id, @RequestParam("type") String type) {
         return this.nodeGraphService.getAsset(id, type);
     }
 

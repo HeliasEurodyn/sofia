@@ -28,7 +28,7 @@ public class InfoCardDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    InfoCardDTO getObject(@RequestParam("id") Long id) {
+    InfoCardDTO getObject(@RequestParam("id") String id) {
         return this.infoCardDesignerService.getObject(id);
     }
 
@@ -43,7 +43,7 @@ public class InfoCardDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.infoCardDesignerService.deleteObject(id);
     }
 

@@ -38,26 +38,26 @@ public class ComponentController {
     }
 
     @GetMapping(path = "/component-persist-entity/by-id")
-    ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") Long id,
+    ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") String id,
                                                                 @RequestParam("selection-id") String selectionId) {
         return this.componentPersistEntityRetrieverService.get(id, selectionId);
     }
 
 
     @GetMapping(path = "/by-id")
-    ComponentDTO getObject(@RequestParam("id") Long componentId,
+    ComponentDTO getObject(@RequestParam("id") String componentId,
                            @RequestParam("selection-id") String selectionId) {
         return this.componentRetrieverService.retrieveComponentWithData(componentId, selectionId);
     }
 
     @PostMapping
-    public String postObjectData(@RequestParam("id") Long componentId,
+    public String postObjectData(@RequestParam("id") String componentId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.componentSaverService.save(componentId, parameters);
     }
 
     @DeleteMapping
-    public void deleteObjectData(@RequestParam("id") Long componentId, @RequestParam("selection-id") String selectionId) {
+    public void deleteObjectData(@RequestParam("id") String componentId, @RequestParam("selection-id") String selectionId) {
         this.componentDeleterService.retrieveComponentAndDelete(componentId, selectionId);
     }
 

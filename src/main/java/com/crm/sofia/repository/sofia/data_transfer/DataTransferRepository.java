@@ -14,6 +14,6 @@ public interface DataTransferRepository extends BaseRepository<DataTransfer> {
 
     @Query(" SELECT DISTINCT d.currentVersion FROM DataTransfer d " +
             " WHERE d.id =:id ")
-    public Integer getCurrentVersion(@Param("id") Long id);
+    public Integer getCurrentVersion(@Param("id") String id);
 
 }

@@ -28,7 +28,7 @@ public class ReportDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    ReportDTO getObject(@RequestParam("id") Long id) {
+    ReportDTO getObject(@RequestParam("id") String id) {
         return this.reportDesignerService.getObject(id);
     }
 
@@ -47,12 +47,12 @@ public class ReportDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.reportDesignerService.deleteObject(id);
     }
 
     @GetMapping(value = "/report-file")
-    public void getFileReport(HttpServletResponse response, @RequestParam("id") Long id ) throws IOException {
+    public void getFileReport(HttpServletResponse response, @RequestParam("id") String id ) throws IOException {
         this.reportDesignerService.getFileReport(response, id);
     }
 

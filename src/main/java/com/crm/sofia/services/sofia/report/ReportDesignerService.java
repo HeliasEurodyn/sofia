@@ -66,7 +66,7 @@ public class ReportDesignerService {
         return this.reportMapper.map(entites);
     }
 
-    public ReportDTO getObject(Long id) {
+    public ReportDTO getObject(String id) {
         Optional<Report> optionalEntity = this.reportRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -166,7 +166,7 @@ public class ReportDesignerService {
         return this.reportMapper.map(createdReport);
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Report> optionalEntity = this.reportRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
@@ -267,7 +267,7 @@ public class ReportDesignerService {
 //        connection.close();
 //    }
 
-    public void getFileReport(HttpServletResponse response, Long id) throws IOException {
+    public void getFileReport(HttpServletResponse response, String id) throws IOException {
         Optional<Report> optionalReport = reportRepository.findById(id);
         if (!optionalReport.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Report does not exist");

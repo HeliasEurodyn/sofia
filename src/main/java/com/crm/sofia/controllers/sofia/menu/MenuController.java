@@ -26,8 +26,8 @@ public class MenuController {
     }
 
     @GetMapping(path="/by-id")
-    MenuDTO getObject(@RequestParam("id") Long id,
-                      @RequestParam(defaultValue = "0", name = "language-id") Long languageId) {
+    MenuDTO getObject(@RequestParam("id") String id,
+                      @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
         return this.menuService.getObject(id, languageId);
     }
 
@@ -44,7 +44,7 @@ public class MenuController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
           this.menuService.deleteObject(id);
     }
 

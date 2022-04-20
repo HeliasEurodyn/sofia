@@ -101,7 +101,7 @@ public class ListDesignerService {
         return this.listMapper.mapEntitiesForList(views);
     }
 
-    public ListDTO getById(Long id) {
+    public ListDTO getById(String id) {
 
         ListEntity listEntity =
                 this.listRepository.findById(id)
@@ -135,7 +135,7 @@ public class ListDesignerService {
     }
 
 //    @CacheEvict(value = "list_ui_cache", key = "#id")
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         ListEntity lienEntity = this.listRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "List does not exist"));
 

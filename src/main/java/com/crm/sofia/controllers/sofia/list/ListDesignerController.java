@@ -26,12 +26,12 @@ public class ListDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    ListDTO getObject(@RequestParam("id") Long id) {
+    ListDTO getObject(@RequestParam("id") String id) {
         return this.listDesignerService.getById(id);
     }
 
     @GetMapping(path = "/by-name")
-    ListDTO getObject(@RequestParam("name") String name) {
+    ListDTO getObjectByname(@RequestParam("name") String name) {
         return this.listDesignerService.getObjectByName(name);
     }
 
@@ -48,7 +48,7 @@ public class ListDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.listDesignerService.deleteObject(id);
     }
 

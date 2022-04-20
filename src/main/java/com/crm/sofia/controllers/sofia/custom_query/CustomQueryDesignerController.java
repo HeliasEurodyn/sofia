@@ -26,12 +26,12 @@ public class CustomQueryDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    CustomQueryDTO getObject(@RequestParam("id") Long id) {
+    CustomQueryDTO getObject(@RequestParam("id") String id) {
         return customQueryService.getObject(id);
     }
 
     @GetMapping(path = "/data")
-    Object getData(@RequestParam("id") Long id, @RequestParam Map<String, String> parameters) {
+    Object getData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
         return customQueryService.getData(id, parameters);
     }
 
@@ -46,7 +46,7 @@ public class CustomQueryDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         customQueryService.deleteObject(id);
     }
 

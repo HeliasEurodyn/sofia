@@ -25,7 +25,7 @@ public abstract class MenuMapper extends BaseMapper<MenuDTO, Menu>  {
         return entity;
     }
 
-    public MenuDTO mapMenu(Menu entity, Long languageId) {
+    public MenuDTO mapMenu(Menu entity, String languageId) {
         MenuDTO dto = this.map(entity);
 
         if (languageId != null) {
@@ -37,7 +37,7 @@ public abstract class MenuMapper extends BaseMapper<MenuDTO, Menu>  {
         return dto;
     }
 
-    public void mapUserMenuLanguageToTree(List<MenuFieldDTO> menuFieldList, Long languageId) {
+    public void mapUserMenuLanguageToTree(List<MenuFieldDTO> menuFieldList, String languageId) {
         menuFieldList
                 .forEach(menuField -> {
                     if (menuField.getTranslations() == null) {
@@ -47,7 +47,7 @@ public abstract class MenuMapper extends BaseMapper<MenuDTO, Menu>  {
                     MenuTranslationDTO translation =
                             menuField.getTranslations()
                                     .stream()
-                                    .filter(x -> x.getLanguage().getId() == languageId)
+                                    .filter(x -> x.getLanguage().getId().equals(languageId))
                                     .findFirst()
                                     .orElse(null);
 
@@ -67,7 +67,7 @@ public abstract class MenuMapper extends BaseMapper<MenuDTO, Menu>  {
     @Mapping(ignore = true, target = "modifiedBy")
     @Mapping(ignore = true, target = "modifiedOn")
     @Mapping(ignore = true, target = "createdBy")
-    @Mapping(ignore = true, target = "version")
+//    @Mapping(ignore = true, target = "version")
     public abstract void dtoToEntity(MenuDTO dto, @MappingTarget Menu entity);
 
 }

@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ComponentPersistEntityFieldUiDTO implements Serializable {
 
-    private Long id;
+    private String id;
 
     private String code;
 

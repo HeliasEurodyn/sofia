@@ -73,7 +73,7 @@ public class TableService {
         return this.tableMapper.map(tables);
     }
 
-    public TableDTO getObject(Long id) {
+    public TableDTO getObject(String id) {
         Optional<PersistEntity> optionalComponent = this.persistEntityRepository.findById(id);
         if (!optionalComponent.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
@@ -81,7 +81,7 @@ public class TableService {
         return this.tableMapper.map(optionalComponent.get());
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<PersistEntity> optionalPersistEntity = this.persistEntityRepository.findById(id);
         if (!optionalPersistEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Persist entity does not exist");

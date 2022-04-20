@@ -18,7 +18,7 @@ public class SearchController {
     }
 
     @GetMapping(path = "/data")
-    Object getData(@RequestParam("id") Long id,@RequestParam("search") String search) {
+    Object getData(@RequestParam("id") String id,@RequestParam("search") String search) {
         return searchService.getData(id, search);
     }
 }

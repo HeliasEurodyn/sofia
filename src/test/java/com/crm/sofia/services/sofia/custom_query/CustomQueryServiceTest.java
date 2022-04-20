@@ -62,15 +62,15 @@ public class CustomQueryServiceTest {
 
     @Test
     public void getObjectByIdTest(){
-        given(customQueryRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(customQuery));
-        CustomQueryDTO dto = customQueryService.getObject(6L);
+        given(customQueryRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(customQuery));
+        CustomQueryDTO dto = customQueryService.getObject("6L");
     }
 
     @Test
     public void getObjectByIdWhenEmptyTest(){
-        given(customQueryRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(customQueryRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            customQueryService.getObject(6L);
+            customQueryService.getObject("6L");
         });
 
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
@@ -88,16 +88,16 @@ public class CustomQueryServiceTest {
 
     @Test
     public void getDeleteByIdTest(){
-        given(customQueryRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(customQuery));
-        customQueryService.deleteObject(6L);
+        given(customQueryRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(customQuery));
+        customQueryService.deleteObject("6L");
 
     }
 
     @Test
     public void getDeleteByIdWhenEmptyTest(){
-        given(customQueryRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(customQueryRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            customQueryService.deleteObject(6L);
+            customQueryService.deleteObject("6L");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
         String actualMessage = exception.getMessage();

@@ -27,7 +27,7 @@ public class SearchDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    SearchDTO getObject(@RequestParam("id") Long id) {
+    SearchDTO getObject(@RequestParam("id") String id) {
         return this.searchDesignerService.getObject(id);
     }
 
@@ -42,7 +42,7 @@ public class SearchDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.searchDesignerService.deleteObject(id);
     }
 

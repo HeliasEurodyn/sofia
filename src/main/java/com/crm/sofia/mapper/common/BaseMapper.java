@@ -55,7 +55,7 @@ public abstract class BaseMapper<D extends BaseDTO, E extends BaseEntity> {
         return all.stream().map(this::map).collect(Collectors.toList());
     }
 
-    public Long mapToEntityId(E entity) {
+    public String mapToEntityId(E entity) {
         return entity != null ? entity.getId() : null;
     }
 

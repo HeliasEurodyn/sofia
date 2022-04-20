@@ -32,7 +32,7 @@ public class SearchService {
         this.entityManager = entityManager;
     }
 
-    public SearchDTO getObject(Long id) {
+    public SearchDTO getObject(String id) {
         Optional<Search> optionalSearch = this.searchRepository.findById(id);
         if (!optionalSearch.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Search Entry does not exist");
@@ -40,7 +40,7 @@ public class SearchService {
         return this.searchMapper.map(optionalSearch.get());
     }
 
-    public Object getData(Long id, String search) {
+    public Object getData(String id, String search) {
         SearchDTO dto = this.getObject(id);
         String queryString = dto.getQuery();
 

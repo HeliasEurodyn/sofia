@@ -62,15 +62,15 @@ public class SecurityServiceTest {
 
     @Test
     public void getObjectByIdTest() {
-        given(securityRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(security));
-        SecurityDTO dto = securityService.getObject(6L);
+        given(securityRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(security));
+        SecurityDTO dto = securityService.getObject("6L");
     }
 
     @Test
     public void getObjectByIdWhenEmptyTest() {
-        given(securityRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(securityRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            securityService.getObject(6L);
+            securityService.getObject("6L");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
         String actualMessage = exception.getMessage();
@@ -87,16 +87,16 @@ public class SecurityServiceTest {
 
     @Test
     public void getDeleteByIdTest(){
-        given(securityRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(security));
-        securityService.deleteObject(6L);
+        given(securityRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(security));
+        securityService.deleteObject("6L");
 
     }
 
     @Test
     public void getDeleteByIdWhenEmptyTest(){
-        given(securityRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+        given(securityRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            securityService.deleteObject(6L);
+            securityService.deleteObject("6L");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
         String actualMessage = exception.getMessage();

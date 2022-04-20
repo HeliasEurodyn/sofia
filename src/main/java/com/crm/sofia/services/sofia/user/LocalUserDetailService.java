@@ -30,7 +30,7 @@ public class LocalUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public LocalUser loadUserById(Long id) {
+    public LocalUser loadUserById(String id) {
         User user = userService.findUserById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         return createLocalUser(user);
     }

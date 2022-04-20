@@ -18,9 +18,9 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
     private String entityType;
 
-    private Long entityId;
+    private String entityId;
 
-    private Long fieldId;
+    private String fieldId;
 
   //  private Long formId;
 

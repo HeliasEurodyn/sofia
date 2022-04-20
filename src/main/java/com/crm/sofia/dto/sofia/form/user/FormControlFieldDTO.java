@@ -26,6 +26,6 @@ public class FormControlFieldDTO extends BaseDTO {
     private String css;
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
-    private Long fieldId;
+    private String fieldId;
     private String mask;
 }

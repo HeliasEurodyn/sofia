@@ -33,15 +33,15 @@ public class ListController {
     }
 
     @GetMapping(path = "by-id")
-    ListDTO getObject(@RequestParam("id") Long id) {
+    ListDTO getObject(@RequestParam("id") String id) {
         ListDTO listDTO = this.listService.getObjectWithDefaults(id);
         listDTO.setComponent(null);
         return listDTO;
     }
 
     @GetMapping(path = "ui")
-    ListUiDTO getUiObject(@RequestParam("id") Long id,
-                          @RequestParam(defaultValue = "0", name = "language-id") Long languageId) {
+    ListUiDTO getUiObject(@RequestParam("id") String id,
+                          @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
        return this.listService.getUiListObject(id, languageId);
     }
 
@@ -51,19 +51,19 @@ public class ListController {
     }
 
     @GetMapping(path = "/results")
-    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
         return this.listService.getObjectDataByParameters(parameters,0L, id);
     }
 
     @GetMapping(path = "/results/page/{page}")
     ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
                                      @PathVariable("page") Long page,
-                                     @RequestParam("id") Long id) {
+                                     @RequestParam("id") String id) {
         return this.listService.getObjectDataByParameters(parameters,page, id);
     }
 
     @GetMapping(path = "/left-grouping/results")
-    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") Long id) {
+    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
         return this.listService.getObjectLeftGroupingDataByParameters(parameters, id);
     }
 
@@ -81,23 +81,23 @@ public class ListController {
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")
-    String getInstanceVersion(@RequestParam("id") Long formId) {
+    String getInstanceVersion(@RequestParam("id") String formId) {
         return this.listService.getInstanceVersion(formId);
     }
 
     @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getMinJavaScript(@PathVariable("id") Long id) {
+    String getMinJavaScript(@PathVariable("id") String id) {
         return this.listService.getMinJavaScript(id);
     }
 
     @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getJavaScript(@PathVariable("id") Long id) {
+    String getJavaScript(@PathVariable("id") String id) {
         return this.listService.getJavaScript(id);
     }
 
     @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
-    String getFormCssScript(@PathVariable("id") Long id) {
+    String getFormCssScript(@PathVariable("id") String id) {
         return this.listService.getCssScript(id);
     }
 
@@ -108,7 +108,7 @@ public class ListController {
     }
 
     @PutMapping(path = "/update-field")
-    void updateField(@RequestParam("id") Long id,
+    void updateField(@RequestParam("id") String id,
                      @RequestParam("field") String field,
                      @RequestParam("field-value") Object fieldValue,
                      @RequestParam("rel") Object rel ) {

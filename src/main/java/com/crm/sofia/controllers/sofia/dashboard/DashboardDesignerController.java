@@ -26,7 +26,7 @@ public class DashboardDesignerController {
     }
 
     @GetMapping(path = "/by-id")
-    DashboardDTO getObject(@RequestParam("id") Long id) {
+    DashboardDTO getObject(@RequestParam("id") String id) {
         return this.dashboardDesignerService.getObject(id);
     }
 
@@ -41,7 +41,7 @@ public class DashboardDesignerController {
     }
 
     @DeleteMapping
-    public void deleteObject(@RequestParam("id") Long id) {
+    public void deleteObject(@RequestParam("id") String id) {
         this.dashboardDesignerService.deleteObject(id);
     }
 

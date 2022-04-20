@@ -56,7 +56,7 @@ public class MenuFieldService {
 //        menuFieldRepository.deleteObjectsNotInListForParentId(ids, id);
 //    }
 
-    public List<MenuFieldDTO> getObjectTree(Long id) {
+    public List<MenuFieldDTO> getObjectTree(String id) {
         Optional<MenuField> optionalMenuItemComponent = this.menuFieldRepository.findById(id);
         if (!optionalMenuItemComponent.isPresent()) {
             return null;

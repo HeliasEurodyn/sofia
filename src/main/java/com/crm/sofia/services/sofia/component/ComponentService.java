@@ -31,7 +31,7 @@ public class ComponentService {
         this.componentMapper = componentMapper;
     }
 
-    public ComponentDTO getObject(Long id) {
+    public ComponentDTO getObject(String id) {
         Optional<Component> componentOptional = this.componentRepository.findById(id);
         if (!componentOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");

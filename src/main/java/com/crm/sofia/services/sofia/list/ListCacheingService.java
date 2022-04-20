@@ -12,7 +12,7 @@ public class ListCacheingService {
 
     private Map<Long, ListUiDTO> cachedLists = new HashMap<>();
 
-    public ListUiDTO getUiObject(Long id) {
+    public ListUiDTO getUiObject(String id) {
         if (this.cachedLists.containsKey(id)) {
             return this.cachedLists.get(id);
         } else {
@@ -20,7 +20,7 @@ public class ListCacheingService {
         }
     }
 
-    public Boolean hasUiObject(Long id) {
+    public Boolean hasUiObject(String id) {
         if (this.cachedLists.containsKey(id)) {
             return true;
         } else {
@@ -32,7 +32,7 @@ public class ListCacheingService {
         this.cachedLists.put(id, listUiDTO);
     }
 
-    public void clearUiObject(Long id) {
+    public void clearUiObject(String id) {
         if (this.cachedLists.containsKey(id)) {
             this.cachedLists.remove(id);
         }

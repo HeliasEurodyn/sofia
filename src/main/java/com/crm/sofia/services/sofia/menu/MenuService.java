@@ -44,7 +44,7 @@ public class MenuService {
         return this.menuMapper.map(entites);
     }
 
-    public MenuDTO getObject(Long id, Long languageId) {
+    public MenuDTO getObject(String id, String languageId) {
 
         Optional<Menu> optionalEntity = this.menuRepository.findTreeById(id);
         if (!optionalEntity.isPresent()) {
@@ -69,7 +69,7 @@ public class MenuService {
         return dto;
     }
 
-    public void deleteObject(Long id) {
+    public void deleteObject(String id) {
         Optional<Menu> optionalEntity = this.menuRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
