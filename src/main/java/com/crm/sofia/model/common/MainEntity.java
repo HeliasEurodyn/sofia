@@ -1,11 +1,13 @@
 package com.crm.sofia.model.common;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OptimisticLockType;
 import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -16,16 +18,22 @@ import java.time.Instant;
 @Data
 @MappedSuperclass
 @OptimisticLocking(type = OptimisticLockType.VERSION)
-public abstract class BaseNoIdEntity {
+@EqualsAndHashCode
+public abstract class MainEntity extends BaseEntity {
+
+//  @Id
+//  @GeneratedValue(generator = "uuid2")
+//  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+//  @Column( updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+//  private String id;
 
   @CreatedDate
   @Column(name = "created_on", updatable = false, nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Instant createdOn;
 
   @CreatedBy
-  //@Column(name = "created_by", updatable = false, nullable = false)
   @Column(name = "created_by", updatable = false)
-  private Long createdBy;
+  private String createdBy;
 
   @LastModifiedDate
   @Column(name = "modified_on", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -33,10 +41,7 @@ public abstract class BaseNoIdEntity {
 
   @LastModifiedBy
   @Column(name = "modified_by")
-  private Long modifiedBy;
-
-  @Version
-  private Long version;
+  private String modifiedBy;
 
   @Column(name = "short_order")
   private Long shortOrder;
