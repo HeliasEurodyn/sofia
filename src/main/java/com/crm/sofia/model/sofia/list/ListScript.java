@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.list;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -25,4 +26,6 @@ public class ListScript extends BaseEntity implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String script;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

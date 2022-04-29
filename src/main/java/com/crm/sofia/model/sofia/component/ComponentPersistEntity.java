@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.component;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -53,4 +54,6 @@ public class ComponentPersistEntity extends BaseEntity implements Serializable {
 
     private Boolean multiDataLine;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

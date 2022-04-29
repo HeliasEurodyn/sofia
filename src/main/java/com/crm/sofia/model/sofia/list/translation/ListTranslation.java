@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.list.translation;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.language.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @DynamicInsert
 @Entity(name = "ListTranslation")
 @Table(name = "list_translation")
-public class ListTranslation extends BaseEntity implements Serializable {
+public class ListTranslation extends MainEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Language.class)
     @JoinColumn(name = "language_id", referencedColumnName = "id")

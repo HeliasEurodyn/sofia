@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.security;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.model.sofia.user.UserGroup;
 import lombok.Data;
@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Entity(name = "Security")
 @Table(name = "security")
 @EqualsAndHashCode(callSuper = true)
-public class Security extends BaseEntity {
+public class Security extends MainEntity {
 
     @Column
     private String type;

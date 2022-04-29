@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.menu;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.language.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;

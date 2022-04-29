@@ -1,8 +1,7 @@
 package com.crm.sofia.model.cityscape.cve_search.rita;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 //@Accessors(chain = true)
 //@Entity(name = "Asset")
 //@Table(name = "asset")
-public class Asset extends BaseEntity {
+public class Asset extends MainEntity {
 
     @Column(name = "code")
     String code;

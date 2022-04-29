@@ -56,12 +56,8 @@ public class TableService {
 
         persistEntity.getPersistEntityFieldList()
                 .stream()
-                .forEach(persistFieldEntity -> {
-                    persistFieldEntity.setCreatedBy(jwtService.getUserId());
-                    persistFieldEntity.setModifiedBy(jwtService.getUserId());
-                    persistFieldEntity.setCreatedOn(Instant.now());
-                    persistFieldEntity.setModifiedOn(Instant.now());
-                    persistFieldEntity.setPersistEntity(persistEntity);
+                .forEach(persistEntityField -> {
+                    persistEntityField.setPersistEntity(persistEntity);
                 });
 
         PersistEntity entity = this.persistEntityRepository.save(persistEntity);
@@ -97,7 +93,7 @@ public class TableService {
         return tableNames;
     }
 
-    public List<String> getTableFields(String tableName) {
+    public List<String> getExistingTableFields(String tableName) {
         Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + tableName + " FROM "+this.sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();
         List<String> fieldNames = fields.stream().map(f -> f[0].toString()).collect(Collectors.toList());
@@ -112,7 +108,7 @@ public class TableService {
     }
 
     public void updateDatabaseTable(TableDTO tableDTO) {
-        List<String> existingTableFields = this.getTableFields(tableDTO.getName().replace(" ", ""));
+        List<String> existingTableFields = this.getExistingTableFields(tableDTO.getName().replace(" ", ""));
         int fieldCounter = 0;
         String sql = "";
         sql += "ALTER TABLE " + tableDTO.getName().replace(" ", "");
@@ -165,14 +161,14 @@ public class TableService {
         query.executeUpdate();
     }
 
-    public void createDatabaseTable(TableDTO TableDTO) {
-        if (TableDTO.getTableFieldList().size() == 0) return;
+    public void createDatabaseTableIfNotExist(TableDTO tableDTO) {
+        if (tableDTO.getTableFieldList().size() == 0) return;
 
         int fieldCounter = 0;
         String sql = "";
-        sql += "CREATE TABLE IF NOT EXISTS " + TableDTO.getName().replace(" ", "");
+        sql += "CREATE TABLE IF NOT EXISTS " + tableDTO.getName().replace(" ", "");
         sql += " ( ";
-        for (TableFieldDTO tableFieldDTO : TableDTO.getTableFieldList()) {
+        for (TableFieldDTO tableFieldDTO : tableDTO.getTableFieldList()) {
             if (fieldCounter > 0) {
                 sql += ",";
             }
@@ -217,15 +213,19 @@ public class TableService {
         else return false;
     }
 
-    @Transactional
-    public TableDTO save(TableDTO dto) {
-        TableDTO createdDTO = this.postObject(dto);
-        this.createDatabaseTable(createdDTO);
-        return createdDTO;
-    }
+//    @Transactional
+//    public TableDTO save(TableDTO dto) {
+//        TableDTO createdDTO = this.postObject(dto);
+//        this.createDatabaseTableIfNotExist(createdDTO);
+//        return createdDTO;
+//    }
 
     @Transactional
-    public TableDTO update(TableDTO dto) {
+    public TableDTO save(TableDTO dto) {
+
+        /**
+         * Remove deleted Fields From Components
+         */
         this.componentDesignerService.removeComponentTableFieldsByTable(
                 dto.getId(),
                 dto.getTableFieldList()
@@ -233,9 +233,27 @@ public class TableService {
                         .map( x -> x.getId())
                         .collect(Collectors.toList())
                 );
+
+        /**
+         * Save DTO
+         */
         TableDTO createdDTO = this.postObject(dto);
+
+        /**
+         * Creates Database Table If Not Exists
+         */
+        this.createDatabaseTableIfNotExist(createdDTO);
+
+        /**
+         * If Database Table was already existing, Create new table fields that were not there
+         */
         this.updateDatabaseTable(createdDTO);
+
+        /**
+         * Add new Fields From Components
+         */
         this.componentDesignerService.insertComponentTableFieldsByTable(this.tableMapper.map(createdDTO));
+
         return createdDTO;
     }
 

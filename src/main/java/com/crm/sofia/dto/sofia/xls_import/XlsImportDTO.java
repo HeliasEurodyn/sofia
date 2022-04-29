@@ -31,8 +31,6 @@ public class XlsImportDTO extends BaseDTO {
 
     private String xlsIterationColumn;
 
-    private List<XlsImportLineDTO> xlsImportLineList;
-
     private ComponentDTO component;
 
     private Boolean accessControlEnabled;

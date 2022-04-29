@@ -56,36 +56,97 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
     @Mapping(ignore = true, target = "component.componentPersistEntityList")
     public abstract ListDTO mapEntityForList(ListEntity entity);
 
-    public ListEntity mapListDTO(ListDTO dto){
+    public ListEntity mapListDTO(ListDTO dto) {
 
         if (dto.getListComponentColumnFieldList() != null) {
-            dto.getListComponentColumnFieldList().forEach(x -> {
-                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
-                x.setEditor(dec);
-            });
+            dto.getListComponentColumnFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                        x.setEditor(dec);
+                    });
         }
 
         if (dto.getListComponentFilterFieldList() != null) {
-            dto.getListComponentFilterFieldList().forEach(x -> {
-                    String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
-                    x.setEditor(dec);
-            });
+            dto.getListComponentFilterFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                        x.setEditor(dec);
+                    });
         }
 
         if (dto.getListComponentLeftGroupFieldList() != null) {
-            dto.getListComponentLeftGroupFieldList().forEach(x -> {
-                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
-                x.setEditor(dec);
-            });
+            dto.getListComponentLeftGroupFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                        x.setEditor(dec);
+                    });
         }
 
         if (dto.getListComponentTopGroupFieldList() != null) {
-            dto.getListComponentTopGroupFieldList().forEach(x -> {
-                String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
-                x.setEditor(dec);
-            });
+            dto.getListComponentTopGroupFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String dec = new String(Base64.getDecoder().decode(x.getEditor().getBytes(StandardCharsets.UTF_8)));
+                        x.setEditor(dec);
+                    });
         }
 
-       return this.map(dto);
+        return this.map(dto);
     }
+
+
+    public ListDTO mapList(ListEntity entity) {
+        ListDTO dto = this.map(entity);
+
+        if (dto.getListComponentColumnFieldList() != null) {
+            dto.getListComponentColumnFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String encQuery = Base64.getEncoder().encodeToString(x.getEditor().getBytes(StandardCharsets.UTF_8));
+                        x.setEditor(encQuery);
+                    });
+        }
+
+        if (dto.getListComponentFilterFieldList() != null) {
+            dto.getListComponentFilterFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String encQuery = Base64.getEncoder().encodeToString(x.getEditor().getBytes(StandardCharsets.UTF_8));
+                        x.setEditor(encQuery);
+                    });
+        }
+
+        if (dto.getListComponentLeftGroupFieldList() != null) {
+            dto.getListComponentLeftGroupFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String encQuery = Base64.getEncoder().encodeToString(x.getEditor().getBytes(StandardCharsets.UTF_8));
+                        x.setEditor(encQuery);
+                    });
+        }
+
+        if (dto.getListComponentTopGroupFieldList() != null) {
+            dto.getListComponentTopGroupFieldList()
+                    .stream()
+                    .filter(x -> x.getEditor() != null)
+                    .forEach(x -> {
+                        String encQuery = Base64.getEncoder().encodeToString(x.getEditor().getBytes(StandardCharsets.UTF_8));
+                        x.setEditor(encQuery);
+                    });
+        }
+
+        return dto;
+    }
+
+
 }

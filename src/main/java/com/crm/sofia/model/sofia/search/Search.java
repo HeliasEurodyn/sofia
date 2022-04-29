@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.search;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +16,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Search")
 @Table(name = "search")
-public class Search extends BaseEntity {
+public class Search extends MainEntity {
 
     @Column
     private String name;

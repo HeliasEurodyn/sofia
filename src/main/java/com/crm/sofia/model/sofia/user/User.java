@@ -1,8 +1,7 @@
 package com.crm.sofia.model.sofia.user;
 
 import com.crm.sofia.config.AppConstants;
-import com.crm.sofia.dto.sofia.language.LanguageDTO;
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.language.Language;
 import com.crm.sofia.model.sofia.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,7 +26,7 @@ import java.util.Set;
 @Entity(name = "User")
 @Table(name = "user")
 @EqualsAndHashCode(callSuper = true)
-public class User extends BaseEntity implements Serializable {
+public class User extends MainEntity implements Serializable {
 
     @Column(nullable = false)
     private String username;

@@ -1,7 +1,7 @@
 package com.crm.sofia.model.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.base.translation.ListComponentFieldTranslationDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
 import com.crm.sofia.model.sofia.list.translation.ListComponentFieldTranslation;
@@ -105,4 +105,6 @@ public class ListComponentField extends BaseEntity implements Serializable {
     @JoinColumn(name = "list_component_field_id")
     private List<ListComponentFieldTranslation> translations;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

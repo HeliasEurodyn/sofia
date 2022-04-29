@@ -1,10 +1,8 @@
 package com.crm.sofia.model.sofia.form;
 
-import com.crm.sofia.dto.sofia.access_control.AccessControlDTO;
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
-import com.crm.sofia.model.sofia.list.ListActionButton;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -19,7 +17,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "FormEntity")
 @Table(name = "form")
-public class FormEntity extends BaseEntity {
+public class FormEntity extends MainEntity {
 
     @Column
     private String name;

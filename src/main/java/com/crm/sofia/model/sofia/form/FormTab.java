@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -37,4 +38,6 @@ public class FormTab extends BaseEntity {
     @JoinColumn(name = "form_tab_id")
     private List<FormArea> formAreas;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

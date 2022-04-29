@@ -1,0 +1,1709 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-1">
+        <createTable tableName="access_control">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="create_entity" type="BIT"/>
+            <column defaultValueBoolean="false" name="delete_entity" type="BIT"/>
+            <column defaultValueComputed="NULL" name="entity_id" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="read_entity" type="BIT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="update_entity" type="BIT"/>
+            <column name="role_id" type="VARCHAR(36)"/>
+            <column name="xls_import_id" type="VARCHAR(36)"/>
+            <column name="search_id" type="VARCHAR(36)"/>
+            <column name="report_id" type="VARCHAR(36)"/>
+            <column name="menu_id" type="VARCHAR(36)"/>
+            <column name="list_id" type="VARCHAR(36)"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+            <column name="dashboard_id" type="VARCHAR(36)"/>
+            <column name="custom_query_id" type="VARCHAR(36)"/>
+            <column name="component_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-2">
+        <createTable tableName="chart">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="chart_json" type="TEXT"/>
+            <column defaultValueBoolean="false" name="execute_periodically" type="BIT"/>
+            <column defaultValueComputed="NULL" name="execution_interval" type="INT"/>
+            <column name="horizontal_axe" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column name="options_json" type="TEXT"/>
+            <column name="query" type="TEXT"/>
+            <column defaultValueBoolean="false" name="refresh_button" type="BIT"/>
+            <column name="second_title" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-3">
+        <createTable tableName="chart_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="chart_json" type="TEXT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="size" type="INT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="chart_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-4">
+        <createTable tableName="component">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-5">
+        <createTable tableName="component_persist_entity">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueBoolean="false" name="allow_retrieve" type="BIT"/>
+            <column defaultValueBoolean="false" name="allow_save" type="BIT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="delete_type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="multi_data_line" type="BIT"/>
+            <column name="selector" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="persist_entity_id" type="VARCHAR(36)"/>
+            <column name="parent_id" type="VARCHAR(36)"/>
+            <column name="component_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-6">
+        <createTable tableName="component_persist_entity_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="default_value" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="editor" type="VARCHAR(255)"/>
+            <column name="locate_statement" type="VARCHAR(255)"/>
+            <column name="save_statement" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="persist_entity_field_id" type="VARCHAR(36)"/>
+            <column name="component_persist_entity_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-7">
+        <createTable tableName="component_persist_entity_field_assignment">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="css" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="decimals" type="INT"/>
+            <column name="default_value" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="editor" type="VARCHAR(10000)"/>
+            <column name="entity_id" type="VARCHAR(36)"/>
+            <column name="entity_type" type="VARCHAR(255)"/>
+            <column name="field_id" type="VARCHAR(36)"/>
+            <column name="field_value" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="required" type="BIT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-8">
+        <createTable tableName="custom_query">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="query" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-9">
+        <createTable tableName="cve_search_settings">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="server_url" type="VARCHAR(255)"/>
+            <column name="vendor_table_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-10">
+        <createTable tableName="dashboard">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-11">
+        <createTable tableName="dashboard_area">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="css_style" type="VARCHAR(255)"/>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column name="dashboard_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-12">
+        <createTable tableName="dashboard_item">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="entity_id" type="BIGINT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="dashboard_area_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-13">
+        <createTable tableName="data_transfer">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="app_view_ids" type="TEXT"/>
+            <column name="chart_ids" type="TEXT"/>
+            <column name="component_ids" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="current_version" type="INT"/>
+            <column name="custom_query_ids" type="TEXT"/>
+            <column name="dashboard_ids" type="TEXT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="form_ids" type="TEXT"/>
+            <column name="html_part_ids" type="TEXT"/>
+            <column name="info_card_ids" type="TEXT"/>
+            <column name="language_ids" type="TEXT"/>
+            <column name="list_ids" type="TEXT"/>
+            <column name="menu_ids" type="TEXT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="query" type="TEXT"/>
+            <column name="report_ids" type="TEXT"/>
+            <column name="role_ids" type="TEXT"/>
+            <column name="search_ids" type="TEXT"/>
+            <column name="table_ids" type="TEXT"/>
+            <column name="user_ids" type="TEXT"/>
+            <column name="view_ids" type="TEXT"/>
+            <column name="xls_import_ids" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-14">
+        <createTable tableName="download">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-15">
+        <createTable tableName="form">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="instance_version" type="BIGINT"/>
+            <column name="json_url" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="script" type="MEDIUMTEXT"/>
+            <column name="script_min" type="MEDIUMTEXT"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="component_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-16">
+        <createTable tableName="form_action_button">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="css_class" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="editor" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+            <column name="parent_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-17">
+        <createTable tableName="form_area">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="form_tab_id" type="VARCHAR(36)"/>
+            <column name="form_popup_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-18">
+        <createTable tableName="form_control">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="form_control_button_id" type="VARCHAR(36)"/>
+            <column name="form_control_field_id" type="VARCHAR(36)"/>
+            <column name="form_control_table_id" type="VARCHAR(36)"/>
+            <column name="form_area_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-19">
+        <createTable tableName="form_control_button">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="css_class" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="editor" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-20">
+        <createTable tableName="form_control_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="css" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="editor" type="VARCHAR(255)"/>
+            <column name="mask" type="VARCHAR(255)"/>
+            <column name="message" type="VARCHAR(1024)"/>
+            <column name="placeholder" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="required" type="BIT"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="component_persist_entity_id" type="VARCHAR(36)"/>
+            <column name="component_persist_entity_field_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-21">
+        <createTable tableName="form_control_table">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="css" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column defaultValueBoolean="false" name="required" type="BIT"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="component_persist_entity_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-22">
+        <createTable tableName="form_control_table_button_control">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="form_control_table_button_id" type="VARCHAR(36)"/>
+            <column name="form_control_table_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-23">
+        <createTable tableName="form_control_table_control">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="cssclass" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="form_control_field_id" type="VARCHAR(36)"/>
+            <column name="form_control_table_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-24">
+        <createTable tableName="form_css">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="script" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-25">
+        <createTable tableName="form_popup">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-26">
+        <createTable tableName="form_script">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="script" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-27">
+        <createTable tableName="form_tab">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="form_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-28">
+        <createTable tableName="html_dashboard">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="html" type="TEXT"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-29">
+        <createTable tableName="info_card">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="card_text" type="VARCHAR(255)"/>
+            <column name="command" type="VARCHAR(255)"/>
+            <column name="command_icon" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="execute_periodically" type="BIT"/>
+            <column defaultValueComputed="NULL" name="execution_interval" type="INT"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column name="query" type="TEXT"/>
+            <column name="title" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-30">
+        <createTable tableName="language">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="image" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-31">
+        <createTable tableName="list">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="header_description" type="VARCHAR(1024)"/>
+            <column defaultValueBoolean="false" name="header_filters" type="BIT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column defaultValueBoolean="false" name="auto_run" type="BIT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="current_page" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="custom_filter_field_structure" type="BIT"/>
+            <column name="default_page" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column defaultValueBoolean="false" name="export_excel" type="BIT"/>
+            <column name="filter_field_structure" type="TEXT"/>
+            <column defaultValueBoolean="false" name="filter_visible" type="BIT"/>
+            <column name="grouping_description" type="VARCHAR(1024)"/>
+            <column name="grouping_title" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="has_max_size" type="BIT"/>
+            <column defaultValueBoolean="false" name="has_pagination" type="BIT"/>
+            <column name="header_icon" type="VARCHAR(255)"/>
+            <column name="header_title" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="instance_version" type="BIGINT"/>
+            <column name="json_url" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="list_visible" type="BIT"/>
+            <column defaultValueComputed="NULL" name="max_size" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="page_size" type="BIGINT"/>
+            <column name="row_navigation" type="VARCHAR(255)"/>
+            <column name="script" type="MEDIUMTEXT"/>
+            <column name="script_min" type="MEDIUMTEXT"/>
+            <column name="selector" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="total_pages" type="BIGINT"/>
+            <column defaultValueComputed="NULL" name="total_rows" type="BIGINT"/>
+            <column name="component_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-32">
+        <createTable tableName="list_action_button">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="css_class" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="editor" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="list_id" type="VARCHAR(36)"/>
+            <column name="parent_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-33">
+        <createTable tableName="list_action_button_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="list_action_button_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-34">
+        <createTable tableName="list_component_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="bclass" type="VARCHAR(255)"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="css" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="decimals" type="INT"/>
+            <column name="default_value" type="VARCHAR(3000)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="editable_rel_field_code" type="VARCHAR(255)"/>
+            <column name="editor" type="TEXT"/>
+            <column name="fieldtype" type="VARCHAR(255)"/>
+            <column name="formula_type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="header_editable" type="BIT"/>
+            <column defaultValueBoolean="false" name="header_filter" type="BIT"/>
+            <column name="mask" type="VARCHAR(255)"/>
+            <column name="operator" type="TEXT"/>
+            <column defaultValueBoolean="false" name="required" type="BIT"/>
+            <column name="short_location" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="component_persist_entity_id" type="VARCHAR(36)"/>
+            <column name="component_persist_entity_field_id" type="VARCHAR(36)"/>
+            <column name="top_group_list_component_id" type="VARCHAR(36)"/>
+            <column name="order_by_list_component_id" type="VARCHAR(36)"/>
+            <column name="side_group_list_component_id" type="VARCHAR(36)"/>
+            <column name="filter_list_component_id" type="VARCHAR(36)"/>
+            <column name="column_list_component_id" type="VARCHAR(36)"/>
+            <column name="action_list_component_id" type="VARCHAR(36)"/>
+            <column name="chart_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-35">
+        <createTable tableName="list_component_field_child">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="bclass" type="VARCHAR(255)"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="css" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="decimals" type="INT"/>
+            <column name="default_value" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="editable" type="BIT"/>
+            <column name="editor" type="TEXT"/>
+            <column name="fieldtype" type="VARCHAR(255)"/>
+            <column name="formula_type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="required" type="BIT"/>
+            <column name="short_location" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="visible" type="BIT"/>
+            <column name="parent_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-36">
+        <createTable tableName="list_component_field_child_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="list_component_field_child_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-37">
+        <createTable tableName="list_component_field_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="list_component_field_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-38">
+        <createTable tableName="list_css">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="script" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="list_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-39">
+        <createTable tableName="list_script">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="script" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="list_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-40">
+        <createTable tableName="list_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="header_description" type="VARCHAR(1024)"/>
+            <column name="description" type="VARCHAR(1024)"/>
+            <column name="grouping_description" type="VARCHAR(1024)"/>
+            <column name="grouping_title" type="VARCHAR(255)"/>
+            <column name="header_title" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="list_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-41">
+        <createTable tableName="menu">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-42">
+        <createTable tableName="menu_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="command" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="menu_field_id" type="VARCHAR(36)"/>
+            <column name="menu_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-43">
+        <createTable tableName="menu_field_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="menu_field_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-44">
+        <createTable tableName="menu_translation">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="language_id" type="VARCHAR(36)"/>
+            <column name="menu_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-45">
+        <createTable tableName="persist_entity">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueComputed="NULL" name="creation_version" type="INT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="entity_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indexes" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="query" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-46">
+        <createTable tableName="persist_entity_field">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueBoolean="false" name="auto_increment" type="BIT"/>
+            <column name="default_value" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="entity_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="has_default" type="BIT"/>
+            <column defaultValueBoolean="false" name="has_not_null" type="BIT"/>
+            <column defaultValueBoolean="false" name="is_unsigned" type="BIT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="primary_key" type="BIT"/>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueComputed="NULL" name="size" type="INT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="persist_entity_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-47">
+        <createTable tableName="report">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="report_extension" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="report_file_data" type="LONGBLOB"/>
+            <column name="report_filename" type="VARCHAR(255)"/>
+            <column name="report_type" type="VARCHAR(255)"/>
+            <column name="report_uuid" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-48">
+        <createTable tableName="report_parameter">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="report_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-49">
+        <createTable tableName="role">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-50">
+        <createTable tableName="search">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="query" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-51">
+        <createTable tableName="security">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="createstatus" type="BIT"/>
+            <column defaultValueBoolean="false" name="deletestatus" type="BIT"/>
+            <column defaultValueComputed="NULL" name="entity_id" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="readstatus" type="BIT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="updatestatus" type="BIT"/>
+            <column name="user_id" type="VARCHAR(36)"/>
+            <column name="user_group_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-52">
+        <createTable tableName="subreports_to_report">
+            <column name="report_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subreport_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-53">
+        <createTable tableName="user">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="dateformat" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="enabled" type="BIT"/>
+            <column name="login_nav_command" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="provider" type="VARCHAR(255)"/>
+            <column name="provider_user_id" type="VARCHAR(255)"/>
+            <column name="search_nav_command" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_language_id" type="VARCHAR(36)"/>
+            <column name="default_language_id" type="VARCHAR(36)"/>
+            <column name="header_menu_id" type="VARCHAR(36)"/>
+            <column name="sidebar_menu_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-54">
+        <createTable tableName="user_group">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-55">
+        <createTable tableName="user_language">
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="language_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-56">
+        <createTable tableName="user_role">
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-57">
+        <createTable tableName="user_to_user_group">
+            <column name="user_group_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-58">
+        <createTable tableName="xls_import">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column defaultValueComputed="current_timestamp()" name="modified_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
+            <column defaultValueBoolean="false" name="access_control_enabled" type="BIT"/>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column defaultValueComputed="NULL" name="first_line" type="BIGINT"/>
+            <column name="icon" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="xls_iteration_column" type="VARCHAR(255)"/>
+            <column name="component_id" type="VARCHAR(36)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-59">
+        <createIndex indexName="FK1al2arbsey8a0cpa0mi91qse8" tableName="list_script">
+            <column name="list_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-60">
+        <createIndex indexName="FK1ed822tgaxwve23pheu3frlhg" tableName="form_area">
+            <column name="form_tab_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-61">
+        <createIndex indexName="FK1myyvr1xaahy018nm7fieujbx" tableName="access_control">
+            <column name="menu_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-62">
+        <createIndex indexName="FK1pvahjseqdlfufao3lds9g1fx" tableName="form_control">
+            <column name="form_control_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-63">
+        <createIndex indexName="FK204ii36ufyn029bltegw59a9j" tableName="list_component_field">
+            <column name="column_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-64">
+        <createIndex indexName="FK22sg0urxbvibvb51tih17kgrk" tableName="form_css">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-65">
+        <createIndex indexName="FK3auiolwfsrrjj9gnkmophcq16" tableName="form_control_table_control">
+            <column name="form_control_table_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-66">
+        <createIndex indexName="FK3wpmk0exbupb19y26svq3wo3a" tableName="form_control_field">
+            <column name="component_persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-67">
+        <createIndex indexName="FK450i25eysp0w7orp97hng59cn" tableName="form_control_table">
+            <column name="component_persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-68">
+        <createIndex indexName="FK491fadfb2wc0m6fgl9ib3887h" tableName="list_translation">
+            <column name="list_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-69">
+        <createIndex indexName="FK52xv0r8uha79pnt3xjyir7xw5" tableName="form_control">
+            <column name="form_area_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-70">
+        <createIndex indexName="FK5dhe6kqh7ol7f48ker70e368r" tableName="user_language">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-71">
+        <createIndex indexName="FK5tj1u2cplnxdoiouqvmvy3ksp" tableName="user_language">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-72">
+        <createIndex indexName="FK65r0rx9qd275e1dsafy1unyyu" tableName="component_persist_entity_field">
+            <column name="persist_entity_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-73">
+        <createIndex indexName="FK70funprc9if0t4nmt77cqmahn" tableName="access_control">
+            <column name="role_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-74">
+        <createIndex indexName="FK76wmmk95ph9xtm6yne6mtacpd" tableName="list">
+            <column name="component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-75">
+        <createIndex indexName="FK859n2jvi8ivhui0rl0esws6o" tableName="user_role">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-76">
+        <createIndex indexName="FK8mqfeyda4tgeygqehipiks9ej" tableName="component_persist_entity">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-77">
+        <createIndex indexName="FK8vhepo4jl70bh97kqjpxe3ke8" tableName="list_css">
+            <column name="list_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-78">
+        <createIndex indexName="FK9dl90kj2tk18qajrcv5agf5ju" tableName="list_component_field">
+            <column name="top_group_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-79">
+        <createIndex indexName="FK9dytr71ghw1vv3ybfb7shmqbe" tableName="form_control_field">
+            <column name="component_persist_entity_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-80">
+        <createIndex indexName="FK9e93x3x1qk9kkwyomurhel03v" tableName="access_control">
+            <column name="dashboard_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-81">
+        <createIndex indexName="FK9s058u2d8hxn77sb5q78707o5" tableName="list_action_button">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-82">
+        <createIndex indexName="FKa3y2o61bcai1rkyo1o8baxy4e" tableName="user">
+            <column name="current_language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-83">
+        <createIndex indexName="FKa68196081fvovjhkek5m97n3y" tableName="user_role">
+            <column name="role_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-84">
+        <createIndex indexName="FKa6mx1d13ni2h2qv2s6y1cc07t" tableName="list_action_button_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-85">
+        <createIndex indexName="FKa6o5wk90ymn85abxrjcsexi9l" tableName="form">
+            <column name="component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-86">
+        <createIndex indexName="FKa7m1uie0tkgkfp0qmiu5bdgiy" tableName="form_control_table_button_control">
+            <column name="form_control_table_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-87">
+        <createIndex indexName="FKabq49px1ws7rn74xj3luqo86a" tableName="access_control">
+            <column name="list_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-88">
+        <createIndex indexName="FKacl63juuaota39sv4cko3xr3x" tableName="list_component_field">
+            <column name="chart_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-89">
+        <createIndex indexName="FKasgegf360hdiy1vk9rwjbtks1" tableName="form_script">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-90">
+        <createIndex indexName="FKat508p9f4eb934hy91pqgfyf6" tableName="list_component_field">
+            <column name="side_group_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-91">
+        <createIndex indexName="FKb7y114tyr3u76tq7jhrtux4sl" tableName="form_action_button">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-92">
+        <createIndex indexName="FKbo89lk1jb1kh94w0f5fi2omvv" tableName="form_tab">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-93">
+        <createIndex indexName="FKbwd1imc7c72c0kcnq0cuhq5er" tableName="form_action_button">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-94">
+        <createIndex indexName="FKc0f4nfvvd4p0ibytphbi1sbnc" tableName="access_control">
+            <column name="search_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-95">
+        <createIndex indexName="FKc9kt4tkirp9x1nr81goqxouor" tableName="access_control">
+            <column name="report_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-96">
+        <createIndex indexName="FKciirei59u6k574y6jj406e65o" tableName="form_area">
+            <column name="form_popup_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-97">
+        <createIndex indexName="FKdfrjt72qhi7ivs2dhgulsrmig" tableName="list_component_field_child_translation">
+            <column name="list_component_field_child_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-98">
+        <createIndex indexName="FKdrtnwhrc6ti7555c8nu8aic1h" tableName="menu_field">
+            <column name="menu_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-99">
+        <createIndex indexName="FKdy13aw031lpqm6d14aa0iifse" tableName="user">
+            <column name="default_language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-100">
+        <createIndex indexName="FKe6xebo5jgdkcuk5j1j2n2tkw9" tableName="list_component_field">
+            <column name="component_persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-101">
+        <createIndex indexName="FKennkjl2inhk7xv7c10sng1k9x" tableName="access_control">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-102">
+        <createIndex indexName="FKes87wk6vpalg98xtc0cu4hc34" tableName="menu_field">
+            <column name="menu_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-103">
+        <createIndex indexName="FKesymei4s304r3v482iyuks1qk" tableName="list_component_field">
+            <column name="component_persist_entity_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-104">
+        <createIndex indexName="FKetipuvisr2ga3n6a6lkms3cq3" tableName="xls_import">
+            <column name="component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-105">
+        <createIndex indexName="FKf4jewja02s8h2kaqa3lr8rvby" tableName="form_control_table_control">
+            <column name="form_control_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-106">
+        <createIndex indexName="FKf6xpgktqrgue8ib5g9bl3psyx" tableName="list_component_field_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-107">
+        <createIndex indexName="FKfe6l1re9unbaosq9cdh9tlx4r" tableName="security">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-108">
+        <createIndex indexName="FKfiv2bnyja27jxwg2280b7jpvo" tableName="access_control">
+            <column name="custom_query_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-109">
+        <createIndex indexName="FKfseqts28i4n42etjju5ib2o7" tableName="subreports_to_report">
+            <column name="subreport_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-110">
+        <createIndex indexName="FKfuvekt7kedkcjumlob8wespf0" tableName="list_action_button_translation">
+            <column name="list_action_button_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-111">
+        <createIndex indexName="FKg3k65s82m69i8hod8c2syrom8" tableName="form_control_table_button_control">
+            <column name="form_control_table_button_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-112">
+        <createIndex indexName="FKg7g3yely09xq222tpnmtn02wa" tableName="access_control">
+            <column name="xls_import_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-113">
+        <createIndex indexName="FKhmu9ys44tvyuddbw8mb163xfv" tableName="list_component_field">
+            <column name="action_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-114">
+        <createIndex indexName="FKijmc3k2havcg6rl4q4lqfv0kp" tableName="menu_translation">
+            <column name="menu_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-115">
+        <createIndex indexName="FKjbs7fylqvrkdrbm2ps05lipo6" tableName="subreports_to_report">
+            <column name="report_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-116">
+        <createIndex indexName="FKk7mrqc4ummp5tjexmslnacgim" tableName="form_control">
+            <column name="form_control_table_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-117">
+        <createIndex indexName="FKkcmuy4fdfgk6xdj9pfnom9lxm" tableName="component_persist_entity_field">
+            <column name="component_persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-118">
+        <createIndex indexName="FKkhtrb2oa7qhti32gbnb49ckdc" tableName="user_to_user_group">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-119">
+        <createIndex indexName="FKkmh116k0m2vke3ia5vmg2t7it" tableName="access_control">
+            <column name="component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-120">
+        <createIndex indexName="FKkvg7xh53h2uirmwu1d54ox4jc" tableName="dashboard_area">
+            <column name="dashboard_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-121">
+        <createIndex indexName="FKmguysd4m1b5rai7h85cwlvskw" tableName="list_component_field_child_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-122">
+        <createIndex indexName="FKmtqyh1wp1x7jqgkr9er6q3ek1" tableName="user_to_user_group">
+            <column name="user_group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-123">
+        <createIndex indexName="FKmxjj0jirfvagdxrn7o0xspld9" tableName="form_popup">
+            <column name="form_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-124">
+        <createIndex indexName="FKnbjx104pe8o3i299gb7uythxh" tableName="list_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-125">
+        <createIndex indexName="FKnqalempaowhwqu5tph5xmle83" tableName="dashboard_item">
+            <column name="dashboard_area_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-126">
+        <createIndex indexName="FKo6hy6ajqgc42hgmrjr1g1ew3y" tableName="list_action_button">
+            <column name="list_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-127">
+        <createIndex indexName="FKo7ka4ubncg6iwp39p7dhq6uo3" tableName="persist_entity_field">
+            <column name="persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-128">
+        <createIndex indexName="FKof2hnkhcbsded3jkn8mnuti5o" tableName="component_persist_entity">
+            <column name="persist_entity_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-129">
+        <createIndex indexName="FKoi9yrwb2afexchu8579rl8hap" tableName="menu_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-130">
+        <createIndex indexName="FKom62s30plaw8skl5wxu9v52wd" tableName="list_component_field_translation">
+            <column name="list_component_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-131">
+        <createIndex indexName="FKooog11twt1b23sh7vnkko4fnc" tableName="list_component_field">
+            <column name="filter_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-132">
+        <createIndex indexName="FKot2y4nqeep4n37rx78vwf2jlx" tableName="menu_field_translation">
+            <column name="menu_field_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-133">
+        <createIndex indexName="FKpg1ggg4lyv3wgwv55ane8h39o" tableName="user">
+            <column name="sidebar_menu_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-134">
+        <createIndex indexName="FKqgbuuh9xfkq1gmfys15ywgegr" tableName="menu_field_translation">
+            <column name="language_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-135">
+        <createIndex indexName="FKs2ww9rrljne6i1fx7jo8d8teu" tableName="chart_field">
+            <column name="chart_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-136">
+        <createIndex indexName="FKsodctshdfqa3kap0rxj6osqe1" tableName="report_parameter">
+            <column name="report_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-137">
+        <createIndex indexName="FKsuuiyahjromoxfhy6k3e28nb5" tableName="list_component_field_child">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-138">
+        <createIndex indexName="FKsv3cmohxnau2ncgaj0k6wy51s" tableName="user">
+            <column name="header_menu_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-139">
+        <createIndex indexName="FKt4icwe3gc1hh544svv5uex6vd" tableName="security">
+            <column name="user_group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-140">
+        <createIndex indexName="FKt7u6eoqtabl8vggwh0o4aojfw" tableName="list_component_field">
+            <column name="order_by_list_component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-141">
+        <createIndex indexName="FKth6q56g27ipff2jgcqkrc35ki" tableName="component_persist_entity">
+            <column name="component_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-142">
+        <createIndex indexName="FKv2uvnk4yg8u1p13mnb2v8udi" tableName="form_control">
+            <column name="form_control_button_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-143">
+        <addForeignKeyConstraint baseColumnNames="list_id" baseTableName="list_script" constraintName="FK1al2arbsey8a0cpa0mi91qse8" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-144">
+        <addForeignKeyConstraint baseColumnNames="form_tab_id" baseTableName="form_area" constraintName="FK1ed822tgaxwve23pheu3frlhg" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_tab" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-145">
+        <addForeignKeyConstraint baseColumnNames="menu_id" baseTableName="access_control" constraintName="FK1myyvr1xaahy018nm7fieujbx" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-146">
+        <addForeignKeyConstraint baseColumnNames="form_control_field_id" baseTableName="form_control" constraintName="FK1pvahjseqdlfufao3lds9g1fx" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-147">
+        <addForeignKeyConstraint baseColumnNames="column_list_component_id" baseTableName="list_component_field" constraintName="FK204ii36ufyn029bltegw59a9j" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-148">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="form_css" constraintName="FK22sg0urxbvibvb51tih17kgrk" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-149">
+        <addForeignKeyConstraint baseColumnNames="form_control_table_id" baseTableName="form_control_table_control" constraintName="FK3auiolwfsrrjj9gnkmophcq16" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_table" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-150">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_id" baseTableName="form_control_field" constraintName="FK3wpmk0exbupb19y26svq3wo3a" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-151">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_id" baseTableName="form_control_table" constraintName="FK450i25eysp0w7orp97hng59cn" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-152">
+        <addForeignKeyConstraint baseColumnNames="list_id" baseTableName="list_translation" constraintName="FK491fadfb2wc0m6fgl9ib3887h" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-153">
+        <addForeignKeyConstraint baseColumnNames="form_area_id" baseTableName="form_control" constraintName="FK52xv0r8uha79pnt3xjyir7xw5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_area" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-154">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="user_language" constraintName="FK5dhe6kqh7ol7f48ker70e368r" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-155">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_language" constraintName="FK5tj1u2cplnxdoiouqvmvy3ksp" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-156">
+        <addForeignKeyConstraint baseColumnNames="persist_entity_field_id" baseTableName="component_persist_entity_field" constraintName="FK65r0rx9qd275e1dsafy1unyyu" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="persist_entity_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-157">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="access_control" constraintName="FK70funprc9if0t4nmt77cqmahn" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="role" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-158">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="list" constraintName="FK76wmmk95ph9xtm6yne6mtacpd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-159">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_role" constraintName="FK859n2jvi8ivhui0rl0esws6o" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-160">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="component_persist_entity" constraintName="FK8mqfeyda4tgeygqehipiks9ej" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-161">
+        <addForeignKeyConstraint baseColumnNames="list_id" baseTableName="list_css" constraintName="FK8vhepo4jl70bh97kqjpxe3ke8" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-162">
+        <addForeignKeyConstraint baseColumnNames="top_group_list_component_id" baseTableName="list_component_field" constraintName="FK9dl90kj2tk18qajrcv5agf5ju" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-163">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_field_id" baseTableName="form_control_field" constraintName="FK9dytr71ghw1vv3ybfb7shmqbe" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-164">
+        <addForeignKeyConstraint baseColumnNames="dashboard_id" baseTableName="access_control" constraintName="FK9e93x3x1qk9kkwyomurhel03v" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="dashboard" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-165">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="list_action_button" constraintName="FK9s058u2d8hxn77sb5q78707o5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list_action_button" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-166">
+        <addForeignKeyConstraint baseColumnNames="current_language_id" baseTableName="user" constraintName="FKa3y2o61bcai1rkyo1o8baxy4e" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-167">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_role" constraintName="FKa68196081fvovjhkek5m97n3y" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="role" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-168">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="list_action_button_translation" constraintName="FKa6mx1d13ni2h2qv2s6y1cc07t" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-169">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="form" constraintName="FKa6o5wk90ymn85abxrjcsexi9l" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-170">
+        <addForeignKeyConstraint baseColumnNames="form_control_table_id" baseTableName="form_control_table_button_control" constraintName="FKa7m1uie0tkgkfp0qmiu5bdgiy" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_table" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-171">
+        <addForeignKeyConstraint baseColumnNames="list_id" baseTableName="access_control" constraintName="FKabq49px1ws7rn74xj3luqo86a" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-172">
+        <addForeignKeyConstraint baseColumnNames="chart_id" baseTableName="list_component_field" constraintName="FKacl63juuaota39sv4cko3xr3x" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="chart" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-173">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="form_script" constraintName="FKasgegf360hdiy1vk9rwjbtks1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-174">
+        <addForeignKeyConstraint baseColumnNames="side_group_list_component_id" baseTableName="list_component_field" constraintName="FKat508p9f4eb934hy91pqgfyf6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-175">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="form_action_button" constraintName="FKb7y114tyr3u76tq7jhrtux4sl" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_action_button" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-176">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="form_tab" constraintName="FKbo89lk1jb1kh94w0f5fi2omvv" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-177">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="form_action_button" constraintName="FKbwd1imc7c72c0kcnq0cuhq5er" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-178">
+        <addForeignKeyConstraint baseColumnNames="search_id" baseTableName="access_control" constraintName="FKc0f4nfvvd4p0ibytphbi1sbnc" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="search" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-179">
+        <addForeignKeyConstraint baseColumnNames="report_id" baseTableName="access_control" constraintName="FKc9kt4tkirp9x1nr81goqxouor" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="report" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-180">
+        <addForeignKeyConstraint baseColumnNames="form_popup_id" baseTableName="form_area" constraintName="FKciirei59u6k574y6jj406e65o" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_popup" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-181">
+        <addForeignKeyConstraint baseColumnNames="list_component_field_child_id" baseTableName="list_component_field_child_translation" constraintName="FKdfrjt72qhi7ivs2dhgulsrmig" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list_component_field_child" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-182">
+        <addForeignKeyConstraint baseColumnNames="menu_field_id" baseTableName="menu_field" constraintName="FKdrtnwhrc6ti7555c8nu8aic1h" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-183">
+        <addForeignKeyConstraint baseColumnNames="default_language_id" baseTableName="user" constraintName="FKdy13aw031lpqm6d14aa0iifse" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-184">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_id" baseTableName="list_component_field" constraintName="FKe6xebo5jgdkcuk5j1j2n2tkw9" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-185">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="access_control" constraintName="FKennkjl2inhk7xv7c10sng1k9x" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-186">
+        <addForeignKeyConstraint baseColumnNames="menu_id" baseTableName="menu_field" constraintName="FKes87wk6vpalg98xtc0cu4hc34" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-187">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_field_id" baseTableName="list_component_field" constraintName="FKesymei4s304r3v482iyuks1qk" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-188">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="xls_import" constraintName="FKetipuvisr2ga3n6a6lkms3cq3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-189">
+        <addForeignKeyConstraint baseColumnNames="form_control_field_id" baseTableName="form_control_table_control" constraintName="FKf4jewja02s8h2kaqa3lr8rvby" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-190">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="list_component_field_translation" constraintName="FKf6xpgktqrgue8ib5g9bl3psyx" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-191">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="security" constraintName="FKfe6l1re9unbaosq9cdh9tlx4r" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-192">
+        <addForeignKeyConstraint baseColumnNames="custom_query_id" baseTableName="access_control" constraintName="FKfiv2bnyja27jxwg2280b7jpvo" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="custom_query" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-193">
+        <addForeignKeyConstraint baseColumnNames="subreport_id" baseTableName="subreports_to_report" constraintName="FKfseqts28i4n42etjju5ib2o7" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="report" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-194">
+        <addForeignKeyConstraint baseColumnNames="list_action_button_id" baseTableName="list_action_button_translation" constraintName="FKfuvekt7kedkcjumlob8wespf0" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list_action_button" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-195">
+        <addForeignKeyConstraint baseColumnNames="form_control_table_button_id" baseTableName="form_control_table_button_control" constraintName="FKg3k65s82m69i8hod8c2syrom8" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_button" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-196">
+        <addForeignKeyConstraint baseColumnNames="xls_import_id" baseTableName="access_control" constraintName="FKg7g3yely09xq222tpnmtn02wa" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="xls_import" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-197">
+        <addForeignKeyConstraint baseColumnNames="action_list_component_id" baseTableName="list_component_field" constraintName="FKhmu9ys44tvyuddbw8mb163xfv" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-198">
+        <addForeignKeyConstraint baseColumnNames="menu_id" baseTableName="menu_translation" constraintName="FKijmc3k2havcg6rl4q4lqfv0kp" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-199">
+        <addForeignKeyConstraint baseColumnNames="report_id" baseTableName="subreports_to_report" constraintName="FKjbs7fylqvrkdrbm2ps05lipo6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="report" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-200">
+        <addForeignKeyConstraint baseColumnNames="form_control_table_id" baseTableName="form_control" constraintName="FKk7mrqc4ummp5tjexmslnacgim" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_table" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-201">
+        <addForeignKeyConstraint baseColumnNames="component_persist_entity_id" baseTableName="component_persist_entity_field" constraintName="FKkcmuy4fdfgk6xdj9pfnom9lxm" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component_persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-202">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_to_user_group" constraintName="FKkhtrb2oa7qhti32gbnb49ckdc" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-203">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="access_control" constraintName="FKkmh116k0m2vke3ia5vmg2t7it" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-204">
+        <addForeignKeyConstraint baseColumnNames="dashboard_id" baseTableName="dashboard_area" constraintName="FKkvg7xh53h2uirmwu1d54ox4jc" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="dashboard" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-205">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="list_component_field_child_translation" constraintName="FKmguysd4m1b5rai7h85cwlvskw" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-206">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="user_to_user_group" constraintName="FKmtqyh1wp1x7jqgkr9er6q3ek1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_group" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-207">
+        <addForeignKeyConstraint baseColumnNames="form_id" baseTableName="form_popup" constraintName="FKmxjj0jirfvagdxrn7o0xspld9" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-208">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="list_translation" constraintName="FKnbjx104pe8o3i299gb7uythxh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-209">
+        <addForeignKeyConstraint baseColumnNames="dashboard_area_id" baseTableName="dashboard_item" constraintName="FKnqalempaowhwqu5tph5xmle83" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="dashboard_area" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-210">
+        <addForeignKeyConstraint baseColumnNames="list_id" baseTableName="list_action_button" constraintName="FKo6hy6ajqgc42hgmrjr1g1ew3y" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-211">
+        <addForeignKeyConstraint baseColumnNames="persist_entity_id" baseTableName="persist_entity_field" constraintName="FKo7ka4ubncg6iwp39p7dhq6uo3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-212">
+        <addForeignKeyConstraint baseColumnNames="persist_entity_id" baseTableName="component_persist_entity" constraintName="FKof2hnkhcbsded3jkn8mnuti5o" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="persist_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-213">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="menu_translation" constraintName="FKoi9yrwb2afexchu8579rl8hap" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-214">
+        <addForeignKeyConstraint baseColumnNames="list_component_field_id" baseTableName="list_component_field_translation" constraintName="FKom62s30plaw8skl5wxu9v52wd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list_component_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-215">
+        <addForeignKeyConstraint baseColumnNames="filter_list_component_id" baseTableName="list_component_field" constraintName="FKooog11twt1b23sh7vnkko4fnc" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-216">
+        <addForeignKeyConstraint baseColumnNames="menu_field_id" baseTableName="menu_field_translation" constraintName="FKot2y4nqeep4n37rx78vwf2jlx" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-217">
+        <addForeignKeyConstraint baseColumnNames="sidebar_menu_id" baseTableName="user" constraintName="FKpg1ggg4lyv3wgwv55ane8h39o" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-218">
+        <addForeignKeyConstraint baseColumnNames="language_id" baseTableName="menu_field_translation" constraintName="FKqgbuuh9xfkq1gmfys15ywgegr" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="language" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-219">
+        <addForeignKeyConstraint baseColumnNames="chart_id" baseTableName="chart_field" constraintName="FKs2ww9rrljne6i1fx7jo8d8teu" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="chart" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-220">
+        <addForeignKeyConstraint baseColumnNames="report_id" baseTableName="report_parameter" constraintName="FKsodctshdfqa3kap0rxj6osqe1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="report" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-221">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="list_component_field_child" constraintName="FKsuuiyahjromoxfhy6k3e28nb5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list_component_field" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-222">
+        <addForeignKeyConstraint baseColumnNames="header_menu_id" baseTableName="user" constraintName="FKsv3cmohxnau2ncgaj0k6wy51s" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="menu" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-223">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="security" constraintName="FKt4icwe3gc1hh544svv5uex6vd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_group" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-224">
+        <addForeignKeyConstraint baseColumnNames="order_by_list_component_id" baseTableName="list_component_field" constraintName="FKt7u6eoqtabl8vggwh0o4aojfw" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="list" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-225">
+        <addForeignKeyConstraint baseColumnNames="component_id" baseTableName="component_persist_entity" constraintName="FKth6q56g27ipff2jgcqkrc35ki" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="component" validate="true"/>
+    </changeSet>
+    <changeSet author="heliaskaragozidis (generated)" id="1651052478020-226">
+        <addForeignKeyConstraint baseColumnNames="form_control_button_id" baseTableName="form_control" constraintName="FKv2uvnk4yg8u1p13mnb2v8udi" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="form_control_button" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

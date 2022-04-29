@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentMapper;
 import com.crm.sofia.mapper.sofia.component.ComponentPersistEntityMapper;
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.component.Component;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
@@ -42,7 +42,7 @@ public class ComponentDesignerService {
 
     public List<ComponentDTO> getList() {
         List<Component> entites = this.componentRepository.findAll();
-        entites = entites.stream().sorted(Comparator.comparing(BaseEntity::getCreatedOn))
+        entites = entites.stream().sorted(Comparator.comparing(MainEntity::getCreatedOn))
                 .collect(Collectors.toList());
         return this.componentMapper.map(entites);
     }
@@ -66,7 +66,8 @@ public class ComponentDesignerService {
         Component entity = this.componentMapper.mapWithPersistEntities(dto);
 
         Component createdEntity = this.componentRepository.save(entity);
-        return this.componentMapper.map(createdEntity);
+        //return this.componentMapper.map(createdEntity);
+        return null;
     }
 
     @Transactional

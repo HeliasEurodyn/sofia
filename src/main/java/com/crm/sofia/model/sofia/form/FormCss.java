@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,4 +25,6 @@ public class FormCss extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String script;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

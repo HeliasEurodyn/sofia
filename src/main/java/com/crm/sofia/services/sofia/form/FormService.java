@@ -72,7 +72,10 @@ public class FormService {
         /* Map */
         FormDTO formDTO = this.formMapper.mapForm(optionalFormEntity.get());
 
-        /* Shorting */
+        /* Shorting Component Entities */
+        this.sortComponentPersistEntities(formDTO.getComponent().getComponentPersistEntityList());
+
+        /* Shorting Form Entities*/
         formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
         formDTO.getFormTabs().forEach(formTab -> {
             formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
@@ -102,6 +105,15 @@ public class FormService {
 
         /* Return */
         return formDTO;
+    }
+
+    private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+        if(componentPersistEntityList == null){
+            return;
+        }
+
+        componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList() ));
     }
 
     public FormDTO getObjectByJsonUrl(String jsonUrl) {
@@ -177,7 +189,7 @@ public class FormService {
     private ComponentDTO retrieveData(String formId, String selectionId) {
 
         /* Retrieve Component */
-        FormDTO formDTO = this.getObjectByJsonUrl(formId);
+        FormDTO formDTO = this.getObject(formId);
         ComponentDTO componentDTO = formDTO.getComponent();
 
         /* Retrieve Form Component field Assignments from Database */

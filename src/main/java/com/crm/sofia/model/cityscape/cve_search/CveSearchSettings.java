@@ -1,6 +1,6 @@
 package com.crm.sofia.model.cityscape.cve_search;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Accessors(chain = true)
 @Entity(name = "CveSearchSettings")
 @Table(name = "cve_search_settings")
-public class CveSearchSettings extends BaseEntity {
+public class CveSearchSettings extends MainEntity {
 
     @Column
     String serverUrl;

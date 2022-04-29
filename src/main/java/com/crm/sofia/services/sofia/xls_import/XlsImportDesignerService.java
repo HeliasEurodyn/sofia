@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -45,6 +46,9 @@ public class XlsImportDesignerService {
         }
         XlsImportDTO dto = this.xlsImportMapper.map(optionalchart.get());
 
+        List<ComponentPersistEntityDTO> cpeList =
+                this.treeToList(dto.getComponent().getComponentPersistEntityList());
+
         List<ComponentPersistEntityDTO> componentPersistEntityList =
                 this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
                         dto.getComponent().getComponentPersistEntityList(),
@@ -53,6 +57,18 @@ public class XlsImportDesignerService {
                 );
 
         dto.getComponent().setComponentPersistEntityList(componentPersistEntityList);
+
+        cpeList.forEach(cpe -> {
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .filter(cpef -> cpef.getAssignment() != null)
+                    .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
+                    .forEach(cpef -> {
+                        String encDefaultValue = Base64.getEncoder().encodeToString(
+                                cpef.getAssignment().getDefaultValue().getBytes(StandardCharsets.UTF_8));
+                        cpef.getAssignment().setDefaultValue(encDefaultValue);
+                    });
+        });
 
         return dto;
     }
@@ -67,9 +83,9 @@ public class XlsImportDesignerService {
 
         List<ComponentPersistEntityDTO> newChildCpeList = new ArrayList<>();
         newCpeList.forEach(newCpe -> {
-                    List<ComponentPersistEntityDTO> childCpeList = this.treeToList(newCpe.getComponentPersistEntityList());
-        newChildCpeList.addAll(childCpeList);
-      });
+            List<ComponentPersistEntityDTO> childCpeList = this.treeToList(newCpe.getComponentPersistEntityList());
+            newChildCpeList.addAll(childCpeList);
+        });
 
         newCpeList.addAll(newChildCpeList);
         return newCpeList;
@@ -79,17 +95,21 @@ public class XlsImportDesignerService {
     public XlsImportDTO postObject(XlsImportDTO dto) {
         List<ComponentPersistEntityDTO> cpeList = this.treeToList(dto.getComponent().getComponentPersistEntityList());
         cpeList.forEach(cpe -> {
-            cpe.getComponentPersistEntityFieldList().forEach(cpef -> {
-                String decDefaultValue = new String(Base64.getDecoder().decode(cpef.getAssignment().getDefaultValue()));
-                cpef.getAssignment().setDefaultValue(decDefaultValue);
-            });
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .filter(cpef -> cpef.getAssignment() != null)
+                    .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
+                    .forEach(cpef -> {
+                        String decDefaultValue = new String(Base64.getDecoder().decode(cpef.getAssignment().getDefaultValue()));
+                        cpef.getAssignment().setDefaultValue(decDefaultValue);
+                    });
         });
 
         XlsImport chart = this.xlsImportMapper.map(dto);
         XlsImport savedChart = this.xlsImportRepository.save(chart);
 
         this.componentPersistEntityFieldAssignmentService
-                .saveFieldAssignments(dto.getComponent().getComponentPersistEntityList(),"xls_import",
+                .saveFieldAssignments(dto.getComponent().getComponentPersistEntityList(), "xls_import",
                         savedChart.getId());
 
         return this.xlsImportMapper.map(savedChart);
@@ -102,7 +122,7 @@ public class XlsImportDesignerService {
         if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
         }
-        this.componentPersistEntityFieldAssignmentService.deleteByIdAndEntityType(optionalChart.get().getId(),"xls_import");
+        this.componentPersistEntityFieldAssignmentService.deleteByIdAndEntityType(optionalChart.get().getId(), "xls_import");
         this.xlsImportRepository.deleteById(optionalChart.get().getId());
     }
 

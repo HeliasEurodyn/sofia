@@ -9,15 +9,14 @@ import com.crm.sofia.repository.sofia.list.ListRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class ListDesignerService {
@@ -56,17 +55,17 @@ public class ListDesignerService {
         listEntity.setInstanceVersion(instanceVersion);
 
         ListEntity createdListEntity = this.listRepository.save(listEntity);
-        ListDTO createdListDTO =  this.listMapper.map(createdListEntity);
+        ListDTO createdListDTO = this.listMapper.map(createdListEntity);
 
         String script = this.listJavascriptService.generateDynamicScript(createdListDTO);
         String scriptMin = this.listJavascriptService.minify(script);
-        this.listRepository.updateScripts(createdListDTO.getId(),script, scriptMin);
+        this.listRepository.updateScripts(createdListDTO.getId(), script, scriptMin);
 
         return createdListDTO;
     }
 
     @Transactional
-   // @CacheEvict(value = "list_ui_cache", key = "#listDTO.id")
+    // @CacheEvict(value = "list_ui_cache", key = "#listDTO.id")
     public ListDTO putObject(ListDTO listDTO) throws Exception {
 
         ListEntity listEntity = this.listMapper.mapListDTO(listDTO);
@@ -85,31 +84,30 @@ public class ListDesignerService {
 
         String script = this.listJavascriptService.generateDynamicScript(createdListDTO);
         String scriptMin = this.listJavascriptService.minify(script);
-        this.listRepository.updateScripts(createdListDTO.getId(),script, scriptMin);
+        this.listRepository.updateScripts(createdListDTO.getId(), script, scriptMin);
 
-        cacheManager.getCache( "list_ui_cache").evict(createdListEntity.getId());
-        cacheManager.getCache( "list_ui_cache").evict(new Object[]{createdListEntity.getId(), 0});
-        createdListEntity.getTranslations().forEach( translation -> {
-            cacheManager.getCache( "list_ui_cache").evict(new Object[]{createdListEntity.getId(), translation.getLanguage().getId()});
+        cacheManager.getCache("list_ui_cache").evict(createdListEntity.getId());
+        cacheManager.getCache("list_ui_cache").evict(new Object[]{createdListEntity.getId(), 0});
+        createdListEntity.getTranslations().forEach(translation -> {
+            cacheManager.getCache("list_ui_cache").evict(new Object[]{createdListEntity.getId(), translation.getLanguage().getId()});
         });
 
         return createdListDTO;
     }
 
-    public List<ListDTO> getById() {
+    public List<ListDTO> getObject() {
         List<ListEntity> views = this.listRepository.findAll();
         return this.listMapper.mapEntitiesForList(views);
     }
 
-    public ListDTO getById(String id) {
-
+    public ListDTO getObject(String id) {
         ListEntity listEntity =
                 this.listRepository.findById(id)
                         .orElseThrow(() ->
                                 new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist")
                         );
 
-        ListDTO listDTO = this.listMapper.map(listEntity);
+        ListDTO listDTO = this.listMapper.mapList(listEntity);
         listDTO.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
         listDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
@@ -118,7 +116,7 @@ public class ListDesignerService {
         listDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         listDTO.getListComponentActionFieldList().forEach(af -> {
-            if( af.getListComponentActionFieldList() != null) {
+            if (af.getListComponentActionFieldList() != null) {
                 af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
             }
         });
@@ -131,18 +129,33 @@ public class ListDesignerService {
         if (listEntity == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
         }
-        return this.listMapper.map(listEntity);
+
+        ListDTO listDTO = this.listMapper.mapList(listEntity);
+        listDTO.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        listDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+        listDTO.getListComponentActionFieldList().forEach(af -> {
+            if (af.getListComponentActionFieldList() != null) {
+                af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
+            }
+        });
+
+        return listDTO;
     }
 
-//    @CacheEvict(value = "list_ui_cache", key = "#id")
+    //    @CacheEvict(value = "list_ui_cache", key = "#id")
     public void deleteObject(String id) {
         ListEntity lienEntity = this.listRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "List does not exist"));
 
-        cacheManager.getCache( "list_ui_cache").evict(lienEntity.getId());
-        cacheManager.getCache( "list_ui_cache").evict(new Object[]{lienEntity.getId(), 0});
-        lienEntity.getTranslations().forEach( translation -> {
-            cacheManager.getCache( "list_ui_cache").evict(new Object[]{lienEntity.getId(), translation.getId()});
+        cacheManager.getCache("list_ui_cache").evict(lienEntity.getId());
+        cacheManager.getCache("list_ui_cache").evict(new Object[]{lienEntity.getId(), 0});
+        lienEntity.getTranslations().forEach(translation -> {
+            cacheManager.getCache("list_ui_cache").evict(new Object[]{lienEntity.getId(), translation.getId()});
         });
 
         this.listRepository.deleteById(lienEntity.getId());

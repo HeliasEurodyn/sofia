@@ -35,7 +35,7 @@ public class TableController {
 
     @PutMapping
     public TableDTO putObject(@RequestBody TableDTO dto) {
-        TableDTO customComponentDTO = this.tableService.update(dto);
+        TableDTO customComponentDTO = this.tableService.save(dto);
         return customComponentDTO;
     }
 
@@ -63,7 +63,7 @@ public class TableController {
     @GetMapping(path = "/fields")
     public List<String> fields() {
 
-        return tableService.getTableFields("testtable");
+        return tableService.getExistingTableFields("testtable");
     }
 
     @GetMapping(path = "/generate-table-fields")

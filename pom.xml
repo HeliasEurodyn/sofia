@@ -8,7 +8,7 @@
         <version>2.2.6.RELEASE</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.javachinna</groupId>
+    <groupId>com.ed</groupId>
     <artifactId>sofia</artifactId>
     <version>0.0.1</version>
     <name>rita</name>
@@ -114,7 +114,10 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.5.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

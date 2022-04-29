@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -22,7 +23,6 @@ public class FormControlTableButtonControl extends BaseEntity {
     @Column
     private String cssclass;
 
-
     @OneToOne(
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },
@@ -31,4 +31,6 @@ public class FormControlTableButtonControl extends BaseEntity {
     @JoinColumn(name = "form_control_table_button_id")
     private FormControlButton formControlButton;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

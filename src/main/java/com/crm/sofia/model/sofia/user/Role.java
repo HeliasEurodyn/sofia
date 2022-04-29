@@ -1,12 +1,10 @@
 package com.crm.sofia.model.sofia.user;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -20,7 +18,7 @@ import java.util.Set;
 @Table(name = "role")
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Role extends BaseEntity implements Serializable {
+public class Role extends MainEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String USER = "USER";
     public static final String ROLE_USER = "ROLE_USER";

@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.dashboard;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +16,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Dashboard")
 @Table(name = "dashboard")
-public class Dashboard extends BaseEntity {
+public class Dashboard extends MainEntity {
 
     @Column
     private String description;

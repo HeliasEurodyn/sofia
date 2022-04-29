@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.list;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.list.translation.ListActionButtonTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -52,4 +53,7 @@ public class ListActionButton extends BaseEntity implements Serializable {
     )
     @JoinColumn(name = "list_action_button_id")
     private List<ListActionButtonTranslation> translations;
+
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -83,6 +84,21 @@ public class CveSearchSettingsService {
         this.deleteVendors(tableName, uuid);
     }
 
+
+    public void tryInsertVendorsIfEmptyTable() {
+        CveSearchSettingsDTO cveSearchSettingsDTO = this.getObject();
+        String tableName = cveSearchSettingsDTO.getVendorTableName().replace(" ","");
+        Long count = this.countVendorTable(tableName);
+
+        if(count <= 0){
+            VendorDTO vendorDTO = cveSearchRestTemplate.getVendors("*");
+            vendorDTO.getVendor().forEach(vendor -> {
+                    this.insertVendor(tableName, vendor, "");
+            });
+        }
+    }
+
+
     public boolean vendorExists(String tableName, String vendor) {
         String queryString =
                 " SELECT * FROM "+tableName+" WHERE name = :vendor";
@@ -105,6 +121,7 @@ public class CveSearchSettingsService {
             query2.executeUpdate();
     }
 
+    @Transactional
     public void insertVendor(String tableName, String vendor, String updateid) {
             String queryString =
                     " INSERT INTO "+tableName+" (name, update_id) VALUES (:vendor,:updateid);";
@@ -120,6 +137,18 @@ public class CveSearchSettingsService {
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("updateid",updateid);
         query.executeUpdate();
+    }
+
+    private Long countVendorTable(String tableName) {
+        Query query = entityManager.createNativeQuery(" SELECT count(*) FROM "+tableName);
+
+        List<Object> dataList = query.getResultList();
+        for (Object dataRow : dataList) {
+            BigInteger totalRows = (BigInteger) dataRow;
+            return totalRows.longValue();
+        }
+
+        return 0L;
     }
 
 }

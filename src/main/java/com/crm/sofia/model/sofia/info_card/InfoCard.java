@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.info_card;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @Entity(name = "InfoCard")
 @Table(name = "info_card")
-public class InfoCard extends BaseEntity {
+public class InfoCard extends MainEntity {
 
     @Column
     private String title;

@@ -53,6 +53,6 @@ public class DataTransferController {
     @PostMapping(path = "/import")
     public void postObject(
             @RequestParam("file") MultipartFile multipartFile) throws Exception {
-        this.dataTransferService.importFile(multipartFile);
+        this.dataTransferService.importMultipartFile(multipartFile);
     }
 }

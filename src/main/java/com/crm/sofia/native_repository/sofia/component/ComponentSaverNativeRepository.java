@@ -65,7 +65,7 @@ public class ComponentSaverNativeRepository {
 
         String id = componentPersistEntityList.get(0).getComponentPersistEntityFieldList()
                 .stream()
-                .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                .filter(x -> (x.getPersistEntityField().getPrimaryKey()==null?false:x.getPersistEntityField().getPrimaryKey()) == true)
                 .map(x -> (x.getValue()==null?"0":x.getValue().toString())).findFirst()
                 .orElse("0");
 
@@ -219,6 +219,7 @@ public class ComponentSaverNativeRepository {
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getPersistEntityField().getName().equals("modified_by"))
+                .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
                 .forEach(x -> x.setValue(this.jwtService.getUserId().toString()));
 
         /* SET columns = values Section */
@@ -278,8 +279,10 @@ public class ComponentSaverNativeRepository {
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> Arrays.asList( "created_by", "modified_by").contains(x.getPersistEntityField().getName()))
-                .forEach(x -> x.setValue(this.jwtService.getUserId().toString()));
+                .filter(x -> Arrays.asList( "created_by", "modified_by")
+                        .contains(x.getPersistEntityField().getName()))
+                .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
+                .forEach(x -> x.setValue(this.jwtService.getUserId()));
 
         /* Insert into Values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()

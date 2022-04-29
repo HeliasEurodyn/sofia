@@ -27,35 +27,6 @@ public class MenuFieldService {
         this.menuFIeldMapper = menuFIeldMapper;
     }
 
-
-//    public MenuFieldDTO save(MenuFieldDTO menuItemConponentDTO, Long parentId) {
-//        Optional<Menu> optionalMenuComponent = this.menuRepository.findById(parentId);
-//        if (!optionalMenuComponent.isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-//        }
-//        Menu menu = optionalMenuComponent.get();
-//
-//        MenuField menuField;
-//        Long id = 0L;
-//        if (menuItemConponentDTO.getId() != null) id = menuItemConponentDTO.getId();
-//        Optional<MenuField> optionalMenuItemComponent = this.menuFieldRepository.findById(id);
-//
-//        if (optionalMenuItemComponent.isPresent()) {
-//            menuField = optionalMenuItemComponent.get();
-//            menuFIeldMapper.mapUpdateDtoToEntity(menuItemConponentDTO, menuField);
-//
-//        } else {
-//            menuField = menuFIeldMapper.map(menuItemConponentDTO);
-//            menuField.setId(null);
-//        }
-//        menuField.setMenu(menu);
-//        return menuFIeldMapper.map(this.menuFieldRepository.save(menuField));
-//    }
-
-//    public void deleteNotInListForParent(List<Long> ids, Long id) {
-//        menuFieldRepository.deleteObjectsNotInListForParentId(ids, id);
-//    }
-
     public List<MenuFieldDTO> getObjectTree(String id) {
         Optional<MenuField> optionalMenuItemComponent = this.menuFieldRepository.findById(id);
         if (!optionalMenuItemComponent.isPresent()) {

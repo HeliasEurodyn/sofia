@@ -1,7 +1,6 @@
 package com.crm.sofia.model.sofia.report;
 
-import com.crm.sofia.dto.sofia.report.ReportDTO;
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,7 +16,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Report")
 @Table(name = "report")
-public class Report extends BaseEntity {
+public class Report extends MainEntity {
 
     @Column
     private String code;

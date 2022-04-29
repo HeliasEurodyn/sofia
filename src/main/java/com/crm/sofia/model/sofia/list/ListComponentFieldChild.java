@@ -1,10 +1,8 @@
 package com.crm.sofia.model.sofia.list;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.list.translation.ListComponentFieldChildTranslation;
-import com.crm.sofia.model.sofia.list.translation.ListComponentFieldTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -72,4 +70,6 @@ public class ListComponentFieldChild extends BaseEntity implements Serializable 
     @JoinColumn(name = "list_component_field_child_id")
     private List<ListComponentFieldChildTranslation> translations;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

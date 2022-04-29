@@ -1,7 +1,6 @@
 package com.crm.sofia.model.sofia.access_control;
 
-import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.sofia.menu.Menu;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.user.Role;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,7 +16,7 @@ import java.io.Serializable;
 @DynamicInsert
 @Entity(name = "AccessControl")
 @Table(name = "access_control")
-public class AccessControl extends BaseEntity implements Serializable {
+public class AccessControl extends MainEntity implements Serializable {
 
     @Column
     private String type;

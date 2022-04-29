@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.user;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -17,7 +17,7 @@ import java.util.List;
 @Entity(name = "UserGroup")
 @Table(name = "user_group")
 @EqualsAndHashCode(callSuper = true)
-public class UserGroup extends BaseEntity {
+public class UserGroup extends MainEntity {
 
     @Column
     private String name;

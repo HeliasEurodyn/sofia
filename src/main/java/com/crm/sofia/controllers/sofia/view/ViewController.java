@@ -26,12 +26,10 @@ public class ViewController {
         return this.viewService.getObject();
     }
 
-
     @GetMapping(path = "/generate-view-fields")
     List<ViewFieldDTO> generateViewFields(@RequestParam("query") String query) {
         return this.viewService.generateViewFields(query);
     }
-
 
     @PostMapping
     public ViewDTO postObject(@RequestBody ViewDTO dto) {
@@ -65,6 +63,5 @@ public class ViewController {
     public Boolean tableExists(@RequestParam("name") String tableName) {
         return viewService.viewOnDatabase(tableName);
     }
-
 
 }

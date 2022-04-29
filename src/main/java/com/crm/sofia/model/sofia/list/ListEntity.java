@@ -1,11 +1,8 @@
 package com.crm.sofia.model.sofia.list;
 
-import com.crm.sofia.dto.sofia.list.base.translation.ListTranslationDTO;
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
-import com.crm.sofia.model.sofia.form.FormCss;
-import com.crm.sofia.model.sofia.form.FormScript;
 import com.crm.sofia.model.sofia.list.translation.ListTranslation;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -22,7 +19,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "ListEntity")
 @Table(name = "list")
-public class ListEntity extends BaseEntity implements Serializable {
+public class ListEntity extends MainEntity implements Serializable {
 
     public static final String HASH_KEY = "listEntity";
 

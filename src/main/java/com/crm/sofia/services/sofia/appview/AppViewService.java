@@ -5,6 +5,7 @@ import com.crm.sofia.dto.sofia.appview.AppViewFieldDTO;
 import com.crm.sofia.mapper.sofia.appview.AppViewMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.sofia.persistEntity.PersistEntityRepository;
+import com.crm.sofia.services.sofia.component.ComponentDesignerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,27 +31,45 @@ public class AppViewService {
     private PersistEntityRepository appViewRepository;
     private AppViewMapper appViewMapper;
     private EntityManager entityManager;
+    private final ComponentDesignerService componentDesignerService;
 
     public AppViewService(PersistEntityRepository appViewRepository,
                           AppViewMapper appViewMapper,
-                          EntityManager entityManager) {
+                          EntityManager entityManager,
+                          ComponentDesignerService componentDesignerService) {
         this.appViewRepository = appViewRepository;
         this.appViewMapper = appViewMapper;
         this.entityManager = entityManager;
+        this.componentDesignerService = componentDesignerService;
     }
 
-    @Transactional
     public AppViewDTO postObject(AppViewDTO appViewDTO) {
-        PersistEntity appView = this.appViewMapper.map(appViewDTO);
 
+        /**
+         * Remove deleted Fields From Components
+         */
+        this.componentDesignerService.removeComponentTableFieldsByTable(
+                appViewDTO.getId(),
+                appViewDTO.getAppViewFieldList()
+                        .stream()
+                        .map( x -> x.getId())
+                        .collect(Collectors.toList())
+        );
+
+        /**
+         * Map And Save DTO
+         */
+        PersistEntity appView = this.appViewMapper.map(appViewDTO);
         PersistEntity createdAppView = this.appViewRepository.save(appView);
+
+        /**
+         * Add new Fields From Components
+         */
+        this.componentDesignerService.insertComponentTableFieldsByTable(createdAppView);
+
         return this.appViewMapper.map(createdAppView);
     }
 
-    @Transactional
-    public AppViewDTO putObject(AppViewDTO appViewDTO) {
-        return null;
-    }
 
     public List<AppViewDTO> getObject() {
         List<PersistEntity> views = this.appViewRepository.findByEntitytype("AppView");

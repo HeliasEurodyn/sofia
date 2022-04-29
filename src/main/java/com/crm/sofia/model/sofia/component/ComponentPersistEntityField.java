@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.component;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntityField;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -22,7 +23,6 @@ public class ComponentPersistEntityField extends BaseEntity implements Serializa
     @Column
     private String description;
 
-    @Column
     private String editor;
 
     @Column
@@ -34,15 +34,17 @@ public class ComponentPersistEntityField extends BaseEntity implements Serializa
     @Column
     private String locateStatement;
 
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL},
-            orphanRemoval = true,
-            targetEntity = ComponentPersistEntity.class)
-    @JoinColumn(name = "join_persist_entity_id", referencedColumnName = "id")
-    private ComponentPersistEntity joinPersistEntity;
+//    @OneToOne(fetch = FetchType.LAZY,
+//            cascade = {CascadeType.ALL},
+//            orphanRemoval = true,
+//            targetEntity = ComponentPersistEntity.class)
+//    @JoinColumn(name = "join_persist_entity_id", referencedColumnName = "id")
+//    private ComponentPersistEntity joinPersistEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersistEntityField.class)
     @JoinColumn(name = "persist_entity_field_id", referencedColumnName = "id")
     private PersistEntityField persistEntityField;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

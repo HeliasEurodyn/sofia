@@ -26,15 +26,23 @@ public class JWTService {
 
         String token = this.getJwt();
 
+        if(token == null){
+            return "";
+        }
+
         Claims claims = Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(token).getBody();
 
         return claims.getSubject();
     }
 
     private String getJwt() {
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                        .getRequest();
+        ServletRequestAttributes servletRequestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+
+        if(servletRequestAttributes == null) {
+            return null;
+        }
+
+        HttpServletRequest request = servletRequestAttributes.getRequest();
 
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

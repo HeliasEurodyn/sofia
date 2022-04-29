@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.chart;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.list.ListComponentField;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +16,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Chart")
 @Table(name = "chart")
-public class Chart extends BaseEntity {
+public class Chart extends MainEntity {
 
     @Column
     private String title;

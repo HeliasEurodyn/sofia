@@ -1,7 +1,7 @@
 package com.crm.sofia.model.sofia.data_transfer;
 
-import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.utils.LongArrayToStringConverter;
+import com.crm.sofia.model.common.MainEntity;
+import com.crm.sofia.utils.jpa.StringArrayToStringConverter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -16,7 +16,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "DataTransfer")
 @Table(name = "data_transfer")
-public class DataTransfer extends BaseEntity {
+public class DataTransfer extends MainEntity {
 
     @Column
     private String name;
@@ -24,15 +24,82 @@ public class DataTransfer extends BaseEntity {
     @Column
     private String description;
 
+    @Column(columnDefinition = "TEXT")
+    private String query;
+
     @Column
     private Integer currentVersion;
 
-    @Column
-    @Convert(converter = LongArrayToStringConverter.class)
-    List<Long> formIds;
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> formIds;
 
-    @Column
-    @Convert(converter = LongArrayToStringConverter.class)
-    List<Long> listIds;
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> listIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> tableIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> viewIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> appViewIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> menuIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> componentIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> chartIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> infoCardIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> htmlPartIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> dashboardIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> reportIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> xlsImportIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> searchIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> customQueryIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> languageIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> roleIds;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = StringArrayToStringConverter.class)
+    List<String> userIds;
 
 }

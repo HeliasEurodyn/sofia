@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.xls_import;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import com.crm.sofia.model.sofia.component.Component;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "XlsImport")
 @Table(name = "xls_import")
-public class XlsImport extends BaseEntity {
+public class XlsImport extends MainEntity {
 
     @Column
     private String code;
@@ -36,14 +36,6 @@ public class XlsImport extends BaseEntity {
 
     @Column
     private String xlsIterationColumn;
-
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            cascade = { CascadeType.ALL },
-            orphanRemoval=true
-    )
-    @JoinColumn(name = "xls_import_id")
-    private List<XlsImportLine> xlsImportLineList;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = com.crm.sofia.model.sofia.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")

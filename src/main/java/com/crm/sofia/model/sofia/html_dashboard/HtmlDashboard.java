@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.html_dashboard;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @Entity(name = "HtmlDashboard")
 @Table(name = "html_dashboard")
-public class HtmlDashboard extends BaseEntity {
+public class HtmlDashboard extends MainEntity {
 
     @Column
     private String code;

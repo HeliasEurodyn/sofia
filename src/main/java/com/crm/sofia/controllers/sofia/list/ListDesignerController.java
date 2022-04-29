@@ -22,12 +22,12 @@ public class ListDesignerController {
 
     @GetMapping
     List<ListDTO> getObject() {
-        return this.listDesignerService.getById();
+        return this.listDesignerService.getObject();
     }
 
     @GetMapping(path = "/by-id")
     ListDTO getObject(@RequestParam("id") String id) {
-        return this.listDesignerService.getById(id);
+        return this.listDesignerService.getObject(id);
     }
 
     @GetMapping(path = "/by-name")

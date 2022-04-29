@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.component;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,7 +17,7 @@ import java.util.List;
 @DynamicInsert
 @Entity(name = "Component")
 @Table(name = "component")
-public class Component extends BaseEntity implements Serializable {
+public class Component extends MainEntity implements Serializable {
 
     @Column
     private String name;

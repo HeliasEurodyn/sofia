@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.dashboard;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -27,4 +28,6 @@ public class DashboardItem extends BaseEntity {
     @Column
     private String cssclass;
 
+    @Column(name = "short_order")
+    private Long shortOrder;
 }

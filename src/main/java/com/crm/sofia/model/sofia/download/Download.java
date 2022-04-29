@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.download;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @Entity(name = "Download")
 @Table(name = "download")
-public class Download extends BaseEntity {
+public class Download extends MainEntity {
     @Column
     private String code;
 

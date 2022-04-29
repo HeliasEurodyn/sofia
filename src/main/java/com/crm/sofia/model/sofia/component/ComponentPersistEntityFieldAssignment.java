@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.component;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,25 +15,21 @@ import javax.persistence.*;
 @DynamicInsert
 @Entity(name = "ComponentPersistEntityFieldAssignment")
 @Table(name = "component_persist_entity_field_assignment")
-// @Table(name = "component_persist_entity_field_assignment", uniqueConstraints = @UniqueConstraint(columnNames = {"field_id", "form_id"}))
 public class ComponentPersistEntityFieldAssignment extends BaseEntity {
 
     @Column
     private String entityType;
 
-    @Column
-    private Long entityId;
+    @Column(columnDefinition = "VARCHAR(36)")
+    private String entityId;
 
-    @Column(name = "field_id")
-    private Long fieldId;
-
-  //  @Column(name = "form_id")
- //   private Long formId;
+    @Column(columnDefinition = "VARCHAR(36)", name = "field_id")
+    private String fieldId;
 
     @Column
     private String description;
 
-    @Column
+    @Column(columnDefinition = "VARCHAR(10000)")
     private String editor;
 
     @Column
@@ -49,9 +46,6 @@ public class ComponentPersistEntityFieldAssignment extends BaseEntity {
 
     @Column
     private Integer decimals;
-
- //   @Column
- //   private String fieldtype;
 
     @Column
     private String css;

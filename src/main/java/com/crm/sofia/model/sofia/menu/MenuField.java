@@ -1,6 +1,7 @@
 package com.crm.sofia.model.sofia.menu;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -39,5 +40,8 @@ public class MenuField extends BaseEntity {
     )
     @JoinColumn(name = "menu_field_id")
     private List<MenuFieldTranslation> translations;
+
+    @Column(name = "short_order")
+    private Long shortOrder;
 
 }

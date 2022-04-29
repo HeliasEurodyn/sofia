@@ -1,6 +1,6 @@
 package com.crm.sofia.model.sofia.persistEntity;
 
-import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,16 +10,9 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-//@DynamicUpdate
-//@DynamicInsert
 @Entity
 @Table(name = "persist_entity")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "entity_type")
-//@DiscriminatorValue("View")
-//@DiscriminatorValue("AppView")
-//@DiscriminatorValue("Table")
-public class PersistEntity extends BaseEntity implements Serializable {
+public class PersistEntity extends MainEntity implements Serializable {
 
     @Column
     private String name;
@@ -45,7 +38,7 @@ public class PersistEntity extends BaseEntity implements Serializable {
             orphanRemoval = true,
             targetEntity=PersistEntityField.class
     )
-    @JoinColumn(name = "persist_entity_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "persist_entity_id", referencedColumnName = "id")
     private List<PersistEntityField> persistEntityFieldList;
 
 }

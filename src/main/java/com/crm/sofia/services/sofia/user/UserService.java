@@ -81,6 +81,15 @@ public class UserService {
         }
     }
 
+    public UserDTO getTransferUser(String id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userMapper.map(userOptional.get());
+        } else {
+            return null;
+        }
+    }
+
     public UserDTO postUser(UserDTO userDTO) {
 
         if (userDTO.getPassword().equals("") || !userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
@@ -107,6 +116,11 @@ public class UserService {
         return responseUserDTO;
     }
 
+    public void postTransferUser(UserDTO userDTO) {
+        User user = userMapper.map(userDTO);
+        User createdUser = userRepository.save(user);
+    }
+
     @Transactional
     public ResponseEntity<?> authenticate(@NotBlank String username, @NotBlank String enteredPassword) {
 
@@ -114,10 +128,10 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(enteredPassword, user.getPassword())) {
-
+                user.setEnabled(true);
                 UserDetails userDetails =
                         new LocalUser(user.getEmail(), user.getPassword(),
-                                user.isEnabled(), true, true,
+                                true, true, true,
                                 true,
                                 GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()), user, user.getRoles() );
 

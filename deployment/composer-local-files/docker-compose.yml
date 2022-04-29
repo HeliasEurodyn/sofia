@@ -1,14 +1,12 @@
 version: "3.7"
 services:
-  db:
+  drasdb:
     image: mariadb:10.5
     command: --default-authentication-plugin=mysql_native_password
-    container_name: dras-db
+    container_name: drasdb
     environment:
       MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: dras
-    ports:
-      - "4822:3306"
+      MYSQL_DATABASE: dras
     volumes:
       - ./mysql-files:/var/lib/mysql
       - ./mysql-scripts:/docker-entrypoint-initdb.d
@@ -17,9 +15,9 @@ services:
       - dras
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: dras-db-admin
+    container_name: drasdb-admin
     environment:
-      PMA_HOST: db
+      PMA_HOST: drasdb
       PMA_USER: root
       PMA_PASSWORD: root
       UPLOAD_LIMIT: 300M
@@ -42,21 +40,24 @@ services:
     build:
       context: dras-backend
       args:
-        DB_IP: dras-db
+        DB_IP: drasdb
         DB_PORT: 3306
         DB_NAME: dras
         DB_USERNAME: root
         DB_PASSWORD: root
         RMT: https://rmt.ds.unipi.gr
-        REDIS_HOST: redis
-        REDIS_PORT: 6399
-        REDIS_PASSWORD: sOmE_sEcUrE_pAsS
+        REDIS_HOST: drasredis
+        REDIS_PORT: 6379
+        REDIS_PASSWORD: cU7bUfAKHmvvs4yg
       dockerfile: Dockerfile
     image: dras-backend
     container_name: dras-backend
     ports:
       - "15502:15502"
     restart: always
+    depends_on:
+      - drasredis
+      - drasdb
     networks:
       - dras
   dras-frontend:
@@ -72,12 +73,10 @@ services:
     restart: always
     networks:
       - dras
-  redis:
+  drasredis:
     image: "redis:alpine"
-    container_name: redis
-    command: redis-server --requirepass sOmE_sEcUrE_pAsS
-    ports:
-      - "6399:6379"
+    container_name: drasredis
+    command: redis-server --requirepass cU7bUfAKHmvvs4yg
     volumes:
       - $PWD/redis-data:/var/lib/redis
       - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
