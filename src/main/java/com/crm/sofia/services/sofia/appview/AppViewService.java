@@ -59,20 +59,24 @@ public class AppViewService {
         /**
          * Map And Save DTO
          */
-        PersistEntity appView = this.appViewMapper.map(appViewDTO);
-        PersistEntity createdAppView = this.appViewRepository.save(appView);
+        PersistEntity persistEntity = this.appViewMapper.map(appViewDTO);
+
+        persistEntity.getPersistEntityFieldList().stream()
+                .forEach(persistEntityField -> persistEntityField.setPersistEntity(persistEntity));
+
+        PersistEntity createdPersistEntity = this.appViewRepository.save(persistEntity);
 
         /**
          * Add new Fields From Components
          */
-        this.componentDesignerService.insertComponentTableFieldsByTable(createdAppView);
+        this.componentDesignerService.insertComponentTableFieldsByTable(createdPersistEntity);
 
-        return this.appViewMapper.map(createdAppView);
+        return this.appViewMapper.map(createdPersistEntity);
     }
 
 
     public List<AppViewDTO> getObject() {
-        List<PersistEntity> views = this.appViewRepository.findByEntitytype("AppView");
+        List<PersistEntity> views = this.appViewRepository.findByEntitytypeOrderByModifiedOn("AppView");
         return this.appViewMapper.map(views);
     }
 

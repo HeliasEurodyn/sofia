@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends BaseRepository<User> {
 
-    List<User> findAllByStatusIsNotLike(AppConstants.Types.UserStatus status);
+    List<User> findAllByStatusIsNotLikeOrderByCreatedOn(AppConstants.Types.UserStatus status);
 
     List<User> findUsersByIdIn(List<String> ids);
 

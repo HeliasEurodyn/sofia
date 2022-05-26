@@ -12,7 +12,11 @@ import java.util.List;
 
 @Repository
 public interface FormRepository extends BaseRepository<FormEntity> {
+
     List<FormEntity> findAll();
+
+    List<FormEntity> findAllByOrderByModifiedOn();
+
 
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formScripts fs " +
@@ -20,7 +24,7 @@ public interface FormRepository extends BaseRepository<FormEntity> {
     public List<String> getFormJavaScriptsByFormId(@Param("id") String id);
 
     @Query(" SELECT DISTINCT f.id FROM FormEntity f ")
-    public List<Long> getFormIds();
+    public List<String> getFormIds();
 
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formCssList fs " +

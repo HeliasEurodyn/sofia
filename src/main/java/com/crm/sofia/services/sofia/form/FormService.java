@@ -307,14 +307,14 @@ public class FormService {
     }
 
     public String getJavaScriptFactory() {
-        List<Long> formIds = this.formRepository.getFormIds();
+        List<String> formIds = this.formRepository.getFormIds();
         List<String> scriptLines = new ArrayList<>();
         scriptLines.add("function newFormDynamicScript(id) {");
         formIds.forEach(id -> {
            String ifClause =
                    String.join("",
-                           "if (id == " , id.toString(),
-                           " ) return new FormDynamicScript",id.toString() , "();" );
+                           "if (id == '" , id, "'",
+                           " ) return new FormDynamicScript",id.toString().replace("-","_") , "();" );
            scriptLines.add(ifClause);
         });
         scriptLines.add("}");

@@ -51,19 +51,8 @@ public class TableController {
     }
 
     @GetMapping(path = "/table-exists")
-    public Boolean tableExists(@RequestParam("name") String tableName) {
-        return tableService.tableOnDatabase(tableName);
-    }
-
-    @GetMapping(path = "/tables")
-    public List<String> tables() {
-        return tableService.getTables();
-    }
-
-    @GetMapping(path = "/fields")
-    public List<String> fields() {
-
-        return tableService.getExistingTableFields("testtable");
+    public Boolean tableExists(@RequestParam("name") String name) {
+        return tableService.tableOnDatabase(name);
     }
 
     @GetMapping(path = "/generate-table-fields")

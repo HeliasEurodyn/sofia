@@ -72,7 +72,7 @@ public class AppViewServiceTest {
     }
     @Test
     public void getObjectTest(){
-        given(appViewRepository.findByEntitytype(ArgumentMatchers.anyString())).willReturn(persistEntityList);
+        given(appViewRepository.findByEntitytypeOrderByModifiedOn(ArgumentMatchers.anyString())).willReturn(persistEntityList);
         List<AppViewDTO> list = appViewService.getObject();
         assertThat(list).isNotNull();
     }

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface PersistEntityRepository extends BaseRepository<PersistEntity> {
 
-    List<PersistEntity> findByEntitytype(String entityType);
+    List<PersistEntity> findByEntitytypeOrderByModifiedOn(String entityType);
 
 }
 

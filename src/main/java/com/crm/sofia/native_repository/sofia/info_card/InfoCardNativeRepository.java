@@ -23,7 +23,7 @@ public class InfoCardNativeRepository {
     }
 
     public InfoCardTextResponceDTO getData(String sql, Map<String, String> parameters) {
-        sql = sql.replace("##user_id##", this.jwtService.getUserId().toString());
+        sql = sql.replace("##user_id##", "'"+ this.jwtService.getUserId() + "'");
         Query query = entityManager.createNativeQuery(sql);
 
         String finalSql = sql;

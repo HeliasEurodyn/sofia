@@ -64,7 +64,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Menu sidebarMenu = this.createSidebarMenu();
         Menu headerMenu = this.createHeaderMenu();
         this.createUserIfNotFound(Set.of(userRole, adminRole, modRole), sidebarMenu, headerMenu);
-        this.sofiaImports();
+ //       this.sofiaImports();
 //        this.cveSearchSettingsService.tryInsertVendorsIfEmptyTable();
     }
 

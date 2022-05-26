@@ -304,9 +304,9 @@ public class RmtRepository {
             countermeasure.setCisControl(cisControl);
 
             CountermeasureEfficiencyDTO efficiencyDTO = new CountermeasureEfficiencyDTO();
-            efficiencyDTO.setAvailability(0L);
-            efficiencyDTO.setConfidentiality(0L);
-            efficiencyDTO.setIntegrity(0L);
+            efficiencyDTO.setAvailability(1L);
+            efficiencyDTO.setConfidentiality(1L);
+            efficiencyDTO.setIntegrity(1L);
             countermeasure.setEfficiency(efficiencyDTO);
 
             countermeasures.add(countermeasure);

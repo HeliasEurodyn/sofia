@@ -71,7 +71,7 @@ public class FormJavascriptService {
 
         List<String> classDefLines = new ArrayList<>();
         classDefLines.add("class FormDynamicScript");
-        classDefLines.add(formDTO.getId().toString());
+        classDefLines.add(formDTO.getId().replace("-","_"));
         classDefLines.add(" {");
         String classDef = String.join("", classDefLines);
 
@@ -441,6 +441,13 @@ public class FormJavascriptService {
         pointerVarLines.add("getFormDatasetRef = null;");
         pointerVarLines.add("setFieldEditableRef = null;");
         pointerVarLines.add("getFromBackendRef = null;");
+        pointerVarLines.add("getFromUrlRef = null;");
+        pointerVarLines.add("postToBackendRef = null;");
+        pointerVarLines.add("postToUrlRef = null;");
+        pointerVarLines.add("putToBackendRef = null;");
+        pointerVarLines.add("putToUrlRef = null;");
+        pointerVarLines.add("deleteFromBackendRef = null;");
+        pointerVarLines.add("deleteFromUrlRef = null;");
         pointerVarLines.add("setFormTitleRef = null;");
         pointerVarLines.add("setFormDescriptionRef = null;");
         pointerVarLines.add("setHeaderTabEditableRef = null;");
@@ -510,6 +517,30 @@ public class FormJavascriptService {
 
         pointerVarLines.add("defineGetFromBackend(myCallback){this.getFromBackendRef = myCallback;}");
         pointerVarLines.add("getFromBackend(url, callback){return this.getFromBackendRef(url, callback);}");
+
+        pointerVarLines.add("defineGetFromUrl(myCallback){this.getFromUrlRef = myCallback;}");
+        pointerVarLines.add("getFromUrl(url, callback){return this.getFromUrlRef(url, callback);}");
+
+
+        pointerVarLines.add("definePostToBackend(myCallback){this.postToBackendRef = myCallback;}");
+        pointerVarLines.add("postToBackend(url, data, callback){return this.postToBackendRef(url, data, callback);}");
+
+        pointerVarLines.add("definePostToUrl(myCallback){this.postToUrlRef = myCallback;}");
+        pointerVarLines.add("postToUrl(url, data, callback){return this.postToUrlRef(url, data, callback);}");
+
+
+        pointerVarLines.add("definePutToBackend(myCallback){this.putToBackendRef = myCallback;}");
+        pointerVarLines.add("putToBackend(url, data, callback){return this.putToBackendRef(url, data, callback);}");
+
+        pointerVarLines.add("definePutToUrl(myCallback){this.putToUrlRef = myCallback;}");
+        pointerVarLines.add("putToUrl(url, data, callback){return this.putToUrlRef(url, data, callback);}");
+
+
+        pointerVarLines.add("defineDeleteFromBackend(myCallback){this.deleteFromBackendRef = myCallback;}");
+        pointerVarLines.add("deleteFromBackend(url, callback){return this.deleteFromBackendRef(url, callback);}");
+
+        pointerVarLines.add("defineDeleteFromUrl(myCallback){this.deleteFromUrlRef = myCallback;}");
+        pointerVarLines.add("deleteFromUrl(url, callback){return this.deleteFromUrlRef(url, callback);}");
 
         pointerVarLines.add("defineSetFormTitle(myCallback){this.setFormTitleRef = myCallback;}");
         pointerVarLines.add("setFormTitle(title){return this.setFormTitleRef(title, this.formRef);}");

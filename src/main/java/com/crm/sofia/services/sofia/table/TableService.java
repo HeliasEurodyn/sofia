@@ -1,5 +1,6 @@
 package com.crm.sofia.services.sofia.table;
 
+import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.table.TableDTO;
 import com.crm.sofia.dto.sofia.table.TableFieldDTO;
 import com.crm.sofia.mapper.sofia.table.TableMapper;
@@ -17,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -49,9 +51,11 @@ public class TableService {
     public TableDTO postObject(TableDTO componentDTO) {
         PersistEntity persistEntity = this.tableMapper.map(componentDTO);
 
-        persistEntity.setCreatedBy(jwtService.getUserId());
+        if((persistEntity.getId() == null?"":persistEntity.getId()).equals("")){
+            persistEntity.setCreatedBy(jwtService.getUserId());
+            persistEntity.setCreatedOn(Instant.now());
+        }
         persistEntity.setModifiedBy(jwtService.getUserId());
-        persistEntity.setCreatedOn(Instant.now());
         persistEntity.setModifiedOn(Instant.now());
 
         persistEntity.getPersistEntityFieldList()
@@ -65,8 +69,12 @@ public class TableService {
     }
 
     public List<TableDTO> getObject() {
-        List<PersistEntity> tables = this.persistEntityRepository.findByEntitytype("Table");
-        return this.tableMapper.map(tables);
+        List<PersistEntity> tables = this.persistEntityRepository.findByEntitytypeOrderByModifiedOn("Table");
+        List<TableDTO> dtos = this.tableMapper.map(tables);
+        dtos.forEach(tableDTO -> {
+            this.shortTableFields(tableDTO);
+        });
+        return dtos;
     }
 
     public TableDTO getObject(String id) {
@@ -74,7 +82,21 @@ public class TableService {
         if (!optionalComponent.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Component does not exist");
         }
-        return this.tableMapper.map(optionalComponent.get());
+
+        TableDTO tableDTO = this.tableMapper.map(optionalComponent.get());
+        this.shortTableFields(tableDTO);
+        return tableDTO;
+    }
+
+    public void shortTableFields(TableDTO tableDTO) {
+        tableDTO.getTableFieldList().stream()
+                .filter(field -> field.getShortOrder() == null)
+                .forEach(field -> field.setShortOrder(0L) );
+
+        List<TableFieldDTO> shortedFieldList = tableDTO.getTableFieldList()
+                .stream()
+                .sorted(Comparator.comparingLong(TableFieldDTO::getShortOrder)).collect(Collectors.toList());
+        tableDTO.setTableFieldList(shortedFieldList);
     }
 
     public void deleteObject(String id) {
@@ -174,7 +196,7 @@ public class TableService {
             }
             sql += tableFieldDTO.getName().replace(" ", "") + " ";
             sql += " " + tableFieldDTO.getType().replace(" ", "");
-            if (tableFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
+            if (tableFieldDTO.getType().equalsIgnoreCase("VARCHAR")) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
 
@@ -259,6 +281,10 @@ public class TableService {
 
     public List<TableFieldDTO> generateTableFields(String name) {
         List<TableFieldDTO> dtos = new ArrayList<>();
+
+        if(!this.tableOnDatabase(name)){
+            return dtos;
+        }
 
         Query query = entityManager.createNativeQuery("SHOW COLUMNS FROM " + name + " FROM "+sofiaDatabase+";");
         List<Object[]> fields = query.getResultList();

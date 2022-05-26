@@ -13,7 +13,10 @@ import java.util.List;
 
 @Repository
 public interface ListRepository extends BaseRepository<ListEntity> {
+
     List<ListEntity> findAll();
+
+    List<ListEntity> findAllByOrderByModifiedOn();
 
     ListEntity findFirstByName(String name);
 
@@ -50,7 +53,7 @@ public interface ListRepository extends BaseRepository<ListEntity> {
 
 
     @Query(" SELECT DISTINCT l.id FROM ListEntity l ")
-    public List<Long> getListIds();
+    public List<String> getListIds();
 
     @Modifying
     @Query(value = "UPDATE ListEntity SET script = :script , scriptMin = :scriptMin  WHERE id = :id")

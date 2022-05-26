@@ -33,7 +33,7 @@ public class RoleService {
     }
 
     public List<RoleDTO> getObject() {
-        List<Role> entites = roleRepository.findAll();
+        List<Role> entites = roleRepository.findAllByOrderByModifiedOn();
         return roleMapper.map(entites);
     }
 

@@ -97,7 +97,8 @@ public class ExpressionService {
                 outOfQuote = true;
             }
 
-            if (!outOfQuote || (outOfQuote && !expressionPositionString.equals(" "))) {
+            if (!outOfQuote || (outOfQuote && !expressionPositionString.equals(" ") && !expressionPositionString.equals("\n"))
+            ) {
                 newExpression += expressionPositionString;
             }
 
@@ -191,7 +192,7 @@ public class ExpressionService {
             /*
              * On those Types of ExprUnits at least 3 expr units must follow
              * 1. The first parameter, 2. Comma, 3.The second parameter
-             * So they get on the same code section
+             * So they get on the same section
              */
             if ((exprUnit instanceof ExprStringConcat ||
                     exprUnit instanceof ExprDatePlus ||
@@ -277,6 +278,24 @@ public class ExpressionService {
                  */
                 exprUnit.setChildExprUnit(exprUnits.get(listPosition + 1).getTopParrent());
                 exprUnits.get(listPosition + 1).getTopParrent().setParentExprUnit(exprUnit);
+
+                exprUnit.setIsOnTree(true);
+            }
+
+            /*
+             * On those Types of ExprUnits 0 expr unit must follow
+             * So they get on the same code section
+             */
+            if ((exprUnit instanceof ExprUuid )
+                    && !exprUnit.getIsOnTree()
+                    && exprUnit.getPriority().equals(currentPriority)
+            ) {
+
+                /*
+                 * On those Types of ExprUnits Not any expr unit must follow
+                 * Else return error on tree creation
+                 */
+                if ((listPosition ) > exprUnits.size()) return false;
 
                 exprUnit.setIsOnTree(true);
             }
@@ -373,7 +392,7 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprEqualsTo.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIf.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprStrEqualsTo.exrtactExprUnit(expression, i);
-
+            if (exprUnit == null) exprUnit = ExprUuid.exrtactExprUnit(expression, i);
 
             if (exprUnit == null) {
                 return null;

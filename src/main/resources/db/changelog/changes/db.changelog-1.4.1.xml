@@ -214,7 +214,7 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="cssclass" type="VARCHAR(255)"/>
-            <column defaultValueComputed="NULL" name="entity_id" type="BIGINT"/>
+            <column name="entity_id" type="VARCHAR(36)"/>
             <column defaultValueComputed="NULL" name="short_order" type="BIGINT"/>
             <column name="type" type="VARCHAR(255)"/>
             <column name="dashboard_area_id" type="VARCHAR(36)"/>

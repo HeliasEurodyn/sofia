@@ -80,13 +80,11 @@ public class FormController {
         return this.formService.getMinJavaScript(formId);
     }
 
-
     @Transactional
     @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScriptFactory() {
         return this.formService.getJavaScriptFactory();
     }
-
 
     @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")

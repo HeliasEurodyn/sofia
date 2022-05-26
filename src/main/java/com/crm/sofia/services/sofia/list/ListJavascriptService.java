@@ -79,7 +79,7 @@ public class ListJavascriptService {
 
         List<String> classDefLines = new ArrayList<>();
         classDefLines.add("class ListDynamicScript");
-        classDefLines.add(listDTO.getId().toString());
+        classDefLines.add(listDTO.getId().replace("-","_"));
         classDefLines.add(" {");
         String classDef = String.join("", classDefLines);
 

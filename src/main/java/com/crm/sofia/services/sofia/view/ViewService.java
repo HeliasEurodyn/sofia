@@ -50,7 +50,7 @@ public class ViewService {
 
 
     public List<ViewDTO> getObject() {
-        List<PersistEntity> views = this.persistEntityRepository.findByEntitytype("View");
+        List<PersistEntity> views = this.persistEntityRepository.findByEntitytypeOrderByModifiedOn("View");
         return this.viewMapper.map(views);
     }
 

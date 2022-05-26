@@ -102,7 +102,7 @@ public class FormDesignerService {
     }
 
     public List<FormDTO> getObject() {
-        List<FormEntity> formEntities = this.formRepository.findAll();
+        List<FormEntity> formEntities = this.formRepository.findAllByOrderByModifiedOn();
         return this.formMapper.mapEntitiesForList(formEntities);
     }
 

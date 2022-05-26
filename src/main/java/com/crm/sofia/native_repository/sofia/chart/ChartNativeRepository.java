@@ -30,7 +30,7 @@ public class ChartNativeRepository {
     }
 
     public List<ChartFieldDTO> getData(List<ChartFieldDTO> chartFieldList, String sql, Map<String, String> parameters) {
-        sql = sql.replaceAll("##user_id##", this.jwtService.getUserId().toString());
+        sql = sql.replaceAll("##user_id##", "'" + this.jwtService.getUserId() + "'");
         Query query = entityManager.createNativeQuery(sql);
 
         String finalSql = sql;

@@ -2,6 +2,7 @@ package com.crm.sofia.services.sofia.component;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentMapper;
 import com.crm.sofia.mapper.sofia.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.common.MainEntity;
@@ -44,6 +45,7 @@ public class ComponentDesignerService {
         List<Component> entites = this.componentRepository.findAll();
         entites = entites.stream().sorted(Comparator.comparing(MainEntity::getCreatedOn))
                 .collect(Collectors.toList());
+
         return this.componentMapper.map(entites);
     }
 
@@ -55,12 +57,53 @@ public class ComponentDesignerService {
         }
         Component entity = optionalEntity.get();
         ComponentDTO dto = this.componentMapper.map(entity);
-        List<ComponentPersistEntityDTO> sorted = dto.getComponentPersistEntityList().stream().sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
-        dto.setComponentPersistEntityList(sorted);
+
+        this.shortComponent(dto);
 
         return dto;
     }
 
+    public void shortComponent(ComponentDTO dto) {
+        List<ComponentPersistEntityDTO> sorted = this.shortCPEList(dto.getComponentPersistEntityList());
+        dto.setComponentPersistEntityList(sorted);
+    }
+
+    public List<ComponentPersistEntityDTO> shortCPEList(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+        if(componentPersistEntityList == null){
+            return null;
+        }
+
+        componentPersistEntityList
+                .stream()
+                .filter(cpe -> cpe.getShortOrder() == null)
+                .forEach(cpe -> cpe.setShortOrder(0L));
+
+        List<ComponentPersistEntityDTO> sorted =
+                componentPersistEntityList
+                        .stream()
+                        .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+
+        sorted.stream().forEach(cpe -> {
+
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .filter(cpef -> cpef.getShortOrder() == null)
+                    .forEach(cpef -> cpef.setShortOrder(0L));
+
+            List<ComponentPersistEntityFieldDTO> sortedCpefList =
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .sorted(Comparator.comparingLong(ComponentPersistEntityFieldDTO::getShortOrder)).collect(Collectors.toList());
+            cpe.setComponentPersistEntityFieldList(sortedCpefList);
+        });
+
+        sorted.stream().forEach(cpe -> {
+            List<ComponentPersistEntityDTO> sortedCPE = this.shortCPEList(cpe.getComponentPersistEntityList());
+            cpe.setComponentPersistEntityList(sortedCPE);
+        });
+
+        return sorted;
+    }
     @Transactional
     public ComponentDTO postObject(ComponentDTO dto) {
         Component entity = this.componentMapper.mapWithPersistEntities(dto);
