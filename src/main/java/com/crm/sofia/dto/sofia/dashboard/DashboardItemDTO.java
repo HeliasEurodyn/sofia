@@ -18,7 +18,7 @@ public class DashboardItemDTO extends BaseDTO {
 
     private String type;
 
-    private Long entityId;
+    private String entityId;
 
     private String cssclass;
 

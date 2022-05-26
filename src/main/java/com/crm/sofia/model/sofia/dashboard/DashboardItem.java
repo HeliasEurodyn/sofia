@@ -23,7 +23,7 @@ public class DashboardItem extends BaseEntity {
     private String type;
 
     @Column
-    private Long entityId;
+    private String entityId;
 
     @Column
     private String cssclass;
