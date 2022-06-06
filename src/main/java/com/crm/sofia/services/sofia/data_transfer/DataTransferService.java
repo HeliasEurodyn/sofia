@@ -242,10 +242,10 @@ public class DataTransferService {
         });
 
         dataTransferDTO.setReports(new ArrayList<>());
-        dataTransferDTO.getReportIds().forEach(cid -> {
-            ReportDTO dto = this.reportDesignerService.getObject(cid);
-            dataTransferDTO.getReports().add(dto);
-        });
+//        dataTransferDTO.getReportIds().forEach(cid -> {
+//            ReportDTO dto = this.reportDesignerService.getObject(cid);
+//            dataTransferDTO.getReports().add(dto);
+//        });
 
         dataTransferDTO.setXlsImports(new ArrayList<>());
         dataTransferDTO.getXlsImportIds().forEach(cid -> {

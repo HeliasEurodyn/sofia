@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends BaseRepository<Role> {
 
-    Role findByName(String name);
+    Role findFirstByName(String name);
 
     List<Role> findAll();
 

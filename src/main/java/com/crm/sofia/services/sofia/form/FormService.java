@@ -2,6 +2,7 @@ package com.crm.sofia.services.sofia.form;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
 import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.dto.sofia.form.base.FormControlTableControlDTO;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FormService {
@@ -103,8 +105,55 @@ public class FormService {
             });
         });
 
+        formDTO.getFormActionButtons().sort(Comparator.comparingLong(FormActionButtonDTO::getShortOrder));
+
+        /* Shorting Component*/
+        List<ComponentPersistEntityDTO> sorted = this.shortCPEList(formDTO.getComponent().getComponentPersistEntityList());
+        formDTO.getComponent().setComponentPersistEntityList(sorted);
+
         /* Return */
         return formDTO;
+    }
+
+    public List<ComponentPersistEntityDTO> shortCPEList(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+        if(componentPersistEntityList == null){
+            return null;
+        }
+
+        componentPersistEntityList
+                .stream()
+                .filter(cpe -> cpe.getShortOrder() == null)
+                .forEach(cpe -> cpe.setShortOrder(0L));
+
+        List<ComponentPersistEntityDTO> sorted =
+                componentPersistEntityList
+                        .stream()
+                        .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+
+        sorted.stream().forEach(cpe -> {
+
+             cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .filter(cpef -> cpef.getPersistEntityField().getShortOrder() == null)
+                    .forEach(cpef -> cpef.getPersistEntityField().setShortOrder(0L));
+
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .forEach(cpef -> cpef.setShortOrder(cpef.getPersistEntityField().getShortOrder()));
+
+            List<ComponentPersistEntityFieldDTO> sortedCpefList =
+                    cpe.getComponentPersistEntityFieldList()
+                            .stream()
+                            .sorted(Comparator.comparingLong(ComponentPersistEntityFieldDTO::getShortOrder)).collect(Collectors.toList());
+            cpe.setComponentPersistEntityFieldList(sortedCpefList);
+        });
+
+        sorted.stream().forEach(cpe -> {
+            List<ComponentPersistEntityDTO> sortedCPE = this.shortCPEList(cpe.getComponentPersistEntityList());
+            cpe.setComponentPersistEntityList(sortedCPE);
+        });
+
+        return sorted;
     }
 
     private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {

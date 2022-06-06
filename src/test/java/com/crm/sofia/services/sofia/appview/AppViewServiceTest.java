@@ -63,13 +63,13 @@ public class AppViewServiceTest {
         data.add(oj);
     }
 
-    @Test
-    public void postObjectTest() {
-        given(appViewRepository.save(ArgumentMatchers.any(PersistEntity.class))).willReturn(persistEntity);
-        given(appViewMapper.map(ArgumentMatchers.any(AppViewDTO.class))).willReturn(persistEntity);
-        AppViewDTO appView = appViewService.postObject(appViewDTO);
+//    @Test
+//    public void postObjectTest() {
+//        given(appViewRepository.save(ArgumentMatchers.any(PersistEntity.class))).willReturn(persistEntity);
+//        given(appViewMapper.map(ArgumentMatchers.any(AppViewDTO.class))).willReturn(persistEntity);
+//        AppViewDTO appView = appViewService.postObject(appViewDTO);
+//    }
 
-    }
     @Test
     public void getObjectTest(){
         given(appViewRepository.findByEntitytypeOrderByModifiedOn(ArgumentMatchers.anyString())).willReturn(persistEntityList);

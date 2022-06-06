@@ -64,7 +64,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Menu sidebarMenu = this.createSidebarMenu();
         Menu headerMenu = this.createHeaderMenu();
         this.createUserIfNotFound(Set.of(userRole, adminRole, modRole), sidebarMenu, headerMenu);
- //       this.sofiaImports();
+        this.sofiaImports();
 //        this.cveSearchSettingsService.tryInsertVendorsIfEmptyTable();
     }
 
@@ -98,7 +98,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             user.setModifiedOn(Instant.now());
             user.setSidebarMenu(sidebarMenu);
             user.setHeaderMenu(headerMenu);
-            user.setLoginNavCommand("STATICPAGE[NAME:user-list,TITLE:Users]");
+            user.setLoginNavCommand("STATICPAGE[NAME:author-dashboard]");
             user = userRepository.save(user);
         }
         return user;
@@ -305,7 +305,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     private final Role createRoleIfNotFound(final String name) {
-        Role role = roleRepository.findByName(name);
+        Role role = roleRepository.findFirstByName(name);
         if (role == null) {
             role = roleRepository.save(new Role(name));
         }

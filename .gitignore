@@ -33,6 +33,6 @@ build/
 ### Deployment Folder ###
 deployment/composer-dockerhub_/mysql-files
 deployment/composer-local-files/mysql-files
-deployment/composer-local-files/dras-frontend/dist
+deployment/composer-local-files/dras-frontend/dist_
 deployment/composer-local-files/dras-backend/sofia-0.0.1_.jar
 deployment/dockerfiles for dockerhub/dras-backend/backend.jar

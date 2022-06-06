@@ -30,7 +30,7 @@ public class RtmRestTemplate {
             headers.add("Authorization", "Bearer " + jwt);
             HttpEntity<RmtDTO> httpEntity = new HttpEntity<RmtDTO>(rmtDTO, headers);
             RmtDTO responce = restTemplate.postForObject(
-                    URI.create(rtmUrl + "/analysis"),
+                    URI.create(rtmUrl + "/riskAnalysis"),
                     httpEntity,
                     RmtDTO.class
             );
