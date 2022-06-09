@@ -1,18 +1,16 @@
 package com.crm.sofia.model.common;
 
-import javax.persistence.*;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OptimisticLockType;
 import org.hibernate.annotations.OptimisticLocking;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.time.Instant;
 
 @Data
@@ -20,12 +18,6 @@ import java.time.Instant;
 @OptimisticLocking(type = OptimisticLockType.VERSION)
 @EqualsAndHashCode
 public abstract class MainEntity extends BaseEntity {
-
-//  @Id
-//  @GeneratedValue(generator = "uuid2")
-//  @GenericGenerator(name = "uuid2", strategy = "uuid2")
-//  @Column( updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-//  private String id;
 
   @CreatedDate
   @Column(name = "created_on", updatable = false, nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
