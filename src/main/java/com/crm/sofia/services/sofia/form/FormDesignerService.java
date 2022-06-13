@@ -184,19 +184,21 @@ public class FormDesignerService {
 
         sorted.stream().forEach(cpe -> {
 
-            cpe.getComponentPersistEntityFieldList()
-                    .stream()
-                    .filter(cpef -> cpef.getShortOrder() == null)
-                    .forEach(cpef -> cpef.setShortOrder(0L));
+            for (ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO : cpe.getComponentPersistEntityFieldList()) {
+                if (componentPersistEntityFieldDTO.getPersistEntityField().getShortOrder() == null) {
+                    componentPersistEntityFieldDTO.getPersistEntityField().setShortOrder(0L);
+                }
+            }
 
-            cpe.getComponentPersistEntityFieldList()
-                    .stream()
-                    .forEach(cpef -> cpef.setShortOrder(cpef.getPersistEntityField().getShortOrder()));
+            for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+                cpef.setShortOrder(cpef.getPersistEntityField().getShortOrder());
+            }
 
             List<ComponentPersistEntityFieldDTO> sortedCpefList =
                     cpe.getComponentPersistEntityFieldList()
                             .stream()
                             .sorted(Comparator.comparingLong(ComponentPersistEntityFieldDTO::getShortOrder)).collect(Collectors.toList());
+
             cpe.setComponentPersistEntityFieldList(sortedCpefList);
         });
 
