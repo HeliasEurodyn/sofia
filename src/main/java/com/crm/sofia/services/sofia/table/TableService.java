@@ -1,6 +1,5 @@
 package com.crm.sofia.services.sofia.table;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.table.TableDTO;
 import com.crm.sofia.dto.sofia.table.TableFieldDTO;
 import com.crm.sofia.mapper.sofia.table.TableMapper;
@@ -195,7 +194,9 @@ public class TableService {
                 sql += ",";
             }
             sql += tableFieldDTO.getName().replace(" ", "") + " ";
-            sql += " " + tableFieldDTO.getType().replace(" ", "");
+            sql += " " + tableFieldDTO.getType()
+                    .replace(" ", "")
+                    .replace("datetime", "timestamp");
             if (tableFieldDTO.getType().equalsIgnoreCase("VARCHAR")) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
@@ -262,7 +263,7 @@ public class TableService {
         TableDTO createdDTO = this.postObject(dto);
 
         /**
-         * Creates Database Table If Not Exists
+         * Create Database Table If Not Exists
          */
         this.createDatabaseTableIfNotExist(createdDTO);
 
