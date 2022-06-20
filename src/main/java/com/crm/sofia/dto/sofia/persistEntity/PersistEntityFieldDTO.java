@@ -41,4 +41,5 @@ public class PersistEntityFieldDTO extends BaseDTO {
 
     private Boolean hasNotNull;
 
+    private String onSaveValue;
 }

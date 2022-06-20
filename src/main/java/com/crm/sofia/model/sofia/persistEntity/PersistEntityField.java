@@ -1,7 +1,6 @@
 package com.crm.sofia.model.sofia.persistEntity;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -53,4 +52,7 @@ public class PersistEntityField extends BaseEntity implements Serializable {
 
     @Column(name = "short_order")
     private Long shortOrder;
+
+    @Column(length = 2000)
+    private String onSaveValue;
 }

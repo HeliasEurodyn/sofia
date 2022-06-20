@@ -37,4 +37,6 @@ public class TableFieldDTO extends BaseDTO {
     private Boolean hasNotNull;
 
     private String entitytype;
+
+    private String onSaveValue;
 }

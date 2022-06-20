@@ -22,13 +22,13 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
     private String fieldId;
 
-  //  private Long formId;
-
     private String description;
 
     private String editor;
 
     private String defaultValue;
+
+    private String onSaveValue;
 
     private Boolean visible;
 

@@ -4,7 +4,9 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.model.sofia.expression.ExprResponce;
 import com.crm.sofia.services.sofia.auth.JWTService;
+import com.crm.sofia.services.sofia.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
@@ -28,16 +30,19 @@ public class ComponentSaverNativeRepository {
 
     private final EntityManager entityManager;
     private final JWTService jwtService;
+    private final ExpressionService expressionService;
 
     public ComponentSaverNativeRepository(EntityManager entityManager,
-                                          JWTService jwtService) {
+                                          JWTService jwtService,
+                                          ExpressionService expressionService) {
         this.entityManager = entityManager;
         this.jwtService = jwtService;
+        this.expressionService = expressionService;
     }
 
     @Transactional
     public String save(ComponentDTO componentDTO) {
-       return this.generateQueriesAndSave(componentDTO.getComponentPersistEntityList(), new ArrayList<>());
+        return this.generateQueriesAndSave(componentDTO.getComponentPersistEntityList(), new ArrayList<>());
     }
 
     private String generateQueriesAndSave(
@@ -45,7 +50,7 @@ public class ComponentSaverNativeRepository {
 
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
-            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine());
+            Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine());
             if (multiDataLine == true) {
                 this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
             } else {
@@ -65,8 +70,8 @@ public class ComponentSaverNativeRepository {
 
         String id = componentPersistEntityList.get(0).getComponentPersistEntityFieldList()
                 .stream()
-                .filter(x -> (x.getPersistEntityField().getPrimaryKey()==null?false:x.getPersistEntityField().getPrimaryKey()) == true)
-                .map(x -> (x.getValue()==null?"0":x.getValue().toString())).findFirst()
+                .filter(x -> (x.getPersistEntityField().getPrimaryKey() != null && x.getPersistEntityField().getPrimaryKey()) == true)
+                .map(x -> (x.getValue() == null ? "0" : x.getValue().toString())).findFirst()
                 .orElse("0");
 
         return id;
@@ -75,7 +80,7 @@ public class ComponentSaverNativeRepository {
     private ComponentPersistEntityDTO saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        if(!(componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())){
+        if (!(componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
             return componentPersistEntity;
         }
 
@@ -107,8 +112,8 @@ public class ComponentSaverNativeRepository {
 
 
         if (componentPersistEntity.getDeleteType().equals("delete")
-        && componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
-                && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())
+                && componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())
         ) {
             this.deleteNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
@@ -119,7 +124,7 @@ public class ComponentSaverNativeRepository {
             );
         } else if (componentPersistEntity.getDeleteType().equals("clearJoin")
                 && componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
-                && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
+                && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
             this.unjoinNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
                     componentPersistEntity.getPersistEntity().getName(),
@@ -132,13 +137,14 @@ public class ComponentSaverNativeRepository {
         /*  Update Section */
         updatableLines.forEach(componentPersistEntityDataLine -> {
 
-            if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
-                    && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
+            if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                    && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
                 this.updateComponentPersistEntity(
                         componentPersistEntity.getPersistEntity().getName(),
                         componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
             }
+
             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
             lineSavedPersistEntities.addAll(savedPersistEntities);
 
@@ -156,8 +162,8 @@ public class ComponentSaverNativeRepository {
         /*  Insert Section */
         insertableLines.forEach(componentPersistEntityDataLine -> {
 
-            if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
-                    && (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())) {
+            if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
+                    && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
                 this.insertComponentPersistEntity(
                         componentPersistEntity.getPersistEntity().getName(),
                         componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
@@ -166,7 +172,7 @@ public class ComponentSaverNativeRepository {
 
             List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
             lineSavedPersistEntities.addAll(savedPersistEntities);
-           // lineSavedPersistEntities.add(componentPersistEntity);
+            // lineSavedPersistEntities.add(componentPersistEntity);
             ComponentPersistEntityDTO componentPersistEntityLine = new ComponentPersistEntityDTO();
             componentPersistEntityLine.setComponentPersistEntityFieldList(componentPersistEntityDataLine.getComponentPersistEntityFieldList());
             componentPersistEntityLine.setPersistEntity(componentPersistEntity.getPersistEntity());
@@ -193,8 +199,7 @@ public class ComponentSaverNativeRepository {
         /* Generate Query */
         Query query = this.generateUpdateQuery(entityName, componentPersistEntityFieldList);
 
-    //    log.debug(query.toString());
-        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+        log.info(query.toString());
 
         /* Execute Query */
         if (query != null) {
@@ -220,12 +225,12 @@ public class ComponentSaverNativeRepository {
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getPersistEntityField().getName().equals("modified_by"))
                 .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
-                .forEach(x -> x.setValue(this.jwtService.getUserId().toString()));
+                .forEach(x -> x.setValue(this.jwtService.getUserId()));
 
         /* SET columns = values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
-               // .filter(x -> x.getValue() != null)
+                // .filter(x -> x.getValue() != null)
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
         String headersString = String.join(", ", headersList);
@@ -271,15 +276,15 @@ public class ComponentSaverNativeRepository {
         /* Insert into Section */
         String queryString = "INSERT INTO " + entityName;
 
-        /* Set Default created-updated dates-users row log */
+        /* Set Default created-updated date-user log fields */
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> Arrays.asList( "created_on", "modified_on").contains(x.getPersistEntityField().getName()))
+                .filter(x -> Arrays.asList("created_on", "modified_on").contains(x.getPersistEntityField().getName()))
                 .forEach(x -> x.setValue(Instant.now()));
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> Arrays.asList( "created_by", "modified_by")
+                .filter(x -> Arrays.asList("created_by", "modified_by")
                         .contains(x.getPersistEntityField().getName()))
                 .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
                 .forEach(x -> x.setValue(this.jwtService.getUserId()));
@@ -360,12 +365,13 @@ public class ComponentSaverNativeRepository {
         componentPersistEntityFieldList =
                 this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
 
+        /* Run On Save Expressions */
+        this.runOnSaveExpressions(componentPersistEntityFieldList);
+
         /* Generate Query */
         Query query = this.generateInsertQuery(entityName, componentPersistEntityFieldList);
 
-        log.debug(query.unwrap(org.hibernate.Query.class).getQueryString());
-        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
-        System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+        log.info(query.unwrap(org.hibernate.Query.class).getQueryString());
 
         /* Execute Query */
         Long id = this.executeSave(query);
@@ -385,11 +391,11 @@ public class ComponentSaverNativeRepository {
             ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        if(!componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")){
+        if (!componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
             return;
         }
 
-        if(!(componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave())){
+        if (!(componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
             return;
         }
 
@@ -572,11 +578,22 @@ public class ComponentSaverNativeRepository {
 
         ComponentPersistEntityFieldDTO componentPersistEntityFieldDTO = optionalComponentPersistEntityFieldDTO.get();
 
-        if (componentPersistEntityFieldDTO.getValue() == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return componentPersistEntityFieldDTO.getValue() != null;
+    }
+
+    private void runOnSaveExpressions(List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
+        componentPersistEntityFieldList
+                .stream()
+                .filter(cpef -> cpef.getPersistEntityField() != null)
+                .filter(cpef -> cpef.getPersistEntityField().getOnSaveValue() != null)
+                .filter(cpef -> !cpef.getPersistEntityField().getOnSaveValue().equals(""))
+                .forEach(cpef -> {
+                    ExprResponce exprResponce = expressionService.create(cpef.getPersistEntityField().getOnSaveValue());
+                    if (!exprResponce.getError()) {
+                        Object fieldValue = exprResponce.getExprUnit().getResult();
+                        cpef.setValue(fieldValue);
+                    }
+                });
     }
 
 }

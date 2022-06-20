@@ -30,4 +30,5 @@ public class TableDTO extends BaseDTO {
     private List<TableFieldDTO> tableFieldList;
 
     private String entitytype;
+
 }

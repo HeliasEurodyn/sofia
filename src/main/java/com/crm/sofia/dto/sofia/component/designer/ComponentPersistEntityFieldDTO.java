@@ -32,6 +32,8 @@ public class ComponentPersistEntityFieldDTO extends BaseDTO {
 
     ComponentPersistEntityFieldAssignmentDTO assignment;
 
+
+
 //    private Boolean visible ;
 //
 //    private Boolean  editable ;
