@@ -46,4 +46,5 @@ public class ThreatController {
     public Boolean delete(@RequestParam("id") Long id) {
         return this.threatService.delete(id);
     }
+
 }

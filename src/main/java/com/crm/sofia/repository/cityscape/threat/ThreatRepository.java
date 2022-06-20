@@ -11,4 +11,6 @@ public interface ThreatRepository extends PagingAndSortingRepository<Threat, Lon
     Optional<Threat> findByCreatedByAndId(String userId, Long id);
 
     List<Threat> findByCreatedBy(String userId);
+
+    List<Threat> findAll();
 }

@@ -23,16 +23,14 @@ public class ThreatService {
     }
 
     public Threat getObject(Long id) {
-        String userId = jwtService.getUserId();
-        Threat threat = this.threatRepository.findByCreatedByAndId(userId, id).orElseThrow(() ->
+        Threat threat = this.threatRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Threat does not exist")
         );
         return threat;
     }
 
     public List<Threat> getObject() {
-        String userId = jwtService.getUserId();
-        List<Threat> threats = this.threatRepository.findByCreatedBy(userId);
+        List<Threat> threats = this.threatRepository.findAll();
         return threats;
     }
 
