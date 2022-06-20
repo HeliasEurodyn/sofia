@@ -66,4 +66,25 @@ public class RtmRestTemplate {
         }
     }
 
+    public RmtDTO insertThreat(RmtDTO rmtDTO, String jwt)
+    {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            headers.add("Content-Type", "application/json");
+            headers.add("Authorization", "Bearer " + jwt);
+            HttpEntity<RmtDTO> httpEntity = new HttpEntity<RmtDTO>(rmtDTO, headers);
+            RmtDTO responce = restTemplate.postForObject(
+                    URI.create(rtmUrl + "/riskAnalysis"),
+                    httpEntity,
+                    RmtDTO.class
+            );
+
+            return responce;
+        }catch(Exception ex){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+    }
+
 }

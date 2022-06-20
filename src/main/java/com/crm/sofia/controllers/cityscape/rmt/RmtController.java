@@ -53,4 +53,5 @@ public class RmtController {
     public RmtDTO sendToRmt(@RequestBody RmtDTO rmt) {
         return this.rmtService.sendToRmt(rmt);
     }
+
 }

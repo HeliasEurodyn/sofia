@@ -535,14 +535,13 @@ public class RmtRepository {
         for (Object[] field : fields) {
             RiskDTO risk = new RiskDTO();
             risk.setCve_id(field[1] == null ? null : (String) field[1]);
-//            risk.setDescription(field[2] == null ? null : (String) field[2]);
-//            risk.setLink(field[3] == null ? null : (String) field[3]);
             risk.setDescription("");
             risk.setLink("");
             RiskScoreDTO riskScore = new RiskScoreDTO();
             riskScore.setConfidentiality(field[9] == null ? null : (Double) field[9]);
             riskScore.setIntegrity(field[10] == null ? null : (Double) field[10]);
             riskScore.setAvailability(field[11] == null ? null : (Double) field[11]);
+            risk.setRisk_score(riskScore);
 
             risks.add(risk);
         }
