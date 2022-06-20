@@ -66,7 +66,7 @@ public class ExpressionService {
 
         this.createBracketPriorities(exprUnits);
         exprUnits = this.removeBracketsFromList(exprUnits);
-        Boolean treeCreated = this.createTree(exprUnits, exprUnits.get(0).getPriority());
+        boolean treeCreated = this.createTree(exprUnits, exprUnits.get(0).getPriority());
         if (!treeCreated) {
             return new ExprResponce("Error on tree creation", false, expression, null);
         }
@@ -83,9 +83,9 @@ public class ExpressionService {
      * */
     private String removeSpaces(String expression) {
 
-        Boolean outOfQuote = true;
+        boolean outOfQuote = true;
         String prevExpressionPositionString = "";
-        String expressionPositionString = "";
+        String expressionPositionString;
         String newExpression = "";
         for (int i = 0; i < expression.length(); i++) {
 
@@ -393,6 +393,7 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprIf.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprStrEqualsTo.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprUuid.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprException.exrtactExprUnit(expression, i);
 
             if (exprUnit == null) {
                 return null;
