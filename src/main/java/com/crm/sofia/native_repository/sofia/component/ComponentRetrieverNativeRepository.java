@@ -236,7 +236,7 @@ public class ComponentRetrieverNativeRepository {
         }
 
         if (!(componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
-            componentPersistEntity = this.mapSingleLineQueryResponces(componentPersistEntity, dataList.get(0));
+            componentPersistEntity = this.mapSingleLineQueryResponses(componentPersistEntity, dataList.get(0));
         } else {
             componentPersistEntity = this.mapMultiLineQueryResponces(componentPersistEntity, dataList);
         }
@@ -244,10 +244,12 @@ public class ComponentRetrieverNativeRepository {
         return componentPersistEntity;
     }
 
-    private ComponentPersistEntityDTO mapSingleLineQueryResponces(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
+    private ComponentPersistEntityDTO mapSingleLineQueryResponses(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
         int i = 0;
         for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
-            componentPersistEntityField.setValue(dataRow[i]);
+            if(!componentPersistEntityField.getPersistEntityField().getType().equals("password")){
+                componentPersistEntityField.setValue(dataRow[i]);
+            }
             i++;
         }
 
@@ -272,7 +274,9 @@ public class ComponentRetrieverNativeRepository {
 
             /* Add data  to new line field list */
             for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntityFieldList) {
-                componentPersistEntityField.setValue(dataRow[i]);
+                if(!componentPersistEntityField.getPersistEntityField().getType().equals("password")){
+                    componentPersistEntityField.setValue(dataRow[i]);
+                }
                 i++;
             }
         }

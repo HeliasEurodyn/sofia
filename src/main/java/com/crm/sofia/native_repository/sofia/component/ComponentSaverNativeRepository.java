@@ -10,6 +10,7 @@ import com.crm.sofia.services.sofia.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,13 +32,15 @@ public class ComponentSaverNativeRepository {
     private final EntityManager entityManager;
     private final JWTService jwtService;
     private final ExpressionService expressionService;
+    private final PasswordEncoder passwordEncoder;
 
     public ComponentSaverNativeRepository(EntityManager entityManager,
                                           JWTService jwtService,
-                                          ExpressionService expressionService) {
+                                          ExpressionService expressionService, PasswordEncoder passwordEncoder) {
         this.entityManager = entityManager;
         this.jwtService = jwtService;
         this.expressionService = expressionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -230,7 +233,9 @@ public class ComponentSaverNativeRepository {
         /* SET columns = values Section */
         List<String> headersList = componentPersistEntityFieldList.stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
-                // .filter(x -> x.getValue() != null)
+                .filter(x ->
+                        (!x.getPersistEntityField().getType().equals("password")) ||
+                                (x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null?"":x.getValue()).equals("")) )
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
         String headersString = String.join(", ", headersList);
@@ -260,11 +265,19 @@ public class ComponentSaverNativeRepository {
         Query query = entityManager.createNativeQuery(queryString);
 
         componentPersistEntityFieldList.stream()
-                //.filter(x -> x.getValue() != null)
+                .filter(x -> !x.getPersistEntityField().getType().equals("password"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
                                 x.getValue()
+                        ));
+
+        componentPersistEntityFieldList.stream()
+                .filter(x -> x.getPersistEntityField().getType().equals("password")  && !(x.getValue() == null?"":x.getValue()).equals("") )
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                passwordEncoder.encode(x.getValue().toString())
                         ));
 
         return query;
@@ -313,10 +326,21 @@ public class ComponentSaverNativeRepository {
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
+                .filter(x -> !x.getPersistEntityField().getType().equals("password"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
                                 (x.getValue() != null ? x.getValue() : "")
+                        ));
+
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getValue() != null)
+                .filter(x -> x.getPersistEntityField().getType().equals("password") )
+                .forEach(x ->
+                        query.setParameter(
+                                x.getPersistEntityField().getName(),
+                                passwordEncoder.encode(x.getValue().toString())
                         ));
 
         return query;

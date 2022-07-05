@@ -38,9 +38,11 @@ public class ComponentRetrieverService {
                                                   String selectionId) {
 
         this.runDefaultExpressionsOnTree(componentDTO.getComponentPersistEntityList());
-        if (!selectionId.equals("") && !selectionId.equals("0")) {
+        if (selectionId.equals(""))  selectionId = "0";
+
+       // if (!selectionId.equals("") && !selectionId.equals("0")) {
             this.componentRetrieverNativeRepository.retrieveComponentData(componentDTO, selectionId);
-        }
+      //  }
 
         return componentDTO;
     }

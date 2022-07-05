@@ -16,10 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -145,8 +142,12 @@ public class TableService {
             }
             sql += " ADD COLUMN ";
             sql += tableFieldDTO.getName().replace(" ", "") + " ";
-            sql += " " + tableFieldDTO.getType().replace(" ", "");
-            if (tableFieldDTO.getType().toUpperCase().equals("VARCHAR")) {
+            sql += " " + tableFieldDTO.getType()
+                    .replace(" ", "")
+                    .replace("datetime", "timestamp")
+                    .replace("password", "varchar");
+
+            if (Arrays.asList("varchar","password").contains(tableFieldDTO.getType())) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
 
@@ -196,8 +197,10 @@ public class TableService {
             sql += tableFieldDTO.getName().replace(" ", "") + " ";
             sql += " " + tableFieldDTO.getType()
                     .replace(" ", "")
-                    .replace("datetime", "timestamp");
-            if (tableFieldDTO.getType().equalsIgnoreCase("VARCHAR")) {
+                    .replace("datetime", "timestamp")
+                    .replace("password", "varchar");
+
+            if (Arrays.asList("varchar","password").contains(tableFieldDTO.getType())) {
                 sql += " (" + tableFieldDTO.getSize().toString().replace(" ", "") + ") ";
             }
 
@@ -309,6 +312,7 @@ public class TableService {
             } else {
                 String type = field[1].toString();
                 if (type.equals("timestamp")) type = "datetime";
+                if (type.equals("password")) type = "varchar";
                 dto.setType(type);
             }
 
