@@ -1,7 +1,16 @@
 package com.crm.sofia;
 
+import lombok.*;
+import lombok.experimental.Accessors;
+
 import javax.persistence.*;
 
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 @Table(name = "cis_control")
 @Entity
 public class CisControl {
@@ -9,7 +18,6 @@ public class CisControl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
 
     @Column(name = "code")
     private String code;

@@ -2,7 +2,6 @@ package com.crm.sofia.model.cityscape.countermeasure;
 
 import com.crm.sofia.CisControl;
 import com.crm.sofia.model.cityscape.threat.Threat;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -58,13 +57,13 @@ public class Countermeasure {
 //    @Column(name = "cis_control_id")
 //    private Long cisControlId;
 
-    @ManyToOne(fetch = FetchType.LAZY,
-            targetEntity = ComponentPersistEntity.class)
+    @ManyToOne(fetch = FetchType.EAGER,
+            targetEntity = CisControl.class)
     @JoinColumn(name = "cis_control_id", referencedColumnName = "id")
     private CisControl cisControl;
 
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "threat_to_countermeasure",
             joinColumns = @JoinColumn(name = "countermeasure_id"),
