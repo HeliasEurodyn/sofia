@@ -2,6 +2,8 @@ package com.crm.sofia.controllers.cityscape.asset_type_group;
 
 import com.crm.sofia.model.cityscape.threat.AssetTypeGroup;
 import com.crm.sofia.services.cityscape.asset_type_group.AssetTypeGroupService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -25,11 +27,13 @@ public class AssetTypeGroupController {
         this.assetTypeGroupService = assetTypeGroupService;
     }
 
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "")
     public List<AssetTypeGroup> getObjectById() {
         return this.assetTypeGroupService.getObject();
     }
 
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}")
     public AssetTypeGroup getObjectById(@PathVariable("id") Long id) {
         return this.assetTypeGroupService.getObject(id);
