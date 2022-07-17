@@ -5,6 +5,7 @@ import com.crm.sofia.mapper.sofia.custom_query.CustomQueryMapper;
 import com.crm.sofia.model.sofia.custom_query.CustomQuery;
 import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,12 @@ import java.util.Optional;
 @Service
 public class CustomQueryService {
 
-    @Autowired
-    private CustomQueryMapper customQueryMapper;
-
-    @Autowired
-    private CustomQueryRepository customQueryRepository;
-
     private final JWTService jwtService;
     private final EntityManager entityManager;
+    @Autowired
+    private CustomQueryMapper customQueryMapper;
+    @Autowired
+    private CustomQueryRepository customQueryRepository;
 
     public CustomQueryService(JWTService jwtService,
                               EntityManager entityManager) {
@@ -53,14 +52,33 @@ public class CustomQueryService {
     public Object getData(String id, Map<String, String> parameters) {
         CustomQueryDTO dto = this.getObject(id);
         String queryString = dto.getQuery();
-        queryString = queryString.replace("##userid##", this.jwtService.getUserId().toString());
-        for (Map.Entry<String,String> entry : parameters.entrySet()){
-            queryString = queryString.replace("##"+entry.getKey()+"##", entry.getValue().toString());
+        queryString = queryString.replace("##userid##", this.jwtService.getUserId());
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            queryString = queryString.replace("##" + entry.getKey() + "##", entry.getValue());
         }
         Query query = entityManager.createNativeQuery(queryString);
         return query.getResultList();
     }
 
+    public Object postData(String id, Map<String, String> parameters) {
+        try {
+            Object lastInsertId;
+            CustomQueryDTO dto = this.getObject(id);
+            String queryString = dto.getQuery();
+            queryString = queryString.replace("##userid##", this.jwtService.getUserId());
+            for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                queryString = queryString.replace("##" + entry.getKey() + "##", entry.getValue());
+            }
+            Query query = entityManager.createNativeQuery(queryString);
+
+            query.executeUpdate();
+            lastInsertId = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
+
+            return lastInsertId;
+        } catch (HibernateException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+    }
 
     public CustomQueryDTO postObject(CustomQueryDTO customQueryDto) {
 
