@@ -23,8 +23,9 @@ public class CustomQueryController {
     }
 
     @PostMapping(path = "/data")
-    Object postData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
-        return customQueryService.postData(id, parameters);
+    String postData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
+        Object response = customQueryService.postData(id, parameters);
+        return "{\"response\": \"" + response.toString() + "\"}";
     }
 
 }
