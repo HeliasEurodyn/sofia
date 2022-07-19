@@ -122,6 +122,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET,"/search/data").hasAnyAuthority("unrestricted_role", "read_role")
 
+                .antMatchers(HttpMethod.POST,"/custom-query/data").hasAnyAuthority("unrestricted_role", "read_role")
                 .antMatchers(HttpMethod.GET,"/custom-query/data").hasAnyAuthority("unrestricted_role", "read_role")
 
                 .anyRequest()
