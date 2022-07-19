@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,11 +66,11 @@ public class ComponentSaverNativeRepository {
         }
 
         /* Retrieve and return created id */
-        if (componentPersistEntityList.size() == 0) {
-            return "0";
+        if (savedPersistEntities.size() == 0) {
+            return "";
         }
 
-        String id = componentPersistEntityList.get(0).getComponentPersistEntityFieldList()
+        String id = savedPersistEntities.get(0).getComponentPersistEntityFieldList()
                 .stream()
                 .filter(x -> (x.getPersistEntityField().getPrimaryKey() != null && x.getPersistEntityField().getPrimaryKey()) == true)
                 .map(x -> (x.getValue() == null ? "0" : x.getValue().toString())).findFirst()
@@ -346,12 +345,12 @@ public class ComponentSaverNativeRepository {
         return query;
     }
 
-    private Long executeSave(Query query) {
-        Long id;
+    private Object executeSave(Query query) {
+        Object id;
         try {
-            System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+           // System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
             query.executeUpdate();
-            id = ((BigInteger) entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult()).longValue();
+            id = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
 
         } catch (HibernateException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -398,12 +397,13 @@ public class ComponentSaverNativeRepository {
         log.info(query.unwrap(org.hibernate.Query.class).getQueryString());
 
         /* Execute Query */
-        Long id = this.executeSave(query);
+        Object id = this.executeSave(query);
 
         /* Set Id to component */
         componentPersistEntityFieldList
                 .stream()
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
+                .filter(x -> x.getPersistEntityField().getAutoIncrement() == true)
                 .forEach(x -> x.setValue(id));
 
         //  this.setPrimaryKey(componentPersistEntityFieldList, id);
