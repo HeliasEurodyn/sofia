@@ -48,7 +48,7 @@ public class ExprEqualsTo extends ExprUnit {
         if (secondNumberObject == null) {
             return null;
         }
-
+        
         if (firstNumberObject instanceof Double){
             firstNumber = (Double) firstNumberObject;
         }else if (firstNumberObject instanceof String){

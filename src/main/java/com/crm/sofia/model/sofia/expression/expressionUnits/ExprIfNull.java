@@ -1,14 +1,14 @@
 package com.crm.sofia.model.sofia.expression.expressionUnits;
 
-import com.crm.sofia.exception.ExpressionException;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
 
-public class ExprException extends ExprUnit {
 
-    static private final Integer exprUnitLength = 9;
-    static private final String exprUnitString = "exception";
+public class ExprIfNull extends ExprUnit {
 
-    public static ExprException exrtactExprUnit(String expression, Integer expressionPosition) {
+    static private Integer exprUnitLength = 6;
+    static private String exprUnitString = "ifNull";
+
+    public static ExprIfNull exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -16,7 +16,7 @@ public class ExprException extends ExprUnit {
 
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
-            ExprException exprUnit = new ExprException();
+            ExprIfNull exprUnit = new ExprIfNull();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
@@ -30,19 +30,18 @@ public class ExprException extends ExprUnit {
         return exprUnitLength;
     }
 
+
     @Override
     public Object getResult() {
-        Object keyObject = (String) this.childExprUnit.getResult();
-        if (keyObject == null) {
-            throw new ExpressionException("");
+
+        Object left = this.leftChildExprUnit.getResult();
+        Object right =  this.rightChildExprUnit.getResult();
+
+        if (left == null) {
+            return right;
+        } else {
+            return left;
         }
-
-        if (!(keyObject instanceof String)) {
-            throw new ExpressionException("");
-        }
-
-        String message = (String) keyObject;
-
-        throw new ExpressionException(message);
     }
+
 }

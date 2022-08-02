@@ -6,7 +6,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLine
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.xls_import.XlsImportDTO;
 import com.crm.sofia.mapper.sofia.xls_import.XlsImportMapper;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.xls_import.XlsImport;
 import com.crm.sofia.repository.sofia.xls_import.XlsImportRepository;
 import com.crm.sofia.services.sofia.component.ComponentPersistEntityFieldAssignmentService;
@@ -174,9 +174,9 @@ public class XlsImportService {
             return null;
         }
 
-        ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
-        if (!exprResponce.getError()) {
-            Object fieldValue = exprResponce.getExprUnit().getResult();
+        ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+        if (!exprResponse.getError()) {
+            Object fieldValue = exprResponse.getExprUnit().getResult();
             return fieldValue.toString();
         }
 
@@ -207,11 +207,11 @@ public class XlsImportService {
                             .filter(cpef -> cpef.getAssignment().getEditor() != null)
                             .filter(cpef -> cpef.getAssignment().getEditor().equals("NEWLINEONUPDATE"))
                             .forEach(cpef -> {
-                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
-                                if (exprResponce.getError()) {
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+                                if (exprResponse.getError()) {
                                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Import Error");
                                 }
-                                Object fieldValue = exprResponce.getExprUnit().getResult();
+                                Object fieldValue = exprResponse.getExprUnit().getResult();
                                 Object value = cpef.getValue() == null ? "" : cpef.getValue();
                                 if (!value.equals(fieldValue)) {
                                     addNewLineForValueChange[0] = true;
@@ -259,9 +259,9 @@ public class XlsImportService {
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
-                                if (!exprResponce.getError()) {
-                                    Object fieldValue = exprResponce.getExprUnit().getResult();
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+                                if (!exprResponse.getError()) {
+                                    Object fieldValue = exprResponse.getExprUnit().getResult();
                                     cpef.setValue(fieldValue);
                                 }
                             });

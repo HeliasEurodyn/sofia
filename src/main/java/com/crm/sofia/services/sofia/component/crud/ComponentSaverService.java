@@ -2,12 +2,13 @@ package com.crm.sofia.services.sofia.component.crud;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.native_repository.sofia.component.ComponentSaverNativeRepository;
 import com.crm.sofia.services.sofia.component.ComponentService;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -45,13 +46,14 @@ public class ComponentSaverService {
 
     public String save(ComponentDTO componentDTO) {
 
-        this.runOnSaveExpressionsOnTree(componentDTO.getComponentPersistEntityList());
+
+        this.runOnSaveExpressions(componentDTO.getComponentPersistEntityList());
 
         /* Save */
         return this.componentSaverNativeRepository.save(componentDTO);
     }
-    
-    private void runOnSaveExpressionsOnTree(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+
+    private void runOnSaveExpressions(List<ComponentPersistEntityDTO> componentPersistEntityList) {
         componentPersistEntityList
                 .forEach(cpe -> {
                     cpe.getComponentPersistEntityFieldList()
@@ -60,15 +62,16 @@ public class ComponentSaverService {
                             .filter(cpef -> cpef.getAssignment().getOnSaveValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getOnSaveValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getOnSaveValue());
-                                if (!exprResponce.getError()) {
-                                    Object fieldValue = exprResponce.getExprUnit().getResult();
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getOnSaveValue(),
+                                        Collections.singletonMap("fieldValue", cpef.getValue()));
+                                if (!exprResponse.getError()) {
+                                    Object fieldValue = exprResponse.getExprUnit().getResult();
                                     cpef.setValue(fieldValue);
                                 }
                             });
 
                     if (cpe.getComponentPersistEntityList() != null) {
-                        this.runOnSaveExpressionsOnTree(cpe.getComponentPersistEntityList());
+                        this.runOnSaveExpressions(cpe.getComponentPersistEntityList());
                     }
 
                     cpe.getComponentPersistEntityDataLines().forEach(cpedl -> {
@@ -79,14 +82,15 @@ public class ComponentSaverService {
                                 .filter(cpef -> cpef.getAssignment().getOnSaveValue() != null)
                                 .filter(cpef -> !cpef.getAssignment().getOnSaveValue().equals(""))
                                 .forEach(cpef -> {
-                                    ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getOnSaveValue());
-                                    if (!exprResponce.getError()) {
-                                        Object fieldValue = exprResponce.getExprUnit().getResult();
+                                    ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getOnSaveValue(),
+                                            Collections.singletonMap("fieldValue", cpef.getValue()));
+                                    if (!exprResponse.getError()) {
+                                        Object fieldValue = exprResponse.getExprUnit().getResult();
                                         cpef.setValue(fieldValue);
                                     }
                                 });
 
-                        this.runOnSaveExpressionsOnTree(cpedl.getComponentPersistEntityList());
+                        this.runOnSaveExpressions(cpedl.getComponentPersistEntityList());
                     });
                 });
     }

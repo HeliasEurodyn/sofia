@@ -10,7 +10,7 @@ import com.crm.sofia.dto.sofia.list.user.ListComponentSubFieldUiDTO;
 import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
 import com.crm.sofia.mapper.sofia.list.designer.ListMapper;
 import com.crm.sofia.mapper.sofia.list.user.ListUiMapper;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
@@ -89,9 +89,9 @@ public class ListService {
                 .filter(x -> !x.getDefaultValue().equals(""))
                // .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
                 .forEach(x -> {
-                    ExprResponce exprResponce = expressionService.create(x.getDefaultValue());
-                    if (!exprResponce.getError()) {
-                        Object fieldValue = exprResponce.getExprUnit().getResult();
+                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
+                    if (!exprResponse.getError()) {
+                        Object fieldValue = exprResponse.getExprUnit().getResult();
                         x.setFieldValue(fieldValue);
                     }
                 });
@@ -101,9 +101,9 @@ public class ListService {
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
                 .forEach(x -> {
-                    ExprResponce exprResponce = expressionService.create(x.getDefaultValue());
-                    if (!exprResponce.getError()) {
-                        Object fieldValue = exprResponce.getExprUnit().getResult();
+                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
+                    if (!exprResponse.getError()) {
+                        Object fieldValue = exprResponse.getExprUnit().getResult();
                         x.setFieldValue(fieldValue);
                     }
         });
@@ -147,9 +147,9 @@ public class ListService {
             if (filterDto.getDefaultValue() == null) continue;
             if (filterDto.getDefaultValue().equals("")) continue;
 
-            ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
-            if (!exprResponce.getError()) {
-                Object fieldValue = exprResponce.getExprUnit().getResult();
+            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
+            if (!exprResponse.getError()) {
+                Object fieldValue = exprResponse.getExprUnit().getResult();
                 if(filterDto.getType().equals("list")){
                     // List<List<Object>> response = (List<List<Object>>) fieldValue;
                     filterDto.setDefaultValue(fieldValue.toString());

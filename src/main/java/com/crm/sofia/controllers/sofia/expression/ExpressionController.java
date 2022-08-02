@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.sofia.expression;
 
 import com.crm.sofia.dto.sofia.expression.ExprUnitDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +27,21 @@ public class ExpressionController {
 
     @GetMapping(path = "/result", produces = "text/plain")
     String getResult(@RequestParam("expression") String expression) {
-        ExprResponce exprResponce = expressionService.create(expression);
-        if (exprResponce.getError()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exprResponce.getErrorMessage());
+        ExprResponse exprResponse = expressionService.create(expression);
+        if (exprResponse.getError()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exprResponse.getErrorMessage());
         }
-        Object fieldValue = exprResponce.getExprUnit().getResult();
+        Object fieldValue = exprResponse.getExprUnit().getResult();
         return fieldValue.toString();
     }
 
     @GetMapping(path = "/expression-units")
     ExprUnitDTO getExpressionUnits(@RequestParam("expression") String expression) {
-        ExprResponce exprResponce = expressionService.create(expression);
-        if (exprResponce.getError()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exprResponce.getErrorMessage());
+        ExprResponse exprResponse = expressionService.create(expression);
+        if (exprResponse.getError()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exprResponse.getErrorMessage());
         }
-        ExprUnit exprUnit = exprResponce.getExprUnit();
+        ExprUnit exprUnit = exprResponse.getExprUnit();
         ExprUnitDTO exprUnitDTO = new ExprUnitDTO();
         this.expressionService.map(exprUnit,exprUnitDTO);
         return exprUnitDTO;

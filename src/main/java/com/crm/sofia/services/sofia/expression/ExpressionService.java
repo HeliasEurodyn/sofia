@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.expression;
 
 import com.crm.sofia.dto.sofia.expression.ExprUnitDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
 import com.crm.sofia.model.sofia.expression.expressionUnits.*;
 import com.crm.sofia.services.sofia.auth.JWTService;
@@ -27,13 +27,17 @@ public class ExpressionService {
         this.entityManager = entityManager;
     }
 
-    public ExprResponce create(String expression) {
+    public ExprResponse create(String expression) {
         return this.create(expression, null);
     }
 
-    public ExprResponce create(String expression, Map<String, Object> importDataset) {
+    public ExprResponse create(String expression, Map<String, Object> parameters) {
 
-        this.defineSystemParameters();
+        Map<String,Object> systemParameters = this.defineSystemParameters();
+
+        if(parameters != null){
+            systemParameters.putAll(parameters);
+        }
 
         if (expression.length() == 0) {
             this.createEmptyExprResponce();
@@ -41,12 +45,12 @@ public class ExpressionService {
 
         Boolean brakcetCheck = this.checkBruckets(expression);
         if (!brakcetCheck) {
-            return new ExprResponce("Error on Bracker openings & closings", false, expression, null);
+            return new ExprResponse("Error on Bracker openings & closings", false, expression, null);
         }
 
         Boolean quoteCheck = this.checkQuotes(expression);
         if (!quoteCheck) {
-            return new ExprResponce("Error on Quotes openings & closings", false, expression, null);
+            return new ExprResponse("Error on Quotes openings & closings", false, expression, null);
         }
 
         expression = this.removeSpaces(expression);
@@ -54,27 +58,27 @@ public class ExpressionService {
             this.createEmptyExprResponce();
         }
 
-        List<ExprUnit> exprUnits = this.createExprUnitList(expression, importDataset);
+        List<ExprUnit> exprUnits = this.createExprUnitList(expression, systemParameters);
 
         if (exprUnits == null) {
-            return new ExprResponce("Could not read parameter", false, expression, null);
+            return new ExprResponse("Could not read parameter", false, expression, null);
         }
 
         if (exprUnits.size() == 0) {
-            return new ExprResponce("Could not read parameter", false, expression, null);
+            return new ExprResponse("Could not read parameter", false, expression, null);
         }
 
         this.createBracketPriorities(exprUnits);
         exprUnits = this.removeBracketsFromList(exprUnits);
         boolean treeCreated = this.createTree(exprUnits, exprUnits.get(0).getPriority());
         if (!treeCreated) {
-            return new ExprResponce("Error on tree creation", false, expression, null);
+            return new ExprResponse("Error on tree creation", false, expression, null);
         }
 
-        ExprResponce exprResponce = new ExprResponce();
-        exprResponce.setExpression(expression);
-        exprResponce.setExprUnit(exprUnits.get(0).getTopParrent());
-        return exprResponce;
+        ExprResponse exprResponse = new ExprResponse();
+        exprResponse.setExpression(expression);
+        exprResponse.setExprUnit(exprUnits.get(0).getTopParrent());
+        return exprResponse;
     }
 
     /*
@@ -208,6 +212,7 @@ public class ExpressionService {
                     exprUnit instanceof ExprMinorThan ||
                     exprUnit instanceof ExprEqualsTo ||
                     exprUnit instanceof ExprStrEqualsTo ||
+                    exprUnit instanceof ExprIfNull ||
                     exprUnit instanceof ExprAtListPosParameter)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
@@ -254,6 +259,7 @@ public class ExpressionService {
                     exprUnit instanceof ExprSystemParameter ||
                     exprUnit instanceof ExprImportColumnParameter ||
                     exprUnit instanceof ExprGetSqlParameter ||
+                    exprUnit instanceof ExprException ||
                     exprUnit instanceof ExprGetSqlValParameter)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)
@@ -356,7 +362,7 @@ public class ExpressionService {
         }
     }
 
-    private List<ExprUnit> createExprUnitList(String expression, Map<String, Object> importDataset) {
+    private List<ExprUnit> createExprUnitList(String expression, Map<String,Object> parameters) {
         List<ExprUnit> exprUnits = new ArrayList<>();
 
         int i = 0;
@@ -382,14 +388,17 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprStringValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
-            if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i);
-            if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, importDataset);
+            if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i, parameters);
+            if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, parameters);
             if (exprUnit == null) exprUnit = ExprGetSqlValParameter.exrtactExprUnit(expression, i, entityManager);
             if (exprUnit == null) exprUnit = ExprGetSqlParameter.exrtactExprUnit(expression, i, entityManager);
             if (exprUnit == null) exprUnit = ExprAtListPosParameter.exrtactExprUnit(expression, i);
+
             if (exprUnit == null) exprUnit = ExprGreaterThan.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprMinorThan.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprEqualsTo.exrtactExprUnit(expression, i);
+
+            if (exprUnit == null) exprUnit = ExprIfNull.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIf.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprStrEqualsTo.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprUuid.exrtactExprUnit(expression, i);
@@ -425,17 +434,19 @@ public class ExpressionService {
         else return false;
     }
 
-    private void defineSystemParameters() {
-        Map<String, String> systemParameters = new HashMap<>();
+    private Map<String, Object> defineSystemParameters() {
+        Map<String, Object> systemParameters = new HashMap<>();
         systemParameters.put("userId", this.jwtService.getUserId().toString());
-        ExprSystemParameter.systemParameters = systemParameters;
+
+        return systemParameters;
+       // ExprSystemParameter.systemParameters = systemParameters;
     }
 
-    private ExprResponce createEmptyExprResponce() {
-        ExprResponce exprResponce = new ExprResponce();
-        exprResponce.setExpression("");
-        exprResponce.setExprUnit(new ExprEmptyValue());
-        return exprResponce;
+    private ExprResponse createEmptyExprResponce() {
+        ExprResponse exprResponse = new ExprResponse();
+        exprResponse.setExpression("");
+        exprResponse.setExprUnit(new ExprEmptyValue());
+        return exprResponse;
     }
 
     public void map(ExprUnit exprUnit, ExprUnitDTO exprUnitDTO) {

@@ -1,6 +1,5 @@
 package com.crm.sofia.config;
 
-import com.crm.sofia.dto.cityscape.cve_search.CveSearchSettingsDTO;
 import com.crm.sofia.dto.sofia.user.SocialProvider;
 import com.crm.sofia.model.sofia.menu.Menu;
 import com.crm.sofia.model.sofia.menu.MenuField;
@@ -9,7 +8,6 @@ import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.repository.sofia.menu.MenuRepository;
 import com.crm.sofia.repository.sofia.user.RoleRepository;
 import com.crm.sofia.repository.sofia.user.UserRepository;
-import com.crm.sofia.services.cityscape.cve_search.CveSearchSettingsService;
 import com.crm.sofia.services.sofia.data_transfer.DataTransferService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.io.File;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,8 +45,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private DataTransferService dataTransferService;
 
-//    @Autowired
-//    private CveSearchSettingsService cveSearchSettingsService;
+//  @Autowired
+//  private CveSearchSettingsService cveSearchSettingsService;
 
     @SneakyThrows
     @Override

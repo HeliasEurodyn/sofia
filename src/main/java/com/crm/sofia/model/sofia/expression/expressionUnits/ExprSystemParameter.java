@@ -9,9 +9,9 @@ public class ExprSystemParameter extends ExprUnit {
 
     static private Integer exprUnitLength = 15;
     static private String exprUnitString = "systemParameter";
-    static public Map<String,String> systemParameters;
+    private Map<String,Object> parameters;
 
-    public static ExprSystemParameter exrtactExprUnit(String expression, Integer expressionPosition) {
+    public static ExprSystemParameter exrtactExprUnit(String expression, Integer expressionPosition, Map<String,Object> systemParameters) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -22,10 +22,15 @@ public class ExprSystemParameter extends ExprUnit {
             ExprSystemParameter exprUnit = new ExprSystemParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
+            exprUnit.setParameters(systemParameters);
             return exprUnit;
         }
 
         return null;
+    }
+
+    public void setParameters(Map<String,Object> parameters){
+        this.parameters = parameters;
     }
 
     @Override
@@ -47,8 +52,8 @@ public class ExprSystemParameter extends ExprUnit {
         }
 
         String systemParameter = (String) systemParameterObject;
-        if(ExprSystemParameter.systemParameters.containsKey(systemParameter)){
-            return ExprSystemParameter.systemParameters.get(systemParameter);
+        if(this.parameters.containsKey(systemParameter)){
+            return this.parameters.get(systemParameter);
         } else {
             return null;
         }

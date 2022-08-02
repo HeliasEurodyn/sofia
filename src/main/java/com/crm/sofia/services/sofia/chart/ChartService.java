@@ -5,14 +5,12 @@ import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
 import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
 import com.crm.sofia.mapper.sofia.chart.ChartMapper;
 import com.crm.sofia.model.sofia.chart.Chart;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.native_repository.sofia.chart.ChartNativeRepository;
 import com.crm.sofia.repository.sofia.chart.ChartRepository;
-import com.crm.sofia.services.sofia.auth.JWTService;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
@@ -49,9 +47,9 @@ public class ChartService {
             if (filterDto.getDefaultValue() == null) continue;
             if (filterDto.getDefaultValue().equals("")) continue;
 
-            ExprResponce exprResponce = expressionService.create(filterDto.getDefaultValue());
-            if (!exprResponce.getError()) {
-                Object defaultFieldValue = exprResponce.getExprUnit().getResult();
+            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
+            if (!exprResponse.getError()) {
+                Object defaultFieldValue = exprResponse.getExprUnit().getResult();
                 if(filterDto.getType().equals("list")) {
                     filterDto.setDefaultValue((defaultFieldValue==null?"":defaultFieldValue.toString()));
                     Object fieldValue = this.tryRetrieveSqlListValue(defaultFieldValue);

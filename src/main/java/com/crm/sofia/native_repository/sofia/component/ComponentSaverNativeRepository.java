@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
@@ -612,9 +612,9 @@ public class ComponentSaverNativeRepository {
                 .filter(cpef -> cpef.getPersistEntityField().getOnSaveValue() != null)
                 .filter(cpef -> !cpef.getPersistEntityField().getOnSaveValue().equals(""))
                 .forEach(cpef -> {
-                    ExprResponce exprResponce = expressionService.create(cpef.getPersistEntityField().getOnSaveValue());
-                    if (!exprResponce.getError()) {
-                        Object fieldValue = exprResponce.getExprUnit().getResult();
+                    ExprResponse exprResponse = expressionService.create(cpef.getPersistEntityField().getOnSaveValue());
+                    if (!exprResponse.getError()) {
+                        Object fieldValue = exprResponse.getExprUnit().getResult();
                         cpef.setValue(fieldValue);
                     }
                 });

@@ -2,13 +2,15 @@ package com.crm.sofia.services.sofia.component.crud;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponce;
+import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.native_repository.sofia.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.services.sofia.component.ComponentService;
 import com.crm.sofia.services.sofia.expression.ExpressionService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ComponentRetrieverService {
@@ -37,7 +39,8 @@ public class ComponentRetrieverService {
     public ComponentDTO retrieveComponentWithData(ComponentDTO componentDTO,
                                                   String selectionId) {
 
-        this.runDefaultExpressionsOnTree(componentDTO.getComponentPersistEntityList());
+        this.runDefaultExpressions(componentDTO.getComponentPersistEntityList(), selectionId);
+
         if (selectionId.equals("")) selectionId = "0";
 
         this.componentRetrieverNativeRepository.retrieveComponentData(componentDTO, selectionId);
@@ -45,7 +48,13 @@ public class ComponentRetrieverService {
         return componentDTO;
     }
 
-    private void runDefaultExpressionsOnTree(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+    private void runDefaultExpressions(List<ComponentPersistEntityDTO> componentPersistEntityList, String selectionId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("selectionId", selectionId);
+        this.runDefaultExpressionsOnTree(componentPersistEntityList, parameters);
+    }
+
+    private void runDefaultExpressionsOnTree(List<ComponentPersistEntityDTO> componentPersistEntityList, Map<String, Object> parameters) {
 
         componentPersistEntityList
                 .forEach(cpe -> {
@@ -55,15 +64,15 @@ public class ComponentRetrieverService {
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponce exprResponce = expressionService.create(cpef.getAssignment().getDefaultValue());
-                                if (!exprResponce.getError()) {
-                                    Object fieldValue = exprResponce.getExprUnit().getResult();
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), parameters);
+                                if (!exprResponse.getError()) {
+                                    Object fieldValue = exprResponse.getExprUnit().getResult();
                                     cpef.setValue(fieldValue);
                                 }
                             });
 
                     if (cpe.getComponentPersistEntityList() != null) {
-                        this.runDefaultExpressionsOnTree(cpe.getComponentPersistEntityList());
+                        this.runDefaultExpressionsOnTree(cpe.getComponentPersistEntityList(), parameters);
                     }
 
                 });

@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExprResponce {
-
+public class ExprResponse {
     String errorMessage = "";
     Boolean error = false;
     String expression = "";
     ExprUnit exprUnit = null;
-
 }
