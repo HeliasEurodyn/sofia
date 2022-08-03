@@ -385,6 +385,7 @@ public class RmtRepository {
                         "LEFT OUTER JOIN asset_to_composite_asset_threat acat ON aca.id = acat.asset_to_composite_asset_id AND acat.active = 1 " +
                         "INNER JOIN threat t ON t.id = acat.threat_id " +
                         "WHERE aca.composite_asset_id = :id  " +
+                        "AND IFNULL(a.detailed_cpe, '') != ''  " +
                         "ORDER BY aca.id, a.id, t.id ";
 
         Query query = entityManager.createNativeQuery(queryString);
