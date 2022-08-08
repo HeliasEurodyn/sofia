@@ -15,10 +15,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CountermeasureEfficiencyDTO {
 
-    private Long confidentiality;
+    private Double confidentiality;
 
-    private Long integrity;
+    private Double integrity;
 
-    private Long availability;
+    private Double availability;
 
 }
