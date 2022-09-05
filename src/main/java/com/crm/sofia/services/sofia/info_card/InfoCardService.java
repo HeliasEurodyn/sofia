@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,4 +46,29 @@ public class InfoCardService {
         return infoCardDTO;
     }
 
+    public String getJavaScriptFactory() {
+        List<String> ids = this.infoCardRepository.getListIds();
+        List<String> scriptLines = new ArrayList<>();
+        scriptLines.add("function newInfoCardDynamicScript(id) {");
+        ids.forEach(id -> {
+            String ifClause =
+                    String.join("",
+                            "if (id == '" , id,
+                            "' ) return new InfoCardDynamicScript",id.replace("-","_") , "();" );
+            scriptLines.add(ifClause);
+        });
+        scriptLines.add("}");
+
+        return String.join("\n", scriptLines);
+    }
+    
+    public String getJavaScript(String id) {
+        String script = this.infoCardRepository.getListScript(id);
+        return script;
+    }
+
+    public String getMinJavaScript(String id) {
+        String script = this.infoCardRepository.getListMinScript(id);
+        return script;
+    }
 }

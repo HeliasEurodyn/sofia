@@ -6,14 +6,15 @@ import com.crm.sofia.mapper.sofia.info_card.InfoCardMapper;
 import com.crm.sofia.model.sofia.info_card.InfoCard;
 import com.crm.sofia.native_repository.sofia.info_card.InfoCardNativeRepository;
 import com.crm.sofia.repository.sofia.info_card.InfoCardRepository;
+import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +26,19 @@ public class InfoCardDesignerService {
     private final InfoCardRepository infoCardRepository;
     private final InfoCardMapper infoCardMapper;
     private final InfoCardNativeRepository infoCardNativeRepository;
+    private final JWTService jwtService;
+    private final InfoCardJavascriptService infoCardJavascriptService;
 
     public InfoCardDesignerService(InfoCardRepository infoCardRepository,
                                    InfoCardMapper infoCardMapper,
-                                   InfoCardNativeRepository infoCardNativeRepository) {
+                                   InfoCardNativeRepository infoCardNativeRepository,
+                                   JWTService jwtService,
+                                   InfoCardJavascriptService infoCardJavascriptService) {
         this.infoCardRepository = infoCardRepository;
         this.infoCardMapper = infoCardMapper;
         this.infoCardNativeRepository = infoCardNativeRepository;
+        this.jwtService = jwtService;
+        this.infoCardJavascriptService = infoCardJavascriptService;
     }
 
     public List<InfoCardDTO> getObject() {
@@ -54,13 +61,24 @@ public class InfoCardDesignerService {
 
     @Transactional
     @Modifying
-    public InfoCardDTO postObject(InfoCardDTO dto) {
+    public InfoCardDTO postObject(InfoCardDTO dto) throws Exception {
 
         String decQuery = new String(Base64.getDecoder().decode(dto.getQuery().getBytes(StandardCharsets.UTF_8)));
         dto.setQuery(decQuery);
 
         InfoCard infoCard = this.infoCardMapper.map(dto);
+
+        infoCard.setModifiedOn(Instant.now());
+        infoCard.setModifiedBy(jwtService.getUserId());
+        if (infoCard.getId() == null) infoCard.setCreatedOn(Instant.now());
+        if (infoCard.getId() == null) infoCard.setCreatedBy(jwtService.getUserId());
+
         InfoCard createdInfoCard = this.infoCardRepository.save(infoCard);
+
+        String script = this.infoCardJavascriptService.generateDynamicScript(createdInfoCard);
+        String scriptMin = this.infoCardJavascriptService.minify(script);
+        this.infoCardRepository.updateScripts(createdInfoCard.getId(), script, scriptMin);
+
         return this.infoCardMapper.map(createdInfoCard);
     }
 

@@ -33,12 +33,12 @@ public class InfoCardDesignerController {
     }
 
     @PostMapping
-    public InfoCardDTO postObject(@RequestBody InfoCardDTO dto) {
+    public InfoCardDTO postObject(@RequestBody InfoCardDTO dto) throws Exception {
         return this.infoCardDesignerService.postObject(dto);
     }
 
     @PutMapping
-    public InfoCardDTO putObject(@RequestBody InfoCardDTO dto) {
+    public InfoCardDTO putObject(@RequestBody InfoCardDTO dto) throws Exception {
         return this.infoCardDesignerService.postObject(dto);
     }
 

@@ -1,12 +1,15 @@
 package com.crm.sofia.dto.sofia.info_card;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.sofia.list.base.ListScriptDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,4 +39,5 @@ public class InfoCardDTO extends BaseDTO {
 
     private Integer executionInterval;
 
+    private List<ListScriptDTO> scripts;
 }

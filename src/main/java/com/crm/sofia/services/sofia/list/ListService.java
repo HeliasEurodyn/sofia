@@ -352,10 +352,10 @@ public class ListService {
     }
 
     public String getJavaScriptFactory() {
-        List<String> formIds = this.listRepository.getListIds();
+        List<String> ids = this.listRepository.getListIds();
         List<String> scriptLines = new ArrayList<>();
         scriptLines.add("function newListDynamicScript(id) {");
-        formIds.forEach(id -> {
+        ids.forEach(id -> {
             String ifClause =
                     String.join("",
                             "if (id == '" , id,

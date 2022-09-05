@@ -6,9 +6,8 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -44,5 +43,18 @@ public class InfoCard extends MainEntity {
 
     @Column
     private Integer executionInterval;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @JoinColumn(name = "info_card_id")
+    private List<InfoCartScript> scripts;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String script;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String scriptMin;
 
 }

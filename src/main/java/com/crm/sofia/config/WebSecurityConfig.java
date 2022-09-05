@@ -89,6 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/form/dynamic-cssscript/**",
                         "/form/dynamic-javascripts/**",
                         "/form/dynamic-javascript/**",
+                        "/info-card/dynamic-javascripts/**",
+                        "/info-card/dynamic-javascript/**",
                         "/v3/api-docs/**",
                         "/v3/api-docs.yaml",
                         "/swagger-ui/**",
