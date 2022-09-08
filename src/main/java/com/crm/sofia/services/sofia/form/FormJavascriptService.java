@@ -521,7 +521,6 @@ public class FormJavascriptService {
         pointerVarLines.add("defineGetFromUrl(myCallback){this.getFromUrlRef = myCallback;}");
         pointerVarLines.add("getFromUrl(url, callback){return this.getFromUrlRef(url, callback);}");
 
-
         pointerVarLines.add("definePostToBackend(myCallback){this.postToBackendRef = myCallback;}");
         pointerVarLines.add("postToBackend(url, data, callback){return this.postToBackendRef(url, data, callback);}");
 

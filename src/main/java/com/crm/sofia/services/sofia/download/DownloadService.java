@@ -23,7 +23,6 @@ public class DownloadService {
     @Autowired
     private JWTService jwtService;
 
-
     public List<DownloadDTO> getObject() {
         List<Download> entites = downloadRepository.findAll();
         return downloadMapper.map(entites);

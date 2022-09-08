@@ -12,8 +12,6 @@ import java.util.stream.StreamSupport;
 
 public abstract class BaseMapper<D extends BaseDTO, E extends BaseEntity> {
 
-//    @Autowired
-//    BaseRepository<E> repository;
 
     public abstract E map(D dto);
 

@@ -48,7 +48,8 @@ public class ComponentSaverNativeRepository {
     }
 
     private String generateQueriesAndSave(
-            List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> savedPersistEntities) {
+            List<ComponentPersistEntityDTO> componentPersistEntityList,
+            List<ComponentPersistEntityDTO> savedPersistEntities) {
 
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
@@ -405,8 +406,6 @@ public class ComponentSaverNativeRepository {
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
                 .filter(x -> x.getPersistEntityField().getAutoIncrement() == true)
                 .forEach(x -> x.setValue(id));
-
-        //  this.setPrimaryKey(componentPersistEntityFieldList, id);
 
         return componentPersistEntityFieldList;
     }

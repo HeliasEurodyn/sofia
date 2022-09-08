@@ -4,16 +4,12 @@ import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.sofia.access_control.AccessControl;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@DynamicUpdate
-@DynamicInsert
 @Entity(name = "Report")
 @Table(name = "report")
 public class Report extends MainEntity {
