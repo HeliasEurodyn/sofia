@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.email_template;
+package com.crm.sofia.dto.sofia.timeline;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,10 +14,10 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class EmailTemplateDTO extends BaseDTO {
+public class TimelineDTO extends BaseDTO {
     
-    private String subject;
+    private String title;
 
-    private String template;
+    private String query;
 
 }
