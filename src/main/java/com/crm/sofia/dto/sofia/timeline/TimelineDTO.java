@@ -8,6 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +18,12 @@ import lombok.experimental.Accessors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
 public class TimelineDTO extends BaseDTO {
-    
+
+    @NotNull
+    @NotBlank
     private String title;
 
+    @NotNull
     private String query;
 
 }
