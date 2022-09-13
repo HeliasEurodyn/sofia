@@ -1,9 +1,8 @@
 package com.crm.sofia.controllers.sofia.timeline;
 
-import com.crm.sofia.dto.sofia.download.DownloadDTO;
 import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.timeline.TimelineService;
+import com.crm.sofia.services.sofia.timeline.TimelineDesignerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
-public class TimelineControllerTest {
+public class TimelineDesignerControllerTest {
 
     private MockMvc mvc;
 
@@ -41,7 +40,7 @@ public class TimelineControllerTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private TimelineService timelineService;
+    private TimelineDesignerService timelineDesignerService;
 
     private List<TimelineDTO> timelineDTOList;
 
@@ -49,7 +48,7 @@ public class TimelineControllerTest {
     private JWTAuthFilter filter;
 
     @InjectMocks
-    private TimelineController timelineController;
+    private TimelineDesignerController timelineDesignerController;
 
     @BeforeEach
     void setUp() {
@@ -57,15 +56,15 @@ public class TimelineControllerTest {
         dto = new TimelineDTO().setTitle("dummyTitleDTO").setQuery("dummyQueryDTO");
         this.timelineDTOList.add(dto);
 
-        mvc = MockMvcBuilders.standaloneSetup(timelineController)
+        mvc = MockMvcBuilders.standaloneSetup(timelineDesignerController)
                 .build();
     }
 
     @Test
     void getObjectTest() throws Exception {
 
-        given(timelineService.getObject()).willReturn(timelineDTOList);
-        MockHttpServletResponse response = mvc.perform(get("/timeline")
+        given(timelineDesignerService.getObject()).willReturn(timelineDTOList);
+        MockHttpServletResponse response = mvc.perform(get("/timeline-designer")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$[0].title")  ,"dummyTitleDTO");
@@ -73,8 +72,8 @@ public class TimelineControllerTest {
 
     @Test
     void getDownloadByIdTest() throws Exception {
-        given(timelineService.getObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(get("/timeline/by-id?id=0")
+        given(timelineDesignerService.getObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(get("/timeline-designer/by-id?id=0")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$.title")  ,"dummyTitleDTO");
@@ -82,8 +81,8 @@ public class TimelineControllerTest {
 
     @Test
     void postObjectTest() throws Exception {
-        given(timelineService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(post("/timeline")
+        given(timelineDesignerService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(post("/timeline-designer")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -92,8 +91,8 @@ public class TimelineControllerTest {
     }
     @Test
     void putObjectTest() throws Exception {
-        given(timelineService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(put("/timeline")
+        given(timelineDesignerService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(put("/timeline-designer")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -103,8 +102,8 @@ public class TimelineControllerTest {
 
     @Test
     void deleteObjectTest() throws Exception {
-        doNothing().when(timelineService).deleteObject(any());
-        MockHttpServletResponse response = mvc.perform(delete("/timeline?id=0")
+        doNothing().when(timelineDesignerService).deleteObject(any());
+        MockHttpServletResponse response = mvc.perform(delete("/timeline-designer?id=0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();

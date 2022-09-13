@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.sofia.timeline;
 
 
 import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
-import com.crm.sofia.services.sofia.timeline.TimelineService;
+import com.crm.sofia.services.sofia.timeline.TimelineDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -14,35 +14,35 @@ import java.util.List;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/timeline")
-public class TimelineController {
+@RequestMapping("/timeline-designer")
+public class TimelineDesignerController {
 
     @Autowired
-    private TimelineService timelineService;
+    private TimelineDesignerService timelineDesignerService;
 
     @GetMapping
     List<TimelineDTO> getObject() {
-        return timelineService.getObject();
+        return timelineDesignerService.getObject();
     }
 
     @GetMapping(path = "/by-id")
     TimelineDTO getObject(@RequestParam("id") String id) {
-        return timelineService.getObject(id);
+        return timelineDesignerService.getObject(id);
     }
 
     @PostMapping
     public TimelineDTO postObject(@RequestBody TimelineDTO timelineDTO) throws IOException {
-        return timelineService.postObject(timelineDTO);
+        return timelineDesignerService.postObject(timelineDTO);
     }
 
     @PutMapping
     public TimelineDTO putObject(@RequestBody TimelineDTO timelineDTO) {
-        return timelineService.postObject(timelineDTO);
+        return timelineDesignerService.postObject(timelineDTO);
     }
 
     @DeleteMapping
     public void deleteObject(@RequestParam("id") String id) {
-        timelineService.deleteObject(id);
+        timelineDesignerService.deleteObject(id);
     }
 
 }

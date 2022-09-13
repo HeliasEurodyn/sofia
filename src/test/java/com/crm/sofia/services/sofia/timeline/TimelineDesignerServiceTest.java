@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class TimelineServiceTest {
+public class TimelineDesignerServiceTest {
 
     @Mock
     private TimelineRepository timelineRepository;
 
     @InjectMocks
-    private TimelineService timelineService;
+    private TimelineDesignerService timelineDesignerService;
 
     @Mock
     private JWTService jwtService;
@@ -53,21 +53,21 @@ public class TimelineServiceTest {
     @Test
     public void getObjectTest() {
         given(timelineRepository.findAll()).willReturn(timelineList);
-        List<TimelineDTO> list = timelineService.getObject();
+        List<TimelineDTO> list = timelineDesignerService.getObject();
         assertThat(list).isNotNull();
     }
 
     @Test
     public void getObjectByIdTest(){
         given(timelineRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(timeline));
-        TimelineDTO dto = timelineService.getObject("1");
+        TimelineDTO dto = timelineDesignerService.getObject("1");
     }
 
     @Test
     public void getObjectByIdWhenEmptyTest(){
         given(timelineRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            timelineService.getObject("1");
+            timelineDesignerService.getObject("1");
         });
 
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
@@ -80,13 +80,13 @@ public class TimelineServiceTest {
     public void postObjectTest(){
         given(timelineMapper.map(ArgumentMatchers.any(TimelineDTO.class))).willReturn(timeline);
         given(timelineRepository.save(ArgumentMatchers.any(Timeline.class))).willReturn(timeline);
-        timelineService.postObject(timelineDTO);
+        timelineDesignerService.postObject(timelineDTO);
     }
 
     @Test
     public void getDeleteByIdTest(){
         given(timelineRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(timeline));
-        timelineService.deleteObject("1");
+        timelineDesignerService.deleteObject("1");
 
     }
 
@@ -94,7 +94,7 @@ public class TimelineServiceTest {
     public void getDeleteByIdWhenEmptyTest(){
         given(timelineRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.empty());
         Exception exception = assertThrows(ResponseStatusException.class, () -> {
-            timelineService.deleteObject("1");
+            timelineDesignerService.deleteObject("1");
         });
         String expectedMessage = "500 INTERNAL_SERVER_ERROR \"Object does not exist\"";
         String actualMessage = exception.getMessage();

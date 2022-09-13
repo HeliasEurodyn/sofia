@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TimelineService {
+public class TimelineDesignerService {
 
 
     @Autowired
