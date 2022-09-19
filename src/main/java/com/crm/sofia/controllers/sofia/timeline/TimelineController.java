@@ -1,6 +1,8 @@
 package com.crm.sofia.controllers.sofia.timeline;
 
 
+import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
+import com.crm.sofia.dto.sofia.timeline.TimelineResponseDTO;
 import com.crm.sofia.services.sofia.timeline.TimelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ public class TimelineController {
     private TimelineService timelineService;
 
     @GetMapping(path = "/data")
-    Object getData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
+    TimelineResponseDTO getData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
         return timelineService.getData(id, parameters);
     }
 

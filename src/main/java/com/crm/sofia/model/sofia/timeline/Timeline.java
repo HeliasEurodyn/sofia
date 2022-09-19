@@ -17,6 +17,12 @@ public class Timeline extends MainEntity {
     @Column
     private String title;
 
+    @Column
+    private String description;
+
+    @Column
+    private String icon;
+
     @Column(columnDefinition = "TEXT")
     private String query;
 

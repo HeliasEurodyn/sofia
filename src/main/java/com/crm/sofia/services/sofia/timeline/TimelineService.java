@@ -1,11 +1,15 @@
 package com.crm.sofia.services.sofia.timeline;
 
 import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
+import com.crm.sofia.dto.sofia.timeline.TimelineResponseDTO;
 import com.crm.sofia.mapper.sofia.timeline.TimelineMapper;
 import com.crm.sofia.model.sofia.timeline.Timeline;
 import com.crm.sofia.repository.sofia.timeline.TimelineRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.hibernate.HibernateException;
+import org.hibernate.QueryException;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,10 +37,17 @@ public class TimelineService {
         this.entityManager = entityManager;
     }
 
-    public Object getData(String id, Map<String, String> parameters) {
+    public TimelineResponseDTO getData(String id, Map<String, String> parameters) {
+        TimelineDTO timelineDTO = this.getObject(id);
+        Query query =buildQuery(timelineDTO,parameters);
 
-        Query query =buildQuery(id,parameters);
-        return query.getResultList();
+        try{
+            List<Map<String,Object>> resultList = query.getResultList();
+            return  new TimelineResponseDTO(timelineDTO,resultList);
+        }catch (QueryException exception){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        }
+
     }
 
     @Transactional
@@ -43,7 +55,8 @@ public class TimelineService {
     public Object postData(String id, Map<String, String> parameters) {
         try {
             Object lastInsertId;
-            Query query =buildQuery(id,parameters);
+            TimelineDTO timelineDTO = this.getObject(id);
+            Query query =buildQuery(timelineDTO,parameters);
             query.executeUpdate();
             lastInsertId = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
             return lastInsertId;
@@ -58,25 +71,26 @@ public class TimelineService {
         return timelineMapper.map(model);
     }
 
-    private Query buildQuery(String id, Map<String, String> parameters){
+    private Query buildQuery(TimelineDTO dto, Map<String, String> parameters){
 
-        TimelineDTO dto = this.getObject(id);
-        String queryString = dto.getQuery();
+            String queryString = dto.getQuery();
 
-        Query query = entityManager.createNativeQuery(queryString);
+            Query query = entityManager.createNativeQuery(queryString);
 
-        if( queryString.contains(":userid")){
-            query.setParameter("userid",this.jwtService.getUserId());
-        }
+            if( queryString.contains(":userid")){
+                query.setParameter("userid",this.jwtService.getUserId());
+            }
 
-        parameters
-                .entrySet()
-                .stream()
-                .filter(entry->  queryString.contains(":"+entry.getKey()))
-                .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
+            parameters
+                    .entrySet()
+                    .stream()
+                    .filter(entry->  queryString.contains(":"+entry.getKey()))
+                    .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
 
-        return query;
+            NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+            nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
+            return nativeQuery;
     }
 
 
