@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class TimelineDesignerService {
 
     public List<TimelineDTO> getObject() {
         List<Timeline> entities = timelineRepository.findAll();
-        return timelineMapper.map(entities);
+        return timelineMapper.mapEntitiesForList(entities);
     }
 
     public TimelineDTO getObject(String id) {
@@ -38,11 +40,18 @@ public class TimelineDesignerService {
         }
         Timeline entity = optionalEntity.get();
         TimelineDTO dto = timelineMapper.map(entity);
+
+        String encodedQuery = Base64.getEncoder().encodeToString(dto.getQuery().getBytes(StandardCharsets.UTF_8));
+        dto.setQuery(encodedQuery);
+
         return dto;
     }
 
 
     public TimelineDTO postObject(TimelineDTO timelineDTO) {
+
+        byte[] decodedQuery = Base64.getDecoder().decode(timelineDTO.getQuery());
+        timelineDTO.setQuery(new String(decodedQuery));
 
         Timeline timeline = timelineMapper.map(timelineDTO);
         if (timeline.getId() == null) {
