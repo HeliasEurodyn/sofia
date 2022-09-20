@@ -30,4 +30,8 @@ public class TimelineDTO extends BaseDTO {
     @NotNull
     private String query;
 
+    private Boolean hasPagination;
+
+    private Integer pageSize;
+
 }

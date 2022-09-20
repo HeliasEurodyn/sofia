@@ -26,4 +26,10 @@ public class Timeline extends MainEntity {
     @Column(columnDefinition = "TEXT")
     private String query;
 
+    @Column
+    private Boolean hasPagination;
+
+    @Column
+    private Integer pageSize;
+
 }

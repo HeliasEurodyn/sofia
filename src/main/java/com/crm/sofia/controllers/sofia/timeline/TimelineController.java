@@ -21,13 +21,17 @@ public class TimelineController {
     private TimelineService timelineService;
 
     @GetMapping(path = "/data")
-    TimelineResponseDTO getData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
-        return timelineService.getData(id, parameters);
+    TimelineResponseDTO getData(@RequestParam("id") String id,
+                                @RequestParam Map<String, String> parameters,
+                                @RequestParam int currentPage) {
+        return timelineService.getData(id, parameters,currentPage);
     }
 
     @PostMapping(path = "/data")
-    String postData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
-        Object response = timelineService.postData(id, parameters);
+    String postData(@RequestParam("id") String id,
+                    @RequestParam Map<String, String> parameters,
+                    @RequestParam int currentPage) {
+        Object response = timelineService.postData(id, parameters,currentPage);
         return "{\"response\": \"" + response.toString() + "\"}";
     }
 

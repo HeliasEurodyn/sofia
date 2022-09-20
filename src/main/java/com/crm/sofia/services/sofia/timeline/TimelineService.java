@@ -37,9 +37,9 @@ public class TimelineService {
         this.entityManager = entityManager;
     }
 
-    public TimelineResponseDTO getData(String id, Map<String, String> parameters) {
+    public TimelineResponseDTO getData(String id, Map<String, String> parameters ,int currentPage) {
         TimelineDTO timelineDTO = this.getObject(id);
-        Query query =buildQuery(timelineDTO,parameters);
+        Query query =buildQuery(timelineDTO,parameters,currentPage);
 
         try{
             List<Map<String,Object>> resultList = query.getResultList();
@@ -52,11 +52,11 @@ public class TimelineService {
 
     @Transactional
     @Modifying
-    public Object postData(String id, Map<String, String> parameters) {
+    public Object postData(String id, Map<String, String> parameters,int currentPage) {
         try {
             Object lastInsertId;
             TimelineDTO timelineDTO = this.getObject(id);
-            Query query =buildQuery(timelineDTO,parameters);
+            Query query =buildQuery(timelineDTO,parameters,currentPage);
             query.executeUpdate();
             lastInsertId = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
             return lastInsertId;
@@ -71,7 +71,7 @@ public class TimelineService {
         return timelineMapper.map(model);
     }
 
-    private Query buildQuery(TimelineDTO dto, Map<String, String> parameters){
+    private Query buildQuery(TimelineDTO dto, Map<String, String> parameters,int currentPage){
 
             String queryString = dto.getQuery();
 
@@ -88,6 +88,12 @@ public class TimelineService {
                     .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
 
             NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+
+            if(dto.getHasPagination() && dto.getPageSize()!=null){
+                nativeQuery.setFirstResult((currentPage-1)*dto.getPageSize());
+                nativeQuery.setMaxResults(dto.getPageSize());
+            }
+
             nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
             return nativeQuery;
