@@ -40,9 +40,10 @@ public class TimelineService {
     public TimelineResponseDTO getData(String id, Map<String, String> parameters ,int currentPage) {
         TimelineDTO timelineDTO = this.getObject(id);
         Query query =buildQuery(timelineDTO,parameters,currentPage);
-
         try{
-            List<Map<String,Object>> resultList = query.getResultList();
+            List tempResultList =query.getResultList();
+            checkLastPage(tempResultList,timelineDTO);
+            List<Map<String,Object>> resultList = tempResultList;
             return  new TimelineResponseDTO(timelineDTO,resultList);
         }catch (QueryException exception){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
@@ -91,12 +92,22 @@ public class TimelineService {
 
             if(dto.getHasPagination() && dto.getPageSize()!=null){
                 nativeQuery.setFirstResult((currentPage-1)*dto.getPageSize());
-                nativeQuery.setMaxResults(dto.getPageSize());
+                nativeQuery.setMaxResults(dto.getPageSize()+1);
             }
 
             nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
             return nativeQuery;
+    }
+
+    private void checkLastPage(List resultList, TimelineDTO timelineDTO){
+        if(resultList.size()== timelineDTO.getPageSize()+1){
+            timelineDTO.setIsTheLastPage(false);
+            int indexOfLastElement = resultList.size() - 1;
+            resultList.remove(indexOfLastElement);
+        }else {
+            timelineDTO.setIsTheLastPage(true);
+        }
     }
 
 
