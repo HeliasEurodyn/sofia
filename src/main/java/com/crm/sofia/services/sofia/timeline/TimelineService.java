@@ -42,7 +42,10 @@ public class TimelineService {
         Query query =buildQuery(timelineDTO,parameters,currentPage);
         try{
             List tempResultList =query.getResultList();
-            checkLastPage(tempResultList,timelineDTO);
+            timelineDTO.setIsTheLastPage(true);
+            if(timelineDTO.isHasPagination() && timelineDTO.getPageSize()!=null){
+                checkLastPage(tempResultList,timelineDTO);
+            }
             List<Map<String,Object>> resultList = tempResultList;
             return  new TimelineResponseDTO(timelineDTO,resultList);
         }catch (QueryException exception){
@@ -90,7 +93,7 @@ public class TimelineService {
 
             NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
 
-            if(dto.getHasPagination() && dto.getPageSize()!=null){
+            if(dto.isHasPagination() && dto.getPageSize()!=null){
                 nativeQuery.setFirstResult((currentPage-1)*dto.getPageSize());
                 nativeQuery.setMaxResults(dto.getPageSize()+1);
             }
