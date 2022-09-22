@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <changeSet author="ChristosAslamatzidis (generated)" id="2053169944001-06">
+        <addColumn tableName="list_component_field">
+            <column name="timeline_id" type="VARCHAR(36)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="ChristosAslamatzidis (generated)" id="2053169944001-07">
+        <createIndex indexName="FKem78O0bEZNZOoYa6PBv2uHA" tableName="list_component_field">
+            <column name="timeline_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ChristosAslamatzidis (generated)" id="2053169944001-08">
+        <addForeignKeyConstraint baseColumnNames="timeline_id" baseTableName="list_component_field" constraintName="FKem78O0bEZNZOoYa6PBv2uHA" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="timeline"/>
+    </changeSet>
+</databaseChangeLog>

@@ -2,11 +2,12 @@ package com.crm.sofia.model.sofia.timeline;
 
 
 import com.crm.sofia.model.common.MainEntity;
+import com.crm.sofia.model.sofia.list.ListComponentField;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -31,5 +32,13 @@ public class Timeline extends MainEntity {
 
     @Column
     private Integer pageSize;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "timeline_id")
+    private List<ListComponentField> filterList;
 
 }
