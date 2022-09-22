@@ -12,7 +12,9 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +49,7 @@ public class TimelineDesignerServiceTest {
         timelineList = new ArrayList<>();
         timeline = new Timeline().setTitle("dummyTitle").setQuery("dummyQuery");
         timelineList.add(timeline);
-        timelineDTO = new TimelineDTO().setTitle("dummyTitleDTO").setQuery("dummyQueryDTO");
+        timelineDTO = new TimelineDTO().setTitle("dummyTitleDTO").setQuery(Base64.getEncoder().encodeToString("dummyQueryDTO".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -60,6 +62,7 @@ public class TimelineDesignerServiceTest {
     @Test
     public void getObjectByIdTest(){
         given(timelineRepository.findById(ArgumentMatchers.anyString())).willReturn(Optional.of(timeline));
+        given(timelineMapper.map(ArgumentMatchers.any(Timeline.class))).willReturn(timelineDTO);
         TimelineDTO dto = timelineDesignerService.getObject("1");
     }
 
