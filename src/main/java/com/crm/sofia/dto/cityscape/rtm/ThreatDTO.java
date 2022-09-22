@@ -33,4 +33,6 @@ public class ThreatDTO {
 
     private List<RiskDTO> risk;
 
+    private Double score_sum;
+
 }

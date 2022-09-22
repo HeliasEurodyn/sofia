@@ -17,6 +17,8 @@ public class RiskDTO {
 
     private String cve_id;
 
+    private String generic_vuln_id;
+
     private String description;
 
     private String link;

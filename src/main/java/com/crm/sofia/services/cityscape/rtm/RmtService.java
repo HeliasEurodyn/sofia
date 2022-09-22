@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class RmtService {
@@ -79,7 +80,7 @@ public class RmtService {
 
                 basicAssets.forEach(basicAsset -> {
                     basicAsset.getThreats().forEach(threat -> {
-
+                        threat.setRisk(Arrays.asList());
                         List<CountermeasureDTO> counterMeasures = this.rmtRepository.retrieveCounterMeasures(compositeAsset.getId(),
                                 basicAsset.getId()
                                 , threat.getId());
@@ -92,6 +93,7 @@ public class RmtService {
 
         RmtDTO rmtResponse = this.sendToRmt(rmt);
         this.saveRmtResponse(rmtResponse);
+
         this.rmtRepository.saveRiskAssessmentOveralRisk(rmt.getId());
         rmt.getServices().forEach(service -> {
             this.rmtRepository.saveServiceOverallRisk(rmt.getId(), service.getId());
@@ -131,6 +133,29 @@ public class RmtService {
                                     sumScore
                             );
                         });
+
+                        if(basicAsset.getHas_custom_risk() == 1){
+
+                            Double sumScore = threat.getScore_sum();
+                            Double confidentiality = sumScore /3;
+                            Double integrity = sumScore /3;
+                            Double availability = sumScore /3;
+                            RiskDTO risk = new RiskDTO().setCve_id("").setLink("")
+                                    .setDescription("").setGeneric_vuln_id("")
+                                    .setRisk_score(new RiskScoreDTO().setAvailability(0d)
+                                            .setConfidentiality(0d).setIntegrity(0d));
+
+                            this.rmtRepository.saveRisk(
+                                    threat.getDescription(),
+                                    rmt.getId(),
+                                    service.getId(),
+                                    risk,
+                                    confidentiality,
+                                    integrity,
+                                    availability,
+                                    sumScore
+                            );
+                        }
                     });
                 });
             });

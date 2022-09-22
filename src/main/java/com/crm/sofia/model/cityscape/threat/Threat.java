@@ -46,6 +46,8 @@ public class Threat {
     @Column(name = "accountability")
     private Integer accountability;
 
+    @Column(name = "system_threat")
+    private Integer systemThreat;
 
     @Column(name = "created_by", length = 36)
     private String createdBy;

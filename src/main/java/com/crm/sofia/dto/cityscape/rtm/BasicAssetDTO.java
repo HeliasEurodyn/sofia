@@ -38,4 +38,6 @@ public class BasicAssetDTO {
     private String cpe;
 
     private List<ThreatDTO> threats;
+
+    private Long has_custom_risk;
 }

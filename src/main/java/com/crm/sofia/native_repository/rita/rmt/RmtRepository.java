@@ -376,7 +376,9 @@ public class RmtRepository {
                         "t.integrity AS threat_integrity, " +
                         "t.accountability AS threat_availability, " +
                         "aca.id AS asset_to_composite_asset_id, " +
-                        "acat.threat_propability AS threat_propability " + //24
+                        "acat.threat_propability AS threat_propability, " + //24
+                        "a.has_custom_risk AS has_custom_risk, " + //25
+                        "acat.score_sum " + //26
                         "FROM asset_to_composite_asset aca " +
                         "INNER JOIN asset a ON aca.asset_id = a.id " +
                         "LEFT OUTER JOIN asset_type aty ON a.type_id = aty.id " +
@@ -385,7 +387,8 @@ public class RmtRepository {
                         "LEFT OUTER JOIN asset_to_composite_asset_threat acat ON aca.id = acat.asset_to_composite_asset_id AND acat.active = 1 " +
                         "INNER JOIN threat t ON t.id = acat.threat_id " +
                         "WHERE aca.composite_asset_id = :id  " +
-                        "AND IFNULL(a.detailed_cpe, '') != ''  " +
+//                        "AND ifnull(a.has_custom_risk,0) = 0 " +
+//                        "AND IFNULL(a.detailed_cpe, '') != ''  " +
                         "ORDER BY aca.id, a.id, t.id ";
 
         Query query = entityManager.createNativeQuery(queryString);
@@ -412,6 +415,7 @@ public class RmtRepository {
                 asset.setProduct(field[10] == null ? null : field[10].toString());
                 asset.setVersion(field[11] == null ? null : field[11].toString());
                 asset.setCpe(field[12] == null ? null : field[12].toString());
+                asset.setHas_custom_risk(field[25] == null ? 0 : ((Integer) field[25]).longValue());
                 assets.add(asset);
             }
 
@@ -421,6 +425,8 @@ public class RmtRepository {
             threat.setName(field[16] == null ? null : (String) field[16]);
             threat.setDescription(field[13] == null ? "" : ((BigInteger) field[13]).toString());
             threat.setOccurrence(field[24] == null ? null : (Double) field[24]);
+            threat.setScore_sum(field[26] == null ? 0 : ((Double) field[26]));
+
             ThreatImpactSelectionDTO impact = new ThreatImpactSelectionDTO();
             threat.setImpact(impact);
             impact.setConfidentiality(field[20] == null ? false : ((Integer) field[20] != 0));
@@ -445,11 +451,13 @@ public class RmtRepository {
         Query query =
                 entityManager.createNativeQuery("INSERT INTO risk ( cve_id, description, link, asset_to_composite_asset_threat_id, risk_assessment_id, " +
                         "business_service_to_risk_assessment_id, " +
-                        "confidentiality, integrity, availability, confidentiality_score, integrity_score, availability_score, score_sum) " +
+                        "confidentiality, integrity, availability, confidentiality_score, integrity_score, availability_score, score_sum, generic_vuln) " +
                         "VALUES (:cve_id, :description, :link, :asset_to_composite_asset_threat_id, :risk_assessment_id, " +
                         ":business_service_to_risk_assessment_id, " +
-                        ":confidentiality, :integrity, :availability, :confidentiality_score, :integrity_score, :availability_score, :score_sum);");
-        query.setParameter("cve_id", risk.getCve_id());
+                        ":confidentiality, :integrity, :availability, :confidentiality_score, :integrity_score, :availability_score, :score_sum, :generic_vuln);");
+        query.setParameter("cve_id", (risk.getCve_id()==null?risk.getGeneric_vuln_id():risk.getCve_id()));
+        query.setParameter("generic_vuln", (risk.getCve_id() == null) );
+
         query.setParameter("description", risk.getDescription());
         query.setParameter("link", risk.getLink());
         query.setParameter("asset_to_composite_asset_threat_id", Double.valueOf(assetToCompositeAssetThreatId));
