@@ -361,10 +361,10 @@ public class RmtRepository {
                         "act.id AS asset_category_id, " +
                         "act.code AS asset_category_code, " +
                         "vd.id AS asset_vendor_id, " +
-                        "vd.name AS asset_vendor_name, " +
-                        "a.vendor_product AS asset_vendor_product, " + //10
+                        "ifnull(vd.name,'') AS asset_vendor_name, " +
+                        "ifnull(a.vendor_product,'') AS asset_vendor_product, " + //10
                         "a.cpe AS asset_cpe, " +
-                        "a.detailed_cpe AS asset_detailed_cpe,  " +
+                        "ifnull(a.detailed_cpe,'') AS asset_detailed_cpe,  " +
                         "acat.id AS asset_to_composite_asset_threat_id, " +
                         "t.id AS threat_id,  " +
                         "t.code AS threat_code, " +
