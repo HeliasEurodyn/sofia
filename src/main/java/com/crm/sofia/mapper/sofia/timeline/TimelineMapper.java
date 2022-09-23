@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 public abstract class TimelineMapper extends BaseMapper<TimelineDTO, Timeline> {
 
     public List<TimelineDTO> mapEntitiesForList(List<Timeline> entities) {
-        return entities.stream().map(this::mapEntityForList).collect(Collectors.toList());
+        return entities.stream().map(this::mapEntityIgnoringQuery).collect(Collectors.toList());
     }
 
     @Mapping(ignore = true, target = "query")
-    public abstract TimelineDTO mapEntityForList(Timeline entity);
+    public abstract TimelineDTO mapEntityIgnoringQuery(Timeline entity);
 
 }

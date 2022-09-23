@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TimelineService {
@@ -37,17 +38,19 @@ public class TimelineService {
         this.entityManager = entityManager;
     }
 
-    public TimelineResponseDTO getData(String id, Map<String, String> parameters ,int currentPage) {
+    public TimelineResponseDTO getData(String id, Map<String, String> parameters , int currentPage) {
         TimelineDTO timelineDTO = this.getObject(id);
+        TimelineResponseDTO timelineResponseDTO =new TimelineResponseDTO();
         Query query =buildQuery(timelineDTO,parameters,currentPage);
         try{
-            List tempResultList =query.getResultList();
-            timelineDTO.setIsTheLastPage(true);
+            timelineResponseDTO.setResultList(query.getResultList());
+
+            timelineResponseDTO.setIsTheLastPage(true);
             if(timelineDTO.isHasPagination() && timelineDTO.getPageSize()!=null){
-                checkLastPage(tempResultList,timelineDTO);
+                checkLastPage(timelineDTO,timelineResponseDTO);
             }
-            List<Map<String,Object>> resultList = tempResultList;
-            return  new TimelineResponseDTO(timelineDTO,resultList);
+            
+            return  timelineResponseDTO;
         }catch (QueryException exception){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         }
@@ -73,6 +76,12 @@ public class TimelineService {
         Timeline model = timelineRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist"));
         return timelineMapper.map(model);
+    }
+
+    public TimelineDTO getObjectIgnoringQuery(String id) {
+        Timeline model = timelineRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist"));
+        return timelineMapper.mapEntityIgnoringQuery(model);
     }
 
     private Query buildQuery(TimelineDTO dto, Map<String, String> parameters,int currentPage){
@@ -103,13 +112,18 @@ public class TimelineService {
             return nativeQuery;
     }
 
-    private void checkLastPage(List resultList, TimelineDTO timelineDTO){
-        if(resultList.size()== timelineDTO.getPageSize()+1){
-            timelineDTO.setIsTheLastPage(false);
-            int indexOfLastElement = resultList.size() - 1;
-            resultList.remove(indexOfLastElement);
+    private void checkLastPage(TimelineDTO timelineDTO,TimelineResponseDTO timelineResponseDTO){
+
+        List tempResultList = Optional.ofNullable(timelineResponseDTO.getResultList())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Result List is Empty"));
+
+        if(tempResultList.size()== timelineDTO.getPageSize()+1){
+            timelineResponseDTO.setIsTheLastPage(false);
+            int indexOfLastElement = tempResultList.size() - 1;
+            tempResultList.remove(indexOfLastElement);
+            timelineResponseDTO.setResultList(tempResultList);
         }else {
-            timelineDTO.setIsTheLastPage(true);
+            timelineResponseDTO.setIsTheLastPage(true);
         }
     }
 

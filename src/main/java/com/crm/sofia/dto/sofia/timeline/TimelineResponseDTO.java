@@ -18,7 +18,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class TimelineResponseDTO {
 
-    TimelineDTO timelineDTO;
+    private Boolean isTheLastPage;
 
     List<Map<String,Object>> resultList;
 

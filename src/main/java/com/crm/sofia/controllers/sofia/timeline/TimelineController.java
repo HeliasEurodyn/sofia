@@ -35,4 +35,9 @@ public class TimelineController {
         return "{\"response\": \"" + response.toString() + "\"}";
     }
 
+    @GetMapping(path = "/by-id")
+    TimelineDTO getObject(@RequestParam("id") String id) {
+        return timelineService.getObjectIgnoringQuery(id);
+    }
+
 }

@@ -36,8 +36,6 @@ public class TimelineDTO extends BaseDTO {
 
     private Integer pageSize;
 
-    private Boolean isTheLastPage;
-
     private List<ListComponentFieldDTO> filterList;
 
 }
