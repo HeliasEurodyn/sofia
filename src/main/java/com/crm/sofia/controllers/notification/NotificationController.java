@@ -29,6 +29,11 @@ public class NotificationController {
         return sseEmitter;
     }
 
+    @GetMapping("/unsubscribe")
+    public  void unsubscribe() {
+        notificationService.unsubscribe();
+    }
+
     @PostMapping("/send")
     public ResponseEntity<NotificationDTO> send(@RequestBody NotificationDTO notificationDTO) {
         notificationService.send(notificationDTO);
