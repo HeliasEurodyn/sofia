@@ -30,8 +30,8 @@ public class NotificationController {
     }
 
     @GetMapping("/unsubscribe")
-    public  void unsubscribe() {
-        notificationService.unsubscribe();
+    public  void unsubscribe(@RequestParam("id") String id) {
+        notificationService.unsubscribe(id);
     }
 
     @PostMapping("/send")
