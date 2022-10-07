@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Service
 public class NotificationService {
@@ -57,21 +58,25 @@ public class NotificationService {
 
        HashMap<String,SseEmitter> failedEmitters = new HashMap<>();
 
-     this.emitters
-             .entrySet()
-             .stream()
-             .filter(emitterEntry-> emitterEntry.getKey().equals("da7a00e9-3b19-454d-b72b-8646d6eae678"))
-             .forEach(emitterEntry -> {
-                 try {
-                     emitterEntry.getValue().send(SseEmitter
-                             .event()
-                             .name("da7a00e9-3b19-454d-b72b-8646d6eae678")
-                             .data(notificationDTO));
-                 } catch (Exception e) {
-                     emitterEntry.getValue().completeWithError(e);
-                     failedEmitters.put(emitterEntry.getKey(),emitterEntry.getValue());
-                 }
-             });
+        if(notificationDTO.getUserToSendId()!=null && notificationDTO.getMessage()!=null){
+            this.emitters
+                    .entrySet()
+                    .stream()
+                    .filter(emitterEntry-> emitterEntry.getKey().equals(notificationDTO.getUserToSendId()))
+                    .forEach(emitterEntry -> {
+                        try {
+                            emitterEntry.getValue().send(SseEmitter
+                                    .event()
+                                    .name(notificationDTO.getUserToSendId())
+                                    .data(notificationDTO.getMessage()));
+                        } catch (Exception e) {
+                            emitterEntry.getValue().completeWithError(e);
+                            failedEmitters.put(emitterEntry.getKey(),emitterEntry.getValue());
+                        }
+                    });
+        }
+
+
       this.emitters.entrySet().removeAll(failedEmitters.entrySet());
     }
 

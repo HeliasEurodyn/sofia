@@ -16,5 +16,6 @@ import lombok.experimental.Accessors;
 public class NotificationDTO {
 
     private String message;
+    private String userToSendId;
 
 }
