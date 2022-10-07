@@ -45,9 +45,9 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE user SET" +
-            " header_menu_id = 23," +
-            " sidebar_menu_id = 25," +
-            " login_nav_command = 'STATICPAGE[NAME:dashboard,LOCATE:(ID=1)]'," +
+            " header_menu_id = 'dcd336a1-f74f-4410-bbee-6f91d5dd2e83'," +
+            " sidebar_menu_id = 'b220ea37-f6ce-474b-8d8d-28d78ba57f58'," +
+            " login_nav_command = 'STATICPAGE[NAME:dashboard,LOCATE:(ID=b9b1394b-425c-4c33-a132-e28c23df995a)]'," +
             " search_nav_command = 'POPUPPAGE[NAME:search,LOCATE:(ID=1),SEARCH-DEFAULT:#SEARCH-VALUE#,FOCUS:search-field-box]' " +
             " WHERE id = :id ", nativeQuery = true)
     void initiateUserInfo(@Param("id") String id);

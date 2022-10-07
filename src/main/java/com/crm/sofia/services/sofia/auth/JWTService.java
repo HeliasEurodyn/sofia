@@ -1,11 +1,9 @@
 package com.crm.sofia.services.sofia.auth;
 
 
-import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.config.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
