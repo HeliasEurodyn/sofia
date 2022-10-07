@@ -8,6 +8,7 @@ public enum SocialProvider {
     GOOGLE("google"),
     GITHUB("github"),
     KEYCLOAK("keycloak"),
+    KEYROCK("keyrock"),
     LOCAL("local");
 
     private String providerType;

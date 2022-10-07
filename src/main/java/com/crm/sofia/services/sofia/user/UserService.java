@@ -1,7 +1,6 @@
 package com.crm.sofia.services.sofia.user;
 
 import com.crm.sofia.config.AppConstants;
-import com.crm.sofia.dto.sofia.auth.JWTResponseDTO;
 import com.crm.sofia.dto.sofia.user.*;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
@@ -35,7 +34,6 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.nio.charset.Charset;
 import java.time.Instant;
-
 import java.util.*;
 
 @Slf4j
@@ -222,7 +220,7 @@ public class UserService {
         user.setEmail(formDTO.getEmail());
         user.setPassword(passwordEncoder.encode(formDTO.getPassword()));
         final HashSet<Role> roles = new HashSet<Role>();
-        roles.add(roleRepository.findFirstByName(Role.ROLE_USER));
+      //  roles.add(roleRepository.findFirstByName(Role.ROLE_USER));
         user.setRolesSet(roles);
         user.setProvider(formDTO.getSocialProvider().getProviderType());
 

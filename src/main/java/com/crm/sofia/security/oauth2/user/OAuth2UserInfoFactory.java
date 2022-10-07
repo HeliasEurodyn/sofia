@@ -1,10 +1,9 @@
 package com.crm.sofia.security.oauth2.user;
 
-import java.util.Map;
-
-
 import com.crm.sofia.dto.sofia.user.SocialProvider;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
+
+import java.util.Map;
 
 public class OAuth2UserInfoFactory {
     public static OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {

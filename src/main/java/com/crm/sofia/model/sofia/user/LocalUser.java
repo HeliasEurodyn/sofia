@@ -35,7 +35,10 @@ public class LocalUser extends org.springframework.security.core.userdetails.Use
     }
 
     public static LocalUser create(User user, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) {
-        LocalUser localUser = new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()),
+        LocalUser localUser = new LocalUser(user.getEmail(),
+                user.getPassword(),
+                user.isEnabled(), true, true, true,
+                GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()),
                 user, idToken, userInfo, user.getRoles());
         localUser.setAttributes(attributes);
         return localUser;
