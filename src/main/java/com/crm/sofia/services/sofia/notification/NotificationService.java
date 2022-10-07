@@ -8,10 +8,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 @Service
 public class NotificationService {
@@ -31,7 +31,9 @@ public class NotificationService {
         executor.scheduleWithFixedDelay(keepAlive, 40, 40, TimeUnit.SECONDS);
     }
 
-    public SseEmitter add(SseEmitter emitter) {
+    public SseEmitter add() {
+
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 
         String userId = this.jwtService.getUserId();
 
@@ -42,7 +44,7 @@ public class NotificationService {
             emitter.complete();
         });
 
-        emitters.put(userId,emitter);
+        emitters.put(userId + "~" + new Random().nextLong(),emitter);
 
         return emitter;
     }
@@ -62,7 +64,7 @@ public class NotificationService {
             this.emitters
                     .entrySet()
                     .stream()
-                    .filter(emitterEntry-> emitterEntry.getKey().equals(notificationDTO.getUserToSendId()))
+                    .filter(emitterEntry-> emitterEntry.getKey().split("~")[0].equals(notificationDTO.getUserToSendId()))
                     .forEach(emitterEntry -> {
                         try {
                             emitterEntry.getValue().send(SseEmitter
@@ -81,7 +83,6 @@ public class NotificationService {
     }
 
     Runnable keepAlive = () -> {
-
         HashMap<String,SseEmitter> failedEmitters = new HashMap<>();
 
         this.emitters.forEach((userId,emitter) -> {
@@ -99,7 +100,6 @@ public class NotificationService {
         });
 
         this.emitters.entrySet().removeAll(failedEmitters.entrySet());
-
     };
 
 

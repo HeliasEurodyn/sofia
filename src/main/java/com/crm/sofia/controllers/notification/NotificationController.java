@@ -23,10 +23,8 @@ public class NotificationController {
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe() {
-
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-        notificationService.add(sseEmitter);
-        return sseEmitter;
+        SseEmitter emitter = notificationService.add();
+        return emitter;
     }
 
     @GetMapping("/unsubscribe")
