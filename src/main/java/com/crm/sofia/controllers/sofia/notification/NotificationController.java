@@ -1,4 +1,4 @@
-package com.crm.sofia.controllers.notification;
+package com.crm.sofia.controllers.sofia.notification;
 
 import com.crm.sofia.dto.sofia.notification.NotificationDTO;
 import com.crm.sofia.services.sofia.notification.NotificationService;
