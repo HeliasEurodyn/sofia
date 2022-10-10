@@ -193,7 +193,7 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, String jsonUrl) {
+    public ListResultsDataDTO getJsonUrlObjectDataByParameters(Map<String, String> parameters, Long page, String jsonUrl) {
 
         List<String> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
 
@@ -202,6 +202,7 @@ public class ListService {
         }
 
         ListDTO listDTO = this.getObjectWithDefaults(ids.get(0));
+        listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
         return listResultsDataDTO;

@@ -23,11 +23,14 @@ public class ListDataController {
 
     @GetMapping(path = "/{jsonUrl}")
     public List<Map<String, Object>> getDatalist(@PathVariable("jsonUrl") String jsonUrl, @RequestParam Map<String, String> parameters) {
-        return this.listService.getObjectDataByParameters(parameters, jsonUrl).getListContent();
+        return this.listService.getJsonUrlObjectDataByParameters(parameters,0L , jsonUrl).getListContent();
     }
 
-    @GetMapping(path = "/{jsonUrl}/pages")
-    public ListResultsDataDTO getDatalistPage(@PathVariable("jsonUrl") String jsonUrl, @RequestParam Map<String, String> parameters) {
-        return this.listService.getObjectDataByParameters(parameters, jsonUrl);
+    @GetMapping(path = "/{jsonUrl}/page/{page}")
+    public ListResultsDataDTO getDatalistPage(
+            @PathVariable("jsonUrl") String jsonUrl,
+            @PathVariable("page") Long page,
+            @RequestParam Map<String, String> parameters) {
+        return this.listService.getJsonUrlObjectDataByParameters(parameters,page, jsonUrl);
     }
 }
