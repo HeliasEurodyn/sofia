@@ -22,6 +22,11 @@ public class CustomQueryController {
         return customQueryService.getData(id, parameters);
     }
 
+    @GetMapping(path = "/data-objects")
+    Object getDataObjects(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
+        return customQueryService.getDataObjects(id, parameters);
+    }
+
     @PostMapping(path = "/data")
     String postData(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
         Object response = customQueryService.postData(id, parameters);

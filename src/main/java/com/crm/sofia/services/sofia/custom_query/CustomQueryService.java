@@ -6,6 +6,8 @@ import com.crm.sofia.model.sofia.custom_query.CustomQuery;
 import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.hibernate.HibernateException;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
@@ -49,6 +51,27 @@ public class CustomQueryService {
         CustomQuery entity = optionalEntity.get();
         CustomQueryDTO dto = customQueryMapper.map(entity);
         return dto;
+    }
+
+    public Object getDataObjects(String id, Map<String, String> parameters) {
+        CustomQueryDTO dto = this.getObject(id);
+        String queryString = dto.getQuery();
+        Query query = entityManager.createNativeQuery(queryString);
+
+        if( queryString.contains(":userid")){
+            query.setParameter("userid",this.jwtService.getUserId());
+        }
+
+        parameters
+                .entrySet()
+                .stream()
+                .filter(entry->  queryString.contains(":"+entry.getKey()))
+                .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
+
+        NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+        nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+        return nativeQuery.getResultList();
     }
 
     public Object getData(String id, Map<String, String> parameters) {
