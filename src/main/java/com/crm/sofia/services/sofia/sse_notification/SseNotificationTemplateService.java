@@ -5,6 +5,7 @@ import com.crm.sofia.mapper.sofia.sse_notification.SseNotificationMapper;
 import com.crm.sofia.model.sofia.sse_notification.SseNotification;
 import com.crm.sofia.repository.sofia.sse_notification.SseNotificationRepository;
 import com.crm.sofia.services.sofia.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,15 +20,12 @@ import java.util.Optional;
 public class SseNotificationTemplateService {
 
 
-    private final SseNotificationMapper sseNotificationMapper;
-    private final SseNotificationRepository sseNotificationRepository;
-    private final JWTService jwtService;
-
-    public SseNotificationTemplateService(SseNotificationMapper sseNotificationMapper, SseNotificationRepository sseNotificationRepository, JWTService jwtService) {
-        this.sseNotificationMapper = sseNotificationMapper;
-        this.sseNotificationRepository = sseNotificationRepository;
-        this.jwtService = jwtService;
-    }
+    @Autowired
+    private SseNotificationMapper sseNotificationMapper;
+    @Autowired
+    private SseNotificationRepository sseNotificationRepository;
+    @Autowired
+    private JWTService jwtService;
 
 
     public List<SseNotificationDTO> getObject() {

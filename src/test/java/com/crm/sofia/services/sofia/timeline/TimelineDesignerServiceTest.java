@@ -56,7 +56,7 @@ public class TimelineDesignerServiceTest {
     public void getObjectTest() {
         given(timelineRepository.findAll()).willReturn(timelineList);
         List<TimelineDTO> list = timelineDesignerService.getObject();
-        assertThat(list).isNotNull();
+        assertThat(list).isNotEmpty();
     }
 
     @Test

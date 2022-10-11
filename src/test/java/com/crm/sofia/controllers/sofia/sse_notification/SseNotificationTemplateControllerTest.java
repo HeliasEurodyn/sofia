@@ -1,8 +1,7 @@
-package com.crm.sofia.controllers.sofia.timeline;
+package com.crm.sofia.controllers.sofia.sse_notification;
 
-import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
-import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.timeline.TimelineDesignerService;
+import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
+import com.crm.sofia.services.sofia.sse_notification.SseNotificationTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,42 +25,41 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
-public class TimelineDesignerControllerTest {
+public class SseNotificationTemplateControllerTest {
 
     private MockMvc mvc;
 
-    private TimelineDTO dto;
+    private SseNotificationDTO dto;
 
     @InjectMocks
     @Autowired
     private ObjectMapper objectMapper;
 
     @Mock
-    private TimelineDesignerService timelineDesignerService;
+    private SseNotificationTemplateService sseNotificationTemplateService;
 
-    private List<TimelineDTO> timelineDTOList;
+    private List<SseNotificationDTO> sseNotificationDTOList;
 
     @InjectMocks
-    private TimelineDesignerController timelineDesignerController;
+    private SseNotificationTemplateController sseNotificationTemplateController;
 
     @BeforeEach
     void setUp() {
-        this.timelineDTOList = new ArrayList<>();
-        dto = new TimelineDTO().setTitle("dummyTitleDTO").setQuery("dummyQueryDTO");
-        this.timelineDTOList.add(dto);
+        this.sseNotificationDTOList = new ArrayList<>();
+        dto = new SseNotificationDTO().setTitle("dummyTitleDTO").setQuery("dummyQueryDTO");
+        this.sseNotificationDTOList.add(dto);
 
-        mvc = MockMvcBuilders.standaloneSetup(timelineDesignerController)
+        mvc = MockMvcBuilders.standaloneSetup(sseNotificationTemplateController)
                 .build();
     }
 
     @Test
     void getObjectTest() throws Exception {
 
-        given(timelineDesignerService.getObject()).willReturn(timelineDTOList);
-        MockHttpServletResponse response = mvc.perform(get("/timeline-designer")
+        given(sseNotificationTemplateService.getObject()).willReturn(sseNotificationDTOList);
+        MockHttpServletResponse response = mvc.perform(get("/sse-notification-template")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$[0].title")  ,"dummyTitleDTO");
@@ -69,8 +67,8 @@ public class TimelineDesignerControllerTest {
 
     @Test
     void getByIdTest() throws Exception {
-        given(timelineDesignerService.getObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(get("/timeline-designer/by-id?id=0")
+        given(sseNotificationTemplateService.getObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(get("/sse-notification-template/by-id?id=0")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
         assertEquals(JsonPath.parse(response.getContentAsString()).read("$.title")  ,"dummyTitleDTO");
@@ -78,8 +76,8 @@ public class TimelineDesignerControllerTest {
 
     @Test
     void postObjectTest() throws Exception {
-        given(timelineDesignerService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(post("/timeline-designer")
+        given(sseNotificationTemplateService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(post("/sse-notification-template")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -88,8 +86,8 @@ public class TimelineDesignerControllerTest {
     }
     @Test
     void putObjectTest() throws Exception {
-        given(timelineDesignerService.postObject(any())).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(put("/timeline-designer")
+        given(sseNotificationTemplateService.postObject(any())).willReturn(dto);
+        MockHttpServletResponse response = mvc.perform(put("/sse-notification-template")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
@@ -99,15 +97,12 @@ public class TimelineDesignerControllerTest {
 
     @Test
     void deleteObjectTest() throws Exception {
-        doNothing().when(timelineDesignerService).deleteObject(any());
-        MockHttpServletResponse response = mvc.perform(delete("/timeline-designer?id=0")
+        doNothing().when(sseNotificationTemplateService).deleteObject(any());
+        MockHttpServletResponse response = mvc.perform(delete("/sse-notification-template?id=0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn().getResponse();
         assertEquals(response.getStatus(), HttpStatus.OK.value());
     }
-
-
-
 
 }
