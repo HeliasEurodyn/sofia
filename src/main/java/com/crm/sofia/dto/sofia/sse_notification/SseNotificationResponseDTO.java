@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.sofia.notification;
+package com.crm.sofia.dto.sofia.sse_notification;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class NotificationDTO {
+public class SseNotificationResponseDTO {
 
     private String message;
     private String userToSendId;

@@ -1,6 +1,6 @@
-package com.crm.sofia.services.sofia.notification;
+package com.crm.sofia.services.sofia.sse_notification;
 
-import com.crm.sofia.dto.sofia.notification.NotificationDTO;
+import com.crm.sofia.dto.sofia.sse_notification.SseNotificationResponseDTO;
 import com.crm.sofia.services.sofia.auth.JWTService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,7 +14,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class NotificationService {
+public class SseNotificationService {
 
     final
     JWTService jwtService;
@@ -22,7 +22,7 @@ public class NotificationService {
     private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
 
-    public NotificationService(JWTService jwtService) {
+    public SseNotificationService(JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
@@ -56,21 +56,21 @@ public class NotificationService {
 
     }
 
-    public void send(NotificationDTO notificationDTO) {
+    public void send(SseNotificationResponseDTO sseNotificationResponseDTO) {
 
        HashMap<String,SseEmitter> failedEmitters = new HashMap<>();
 
-        if(notificationDTO.getUserToSendId()!=null && notificationDTO.getMessage()!=null){
+        if(sseNotificationResponseDTO.getUserToSendId()!=null && sseNotificationResponseDTO.getMessage()!=null){
             this.emitters
                     .entrySet()
                     .stream()
-                    .filter(emitterEntry-> emitterEntry.getKey().split("~")[0].equals(notificationDTO.getUserToSendId()))
+                    .filter(emitterEntry-> emitterEntry.getKey().split("~")[0].equals(sseNotificationResponseDTO.getUserToSendId()))
                     .forEach(emitterEntry -> {
                         try {
                             emitterEntry.getValue().send(SseEmitter
                                     .event()
-                                    .name(notificationDTO.getUserToSendId())
-                                    .data(notificationDTO.getMessage()));
+                                    .name(sseNotificationResponseDTO.getUserToSendId())
+                                    .data(sseNotificationResponseDTO.getMessage()));
                         } catch (Exception e) {
                             emitterEntry.getValue().completeWithError(e);
                             failedEmitters.put(emitterEntry.getKey(),emitterEntry.getValue());
