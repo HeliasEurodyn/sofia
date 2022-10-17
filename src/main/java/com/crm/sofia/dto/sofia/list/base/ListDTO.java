@@ -51,6 +51,7 @@ public class ListDTO extends BaseDTO {
     private ComponentDTO component;
     private Long instanceVersion;
     private Boolean accessControlEnabled;
+    private String businessUnit;
     private List<AccessControlDTO> accessControls;
     private List<ListScriptDTO> listScripts;
     private List<ListCssDTO> listCssList;

@@ -28,6 +28,8 @@ public class FormDTO extends BaseDTO {
 
     private Boolean accessControlEnabled;
 
+    private String businessUnit;
+
     private ComponentDTO component;
 
     private List<FormTabDTO> formTabs;

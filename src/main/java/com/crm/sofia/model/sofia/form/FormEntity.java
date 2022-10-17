@@ -34,6 +34,9 @@ public class FormEntity extends MainEntity {
     @Column
     private Boolean accessControlEnabled;
 
+    @Column
+    private String businessUnit;
+
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = com.crm.sofia.model.sofia.component.Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
