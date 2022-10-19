@@ -57,4 +57,9 @@ public class ListDesignerController {
         return this.listDesignerService.clearCacheForUi();
     }
 
+    @GetMapping(path = "/business-units")
+    List<String> getBusinessUnits() {
+        return this.listDesignerService.getBusinessUnits();
+    }
+
 }

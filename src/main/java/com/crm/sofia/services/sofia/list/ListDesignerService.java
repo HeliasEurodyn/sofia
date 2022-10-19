@@ -167,4 +167,9 @@ public class ListDesignerService {
         this.listRepository.increaseInstanceVersions();
         return true;
     }
+
+    public List<String> getBusinessUnits(){
+        List<String> businessUnits = listRepository.findBusinessUnitsDistinct();
+        return  businessUnits;
+    }
 }

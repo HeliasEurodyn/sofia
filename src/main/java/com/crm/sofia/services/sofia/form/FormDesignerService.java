@@ -226,4 +226,9 @@ public class FormDesignerService {
         return true;
     }
 
+    public List<String> getBusinessUnits(){
+        List<String> businessUnits = formRepository.findBusinessUnitsDistinct();
+        return  businessUnits;
+    }
+
 }
