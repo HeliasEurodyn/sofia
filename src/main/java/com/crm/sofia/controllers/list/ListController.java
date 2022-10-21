@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
 import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
-import com.crm.sofia.services.sofia.list.ListService;
+import com.crm.sofia.services.list.ListService;
 import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;

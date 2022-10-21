@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.report;
 
 import com.crm.sofia.dto.sofia.report.ReportDTO;
-import com.crm.sofia.services.sofia.report.ReportDesignerService;
+import com.crm.sofia.services.report.ReportDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

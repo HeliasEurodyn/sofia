@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.menu;
 
 import com.crm.sofia.dto.sofia.menu.MenuDTO;
-import com.crm.sofia.services.sofia.menu.MenuService;
+import com.crm.sofia.services.menu.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

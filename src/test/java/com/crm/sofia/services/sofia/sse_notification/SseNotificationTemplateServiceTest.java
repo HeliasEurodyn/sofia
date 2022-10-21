@@ -1,12 +1,11 @@
 package com.crm.sofia.services.sofia.sse_notification;
 
 import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
-import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
 import com.crm.sofia.mapper.sofia.sse_notification.SseNotificationMapper;
 import com.crm.sofia.model.sofia.sse_notification.SseNotification;
-import com.crm.sofia.model.sofia.timeline.Timeline;
 import com.crm.sofia.repository.sofia.sse_notification.SseNotificationRepository;
-import com.crm.sofia.services.sofia.auth.JWTService;
+import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.sse_notification.SseNotificationTemplateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

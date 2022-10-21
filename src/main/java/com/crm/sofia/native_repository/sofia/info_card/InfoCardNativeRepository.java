@@ -1,14 +1,13 @@
 package com.crm.sofia.native_repository.sofia.info_card;
 
 import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
-import com.crm.sofia.services.sofia.auth.JWTService;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class InfoCardNativeRepository {

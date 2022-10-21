@@ -1,7 +1,6 @@
 package com.crm.sofia.controllers.open_api;
 
-import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.services.sofia.open_api.OpenAPIService;
+import com.crm.sofia.services.open_api.OpenAPIService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

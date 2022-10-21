@@ -3,7 +3,7 @@ package com.crm.sofia.controllers.sofia.download;
 import com.crm.sofia.controllers.download.DownloadController;
 import com.crm.sofia.dto.sofia.download.DownloadDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.download.DownloadService;
+import com.crm.sofia.services.download.DownloadService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

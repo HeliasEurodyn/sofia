@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.settings;
 
 import com.crm.sofia.dto.sofia.settings.SettingsDto;
-import com.crm.sofia.services.sofia.settings.SettingsService;
+import com.crm.sofia.services.settings.SettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

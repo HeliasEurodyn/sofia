@@ -3,7 +3,7 @@ package com.crm.sofia.controllers.expression;
 import com.crm.sofia.dto.sofia.expression.ExprUnitDTO;
 import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
-import com.crm.sofia.services.sofia.expression.ExpressionService;
+import com.crm.sofia.services.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;

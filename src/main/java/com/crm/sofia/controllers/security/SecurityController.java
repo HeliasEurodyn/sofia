@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.security;
 
 import com.crm.sofia.dto.sofia.security.SecurityDTO;
-import com.crm.sofia.services.sofia.security.SecurityService;
+import com.crm.sofia.services.security.SecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

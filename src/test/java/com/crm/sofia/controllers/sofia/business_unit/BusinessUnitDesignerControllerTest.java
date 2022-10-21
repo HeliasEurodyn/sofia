@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.sofia.business_unit;
 
 import com.crm.sofia.controllers.business_unit.BusinessUnitDesignerController;
 import com.crm.sofia.dto.sofia.business_unit.BusinessUnitDTO;
-import com.crm.sofia.services.sofia.business_unit.BusinessUnitDesignerService;
+import com.crm.sofia.services.business_unit.BusinessUnitDesignerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.search;
 
-import com.crm.sofia.services.sofia.search.SearchService;
+import com.crm.sofia.services.search.SearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -1,23 +1,5 @@
 package com.crm.sofia.filters;
 
-import com.crm.sofia.dto.sofia.auth.JWTClaimsResponseDTO;
-import com.crm.sofia.services.sofia.auth.JWTService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Collections;
-
 public class JWTAuthFilter{}
 //
 //@Component

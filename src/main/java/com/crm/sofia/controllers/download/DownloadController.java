@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.download;
 
 import com.crm.sofia.dto.sofia.download.DownloadDTO;
-import com.crm.sofia.services.sofia.download.DownloadService;
+import com.crm.sofia.services.download.DownloadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

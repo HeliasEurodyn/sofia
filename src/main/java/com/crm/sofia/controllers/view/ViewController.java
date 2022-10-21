@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.view;
 
 import com.crm.sofia.dto.sofia.view.ViewDTO;
 import com.crm.sofia.dto.sofia.view.ViewFieldDTO;
-import com.crm.sofia.services.sofia.view.ViewService;
+import com.crm.sofia.services.view.ViewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

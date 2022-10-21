@@ -1,7 +1,7 @@
 package com.crm.sofia.native_repository.rita.rmt;
 
 import com.crm.sofia.dto.cityscape.rtm.*;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;

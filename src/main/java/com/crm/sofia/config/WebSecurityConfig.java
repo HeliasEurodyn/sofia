@@ -2,7 +2,7 @@ package com.crm.sofia.config;
 
 import com.crm.sofia.security.jwt.TokenAuthenticationFilter;
 import com.crm.sofia.security.oauth2.*;
-import com.crm.sofia.services.sofia.user.LocalUserDetailService;
+import com.crm.sofia.services.user.LocalUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

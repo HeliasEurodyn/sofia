@@ -1,7 +1,7 @@
 package com.crm.sofia.native_repository.sofia.chart;
 
 import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
-import com.crm.sofia.services.sofia.auth.JWTService;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

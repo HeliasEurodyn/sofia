@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.timeline;
 
 
 import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
-import com.crm.sofia.services.sofia.timeline.TimelineDesignerService;
+import com.crm.sofia.services.timeline.TimelineDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

@@ -1,22 +1,14 @@
 package com.crm.sofia.controllers.list;
 
-import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;
 import com.crm.sofia.dto.sofia.list.base.ListDTO;
 import com.crm.sofia.dto.sofia.list.base.ListResultsDataDTO;
 import com.crm.sofia.dto.sofia.list.user.ListUiDTO;
-import com.crm.sofia.services.sofia.list.ListService;
-import com.crm.sofia.utils.ExcelGenerator;
+import com.crm.sofia.services.list.ListService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.JRException;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

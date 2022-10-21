@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.sofia.timeline;
 
 import com.crm.sofia.controllers.timeline.TimelineDesignerController;
 import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
-import com.crm.sofia.services.sofia.timeline.TimelineDesignerService;
+import com.crm.sofia.services.timeline.TimelineDesignerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,13 +1,11 @@
 package com.crm.sofia.controllers.user;
 
 import com.crm.sofia.config.CurrentUser;
-import com.crm.sofia.dto.sofia.auth.JWTResponseDTO;
 import com.crm.sofia.dto.sofia.auth.LoginDTO;
 import com.crm.sofia.dto.sofia.user.UserDTO;
 import com.crm.sofia.model.sofia.user.LocalUser;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import com.crm.sofia.utils.GeneralUtils;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

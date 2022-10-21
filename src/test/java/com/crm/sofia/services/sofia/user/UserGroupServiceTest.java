@@ -4,22 +4,19 @@ import com.crm.sofia.dto.sofia.user.UserGroupDTO;
 import com.crm.sofia.mapper.sofia.user.UserGroupMapper;
 import com.crm.sofia.model.sofia.user.UserGroup;
 import com.crm.sofia.repository.sofia.user.UserGroupRepository;
-import com.crm.sofia.services.sofia.auth.JWTService;
+import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.user.UserGroupService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class UserGroupServiceTest   {

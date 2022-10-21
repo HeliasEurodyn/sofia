@@ -8,7 +8,7 @@ import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.repository.sofia.menu.MenuRepository;
 import com.crm.sofia.repository.sofia.user.RoleRepository;
 import com.crm.sofia.repository.sofia.user.UserRepository;
-import com.crm.sofia.services.sofia.data_transfer.DataTransferService;
+import com.crm.sofia.services.data_transfer.DataTransferService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;

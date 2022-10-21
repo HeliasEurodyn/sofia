@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.data_transfer;
 
 import com.crm.sofia.dto.sofia.data_transfer.DataTransferDTO;
-import com.crm.sofia.services.sofia.data_transfer.DataTransferService;
+import com.crm.sofia.services.data_transfer.DataTransferService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

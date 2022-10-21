@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.info_card;
 
 import com.crm.sofia.dto.sofia.info_card.InfoCardDTO;
 import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
-import com.crm.sofia.services.sofia.info_card.InfoCardDesignerService;
+import com.crm.sofia.services.info_card.InfoCardDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

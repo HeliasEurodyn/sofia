@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.business_unit;
 
 import com.crm.sofia.dto.sofia.business_unit.BusinessUnitDTO;
-import com.crm.sofia.services.sofia.business_unit.BusinessUnitDesignerService;
+import com.crm.sofia.services.business_unit.BusinessUnitDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

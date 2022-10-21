@@ -4,7 +4,7 @@ import com.crm.sofia.controllers.appview.AppViewController;
 import com.crm.sofia.dto.sofia.appview.AppViewDTO;
 import com.crm.sofia.dto.sofia.appview.AppViewFieldDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.appview.AppViewService;
+import com.crm.sofia.services.appview.AppViewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

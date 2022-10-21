@@ -1,15 +1,11 @@
 package com.crm.sofia.services.sofia.business_unit;
 
 import com.crm.sofia.dto.sofia.business_unit.BusinessUnitDTO;
-import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
 import com.crm.sofia.mapper.sofia.business_unit.BusinessUnitMapper;
-import com.crm.sofia.mapper.sofia.sse_notification.SseNotificationMapper;
 import com.crm.sofia.model.sofia.business_unit.BusinessUnit;
-import com.crm.sofia.model.sofia.sse_notification.SseNotification;
 import com.crm.sofia.repository.sofia.business_unit.BusinessUnitRepository;
-import com.crm.sofia.repository.sofia.sse_notification.SseNotificationRepository;
-import com.crm.sofia.services.sofia.auth.JWTService;
-import com.crm.sofia.services.sofia.sse_notification.SseNotificationTemplateService;
+import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.business_unit.BusinessUnitDesignerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +13,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 

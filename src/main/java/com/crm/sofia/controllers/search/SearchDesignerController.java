@@ -1,13 +1,12 @@
 package com.crm.sofia.controllers.search;
 
 import com.crm.sofia.dto.sofia.search.SearchDTO;
-import com.crm.sofia.services.sofia.search.SearchDesignerService;
+import com.crm.sofia.services.search.SearchDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController

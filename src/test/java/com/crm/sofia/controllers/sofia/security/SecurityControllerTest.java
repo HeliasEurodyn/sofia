@@ -3,7 +3,7 @@ package com.crm.sofia.controllers.sofia.security;
 import com.crm.sofia.controllers.security.SecurityController;
 import com.crm.sofia.dto.sofia.security.SecurityDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
-import com.crm.sofia.services.sofia.security.SecurityService;
+import com.crm.sofia.services.security.SecurityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.crm.sofia.dto.sofia.user.SocialProvider;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;

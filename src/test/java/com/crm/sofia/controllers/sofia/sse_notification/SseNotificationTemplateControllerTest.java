@@ -2,7 +2,7 @@ package com.crm.sofia.controllers.sofia.sse_notification;
 
 import com.crm.sofia.controllers.sse_notification.SseNotificationTemplateController;
 import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
-import com.crm.sofia.services.sofia.sse_notification.SseNotificationTemplateService;
+import com.crm.sofia.services.sse_notification.SseNotificationTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;

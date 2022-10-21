@@ -3,14 +3,12 @@ package com.crm.sofia.controllers.auth;
 import javax.validation.Valid;
 
 import com.crm.sofia.dto.sofia.user.*;
-import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
 import com.crm.sofia.mapper.sofia.user.UserMapper;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.security.jwt.TokenProvider;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
