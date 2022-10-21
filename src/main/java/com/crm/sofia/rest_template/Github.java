@@ -1,4 +1,4 @@
-package com.crm.sofia.rest_template.sofia;
+package com.crm.sofia.rest_template;
 
 import com.crm.sofia.dto.cityscape.cve_search.VendorDTO;
 import org.springframework.core.ParameterizedTypeReference;
