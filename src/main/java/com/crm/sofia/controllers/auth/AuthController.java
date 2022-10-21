@@ -3,7 +3,7 @@ package com.crm.sofia.controllers.auth;
 import javax.validation.Valid;
 
 import com.crm.sofia.dto.sofia.user.*;
-import com.crm.sofia.mapper.sofia.user.UserMapper;
+import com.crm.sofia.mapper.user.UserMapper;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.security.jwt.TokenProvider;
 import com.crm.sofia.services.user.UserService;

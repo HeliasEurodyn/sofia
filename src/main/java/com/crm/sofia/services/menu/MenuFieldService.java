@@ -1,7 +1,7 @@
 package com.crm.sofia.services.menu;
 
 import com.crm.sofia.dto.sofia.menu.MenuFieldDTO;
-import com.crm.sofia.mapper.sofia.menu.MenuFieldMapper;
+import com.crm.sofia.mapper.menu.MenuFieldMapper;
 import com.crm.sofia.model.sofia.menu.MenuField;
 import com.crm.sofia.repository.menu.MenuRepository;
 import com.crm.sofia.repository.menu.MenuFieldRepository;

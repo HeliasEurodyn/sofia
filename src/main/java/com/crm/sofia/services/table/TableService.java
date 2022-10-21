@@ -2,7 +2,7 @@ package com.crm.sofia.services.table;
 
 import com.crm.sofia.dto.sofia.table.TableDTO;
 import com.crm.sofia.dto.sofia.table.TableFieldDTO;
-import com.crm.sofia.mapper.sofia.table.TableMapper;
+import com.crm.sofia.mapper.table.TableMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.auth.JWTService;

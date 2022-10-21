@@ -5,7 +5,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.sofia.xls_import.XlsImportDTO;
-import com.crm.sofia.mapper.sofia.xls_import.XlsImportMapper;
+import com.crm.sofia.mapper.xls_import.XlsImportMapper;
 import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.xls_import.XlsImport;
 import com.crm.sofia.repository.xls_import.XlsImportRepository;

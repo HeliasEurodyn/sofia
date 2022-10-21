@@ -2,7 +2,7 @@ package com.crm.sofia.services.info_card;
 
 import com.crm.sofia.dto.sofia.info_card.InfoCardDTO;
 import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
-import com.crm.sofia.mapper.sofia.info_card.InfoCardMapper;
+import com.crm.sofia.mapper.info_card.InfoCardMapper;
 import com.crm.sofia.model.sofia.info_card.InfoCard;
 import com.crm.sofia.native_repository.info_card.InfoCardNativeRepository;
 import com.crm.sofia.repository.info_card.InfoCardRepository;

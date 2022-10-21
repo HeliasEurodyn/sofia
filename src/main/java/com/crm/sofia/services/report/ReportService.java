@@ -1,6 +1,6 @@
 package com.crm.sofia.services.report;
 
-import com.crm.sofia.mapper.sofia.report.ReportMapper;
+import com.crm.sofia.mapper.report.ReportMapper;
 import com.crm.sofia.model.sofia.report.Report;
 import com.crm.sofia.model.sofia.report.ReportParameter;
 import com.crm.sofia.repository.report.ReportRepository;

@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.download;
 
 import com.crm.sofia.dto.sofia.download.DownloadDTO;
-import com.crm.sofia.mapper.sofia.download.DownloadMapper;
+import com.crm.sofia.mapper.download.DownloadMapper;
 import com.crm.sofia.model.sofia.download.Download;
 import com.crm.sofia.repository.download.DownloadRepository;
 import com.crm.sofia.services.auth.JWTService;

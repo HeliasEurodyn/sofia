@@ -2,7 +2,7 @@ package com.crm.sofia.services.view;
 
 import com.crm.sofia.dto.sofia.view.ViewDTO;
 import com.crm.sofia.dto.sofia.view.ViewFieldDTO;
-import com.crm.sofia.mapper.sofia.view.ViewMapper;
+import com.crm.sofia.mapper.view.ViewMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import org.springframework.data.jpa.repository.Modifying;

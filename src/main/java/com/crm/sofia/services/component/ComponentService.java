@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.mapper.sofia.component.ComponentMapper;
+import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.model.sofia.component.Component;
 import com.crm.sofia.repository.component.ComponentRepository;
 import com.google.gson.Gson;

@@ -18,7 +18,7 @@ import com.crm.sofia.dto.sofia.user.RoleDTO;
 import com.crm.sofia.dto.sofia.user.UserDTO;
 import com.crm.sofia.dto.sofia.view.ViewDTO;
 import com.crm.sofia.dto.sofia.xls_import.XlsImportDTO;
-import com.crm.sofia.mapper.sofia.data_transfer.DataTransferMapper;
+import com.crm.sofia.mapper.data_transfer.DataTransferMapper;
 import com.crm.sofia.model.sofia.data_transfer.DataTransfer;
 import com.crm.sofia.repository.data_transfer.DataTransferRepository;
 import com.crm.sofia.services.appview.AppViewService;
