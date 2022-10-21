@@ -3,8 +3,8 @@ package com.crm.sofia.services.menu;
 import com.crm.sofia.dto.sofia.menu.MenuFieldDTO;
 import com.crm.sofia.mapper.sofia.menu.MenuFieldMapper;
 import com.crm.sofia.model.sofia.menu.MenuField;
-import com.crm.sofia.repository.sofia.menu.MenuRepository;
-import com.crm.sofia.repository.sofia.menu.MenuFieldRepository;
+import com.crm.sofia.repository.menu.MenuRepository;
+import com.crm.sofia.repository.menu.MenuFieldRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;

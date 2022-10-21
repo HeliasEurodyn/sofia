@@ -5,7 +5,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO
 import com.crm.sofia.dto.sofia.form.base.*;
 import com.crm.sofia.mapper.sofia.form.designer.FormMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
-import com.crm.sofia.repository.sofia.form.FormRepository;
+import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import org.springframework.cache.annotation.CacheEvict;

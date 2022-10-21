@@ -3,8 +3,8 @@ package com.crm.sofia.services.open_api;
 import com.crm.sofia.model.sofia.component.Component;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import com.crm.sofia.model.sofia.list.ListEntity;
-import com.crm.sofia.repository.sofia.form.FormRepository;
-import com.crm.sofia.repository.sofia.list.ListRepository;
+import com.crm.sofia.repository.form.FormRepository;
+import com.crm.sofia.repository.list.ListRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

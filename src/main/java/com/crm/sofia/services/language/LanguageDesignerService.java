@@ -3,7 +3,7 @@ package com.crm.sofia.services.language;
 import com.crm.sofia.dto.sofia.language.LanguageDTO;
 import com.crm.sofia.mapper.sofia.language.LanguageMapper;
 import com.crm.sofia.model.sofia.language.Language;
-import com.crm.sofia.repository.sofia.language.LanguageRepository;
+import com.crm.sofia.repository.language.LanguageRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

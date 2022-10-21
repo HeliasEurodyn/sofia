@@ -3,7 +3,7 @@ package com.crm.sofia.services.user;
 import com.crm.sofia.dto.sofia.user.RoleDTO;
 import com.crm.sofia.mapper.sofia.user.RoleMapper;
 import com.crm.sofia.model.sofia.user.Role;
-import com.crm.sofia.repository.sofia.user.RoleRepository;
+import com.crm.sofia.repository.user.RoleRepository;
 import com.crm.sofia.services.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

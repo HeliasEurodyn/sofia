@@ -6,7 +6,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLine
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentMapper;
 import com.crm.sofia.model.sofia.component.Component;
-import com.crm.sofia.repository.sofia.component.ComponentRepository;
+import com.crm.sofia.repository.component.ComponentRepository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.http.HttpStatus;

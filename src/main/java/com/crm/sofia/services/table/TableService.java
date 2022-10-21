@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.table.TableDTO;
 import com.crm.sofia.dto.sofia.table.TableFieldDTO;
 import com.crm.sofia.mapper.sofia.table.TableMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
-import com.crm.sofia.repository.sofia.persistEntity.PersistEntityRepository;
+import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.component.ComponentDesignerService;
 import org.springframework.beans.factory.annotation.Value;

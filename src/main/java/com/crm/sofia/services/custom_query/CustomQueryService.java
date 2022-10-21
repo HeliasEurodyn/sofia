@@ -3,7 +3,7 @@ package com.crm.sofia.services.custom_query;
 import com.crm.sofia.dto.sofia.custom_query.CustomQueryDTO;
 import com.crm.sofia.mapper.sofia.custom_query.CustomQueryMapper;
 import com.crm.sofia.model.sofia.custom_query.CustomQuery;
-import com.crm.sofia.repository.sofia.custom_query.CustomQueryRepository;
+import com.crm.sofia.repository.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.hibernate.HibernateException;
 import org.hibernate.query.internal.NativeQueryImpl;

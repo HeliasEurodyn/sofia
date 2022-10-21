@@ -4,7 +4,7 @@ package com.crm.sofia.services.search;
 import com.crm.sofia.dto.sofia.search.SearchDTO;
 import com.crm.sofia.mapper.sofia.search.SearchMapper;
 import com.crm.sofia.model.sofia.search.Search;
-import com.crm.sofia.repository.sofia.search.SearchRepository;
+import com.crm.sofia.repository.search.SearchRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

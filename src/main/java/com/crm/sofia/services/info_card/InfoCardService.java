@@ -5,7 +5,7 @@ import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
 import com.crm.sofia.mapper.sofia.info_card.InfoCardMapper;
 import com.crm.sofia.model.sofia.info_card.InfoCard;
 import com.crm.sofia.native_repository.sofia.info_card.InfoCardNativeRepository;
-import com.crm.sofia.repository.sofia.info_card.InfoCardRepository;
+import com.crm.sofia.repository.info_card.InfoCardRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

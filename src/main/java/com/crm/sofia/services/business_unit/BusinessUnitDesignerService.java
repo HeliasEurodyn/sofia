@@ -3,7 +3,7 @@ package com.crm.sofia.services.business_unit;
 import com.crm.sofia.dto.sofia.business_unit.BusinessUnitDTO;
 import com.crm.sofia.mapper.sofia.business_unit.BusinessUnitMapper;
 import com.crm.sofia.model.sofia.business_unit.BusinessUnit;
-import com.crm.sofia.repository.sofia.business_unit.BusinessUnitRepository;
+import com.crm.sofia.repository.business_unit.BusinessUnitRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

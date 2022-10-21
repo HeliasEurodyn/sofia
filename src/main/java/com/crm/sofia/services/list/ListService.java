@@ -14,7 +14,7 @@ import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.list.ListEntity;
 import com.crm.sofia.native_repository.sofia.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.sofia.list.ListUpdaterNativeRepository;
-import com.crm.sofia.repository.sofia.list.ListRepository;
+import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.expression.ExpressionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;

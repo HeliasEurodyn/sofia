@@ -3,7 +3,7 @@ package com.crm.sofia.services.security;
 import com.crm.sofia.dto.sofia.security.SecurityDTO;
 import com.crm.sofia.mapper.sofia.security.AccessControlMapper;
 import com.crm.sofia.model.sofia.security.Security;
-import com.crm.sofia.repository.sofia.security.SecurityRepository;
+import com.crm.sofia.repository.security.SecurityRepository;
 import com.crm.sofia.services.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

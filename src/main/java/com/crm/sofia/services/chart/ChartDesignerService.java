@@ -5,7 +5,7 @@ import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
 import com.crm.sofia.mapper.sofia.chart.ChartMapper;
 import com.crm.sofia.model.sofia.chart.Chart;
 import com.crm.sofia.native_repository.sofia.chart.ChartNativeRepository;
-import com.crm.sofia.repository.sofia.chart.ChartRepository;
+import com.crm.sofia.repository.chart.ChartRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

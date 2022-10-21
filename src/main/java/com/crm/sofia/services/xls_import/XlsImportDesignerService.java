@@ -4,7 +4,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.xls_import.XlsImportDTO;
 import com.crm.sofia.mapper.sofia.xls_import.XlsImportMapper;
 import com.crm.sofia.model.sofia.xls_import.XlsImport;
-import com.crm.sofia.repository.sofia.xls_import.XlsImportRepository;
+import com.crm.sofia.repository.xls_import.XlsImportRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;

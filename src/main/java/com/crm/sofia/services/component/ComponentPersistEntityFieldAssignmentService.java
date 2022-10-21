@@ -5,7 +5,7 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldAss
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentPersistEntityFieldAssignmentMapper;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityFieldAssignment;
-import com.crm.sofia.repository.sofia.component.ComponentPersistEntityFieldAssignmentRepository;
+import com.crm.sofia.repository.component.ComponentPersistEntityFieldAssignmentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

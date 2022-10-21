@@ -3,7 +3,7 @@ package com.crm.sofia.services.settings;
 import com.crm.sofia.dto.sofia.settings.SettingsDto;
 import com.crm.sofia.mapper.sofia.settings.SettingsMapper;
 import com.crm.sofia.model.sofia.settings.Settings;
-import com.crm.sofia.repository.sofia.settings.SettingsRepository;
+import com.crm.sofia.repository.settings.SettingsRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.stereotype.Service;
 

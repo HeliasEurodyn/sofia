@@ -3,7 +3,7 @@ package com.crm.sofia.services.sofia.user;
 import com.crm.sofia.dto.sofia.user.UserGroupDTO;
 import com.crm.sofia.mapper.sofia.user.UserGroupMapper;
 import com.crm.sofia.model.sofia.user.UserGroup;
-import com.crm.sofia.repository.sofia.user.UserGroupRepository;
+import com.crm.sofia.repository.user.UserGroupRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.user.UserGroupService;
 import org.junit.jupiter.api.BeforeEach;
