@@ -6,11 +6,11 @@ import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityFieldDTO;
 import com.crm.sofia.mapper.persistEntity.PersistEntityFieldMapper;
 import com.crm.sofia.mapper.persistEntity.PersistEntityMapper;
-import com.crm.sofia.model.sofia.component.Component;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
-import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
-import com.crm.sofia.model.sofia.persistEntity.PersistEntityField;
+import com.crm.sofia.model.component.Component;
+import com.crm.sofia.model.component.ComponentPersistEntity;
+import com.crm.sofia.model.component.ComponentPersistEntityField;
+import com.crm.sofia.model.persistEntity.PersistEntity;
+import com.crm.sofia.model.persistEntity.PersistEntityField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

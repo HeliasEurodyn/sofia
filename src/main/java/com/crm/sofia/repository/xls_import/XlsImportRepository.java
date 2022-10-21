@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.xls_import;
 
-import com.crm.sofia.model.sofia.xls_import.XlsImport;
+import com.crm.sofia.model.xls_import.XlsImport;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

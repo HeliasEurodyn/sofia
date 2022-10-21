@@ -3,7 +3,7 @@ package com.crm.sofia.security.jwt;
 import java.util.Date;
 
 import com.crm.sofia.config.AppProperties;
-import com.crm.sofia.model.sofia.user.LocalUser;
+import com.crm.sofia.model.user.LocalUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

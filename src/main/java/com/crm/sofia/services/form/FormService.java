@@ -12,7 +12,7 @@ import com.crm.sofia.mapper.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.component.ComponentUiMapper;
 import com.crm.sofia.mapper.form.designer.FormMapper;
 import com.crm.sofia.mapper.form.user.FormUiMapper;
-import com.crm.sofia.model.sofia.form.FormEntity;
+import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.ComponentService;

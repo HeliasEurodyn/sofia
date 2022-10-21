@@ -4,7 +4,7 @@ import com.crm.sofia.dto.user.JwtAuthenticationResponse;
 import com.crm.sofia.dto.user.LoginRequest;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.mapper.user.UserMapper;
-import com.crm.sofia.model.sofia.user.LocalUser;
+import com.crm.sofia.model.user.LocalUser;
 import com.crm.sofia.security.jwt.TokenProvider;
 import com.crm.sofia.services.user.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;

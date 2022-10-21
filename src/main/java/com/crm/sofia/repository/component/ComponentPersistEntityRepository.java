@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.component;
 
-import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
+import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

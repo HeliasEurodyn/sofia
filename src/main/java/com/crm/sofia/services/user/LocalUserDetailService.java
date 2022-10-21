@@ -1,8 +1,8 @@
 package com.crm.sofia.services.user;
 
 import com.crm.sofia.exception.ResourceNotFoundException;
-import com.crm.sofia.model.sofia.user.LocalUser;
-import com.crm.sofia.model.sofia.user.User;
+import com.crm.sofia.model.user.LocalUser;
+import com.crm.sofia.model.user.User;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

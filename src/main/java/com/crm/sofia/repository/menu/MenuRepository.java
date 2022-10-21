@@ -1,7 +1,6 @@
 package com.crm.sofia.repository.menu;
 
-import com.crm.sofia.model.sofia.menu.Menu;
-import com.crm.sofia.model.sofia.user.Role;
+import com.crm.sofia.model.menu.Menu;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.settings;
 
-import com.crm.sofia.model.sofia.settings.Settings;
+import com.crm.sofia.model.settings.Settings;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

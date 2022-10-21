@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.security;
 
 import com.crm.sofia.dto.security.SecurityDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.security.Security;
+import com.crm.sofia.model.security.Security;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 import org.springframework.stereotype.Component;

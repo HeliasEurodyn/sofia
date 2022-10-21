@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.info_card;
 
-import com.crm.sofia.model.sofia.info_card.InfoCard;
+import com.crm.sofia.model.info_card.InfoCard;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

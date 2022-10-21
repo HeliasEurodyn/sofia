@@ -2,7 +2,7 @@ package com.crm.sofia.services.user;
 
 import com.crm.sofia.dto.user.RoleDTO;
 import com.crm.sofia.mapper.user.RoleMapper;
-import com.crm.sofia.model.sofia.user.Role;
+import com.crm.sofia.model.user.Role;
 import com.crm.sofia.repository.user.RoleRepository;
 import com.crm.sofia.services.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;

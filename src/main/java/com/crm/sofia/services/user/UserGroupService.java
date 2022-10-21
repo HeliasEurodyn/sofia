@@ -2,8 +2,8 @@ package com.crm.sofia.services.user;
 
 import com.crm.sofia.dto.user.UserGroupDTO;
 import com.crm.sofia.mapper.user.UserGroupMapper;
-import com.crm.sofia.model.sofia.user.User;
-import com.crm.sofia.model.sofia.user.UserGroup;
+import com.crm.sofia.model.user.User;
+import com.crm.sofia.model.user.UserGroup;
 import com.crm.sofia.repository.user.UserGroupRepository;
 import com.crm.sofia.repository.user.UserRepository;
 import com.crm.sofia.services.auth.JWTService;

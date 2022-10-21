@@ -2,7 +2,7 @@ package com.crm.sofia.services.download;
 
 import com.crm.sofia.dto.download.DownloadDTO;
 import com.crm.sofia.mapper.download.DownloadMapper;
-import com.crm.sofia.model.sofia.download.Download;
+import com.crm.sofia.model.download.Download;
 import com.crm.sofia.repository.download.DownloadRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;

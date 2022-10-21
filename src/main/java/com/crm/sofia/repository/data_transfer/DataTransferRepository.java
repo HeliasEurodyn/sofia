@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.data_transfer;
 
-import com.crm.sofia.model.sofia.data_transfer.DataTransfer;
+import com.crm.sofia.model.data_transfer.DataTransfer;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

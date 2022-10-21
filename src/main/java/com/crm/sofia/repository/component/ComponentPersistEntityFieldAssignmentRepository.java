@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.component;
 
-import com.crm.sofia.model.sofia.component.ComponentPersistEntityFieldAssignment;
+import com.crm.sofia.model.component.ComponentPersistEntityFieldAssignment;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

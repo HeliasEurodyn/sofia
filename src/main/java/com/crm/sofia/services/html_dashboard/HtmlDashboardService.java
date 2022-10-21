@@ -3,7 +3,7 @@ package com.crm.sofia.services.html_dashboard;
 
 import com.crm.sofia.dto.html_dashboard.HtmlDashboardDTO;
 import com.crm.sofia.mapper.html_dashboard.HtmlDashboardMapper;
-import com.crm.sofia.model.sofia.html_dashboard.HtmlDashboard;
+import com.crm.sofia.model.html_dashboard.HtmlDashboard;
 import com.crm.sofia.repository.html_dashboard.HtmlDashboardRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;

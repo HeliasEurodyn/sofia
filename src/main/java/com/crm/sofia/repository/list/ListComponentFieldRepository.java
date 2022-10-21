@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.list;
 
-import com.crm.sofia.model.sofia.list.ListComponentField;
+import com.crm.sofia.model.list.ListComponentField;
 import com.crm.sofia.repository.common.BaseRepository;
 
 import java.util.List;

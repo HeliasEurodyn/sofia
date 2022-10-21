@@ -4,7 +4,7 @@ import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.dto.menu.MenuTranslationDTO;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.user.User;
+import com.crm.sofia.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;

@@ -1,7 +1,6 @@
 package com.crm.sofia.repository.list;
 
-import com.crm.sofia.model.sofia.form.FormEntity;
-import com.crm.sofia.model.sofia.list.ListEntity;
+import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

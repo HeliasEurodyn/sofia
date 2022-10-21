@@ -1,7 +1,7 @@
 package com.crm.sofia.repository.report;
 
-import com.crm.sofia.model.sofia.report.Report;
-import com.crm.sofia.model.sofia.report.ReportParameter;
+import com.crm.sofia.model.report.Report;
+import com.crm.sofia.model.report.ReportParameter;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

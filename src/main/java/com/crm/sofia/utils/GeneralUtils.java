@@ -2,9 +2,9 @@ package com.crm.sofia.utils;
 
 import com.crm.sofia.dto.user.SocialProvider;
 import com.crm.sofia.dto.user.UserInfo;
-import com.crm.sofia.model.sofia.user.LocalUser;
-import com.crm.sofia.model.sofia.user.Role;
-import com.crm.sofia.model.sofia.user.User;
+import com.crm.sofia.model.user.LocalUser;
+import com.crm.sofia.model.user.Role;
+import com.crm.sofia.model.user.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;

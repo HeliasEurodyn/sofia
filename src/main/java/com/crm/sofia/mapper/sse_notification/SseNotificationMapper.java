@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.sse_notification;
 
 import com.crm.sofia.dto.sse_notification.SseNotificationDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.sse_notification.SseNotification;
+import com.crm.sofia.model.sse_notification.SseNotification;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;

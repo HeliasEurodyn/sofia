@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.search;
 
-import com.crm.sofia.model.sofia.search.Search;
+import com.crm.sofia.model.search.Search;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

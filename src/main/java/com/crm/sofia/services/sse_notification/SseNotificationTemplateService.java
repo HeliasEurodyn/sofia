@@ -2,7 +2,7 @@ package com.crm.sofia.services.sse_notification;
 
 import com.crm.sofia.dto.sse_notification.SseNotificationDTO;
 import com.crm.sofia.mapper.sse_notification.SseNotificationMapper;
-import com.crm.sofia.model.sofia.sse_notification.SseNotification;
+import com.crm.sofia.model.sse_notification.SseNotification;
 import com.crm.sofia.repository.sse_notification.SseNotificationRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;

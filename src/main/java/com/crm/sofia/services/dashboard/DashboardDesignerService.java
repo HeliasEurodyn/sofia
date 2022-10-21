@@ -4,7 +4,7 @@ import com.crm.sofia.dto.dashboard.DashboardAreaDTO;
 import com.crm.sofia.dto.dashboard.DashboardDTO;
 import com.crm.sofia.dto.dashboard.DashboardItemDTO;
 import com.crm.sofia.mapper.dashboard.DashboardMapper;
-import com.crm.sofia.model.sofia.dashboard.Dashboard;
+import com.crm.sofia.model.dashboard.Dashboard;
 import com.crm.sofia.repository.dashboard.DashboardRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;

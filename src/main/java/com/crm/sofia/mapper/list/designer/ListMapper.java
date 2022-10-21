@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.list.designer;
 
 import com.crm.sofia.dto.list.base.ListDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.list.ListEntity;
+import com.crm.sofia.model.list.ListEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;

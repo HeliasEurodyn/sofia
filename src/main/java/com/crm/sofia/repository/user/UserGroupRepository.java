@@ -1,5 +1,5 @@
 package com.crm.sofia.repository.user;
-import com.crm.sofia.model.sofia.user.UserGroup;
+import com.crm.sofia.model.user.UserGroup;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

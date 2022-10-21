@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.persistEntity;
 
-import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

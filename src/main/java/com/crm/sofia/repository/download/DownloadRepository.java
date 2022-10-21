@@ -1,7 +1,6 @@
 package com.crm.sofia.repository.download;
 
-import com.crm.sofia.model.sofia.download.Download;
-import com.crm.sofia.model.sofia.report.Report;
+import com.crm.sofia.model.download.Download;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

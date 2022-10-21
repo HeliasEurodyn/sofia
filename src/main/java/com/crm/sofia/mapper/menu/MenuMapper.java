@@ -4,7 +4,7 @@ import com.crm.sofia.dto.menu.MenuDTO;
 import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.dto.menu.MenuTranslationDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.menu.Menu;
+import com.crm.sofia.model.menu.Menu;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

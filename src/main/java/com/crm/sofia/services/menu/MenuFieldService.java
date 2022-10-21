@@ -2,7 +2,7 @@ package com.crm.sofia.services.menu;
 
 import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.mapper.menu.MenuFieldMapper;
-import com.crm.sofia.model.sofia.menu.MenuField;
+import com.crm.sofia.model.menu.MenuField;
 import com.crm.sofia.repository.menu.MenuFieldRepository;
 import com.crm.sofia.repository.menu.MenuRepository;
 import org.springframework.stereotype.Service;

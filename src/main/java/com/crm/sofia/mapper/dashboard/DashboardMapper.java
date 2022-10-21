@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.dashboard;
 
 import com.crm.sofia.dto.dashboard.DashboardDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.dashboard.Dashboard;
+import com.crm.sofia.model.dashboard.Dashboard;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 

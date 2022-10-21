@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.view;
 
 import com.crm.sofia.dto.view.ViewDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;

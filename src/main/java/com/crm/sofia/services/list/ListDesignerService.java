@@ -4,7 +4,7 @@ import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.base.ListDTO;
 import com.crm.sofia.mapper.list.designer.ListMapper;
-import com.crm.sofia.model.sofia.list.ListEntity;
+import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.language.LanguageDesignerService;

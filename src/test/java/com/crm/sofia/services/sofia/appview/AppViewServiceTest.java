@@ -1,7 +1,7 @@
 package com.crm.sofia.services.sofia.appview;
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
-import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
+import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
 import com.crm.sofia.services.appview.AppViewService;
 import org.junit.jupiter.api.BeforeEach;

@@ -3,7 +3,7 @@ package com.crm.sofia.services.component.crud;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
-import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
+import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
 import org.springframework.stereotype.Service;

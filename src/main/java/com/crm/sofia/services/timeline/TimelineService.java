@@ -3,7 +3,7 @@ package com.crm.sofia.services.timeline;
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.dto.timeline.TimelineResponseDTO;
 import com.crm.sofia.mapper.timeline.TimelineMapper;
-import com.crm.sofia.model.sofia.timeline.Timeline;
+import com.crm.sofia.model.timeline.Timeline;
 import com.crm.sofia.repository.timeline.TimelineRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.hibernate.HibernateException;

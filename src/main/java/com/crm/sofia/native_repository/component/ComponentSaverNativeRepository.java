@@ -4,7 +4,7 @@ import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.model.sofia.expression.ExprResponse;
+import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;

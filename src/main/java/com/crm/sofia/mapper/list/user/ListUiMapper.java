@@ -2,8 +2,8 @@ package com.crm.sofia.mapper.list.user;
 
 import com.crm.sofia.dto.list.user.ListUiDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.list.ListComponentField;
-import com.crm.sofia.model.sofia.list.ListEntity;
+import com.crm.sofia.model.list.ListComponentField;
+import com.crm.sofia.model.list.ListEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 

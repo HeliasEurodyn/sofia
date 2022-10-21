@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.user;
 
-import com.crm.sofia.model.sofia.user.Role;
+import com.crm.sofia.model.user.Role;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

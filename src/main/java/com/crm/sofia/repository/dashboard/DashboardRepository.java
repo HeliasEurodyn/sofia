@@ -1,6 +1,6 @@
 package com.crm.sofia.repository.dashboard;
 
-import com.crm.sofia.model.sofia.dashboard.Dashboard;
+import com.crm.sofia.model.dashboard.Dashboard;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.chart;
 
 import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.chart.Chart;
+import com.crm.sofia.model.chart.Chart;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 

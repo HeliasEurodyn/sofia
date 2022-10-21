@@ -1,7 +1,7 @@
 package com.crm.sofia.repository.user;
 
 import com.crm.sofia.config.AppConstants;
-import com.crm.sofia.model.sofia.user.User;
+import com.crm.sofia.model.user.User;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

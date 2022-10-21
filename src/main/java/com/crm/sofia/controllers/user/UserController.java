@@ -3,7 +3,7 @@ package com.crm.sofia.controllers.user;
 import com.crm.sofia.config.CurrentUser;
 import com.crm.sofia.dto.auth.LoginDTO;
 import com.crm.sofia.dto.user.UserDTO;
-import com.crm.sofia.model.sofia.user.LocalUser;
+import com.crm.sofia.model.user.LocalUser;
 import com.crm.sofia.services.user.UserService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;

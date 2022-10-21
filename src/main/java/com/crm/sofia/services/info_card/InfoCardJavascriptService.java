@@ -1,6 +1,6 @@
 package com.crm.sofia.services.info_card;
 
-import com.crm.sofia.model.sofia.info_card.InfoCard;
+import com.crm.sofia.model.info_card.InfoCard;
 import com.crm.sofia.utils.JSMin;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package com.crm.sofia.mapper.timeline;
 
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
-import com.crm.sofia.model.sofia.timeline.Timeline;
+import com.crm.sofia.model.timeline.Timeline;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
