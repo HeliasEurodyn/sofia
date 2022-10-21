@@ -1,4 +1,4 @@
-package com.crm.sofia.native_repository.sofia.list;
+package com.crm.sofia.native_repository.list;
 
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.list.base.GroupEntryDTO;

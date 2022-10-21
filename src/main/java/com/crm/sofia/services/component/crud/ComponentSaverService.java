@@ -3,7 +3,7 @@ package com.crm.sofia.services.component.crud;
 import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.model.sofia.expression.ExprResponse;
-import com.crm.sofia.native_repository.sofia.component.ComponentSaverNativeRepository;
+import com.crm.sofia.native_repository.component.ComponentSaverNativeRepository;
 import com.crm.sofia.services.component.ComponentService;
 import com.crm.sofia.services.expression.ExpressionService;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.crm.sofia.native_repository.sofia.chart;
+package com.crm.sofia.native_repository.chart;
 
 import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
 import com.crm.sofia.services.auth.JWTService;

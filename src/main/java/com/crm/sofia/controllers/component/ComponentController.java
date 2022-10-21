@@ -6,7 +6,7 @@ import com.crm.sofia.services.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentPersistEntityRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
-import com.crm.sofia.native_repository.sofia.component.ComponentPersistEntityRetrieverNativeRepository;
+import com.crm.sofia.native_repository.component.ComponentPersistEntityRetrieverNativeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

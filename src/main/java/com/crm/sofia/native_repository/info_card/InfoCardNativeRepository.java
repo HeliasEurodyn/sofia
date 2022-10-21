@@ -1,4 +1,4 @@
-package com.crm.sofia.native_repository.sofia.info_card;
+package com.crm.sofia.native_repository.info_card;
 
 import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
 import com.crm.sofia.services.auth.JWTService;

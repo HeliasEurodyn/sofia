@@ -4,9 +4,9 @@ import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.sofia.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntity;
-import com.crm.sofia.native_repository.sofia.component.ComponentRetrieverNativeRepository;
+import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
-//import com.crm.sofia.native_repository.sofia.component.ComponentPersistEntityRetrieverNativeRepository;
+//import com.crm.sofia.native_repository.component.ComponentPersistEntityRetrieverNativeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

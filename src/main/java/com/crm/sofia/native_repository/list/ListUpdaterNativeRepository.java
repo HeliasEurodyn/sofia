@@ -1,4 +1,4 @@
-package com.crm.sofia.native_repository.sofia.list;
+package com.crm.sofia.native_repository.list;
 
 import aj.org.objectweb.asm.Type;
 import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
