@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.download;
 
-import com.crm.sofia.controllers.download.DownloadController;
 import com.crm.sofia.dto.download.DownloadDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.download.DownloadService;

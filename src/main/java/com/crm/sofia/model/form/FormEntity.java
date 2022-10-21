@@ -1,7 +1,7 @@
 package com.crm.sofia.model.form;
 
-import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.access_control.AccessControl;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.component.Component;
 import lombok.Data;
 import lombok.experimental.Accessors;

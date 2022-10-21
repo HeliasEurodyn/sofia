@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.security;
 
-import com.crm.sofia.controllers.security.SecurityController;
 import com.crm.sofia.dto.security.SecurityDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.security.SecurityService;
@@ -27,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
 

@@ -1,8 +1,8 @@
 package com.crm.sofia.dto.xls_import;
 
+import com.crm.sofia.dto.access_control.AccessControlDTO;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.component.designer.ComponentDTO;
-import com.crm.sofia.dto.access_control.AccessControlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;

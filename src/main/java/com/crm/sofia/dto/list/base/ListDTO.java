@@ -1,7 +1,7 @@
 package com.crm.sofia.dto.list.base;
 
-import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.access_control.AccessControlDTO;
+import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.dto.list.base.translation.ListTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

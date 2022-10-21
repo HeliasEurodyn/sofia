@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.business_unit.BusinessUnitMapper;
 import com.crm.sofia.model.business_unit.BusinessUnit;
 import com.crm.sofia.repository.business_unit.BusinessUnitRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.business_unit.BusinessUnitDesignerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

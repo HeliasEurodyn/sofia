@@ -1,5 +1,5 @@
 package com.crm.sofia.controllers.user;
-import com.crm.sofia.controllers.user.UserGroupController;
+
 import com.crm.sofia.dto.user.UserGroupDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.user.UserGroupService;
@@ -17,14 +17,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
 public class UserGroupControllerTest {

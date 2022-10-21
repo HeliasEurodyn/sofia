@@ -1,10 +1,10 @@
 package com.crm.sofia.model.list;
 
-import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.access_control.AccessControl;
+import com.crm.sofia.model.common.MainEntity;
 import com.crm.sofia.model.component.Component;
 import com.crm.sofia.model.list.translation.ListTranslation;
-import lombok.*;
+import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;

@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.custom_query;
 
-import com.crm.sofia.controllers.custom_query.CustomQueryDesignerController;
 import com.crm.sofia.dto.custom_query.CustomQueryDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.custom_query.CustomQueryService;
@@ -27,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomQueryControllerTest {

@@ -4,7 +4,7 @@ import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.model.component.ComponentPersistEntityField;
 import com.crm.sofia.model.list.translation.ListComponentFieldTranslation;
-import lombok.*;
+import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;

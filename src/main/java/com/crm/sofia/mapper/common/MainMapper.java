@@ -1,12 +1,9 @@
 package com.crm.sofia.mapper.common;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.model.common.BaseEntity;
 import com.crm.sofia.model.common.MainEntity;
-import com.crm.sofia.repository.common.BaseRepository;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import java.util.Collection;

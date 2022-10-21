@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.security.AccessControlMapper;
 import com.crm.sofia.model.security.Security;
 import com.crm.sofia.repository.security.SecurityRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.security.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

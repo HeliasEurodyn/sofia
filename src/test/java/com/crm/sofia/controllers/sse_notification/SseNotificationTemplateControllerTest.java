@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.sse_notification;
 
-import com.crm.sofia.controllers.sse_notification.SseNotificationTemplateController;
 import com.crm.sofia.dto.sse_notification.SseNotificationDTO;
 import com.crm.sofia.services.sse_notification.SseNotificationTemplateService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,21 +1,14 @@
 package com.crm.sofia.security.jwt;
 
-import java.util.Date;
-
 import com.crm.sofia.config.AppProperties;
 import com.crm.sofia.model.user.LocalUser;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import java.util.Date;
 
 
 @Service

@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.business_unit;
 
-import com.crm.sofia.controllers.business_unit.BusinessUnitDesignerController;
 import com.crm.sofia.dto.business_unit.BusinessUnitDTO;
 import com.crm.sofia.services.business_unit.BusinessUnitDesignerService;
 import com.fasterxml.jackson.databind.ObjectMapper;

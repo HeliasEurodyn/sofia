@@ -5,8 +5,6 @@ import com.crm.sofia.mapper.custom_query.CustomQueryMapper;
 import com.crm.sofia.model.custom_query.CustomQuery;
 import com.crm.sofia.repository.custom_query.CustomQueryRepository;
 import com.crm.sofia.services.auth.JWTService;
-
-import com.crm.sofia.services.custom_query.CustomQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

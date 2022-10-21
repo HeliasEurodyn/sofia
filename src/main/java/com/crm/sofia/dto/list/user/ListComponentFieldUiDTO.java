@@ -1,9 +1,9 @@
 package com.crm.sofia.dto.list.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.list.base.translation.ListComponentFieldTranslationDTO;
 import com.crm.sofia.dto.component.user.ComponentPersistEntityFieldUiDTO;
 import com.crm.sofia.dto.component.user.ComponentPersistEntityUiDTO;
+import com.crm.sofia.dto.list.base.translation.ListComponentFieldTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;

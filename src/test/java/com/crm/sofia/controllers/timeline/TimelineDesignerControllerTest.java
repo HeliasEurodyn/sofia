@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.timeline;
 
-import com.crm.sofia.controllers.timeline.TimelineDesignerController;
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.services.timeline.TimelineDesignerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +25,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
 public class TimelineDesignerControllerTest {

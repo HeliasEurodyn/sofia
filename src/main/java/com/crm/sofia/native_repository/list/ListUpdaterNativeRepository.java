@@ -7,6 +7,7 @@ import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;

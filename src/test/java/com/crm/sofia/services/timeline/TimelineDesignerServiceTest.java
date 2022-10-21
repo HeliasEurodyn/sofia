@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.timeline.TimelineMapper;
 import com.crm.sofia.model.timeline.Timeline;
 import com.crm.sofia.repository.timeline.TimelineRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.timeline.TimelineDesignerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

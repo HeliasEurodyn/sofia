@@ -1,17 +1,22 @@
 package com.crm.sofia.services.appview;
+
 import com.crm.sofia.dto.appview.AppViewDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
 import com.crm.sofia.model.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
-import com.crm.sofia.services.appview.AppViewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
-import javax.persistence.*;
-import java.util.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

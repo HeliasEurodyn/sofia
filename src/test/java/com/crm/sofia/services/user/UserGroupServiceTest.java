@@ -5,18 +5,16 @@ import com.crm.sofia.mapper.user.UserGroupMapper;
 import com.crm.sofia.model.user.UserGroup;
 import com.crm.sofia.repository.user.UserGroupRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.user.UserGroupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.Answers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class UserGroupServiceTest   {

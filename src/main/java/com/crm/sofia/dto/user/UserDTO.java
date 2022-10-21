@@ -2,8 +2,8 @@ package com.crm.sofia.dto.user;
 
 import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.menu.MenuDTO;
 import com.crm.sofia.dto.language.LanguageDTO;
+import com.crm.sofia.dto.menu.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;

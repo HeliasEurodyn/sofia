@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.download.DownloadMapper;
 import com.crm.sofia.model.download.Download;
 import com.crm.sofia.repository.download.DownloadRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.download.DownloadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

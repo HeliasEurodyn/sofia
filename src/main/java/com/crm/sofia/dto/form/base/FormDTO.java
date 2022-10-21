@@ -1,7 +1,7 @@
 package com.crm.sofia.dto.form.base;
 
-import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.access_control.AccessControlDTO;
+import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

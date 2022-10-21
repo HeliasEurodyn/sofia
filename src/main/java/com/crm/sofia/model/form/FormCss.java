@@ -1,7 +1,6 @@
 package com.crm.sofia.model.form;
 
 import com.crm.sofia.model.common.BaseEntity;
-import com.crm.sofia.model.common.MainEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;

@@ -5,7 +5,6 @@ import com.crm.sofia.mapper.sse_notification.SseNotificationMapper;
 import com.crm.sofia.model.sse_notification.SseNotification;
 import com.crm.sofia.repository.sse_notification.SseNotificationRepository;
 import com.crm.sofia.services.auth.JWTService;
-import com.crm.sofia.services.sse_notification.SseNotificationTemplateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
