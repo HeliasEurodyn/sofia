@@ -1,5 +1,6 @@
 package com.crm.sofia.controllers.sofia.custom_query;
 
+import com.crm.sofia.controllers.custom_query.CustomQueryDesignerController;
 import com.crm.sofia.dto.sofia.custom_query.CustomQueryDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.sofia.custom_query.CustomQueryService;
