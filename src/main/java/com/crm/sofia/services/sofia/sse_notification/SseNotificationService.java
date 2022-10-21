@@ -28,23 +28,26 @@ public class SseNotificationService {
 
     @PostConstruct
     public void init() {
-        executor.scheduleWithFixedDelay(keepAlive, 40, 40, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(keepAlive, 0, 40, TimeUnit.SECONDS);
     }
 
     public SseEmitter add() {
-
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 
         String userId = this.jwtService.getUserId();
+        String key = userId + "~" + new Random().nextLong();
+        emitters.put(key, emitter);
 
         emitter.onCompletion(() -> {
-            this.emitters.remove(emitter);
+            this.emitters.remove(key);
         });
         emitter.onTimeout(() -> {
             emitter.complete();
         });
 
-        emitters.put(userId + "~" + new Random().nextLong(),emitter);
+        emitter.onError((error) -> {
+            emitter.complete();
+        });
 
         return emitter;
     }
@@ -53,7 +56,6 @@ public class SseNotificationService {
         if(!id.isEmpty() && id !=null && !this.emitters.isEmpty()){
             Optional.ofNullable(this.emitters.get(id)).ifPresent(emitter -> emitter.complete());
         }
-
     }
 
     public void send(SseNotificationResponseDTO sseNotificationResponseDTO) {

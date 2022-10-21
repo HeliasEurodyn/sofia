@@ -12,14 +12,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse-notification")
 public class SseNotificationController {
 
-
-/*    private final SseNotificationService sseNotificationService;
-
+    private final SseNotificationService sseNotificationService;
 
     public SseNotificationController(SseNotificationService sseNotificationService) {
         this.sseNotificationService = sseNotificationService;
     }
-
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe() {
@@ -36,5 +33,5 @@ public class SseNotificationController {
     public ResponseEntity<SseNotificationResponseDTO> send(@RequestBody SseNotificationResponseDTO sseNotificationResponseDTO) {
         sseNotificationService.send(sseNotificationResponseDTO);
         return ResponseEntity.ok(sseNotificationResponseDTO);
-    }*/
+    }
 }
