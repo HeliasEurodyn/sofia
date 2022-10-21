@@ -1,6 +1,6 @@
 package com.crm.sofia.services.component.crud;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.native_repository.component.ComponentDeleterNativeRepository;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.services.component.ComponentService;

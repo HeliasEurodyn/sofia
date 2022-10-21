@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.view;
 
-import com.crm.sofia.dto.sofia.view.ViewDTO;
+import com.crm.sofia.dto.view.ViewDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import org.mapstruct.Mapper;

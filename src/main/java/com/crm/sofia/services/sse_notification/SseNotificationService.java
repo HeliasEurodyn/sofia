@@ -1,6 +1,6 @@
 package com.crm.sofia.services.sse_notification;
 
-import com.crm.sofia.dto.sofia.sse_notification.SseNotificationResponseDTO;
+import com.crm.sofia.dto.sse_notification.SseNotificationResponseDTO;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

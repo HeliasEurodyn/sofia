@@ -1,6 +1,6 @@
 package com.crm.sofia.validator;
 
-import com.crm.sofia.dto.sofia.user.SignUpRequest;
+import com.crm.sofia.dto.user.SignUpRequest;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

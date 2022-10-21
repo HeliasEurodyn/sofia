@@ -1,15 +1,15 @@
 package com.crm.sofia.services.user;
 
-import com.crm.sofia.dto.sofia.user.UserGroupDTO;
+import com.crm.sofia.dto.user.UserGroupDTO;
 import com.crm.sofia.mapper.user.UserGroupMapper;
 import com.crm.sofia.model.sofia.user.User;
 import com.crm.sofia.model.sofia.user.UserGroup;
+import com.crm.sofia.repository.user.UserGroupRepository;
 import com.crm.sofia.repository.user.UserRepository;
 import com.crm.sofia.services.auth.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.crm.sofia.repository.user.UserGroupRepository;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;

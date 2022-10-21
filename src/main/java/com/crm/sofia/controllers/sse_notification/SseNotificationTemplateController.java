@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sse_notification;
 
-import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
+import com.crm.sofia.dto.sse_notification.SseNotificationDTO;
 import com.crm.sofia.services.sse_notification.SseNotificationTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

@@ -1,8 +1,8 @@
 package com.crm.sofia.mapper.component;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
+import com.crm.sofia.dto.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDataLineDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 

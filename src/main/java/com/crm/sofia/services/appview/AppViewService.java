@@ -1,7 +1,7 @@
 package com.crm.sofia.services.appview;
 
-import com.crm.sofia.dto.sofia.appview.AppViewDTO;
-import com.crm.sofia.dto.sofia.appview.AppViewFieldDTO;
+import com.crm.sofia.dto.appview.AppViewDTO;
+import com.crm.sofia.dto.appview.AppViewFieldDTO;
 import com.crm.sofia.mapper.appview.AppViewMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;

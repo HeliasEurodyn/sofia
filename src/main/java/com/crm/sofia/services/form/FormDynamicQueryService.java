@@ -1,9 +1,9 @@
 package com.crm.sofia.services.form;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDataLineDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDataLineDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.hibernate.HibernateException;

@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.report;
 
-import com.crm.sofia.dto.sofia.report.ReportDTO;
+import com.crm.sofia.dto.report.ReportDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.report.Report;
 import org.mapstruct.Mapper;

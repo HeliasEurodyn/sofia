@@ -1,6 +1,6 @@
 package com.crm.sofia.services.sofia.business_unit;
 
-import com.crm.sofia.dto.sofia.business_unit.BusinessUnitDTO;
+import com.crm.sofia.dto.business_unit.BusinessUnitDTO;
 import com.crm.sofia.mapper.business_unit.BusinessUnitMapper;
 import com.crm.sofia.model.sofia.business_unit.BusinessUnit;
 import com.crm.sofia.repository.business_unit.BusinessUnitRepository;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.crm.sofia.dto.sofia.user.SocialProvider;
+import com.crm.sofia.dto.user.SocialProvider;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

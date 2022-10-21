@@ -1,7 +1,7 @@
 package com.crm.sofia.services.chart;
 
-import com.crm.sofia.dto.sofia.chart.ChartDTO;
-import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
+import com.crm.sofia.dto.chart.ChartDTO;
+import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.mapper.chart.ChartMapper;
 import com.crm.sofia.model.sofia.chart.Chart;
 import com.crm.sofia.native_repository.chart.ChartNativeRepository;
@@ -13,7 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChartDesignerService {

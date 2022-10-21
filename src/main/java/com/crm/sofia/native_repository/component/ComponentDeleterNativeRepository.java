@@ -1,8 +1,8 @@
 package com.crm.sofia.native_repository.component;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 

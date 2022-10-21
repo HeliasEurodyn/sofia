@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.table;
 
-import com.crm.sofia.dto.sofia.table.TableDTO;
-import com.crm.sofia.dto.sofia.table.TableFieldDTO;
+import com.crm.sofia.dto.table.TableDTO;
+import com.crm.sofia.dto.table.TableFieldDTO;
 import com.crm.sofia.services.table.TableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

@@ -1,6 +1,5 @@
 package com.crm.sofia.rest_template;
 
-import com.crm.sofia.dto.cityscape.cve_search.VendorDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;

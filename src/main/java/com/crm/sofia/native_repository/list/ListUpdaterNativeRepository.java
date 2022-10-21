@@ -1,13 +1,10 @@
 package com.crm.sofia.native_repository.list;
 
-import aj.org.objectweb.asm.Type;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.list.base.ListComponentFieldDTO;
-import com.crm.sofia.dto.sofia.list.base.ListDTO;
-import com.crm.sofia.dto.sofia.persistEntity.PersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.base.ListDTO;
+import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
-import org.hibernate.type.IntegerType;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;

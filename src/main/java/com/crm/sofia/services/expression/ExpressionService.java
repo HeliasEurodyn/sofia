@@ -1,6 +1,6 @@
 package com.crm.sofia.services.expression;
 
-import com.crm.sofia.dto.sofia.expression.ExprUnitDTO;
+import com.crm.sofia.dto.expression.ExprUnitDTO;
 import com.crm.sofia.model.sofia.expression.ExprResponse;
 import com.crm.sofia.model.sofia.expression.ExprUnit;
 import com.crm.sofia.model.sofia.expression.expressionUnits.*;

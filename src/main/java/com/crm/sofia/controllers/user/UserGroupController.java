@@ -1,5 +1,5 @@
 package com.crm.sofia.controllers.user;
-import com.crm.sofia.dto.sofia.user.UserGroupDTO;
+import com.crm.sofia.dto.user.UserGroupDTO;
 import com.crm.sofia.services.user.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

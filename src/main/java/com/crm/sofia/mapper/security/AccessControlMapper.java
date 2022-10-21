@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.security;
 
-import com.crm.sofia.dto.sofia.security.SecurityDTO;
+import com.crm.sofia.dto.security.SecurityDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.security.Security;
 import org.mapstruct.Mapper;

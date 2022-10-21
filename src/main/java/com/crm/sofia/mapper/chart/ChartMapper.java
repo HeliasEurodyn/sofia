@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.chart;
 
-import com.crm.sofia.dto.sofia.chart.ChartDTO;
+import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.chart.Chart;
 import org.mapstruct.Mapper;

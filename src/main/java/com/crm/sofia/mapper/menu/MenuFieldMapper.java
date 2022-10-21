@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.menu;
 
-import com.crm.sofia.dto.sofia.menu.MenuFieldDTO;
+import com.crm.sofia.dto.menu.MenuFieldDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.menu.MenuField;
 import org.mapstruct.Mapper;

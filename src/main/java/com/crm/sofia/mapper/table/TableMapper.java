@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.table;
 
-import com.crm.sofia.dto.sofia.table.TableDTO;
+import com.crm.sofia.dto.table.TableDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import org.mapstruct.Mapper;

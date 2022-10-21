@@ -1,6 +1,6 @@
 package com.crm.sofia.config;
 
-import com.crm.sofia.dto.sofia.user.SocialProvider;
+import com.crm.sofia.dto.user.SocialProvider;
 import com.crm.sofia.model.sofia.menu.Menu;
 import com.crm.sofia.model.sofia.menu.MenuField;
 import com.crm.sofia.model.sofia.user.Role;

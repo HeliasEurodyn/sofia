@@ -1,6 +1,6 @@
 package com.crm.sofia.services.security;
 
-import com.crm.sofia.dto.sofia.security.SecurityDTO;
+import com.crm.sofia.dto.security.SecurityDTO;
 import com.crm.sofia.mapper.security.AccessControlMapper;
 import com.crm.sofia.model.sofia.security.Security;
 import com.crm.sofia.repository.security.SecurityRepository;

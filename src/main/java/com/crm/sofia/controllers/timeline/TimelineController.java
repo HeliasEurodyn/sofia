@@ -1,8 +1,8 @@
 package com.crm.sofia.controllers.timeline;
 
 
-import com.crm.sofia.dto.sofia.timeline.TimelineDTO;
-import com.crm.sofia.dto.sofia.timeline.TimelineResponseDTO;
+import com.crm.sofia.dto.timeline.TimelineDTO;
+import com.crm.sofia.dto.timeline.TimelineResponseDTO;
 import com.crm.sofia.services.timeline.TimelineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

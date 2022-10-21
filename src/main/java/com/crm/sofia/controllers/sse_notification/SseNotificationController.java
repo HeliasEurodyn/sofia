@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sse_notification;
 
-import com.crm.sofia.dto.sofia.sse_notification.SseNotificationResponseDTO;
+import com.crm.sofia.dto.sse_notification.SseNotificationResponseDTO;
 import com.crm.sofia.services.sse_notification.SseNotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

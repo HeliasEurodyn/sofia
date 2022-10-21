@@ -1,7 +1,7 @@
 package com.crm.sofia.services.view;
 
-import com.crm.sofia.dto.sofia.view.ViewDTO;
-import com.crm.sofia.dto.sofia.view.ViewFieldDTO;
+import com.crm.sofia.dto.view.ViewDTO;
+import com.crm.sofia.dto.view.ViewFieldDTO;
 import com.crm.sofia.mapper.view.ViewMapper;
 import com.crm.sofia.model.sofia.persistEntity.PersistEntity;
 import com.crm.sofia.repository.persistEntity.PersistEntityRepository;
@@ -16,10 +16,10 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
 @Service
 public class ViewService {

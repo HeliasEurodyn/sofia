@@ -1,8 +1,8 @@
 package com.crm.sofia.services.component;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldAssignmentDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldAssignmentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.component.ComponentPersistEntityFieldAssignmentMapper;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityFieldAssignment;
 import com.crm.sofia.repository.component.ComponentPersistEntityFieldAssignmentRepository;

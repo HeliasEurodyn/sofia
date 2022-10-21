@@ -1,7 +1,7 @@
 package com.crm.sofia.mapper.html_dashboard;
 
 
-import com.crm.sofia.dto.sofia.html_dashboard.HtmlDashboardDTO;
+import com.crm.sofia.dto.html_dashboard.HtmlDashboardDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.html_dashboard.HtmlDashboard;
 import org.mapstruct.Mapper;

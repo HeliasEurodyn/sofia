@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.component;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.component.ComponentPersistEntityField;
 import org.mapstruct.Mapper;

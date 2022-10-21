@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.custom_query;
 
-import com.crm.sofia.dto.sofia.custom_query.CustomQueryDTO;
+import com.crm.sofia.dto.custom_query.CustomQueryDTO;
 import com.crm.sofia.services.custom_query.CustomQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

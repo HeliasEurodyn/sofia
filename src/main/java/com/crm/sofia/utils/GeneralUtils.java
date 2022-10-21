@@ -1,7 +1,7 @@
 package com.crm.sofia.utils;
 
-import com.crm.sofia.dto.sofia.user.SocialProvider;
-import com.crm.sofia.dto.sofia.user.UserInfo;
+import com.crm.sofia.dto.user.SocialProvider;
+import com.crm.sofia.dto.user.UserInfo;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.model.sofia.user.Role;
 import com.crm.sofia.model.sofia.user.User;

@@ -1,7 +1,7 @@
 package com.crm.sofia.services.search;
 
 
-import com.crm.sofia.dto.sofia.search.SearchDTO;
+import com.crm.sofia.dto.search.SearchDTO;
 import com.crm.sofia.mapper.search.SearchMapper;
 import com.crm.sofia.model.sofia.search.Search;
 import com.crm.sofia.repository.search.SearchRepository;

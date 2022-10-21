@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.dashboard;
 
-import com.crm.sofia.dto.sofia.dashboard.DashboardDTO;
+import com.crm.sofia.dto.dashboard.DashboardDTO;
 import com.crm.sofia.services.dashboard.DashboardDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

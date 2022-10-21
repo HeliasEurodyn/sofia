@@ -1,7 +1,7 @@
 package com.crm.sofia.mapper.form.user;
 
-import com.crm.sofia.dto.sofia.form.user.FormUiControlDTO;
-import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
+import com.crm.sofia.dto.form.user.FormUiControlDTO;
+import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import org.mapstruct.Mapper;

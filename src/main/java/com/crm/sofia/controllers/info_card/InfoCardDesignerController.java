@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.info_card;
 
-import com.crm.sofia.dto.sofia.info_card.InfoCardDTO;
-import com.crm.sofia.dto.sofia.info_card.InfoCardTextResponceDTO;
+import com.crm.sofia.dto.info_card.InfoCardDTO;
+import com.crm.sofia.dto.info_card.InfoCardTextResponceDTO;
 import com.crm.sofia.services.info_card.InfoCardDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

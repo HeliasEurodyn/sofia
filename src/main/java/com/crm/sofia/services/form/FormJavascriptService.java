@@ -1,11 +1,14 @@
 package com.crm.sofia.services.form;
 
-import com.crm.sofia.dto.sofia.form.base.FormAreaDTO;
-import com.crm.sofia.dto.sofia.form.base.FormDTO;
+import com.crm.sofia.dto.form.base.FormAreaDTO;
+import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.utils.JSMin;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.crm.sofia.services.form;
 
-import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
+import com.crm.sofia.dto.form.user.FormUiDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

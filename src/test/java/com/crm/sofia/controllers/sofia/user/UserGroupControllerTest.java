@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sofia.user;
 import com.crm.sofia.controllers.user.UserGroupController;
-import com.crm.sofia.dto.sofia.user.UserGroupDTO;
+import com.crm.sofia.dto.user.UserGroupDTO;
 import com.crm.sofia.filters.JWTAuthFilter;
 import com.crm.sofia.services.user.UserGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;

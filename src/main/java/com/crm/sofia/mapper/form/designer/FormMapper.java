@@ -1,11 +1,10 @@
 package com.crm.sofia.mapper.form.designer;
 
-import com.crm.sofia.dto.sofia.form.base.FormDTO;
+import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.form.FormEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
 
 import java.util.List;

@@ -1,13 +1,14 @@
 package com.crm.sofia.controllers.auth;
 
-import javax.validation.Valid;
-
-import com.crm.sofia.dto.sofia.user.*;
+import com.crm.sofia.dto.user.JwtAuthenticationResponse;
+import com.crm.sofia.dto.user.LoginRequest;
+import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.mapper.user.UserMapper;
 import com.crm.sofia.model.sofia.user.LocalUser;
 import com.crm.sofia.security.jwt.TokenProvider;
 import com.crm.sofia.services.user.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.Valid;
 
 @Slf4j
 @RestController

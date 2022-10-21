@@ -1,8 +1,8 @@
 package com.crm.sofia.mapper.user;
 
-import com.crm.sofia.dto.sofia.menu.MenuFieldDTO;
-import com.crm.sofia.dto.sofia.menu.MenuTranslationDTO;
-import com.crm.sofia.dto.sofia.user.UserDTO;
+import com.crm.sofia.dto.menu.MenuFieldDTO;
+import com.crm.sofia.dto.menu.MenuTranslationDTO;
+import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.user.User;
 import org.mapstruct.Mapper;

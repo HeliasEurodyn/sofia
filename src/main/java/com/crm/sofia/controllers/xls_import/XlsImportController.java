@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.xls_import;
 
-import com.crm.sofia.dto.sofia.xls_import.XlsImportDTO;
+import com.crm.sofia.dto.xls_import.XlsImportDTO;
 import com.crm.sofia.services.xls_import.XlsImportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

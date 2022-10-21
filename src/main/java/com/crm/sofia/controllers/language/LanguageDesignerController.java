@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.language;
 
-import com.crm.sofia.dto.sofia.language.LanguageDTO;
+import com.crm.sofia.dto.language.LanguageDTO;
 import com.crm.sofia.services.language.LanguageDesignerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

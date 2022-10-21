@@ -1,13 +1,13 @@
 package com.crm.sofia.services.form;
 
-import com.crm.sofia.dto.sofia.component.designer.ComponentDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.sofia.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.base.*;
-import com.crm.sofia.dto.sofia.form.base.FormControlTableControlDTO;
-import com.crm.sofia.dto.sofia.form.base.FormPopupDto;
-import com.crm.sofia.dto.sofia.form.user.*;
+import com.crm.sofia.dto.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.dto.component.user.ComponentUiDTO;
+import com.crm.sofia.dto.form.base.FormControlTableControlDTO;
+import com.crm.sofia.dto.form.base.FormPopupDto;
+import com.crm.sofia.dto.form.base.*;
+import com.crm.sofia.dto.form.user.*;
 import com.crm.sofia.mapper.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.component.ComponentUiMapper;
 import com.crm.sofia.mapper.form.designer.FormMapper;
@@ -199,21 +199,21 @@ public class FormService {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
                 formArea.getFormControls().forEach(formControl -> {
                     if (formControl.getType().equals("table")) {
-                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
-                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.form.user.FormControlTableControlDTO::getShortOrder));
                     }
                 });
             });
         });
-        formUiDTO.getFormPopups().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormPopupDto::getShortOrder));
+        formUiDTO.getFormPopups().sort(Comparator.comparingLong(com.crm.sofia.dto.form.user.FormPopupDto::getShortOrder));
         formUiDTO.getFormPopups().forEach(formPopup -> {
             formPopup.getFormAreas().sort(Comparator.comparingLong(FormUiAreaDTO::getShortOrder));
             formPopup.getFormAreas().forEach(formArea -> {
                 formArea.getFormControls().sort(Comparator.comparingLong(FormUiControlDTO::getShortOrder));
                 formArea.getFormControls().forEach(formControl -> {
                     if (formControl.getType().equals("table")) {
-                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
-                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.sofia.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(com.crm.sofia.dto.form.user.FormControlTableControlDTO::getShortOrder));
+                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(com.crm.sofia.dto.form.user.FormControlTableControlDTO::getShortOrder));
                     }
                 });
             });

@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.language;
 
-import com.crm.sofia.dto.sofia.language.LanguageDTO;
+import com.crm.sofia.dto.language.LanguageDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.language.Language;
 import org.mapstruct.Mapper;

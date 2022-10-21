@@ -1,7 +1,7 @@
 package com.crm.sofia.services.user;
 
 import com.crm.sofia.config.AppConstants;
-import com.crm.sofia.dto.sofia.user.*;
+import com.crm.sofia.dto.user.*;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
 import com.crm.sofia.mapper.user.UserMapper;

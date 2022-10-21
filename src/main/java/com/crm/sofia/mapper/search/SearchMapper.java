@@ -1,6 +1,6 @@
 package com.crm.sofia.mapper.search;
 
-import com.crm.sofia.dto.sofia.search.SearchDTO;
+import com.crm.sofia.dto.search.SearchDTO;
 import com.crm.sofia.mapper.common.BaseMapper;
 import com.crm.sofia.model.sofia.search.Search;
 import org.mapstruct.Mapper;

@@ -1,8 +1,8 @@
 package com.crm.sofia.controllers.form;
 
-import com.crm.sofia.dto.sofia.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.sofia.form.base.FormDTO;
-import com.crm.sofia.dto.sofia.form.user.FormUiDTO;
+import com.crm.sofia.dto.component.user.ComponentUiDTO;
+import com.crm.sofia.dto.form.base.FormDTO;
+import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;

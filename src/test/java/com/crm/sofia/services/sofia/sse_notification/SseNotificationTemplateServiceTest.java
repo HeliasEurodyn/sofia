@@ -1,6 +1,6 @@
 package com.crm.sofia.services.sofia.sse_notification;
 
-import com.crm.sofia.dto.sofia.sse_notification.SseNotificationDTO;
+import com.crm.sofia.dto.sse_notification.SseNotificationDTO;
 import com.crm.sofia.mapper.sse_notification.SseNotificationMapper;
 import com.crm.sofia.model.sofia.sse_notification.SseNotification;
 import com.crm.sofia.repository.sse_notification.SseNotificationRepository;

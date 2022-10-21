@@ -1,7 +1,7 @@
 package com.crm.sofia.controllers.chart;
 
-import com.crm.sofia.dto.sofia.chart.ChartDTO;
-import com.crm.sofia.dto.sofia.chart.ChartFieldDTO;
+import com.crm.sofia.dto.chart.ChartDTO;
+import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.services.chart.ChartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
