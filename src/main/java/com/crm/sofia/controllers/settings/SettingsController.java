@@ -23,16 +23,6 @@ public class SettingsController {
         return this.settingsService.getObject();
     }
 
-    @PostMapping
-    public void postObject(@RequestBody SettingsDto settingsDto) {
-         this.settingsService.postObject(settingsDto);
-    }
-
-    @PutMapping
-    public void putObject(@RequestBody SettingsDto settingsDto) {
-         this.settingsService.postObject(settingsDto);
-    }
-
     @GetMapping(value = "login-image")
     public String getLoginImage() {
         return this.settingsService.getLoginImage();

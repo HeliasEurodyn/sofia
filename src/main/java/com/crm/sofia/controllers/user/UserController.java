@@ -13,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -24,32 +22,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @GetMapping
-    public @ResponseBody
-    Collection<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping(path="/by-id")
-    public UserDTO getUser(@RequestParam("id") String id) {
-        return userService.getUser(id);
-    }
-
-    @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO) {
-        return userService.postUser(userDTO);
-    }
-
-    @PutMapping
-    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
-        return this.userService.putUser(userDTO);
-    }
-
-    @DeleteMapping
-    public Boolean delete(@RequestParam("id") String id) {
-        return this.userService.delete(id);
     }
 
     @PutMapping(value = "/current-language")
@@ -79,28 +51,4 @@ public class UserController {
     public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
         return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
     }
-
-    @GetMapping("/all")
-    public ResponseEntity<?> getContent() {
-        return ResponseEntity.ok("Public content goes here");
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getUserContent() {
-        return ResponseEntity.ok("User content goes here");
-    }
-
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAdminContent() {
-        return ResponseEntity.ok("Admin content goes here");
-    }
-
-    @GetMapping("/mod")
-    @PreAuthorize("hasRole('MODERATOR')")
-    public ResponseEntity<?> getModeratorContent() {
-        return ResponseEntity.ok("Moderator content goes here");
-    }
-
 }
