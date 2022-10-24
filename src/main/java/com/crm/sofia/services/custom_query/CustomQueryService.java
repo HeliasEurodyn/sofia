@@ -17,8 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
-import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,11 +34,6 @@ public class CustomQueryService {
                               EntityManager entityManager) {
         this.jwtService = jwtService;
         this.entityManager = entityManager;
-    }
-
-    public List<CustomQueryDTO> getObject() {
-        List<CustomQuery> entites = customQueryRepository.findAll();
-        return customQueryMapper.map(entites);
     }
 
     public CustomQueryDTO getObject(String id) {
@@ -105,28 +98,6 @@ public class CustomQueryService {
         } catch (HibernateException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
-    }
-
-    public CustomQueryDTO postObject(CustomQueryDTO customQueryDto) {
-
-        CustomQuery customQuery = customQueryMapper.map(customQueryDto);
-        if (customQueryDto.getId() == null) {
-            customQuery.setCreatedOn(Instant.now());
-            customQuery.setCreatedBy(jwtService.getUserId());
-        }
-        customQuery.setModifiedOn(Instant.now());
-        customQuery.setModifiedBy(jwtService.getUserId());
-        CustomQuery savedData = customQueryRepository.save(customQuery);
-
-        return customQueryMapper.map(savedData);
-    }
-
-    public void deleteObject(String id) {
-        Optional<CustomQuery> optionalEntity = customQueryRepository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Object does not exist");
-        }
-        customQueryRepository.deleteById(optionalEntity.get().getId());
     }
 
 }

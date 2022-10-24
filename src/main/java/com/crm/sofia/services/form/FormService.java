@@ -15,7 +15,6 @@ import com.crm.sofia.mapper.form.user.FormUiMapper;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
-import com.crm.sofia.services.component.ComponentService;
 import com.crm.sofia.services.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
@@ -36,7 +35,6 @@ public class FormService {
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
     private final ComponentRetrieverService componentRetrieverService;
     private final ComponentSaverService componentSaverService;
-    private final ComponentService componentService;
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
     private final ComponentDeleterService componentDeleterService;
@@ -47,7 +45,6 @@ public class FormService {
                        ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
                        ComponentRetrieverService componentRetrieverService,
                        ComponentSaverService componentSaverService,
-                       ComponentService componentService,
                        ComponentUiMapper componentUiMapper,
                        ComponentJsonMapper componentJsonMapper,
                        ComponentDeleterService componentDeleterService) {
@@ -57,7 +54,6 @@ public class FormService {
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
         this.componentRetrieverService = componentRetrieverService;
         this.componentSaverService = componentSaverService;
-        this.componentService = componentService;
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
         this.componentDeleterService = componentDeleterService;

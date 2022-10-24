@@ -1,6 +1,5 @@
 package com.crm.sofia.services.user;
 
-import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.user.*;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
@@ -28,13 +27,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -63,60 +64,6 @@ public class UserService {
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
-    }
-
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAllByStatusIsNotLikeOrderByCreatedOn(AppConstants.Types.UserStatus.deleted);
-        return userMapper.mapUsersToDtos(users);
-    }
-
-    public UserDTO getUser(String id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            return userMapper.mapUserToDto(userOptional.get());
-        } else {
-            return null;
-        }
-    }
-
-    public UserDTO getTransferUser(String id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            return userMapper.map(userOptional.get());
-        } else {
-            return null;
-        }
-    }
-
-    public UserDTO postUser(UserDTO userDTO) {
-
-        if (userDTO.getPassword().equals("") || !userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Password error!!");
-        }
-
-        User user = userMapper.map(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        boolean existingUser = userRepository.userExists(userDTO.getUsername());
-        if (existingUser) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User already exists!!");
-        }
-
-        user.setCreatedBy(this.jwtService.getUserId());
-        user.setCreatedOn(Instant.now());
-        user.setModifiedBy(this.jwtService.getUserId());
-        user.setModifiedOn(Instant.now());
-        user.setEnabled(true);
-        user.setCurrentLanguage(user.getDefaultLanguage());
-        User createdUser = userRepository.save(user);
-        UserDTO responseUserDTO = userMapper.map(createdUser);
-        responseUserDTO.setPassword("");
-
-        return responseUserDTO;
-    }
-
-    public void postTransferUser(UserDTO userDTO) {
-        User user = userMapper.map(userDTO);
-        User createdUser = userRepository.save(user);
     }
 
     @Transactional
@@ -154,37 +101,6 @@ public class UserService {
         String userId = this.jwtService.getUserId();
 
        this.userRepository.updateCurrentLanguage(userId, languageId);
-    }
-
-    public UserDTO putUser(UserDTO userDTO) {
-        User user = userMapper.map(userDTO);
-        if ((userDTO.getPassword()==null?"":userDTO.getPassword()).equals("") && (userDTO.getRepeatPassword()==null?"":userDTO.getRepeatPassword()).equals("")) {
-            String password = userRepository.findPasswordById(user.getId());
-            user.setPassword(password);
-        } else if (!userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Password error!!");
-        } else {
-            user.setEnabled(true);
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        }
-
-        user.setCreatedBy(this.jwtService.getUserId());
-        user.setCreatedOn(Instant.now());
-        user.setModifiedBy(this.jwtService.getUserId());
-        user.setModifiedOn(Instant.now());
-        user.setEnabled(true);
-        user.setCurrentLanguage(user.getDefaultLanguage());
-        User createdUser = userRepository.save(user);
-
-        UserDTO responseUserDTO = userMapper.map(createdUser);
-        responseUserDTO.setPassword("");
-
-        return responseUserDTO;
-    }
-
-    public Boolean delete(String id) {
-        userRepository.deleteById(id);
-        return true;
     }
 
     public UserDTO getCurrentUser() {

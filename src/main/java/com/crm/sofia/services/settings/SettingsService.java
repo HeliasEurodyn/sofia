@@ -7,7 +7,6 @@ import com.crm.sofia.repository.settings.SettingsRepository;
 import com.crm.sofia.services.auth.JWTService;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -51,13 +50,6 @@ public class SettingsService {
         }
 
         return settingsMapper.map(settings);
-    }
-
-    @Transactional
-    public void postObject(SettingsDto settingsDto) {
-        Settings settings = this.settingsMapper.map(settingsDto);
-        settings.setId("1");
-        this.settingsRepository.save(settings);
     }
 
     public String getName() {
