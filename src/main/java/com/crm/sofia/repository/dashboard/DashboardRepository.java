@@ -11,9 +11,4 @@ public interface DashboardRepository extends BaseRepository<Dashboard> {
 
     List<Dashboard> findAll();
 
-//    @Query("SELECT d FROM Dashboard d " +
-//            "INNER JOIN FETCH d.dashboardAreaList dl " +
-//            "INNER JOIN FETCH dl.dashboardItemList  " +
-//            "WHERE d.id =:id ")
-//    Dashboard findDashboardById(@Param("id") Long id);
 }

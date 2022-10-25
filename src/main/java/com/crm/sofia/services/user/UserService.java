@@ -1,6 +1,7 @@
 package com.crm.sofia.services.user;
 
 import com.crm.sofia.dto.user.*;
+import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
 import com.crm.sofia.mapper.user.UserMapper;
@@ -70,6 +71,11 @@ public class UserService {
     public ResponseEntity<?> authenticate(@NotBlank String username, @NotBlank String enteredPassword) {
 
         Optional<User> userOptional = userRepository.findByUsername(username);
+
+        if (!userOptional.isPresent()) {
+            throw new DoesNotExistException();
+        }
+
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(enteredPassword, user.getPassword())) {
