@@ -17,5 +17,4 @@ public class InfoCardScriptDTO extends BaseDTO {
     private String name;
 
     private String script;
-
 }

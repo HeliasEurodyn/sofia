@@ -17,7 +17,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class CustomQueryDTO  extends BaseDTO {
+public class CustomQueryDTO extends BaseDTO {
 
     private String code;
 
