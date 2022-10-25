@@ -1,6 +1,5 @@
 package com.crm.sofia.services.report;
 
-import com.crm.sofia.mapper.report.ReportMapper;
 import com.crm.sofia.model.report.Report;
 import com.crm.sofia.model.report.ReportParameter;
 import com.crm.sofia.repository.report.ReportRepository;
@@ -39,16 +38,13 @@ import java.util.Optional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final ReportMapper reportMapper;
     private final JWTService jwtService;
     private final DataSource dataSource;
 
     public ReportService(ReportRepository reportRepository,
-                         ReportMapper reportMapper,
                          JWTService jwtService,
                          DataSource dataSource) {
         this.reportRepository = reportRepository;
-        this.reportMapper = reportMapper;
         this.jwtService = jwtService;
         this.dataSource = dataSource;
     }

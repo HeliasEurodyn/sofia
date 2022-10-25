@@ -6,10 +6,12 @@ import com.crm.sofia.model.list.ListComponentField;
 import com.crm.sofia.model.list.ListEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class ListUiMapper extends BaseMapper<ListUiDTO, ListEntity> {
 

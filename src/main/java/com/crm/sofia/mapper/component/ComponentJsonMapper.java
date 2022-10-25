@@ -5,12 +5,14 @@ import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDataLineDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class ComponentJsonMapper {
 
