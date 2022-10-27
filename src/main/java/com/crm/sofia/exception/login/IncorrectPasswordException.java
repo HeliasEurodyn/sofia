@@ -5,8 +5,8 @@ import com.crm.sofia.exception.common.SofiaException;
 public class IncorrectPasswordException extends SofiaException {
 
     public IncorrectPasswordException() {
+        super("Incorrect Password");
         this.setCategory("LOGIN");
-        this.setMessage("Incorrect Password");
         this.setCode("001-1");
         this.setVisible(true);
     }

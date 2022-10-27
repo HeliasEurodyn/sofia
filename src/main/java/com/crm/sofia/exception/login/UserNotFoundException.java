@@ -5,8 +5,8 @@ import com.crm.sofia.exception.common.SofiaException;
 public class UserNotFoundException extends SofiaException {
 
     public UserNotFoundException() {
+        super("User Not Found");
         this.setCategory("LOGIN");
-        this.setMessage("User Not Found");
         this.setCode("001-1");
         this.setVisible(true);
     }

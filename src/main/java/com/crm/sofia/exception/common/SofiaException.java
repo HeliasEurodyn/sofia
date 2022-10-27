@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 public class SofiaException extends RuntimeException implements Serializable {
 
     private String category;
-    private String message;
     private String code;
     private boolean isVisible;
 
