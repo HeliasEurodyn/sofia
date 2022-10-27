@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class CouldNotDeleteException extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class CouldNotDeleteException extends SofiaException {
 
     public CouldNotDeleteException() {
     }

@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class CouldNotSaveException extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class CouldNotSaveException extends SofiaException {
 
     public CouldNotSaveException() {
     }

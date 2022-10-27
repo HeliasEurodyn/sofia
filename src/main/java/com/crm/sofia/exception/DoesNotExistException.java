@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class DoesNotExistException extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class DoesNotExistException extends SofiaException {
 
     public DoesNotExistException() {
     }
