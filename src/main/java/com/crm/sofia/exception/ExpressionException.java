@@ -6,14 +6,9 @@ public class ExpressionException extends SofiaException {
 
     public ExpressionException(String message) {
         super(message);
-    }
-
-    public ExpressionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ExpressionException(String message, Object... args) {
-        super(message, args);
+        this.setCode("4000");
+        this.setCategory("4000");
+        this.setVisible(true);
     }
 }
 
