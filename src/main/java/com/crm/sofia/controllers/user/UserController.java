@@ -28,6 +28,10 @@ public class UserController {
     public void updateCurrentLanguage(@RequestParam("language-id") Long languageId) {
         this.userService.updateCurrentLanguage(languageId);
     }
+    @PutMapping
+    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
+        return this.userService.putUser(userDTO);
+    }
 
     /**
      * Authenticates a user and returns a JWT if authentication was successful.

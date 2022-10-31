@@ -18,6 +18,7 @@ import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.menu.MenuFieldService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
@@ -101,6 +103,32 @@ public class UserService {
         String userId = this.jwtService.getUserId();
 
        this.userRepository.updateCurrentLanguage(userId, languageId);
+    }
+
+    public UserDTO putUser(UserDTO userDTO) {
+        User user = userMapper.map(userDTO);
+        if ((userDTO.getPassword()==null?"":userDTO.getPassword()).equals("") && (userDTO.getRepeatPassword()==null?"":userDTO.getRepeatPassword()).equals("")) {
+            String password = userRepository.findPasswordById(user.getId());
+            user.setPassword(password);
+        } else if (!userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Password error!!");
+        } else {
+            user.setEnabled(true);
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
+
+        user.setCreatedBy(this.jwtService.getUserId());
+        user.setCreatedOn(Instant.now());
+        user.setModifiedBy(this.jwtService.getUserId());
+        user.setModifiedOn(Instant.now());
+        user.setEnabled(true);
+        user.setCurrentLanguage(user.getDefaultLanguage());
+        User createdUser = userRepository.save(user);
+
+        UserDTO responseUserDTO = userMapper.map(createdUser);
+        responseUserDTO.setPassword("");
+
+        return responseUserDTO;
     }
 
     public UserDTO getCurrentUser() {
