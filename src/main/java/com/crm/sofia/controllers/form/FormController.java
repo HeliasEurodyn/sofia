@@ -5,7 +5,6 @@ import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,25 +67,21 @@ public class FormController {
         this.formService.delete(formId, selectionId);
     }
 
-    @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScript(@PathVariable("id") String formId) {
         return this.formService.getJavaScript(formId);
     }
 
-    @Transactional
     @RequestMapping(value = "/dynamic-javascript/{id}/min/script.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormMinJavaScript(@PathVariable("id") String formId) {
         return this.formService.getMinJavaScript(formId);
     }
 
-    @Transactional
     @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
     String getFormJavaScriptFactory() {
         return this.formService.getJavaScriptFactory();
     }
 
-    @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
     String getFormCssScript(@PathVariable("id") String formId) {
         return this.formService.getCssScript(formId);
