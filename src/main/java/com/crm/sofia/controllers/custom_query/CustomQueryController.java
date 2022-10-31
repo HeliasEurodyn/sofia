@@ -33,4 +33,10 @@ public class CustomQueryController {
         return "{\"response\": \"" + response.toString() + "\"}";
     }
 
+    @PostMapping(path = "/data-objects")
+    Object postDataObjects(@RequestParam("id") String id, @RequestParam Map<String, String> parameters) {
+        Object response = customQueryService.postData(id, parameters);
+        return "{\"response\": \"" + response.toString() + "\"}";
+    }
+
 }
