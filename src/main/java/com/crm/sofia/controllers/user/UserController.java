@@ -2,6 +2,7 @@ package com.crm.sofia.controllers.user;
 
 import com.crm.sofia.config.CurrentUser;
 import com.crm.sofia.dto.auth.LoginDTO;
+import com.crm.sofia.dto.user.ChangePasswordRequest;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.model.user.LocalUser;
 import com.crm.sofia.services.user.UserService;
@@ -28,9 +29,9 @@ public class UserController {
     public void updateCurrentLanguage(@RequestParam("language-id") Long languageId) {
         this.userService.updateCurrentLanguage(languageId);
     }
-    @PutMapping
-    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
-        return this.userService.putUser(userDTO);
+    @PutMapping(value = "/change-password")
+    public UserDTO changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        return this.userService.changePassword(changePasswordRequest);
     }
 
     /**

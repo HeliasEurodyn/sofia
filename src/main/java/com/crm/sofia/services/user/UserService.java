@@ -3,6 +3,7 @@ package com.crm.sofia.services.user;
 import com.crm.sofia.dto.user.*;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
+import com.crm.sofia.exception.login.ChangePasswordException;
 import com.crm.sofia.exception.login.IncorrectPasswordException;
 import com.crm.sofia.exception.login.UserNotFoundException;
 import com.crm.sofia.mapper.user.UserMapper;
@@ -18,6 +19,7 @@ import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.menu.MenuFieldService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -105,29 +107,26 @@ public class UserService {
        this.userRepository.updateCurrentLanguage(userId, languageId);
     }
 
-    public UserDTO putUser(UserDTO userDTO) {
-        User user = userMapper.map(userDTO);
-        if ((userDTO.getPassword()==null?"":userDTO.getPassword()).equals("") && (userDTO.getRepeatPassword()==null?"":userDTO.getRepeatPassword()).equals("")) {
-            String password = userRepository.findPasswordById(user.getId());
-            user.setPassword(password);
-        } else if (!userDTO.getPassword().equals(userDTO.getRepeatPassword())) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Password error!!");
-        } else {
-            user.setEnabled(true);
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+    @Transactional
+    public UserDTO changePassword(ChangePasswordRequest optionalChangePasswordRequest) {
+
+        ChangePasswordRequest changePasswordRequest = Optional.ofNullable(optionalChangePasswordRequest)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error!"));
+
+        User currentUser = userRepository.findByUsername(changePasswordRequest.getUsername())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error!"));
+
+
+        if(StringUtils.isNotBlank(changePasswordRequest.getPassword()) || StringUtils.isNotBlank(changePasswordRequest.getRepeatPassword())){
+            if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getRepeatPassword())) {
+                throw new ChangePasswordException();
+            }else {
+                currentUser.setEnabled(true);
+                currentUser.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
+            }
         }
 
-        user.setCreatedBy(this.jwtService.getUserId());
-        user.setCreatedOn(Instant.now());
-        user.setModifiedBy(this.jwtService.getUserId());
-        user.setModifiedOn(Instant.now());
-        user.setEnabled(true);
-        user.setCurrentLanguage(user.getDefaultLanguage());
-        User createdUser = userRepository.save(user);
-
-        UserDTO responseUserDTO = userMapper.map(createdUser);
-        responseUserDTO.setPassword("");
-
+        UserDTO responseUserDTO = userMapper.mapUserToDto(currentUser);
         return responseUserDTO;
     }
 

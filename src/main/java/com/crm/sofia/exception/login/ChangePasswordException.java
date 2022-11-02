@@ -2,19 +2,20 @@ package com.crm.sofia.exception.login;
 
 import com.crm.sofia.exception.common.SofiaException;
 
-public class UserNotFoundException extends SofiaException {
+public class ChangePasswordException extends SofiaException {
 
-    public UserNotFoundException() {
-        super("User Not Found");
+    public ChangePasswordException() {
+        super("Passwords Do Not Match");
         this.setCategory("LOGIN");
-        this.setCode("001-2");
+        this.setCode("001-3");
         this.setVisible(true);
     }
 
-    public UserNotFoundException(String message) {
+    public ChangePasswordException(String message) {
         super(message);
         this.setCategory("LOGIN");
-        this.setCode("001-2");
+        this.setCode("001-3");
         this.setVisible(true);
     }
+
 }
