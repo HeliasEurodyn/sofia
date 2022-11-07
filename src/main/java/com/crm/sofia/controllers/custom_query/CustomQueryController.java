@@ -1,6 +1,6 @@
 package com.crm.sofia.controllers.sofia.custom_query;
 
-import com.crm.sofia.services.sofia.custom_query.CustomQueryService;
+import com.crm.sofia.services.custom_query.CustomQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

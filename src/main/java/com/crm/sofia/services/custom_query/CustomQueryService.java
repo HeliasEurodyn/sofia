@@ -128,33 +128,4 @@ public class CustomQueryService {
         }
     }
 
-    @Transactional
-    @Modifying
-    public Object postDataObjects(String id, Map<String, String> parameters) {
-        try {
-            Object lastInsertId;
-            CustomQueryDTO dto = this.getObject(id);
-            String queryString = dto.getQuery();
-            Query query = entityManager.createNativeQuery(queryString);
-
-            if( queryString.contains(":userid")){
-                query.setParameter("userid",this.jwtService.getUserId());
-            }
-
-            parameters
-                    .entrySet()
-                    .stream()
-                    .filter(entry->  queryString.contains(":"+entry.getKey()))
-                    .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
-
-            query.executeUpdate();
-            lastInsertId = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
-
-            return lastInsertId;
-        } catch (HibernateException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
-    }
-
-
 }
