@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class MismatchException extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class MismatchException extends SofiaException {
     public MismatchException() {
     }
 

@@ -1,6 +1,6 @@
 package com.crm.sofia.security.oauth2.user;
 
-import com.crm.sofia.dto.sofia.user.SocialProvider;
+import com.crm.sofia.dto.user.SocialProvider;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
 
 import java.util.Map;

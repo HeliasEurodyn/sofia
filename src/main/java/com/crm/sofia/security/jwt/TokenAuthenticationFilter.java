@@ -1,9 +1,6 @@
 package com.crm.sofia.security.jwt;
 
-import com.crm.sofia.model.sofia.user.LocalUser;
-import com.crm.sofia.model.sofia.user.Role;
-import com.crm.sofia.services.sofia.user.LocalUserDetailService;
-import com.crm.sofia.utils.GeneralUtils;
+import com.crm.sofia.services.user.LocalUserDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +19,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 

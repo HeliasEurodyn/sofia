@@ -1,4 +1,5 @@
 package com.crm.sofia.exception;
+import com.crm.sofia.exception.common.SofiaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

@@ -1,12 +1,8 @@
 package com.crm.sofia.security.oauth2;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.crm.sofia.dto.sofia.user.SocialProvider;
+import com.crm.sofia.dto.user.SocialProvider;
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -21,6 +17,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {

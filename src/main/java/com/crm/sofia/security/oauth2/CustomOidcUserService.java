@@ -1,7 +1,7 @@
 package com.crm.sofia.security.oauth2;
 
 import com.crm.sofia.exception.OAuth2AuthenticationProcessingException;
-import com.crm.sofia.services.sofia.user.UserService;
+import com.crm.sofia.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;

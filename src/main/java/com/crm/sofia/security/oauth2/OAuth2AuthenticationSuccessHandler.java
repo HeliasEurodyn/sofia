@@ -1,16 +1,5 @@
 package com.crm.sofia.security.oauth2;
 
-import static com.crm.sofia.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.crm.sofia.config.AppProperties;
 import com.crm.sofia.exception.BadRequestException;
 import com.crm.sofia.security.jwt.TokenProvider;
@@ -20,6 +9,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+
+import static com.crm.sofia.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 
 @Component

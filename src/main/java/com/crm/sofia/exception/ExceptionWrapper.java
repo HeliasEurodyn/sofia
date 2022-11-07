@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class ExceptionWrapper extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class ExceptionWrapper extends SofiaException {
 
     public ExceptionWrapper(String message) {
         super(message);

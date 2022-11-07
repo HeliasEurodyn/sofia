@@ -1,6 +1,8 @@
 package com.crm.sofia.exception;
 
-public class SecurityException extends SofiaException{
+import com.crm.sofia.exception.common.SofiaException;
+
+public class SecurityException extends SofiaException {
     public SecurityException() {
     }
 
