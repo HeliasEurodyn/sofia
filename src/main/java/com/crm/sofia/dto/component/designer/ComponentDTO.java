@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +30,8 @@ public class ComponentDTO extends BaseDTO {
 
     private List<AccessControlDTO> accessControls;
 
+    public Stream<ComponentPersistEntityDTO> flatComponentPersistEntityTree(){
+        return this.getComponentPersistEntityList().stream()
+                .flatMap(ComponentPersistEntityDTO::streamTree);
+    }
 }

@@ -216,7 +216,7 @@ public class ListRetrieverNativeRepository {
                 .stream()
                 .forEach(x -> {
                     String selectPart = "";
-                    if((x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql")){
+                    if ((x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql")) {
                         selectPart = "( " + x.getEditor() + ") as " + x.getCode();
                     } else {
                         selectPart =
@@ -237,8 +237,8 @@ public class ListRetrieverNativeRepository {
     private List<ComponentPersistEntityDTO> identifyFromPersistEntities(ListDTO listDTO) {
 
         /*
-        * Unite All Fields
-        * */
+         * Unite All Fields
+         * */
         List<ListComponentFieldDTO> fields = new ArrayList<>();
         fields.addAll(listDTO.getListComponentColumnFieldList());
         fields.addAll(listDTO.getListComponentActionFieldList());
@@ -247,16 +247,40 @@ public class ListRetrieverNativeRepository {
         fields.addAll(listDTO.getListComponentOrderByFieldList());
         fields.addAll(listDTO.getListComponentTopGroupFieldList());
 
-        List<String> fieldCpeIds =
+        // 1. CpeIds by Fields
+        List<String> cpeIds =
                 fields.stream()
                         .filter(x -> x.getComponentPersistEntity() != null)
                         .map(x -> x.getComponentPersistEntity().getId())
                         .distinct()
                         .collect(Collectors.toList());
 
+        // 2. All Cpes by Sql Formula Fields
+        List<String> sqlEditors =
+                fields.stream()
+                        .filter(x -> x.getFormulaType() != null)
+                        .filter(x -> x.getFormulaType().equals("sql"))
+                        .filter(x -> x.getEditor() != null)
+                        .filter(x -> !x.getEditor().isEmpty())
+                        .map(x -> x.getEditor())
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        listDTO.getComponent().flatComponentPersistEntityTree()
+                .filter(cpe -> {
+                    return sqlEditors.stream()
+                            .filter(editor -> editor.contains(cpe.getCode() + "."))
+                            .findFirst().isPresent();
+                })
+                .filter(cpe -> !cpeIds.contains(cpe.getId()))
+                .distinct()
+                .forEach(cpe -> cpeIds.add(cpe.getId()));
+
         List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
-        for (String id : fieldCpeIds) {
-            List<ComponentPersistEntityDTO> cpesUpToId = this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(), id);
+        for (String cpeId : cpeIds) {
+            List<ComponentPersistEntityDTO> cpesUpToId =
+                    this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(),
+                            cpeId);
 
             List<ComponentPersistEntityDTO> newCpes =
                     cpesUpToId.stream()
@@ -267,96 +291,7 @@ public class ListRetrieverNativeRepository {
         }
 
         return cpes;
-//        /*
-//         * Get Persist Entities List From Tree
-//         * */
-//        List<ComponentPersistEntityDTO> allCpeList =
-//                this.getComponentPersistEntitiesTreeToList(listDTO.getComponent().getComponentPersistEntityList());
-//
-//        /*
-//         * Get Persist Entities ids By Fields's Persist Entities
-//         * */
-//        List<Long> entityIds =
-//                fields.stream()
-//                        .filter(x -> x.getComponentPersistEntity() != null)
-//                        .map(x -> x.getComponentPersistEntity().getId())
-//                        .distinct()
-//                        .collect(Collectors.toList());
-//
-//        /*
-//         * Iterate Persist Entities ids To find Other Persist Entities By Joins
-//         * */
-//        entityIds.forEach(id -> {
-//            ComponentPersistEntityDTO cpe =
-//                    allCpeList
-//                            .stream()
-//                            .filter(x -> x.getId() == id)
-//                            .findFirst()
-//                            .orElse(null);
-//
-//            this.identifyFromPersistEntitiesByJoins(
-//                    cpe,
-//                    entityIds,
-//                    allCpeList
-//            );
-//        });
-
-//        return allCpeList
-//                .stream()
-//                .filter(x -> x != null)
-//                .filter(x -> entityIds.contains(x.getId()))
-//                .collect(Collectors.toList());
     }
-
-//    /*
-//     * Iterate to Generate FROM Tables & Relashionships part
-//     */
-//    private void identifyFromPersistEntitiesByJoins(ComponentPersistEntityDTO cpe,
-//                                                    List<Long> entityIds,
-//                                                    List<ComponentPersistEntityDTO> allCpeList) {
-//
-//        List<String> cpeCodes = new ArrayList<>();
-//
-//        /*
-//        * Find locate statements of Cpe
-//        * */
-//        List<String> locateStatemens =
-//                cpe.getComponentPersistEntityFieldList()
-//                        .stream()
-//                        .filter(x -> x.getLocateStatement() != null)
-//                        .filter(x -> x.getLocateStatement() != "")
-//                        .filter(x -> x.getLocateStatement().contains("."))
-//                        .filter(x -> x.getLocateStatement().startsWith("#"))
-//                        .map(x -> x.getLocateStatement())
-//                        .collect(Collectors.toList());
-//
-//        /*
-//         * Iterate Locate statements of retrive child Cpe codes
-//         * */
-//        locateStatemens
-//                .stream()
-//                .forEach(x -> {
-//                    String[] joinParts = x.split("\\.");
-//                    String cpeCode = joinParts[0].replace("#", "");
-//                    cpeCodes.add(cpeCode);
-//                });
-//
-//        /*
-//         * Iterate child Cpes that are not on the List
-//         * */
-//        allCpeList
-//                .stream()
-//                .filter(x -> cpeCodes.contains(x.getCode()))
-//                .filter(x -> !entityIds.contains(x.getId()))
-//                .forEach(x -> {
-//                  //  entityIds.add(x.getId());
-//                    this.identifyFromPersistEntitiesByJoins(
-//                            x,
-//                            entityIds,
-//                            allCpeList);
-//                });
-//
-//    }
 
     /*
      * Iterate to Generate FROM Tables & Relashionships part
@@ -439,7 +374,7 @@ public class ListRetrieverNativeRepository {
                 filtersList
                         .stream()
                         .filter(x -> (x.getFieldValue() == null ? "" : x.getFieldValue()).equals("") &&
-                                        (x.getRequired() == null ? false : x.getRequired()))
+                                (x.getRequired() != null && x.getRequired()))
                         .findFirst();
 
         if (optionalRequiredFieldEmpty.isPresent()) {
@@ -510,7 +445,7 @@ public class ListRetrieverNativeRepository {
         filtersList
                 .stream()
                 .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("") ||
-                        (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("column") )
+                        (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("column"))
                 .forEach(x -> {
                     String whereClause =
                             x.getComponentPersistEntity().getCode() + "." +
@@ -524,7 +459,7 @@ public class ListRetrieverNativeRepository {
                 .filter(x -> (x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql"))
                 .forEach(x -> {
                     String whereClause =
-                             "( " +  x.getEditor() + " )" +
+                            "( " + x.getEditor() + " )" +
                                     x.getOperator() + " :filter_" + x.getCode();
                     whereClauseParts.add(whereClause);
                 });
@@ -586,7 +521,7 @@ public class ListRetrieverNativeRepository {
                 .filter(x -> !(x.getFieldValue() == null ? "" : x.getFieldValue()).equals(""))
                 .forEach(x -> {
                     String whereClause =
-                            "( " +  x.getEditor() + " )" +
+                            "( " + x.getEditor() + " )" +
                                     x.getOperator() + " :filter_" + x.getCode();
                     whereClauseParts.put(x.getCode(), whereClause);
                 });
@@ -599,7 +534,7 @@ public class ListRetrieverNativeRepository {
 
             if (filterFieldStructure.contains("$" + k)) {
                 filterFieldStructure = filterFieldStructure.replaceAll("\\$" + k, v);
-            } else{
+            } else {
                 dynamicFilterFieldStructure += " AND " + v;
             }
         }
@@ -633,7 +568,7 @@ public class ListRetrieverNativeRepository {
         listDTO.getListComponentOrderByFieldList().forEach(x -> {
             String orderByPart = "";
 
-            if((x.getFormulaType()==null?"":x.getFormulaType()).equals("sql")){
+            if ((x.getFormulaType() == null ? "" : x.getFormulaType()).equals("sql")) {
                 orderByPart = x.getCode();
             } else {
                 orderByPart = x.getComponentPersistEntity().getCode() + "." +
@@ -680,14 +615,14 @@ public class ListRetrieverNativeRepository {
      */
     private String generateLimitPart(ListDTO listDTO) {
 
-        if ((listDTO.getHasPagination() == null ? false : listDTO.getHasPagination())) {
+        if ((listDTO.getHasPagination() != null && listDTO.getHasPagination())) {
             Long currentPage = listDTO.getCurrentPage();
             if (currentPage == null) currentPage = 0L;
             Long offset = listDTO.getPageSize() * currentPage;
 
             return " LIMIT " + listDTO.getPageSize() + " OFFSET  " + offset;
 
-        } else if ((listDTO.getHasMaxSize() == null ? false : listDTO.getHasMaxSize())) {
+        } else if ((listDTO.getHasMaxSize() != null && listDTO.getHasMaxSize())) {
             return " LIMIT " + listDTO.getMaxSize();
         }
 
@@ -774,7 +709,7 @@ public class ListRetrieverNativeRepository {
                 filtersList.stream()
                         .filter(x -> x.getFieldValue() != null)
                         .filter(x -> !x.getFieldValue().equals(""))
-                     //   .filter(field -> field.getComponentPersistEntity() != null)
+                        //   .filter(field -> field.getComponentPersistEntity() != null)
                         .collect(Collectors.toList());
 
         /* Iterate and create Where parts */
@@ -952,31 +887,37 @@ public class ListRetrieverNativeRepository {
 
     private List<ComponentPersistEntityDTO> getCpeTreeToListUpToId(List<ComponentPersistEntityDTO> cpeList, String id) {
 
-        ComponentPersistEntityDTO cpe =
-                            cpeList
-                            .stream()
-                            .filter(x -> x.getId() == id)
-                            .findFirst()
-                            .orElse(null);
+        ComponentPersistEntityDTO selectedCpe =
+                cpeList
+                        .stream()
+                        .filter(x -> x.getId() == id)
+                        .findFirst()
+                        .orElse(null);
 
-        List<ComponentPersistEntityDTO> selectedCpes = new ArrayList<>();
-        if(cpe != null){
-            selectedCpes.add(cpe);
-            return selectedCpes;
+        if (selectedCpe == null) {
+
+            List<ComponentPersistEntityDTO> filteredCpeList =
+                    cpeList
+                            .stream()
+                            .filter(x -> x.getComponentPersistEntityList() != null)
+                            .filter(x -> x.getComponentPersistEntityList().size() > 0)
+                            .collect(Collectors.toList());
+
+            for (ComponentPersistEntityDTO cpe : filteredCpeList) {
+                List<ComponentPersistEntityDTO> selectedChildCpes = this.getCpeTreeToListUpToId(cpe.getComponentPersistEntityList(), id);
+                if (selectedChildCpes.size() > 0) {
+                    List<ComponentPersistEntityDTO> selectedCpes = new ArrayList<>();
+                    selectedCpes.add(cpe);
+                    selectedCpes.addAll(selectedChildCpes);
+                    return selectedCpes;
+                }
+            }
+
         } else {
-            selectedCpes.addAll(cpeList);
+            return Collections.singletonList(selectedCpe);
         }
 
-        cpeList
-                .stream()
-                .filter(x -> x.getComponentPersistEntityList() != null)
-                .filter(x -> x.getComponentPersistEntityList().size() > 0)
-                .forEach(x -> {
-                    List<ComponentPersistEntityDTO> selectedChildCpes = this.getCpeTreeToListUpToId(x.getComponentPersistEntityList(), id);
-                    selectedCpes.addAll(selectedChildCpes);
-                });
-
-        return selectedCpes;
+        return Collections.emptyList();
     }
 
 }

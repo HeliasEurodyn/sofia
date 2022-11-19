@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor
@@ -45,4 +46,8 @@ public class ComponentPersistEntityDTO extends BaseDTO {
     private List<ComponentPersistEntityDTO> componentPersistEntityList = new ArrayList<>();
 
     private List<ComponentPersistEntityDTO> defaultComponentPersistEntityList = new ArrayList<>();
+
+    public Stream<ComponentPersistEntityDTO> streamTree(){
+        return Stream.concat(Stream.of(this), this.getComponentPersistEntityList().stream().flatMap(ComponentPersistEntityDTO::streamTree));
+    }
 }
