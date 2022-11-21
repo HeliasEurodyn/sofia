@@ -1,5 +1,6 @@
 package com.crm.sofia.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final long MAX_AGE_SECS = 3600;
 
+    @Value("${cors_url}")
+    private String corsUrl;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE").maxAge(MAX_AGE_SECS);
+        registry.addMapping("/**")
+                .allowedOrigins(corsUrl)
+                .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
+                .maxAge(MAX_AGE_SECS);
     }
 
     @Bean
