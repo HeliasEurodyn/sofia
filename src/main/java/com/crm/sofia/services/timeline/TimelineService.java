@@ -1,5 +1,6 @@
 package com.crm.sofia.services.timeline;
 
+import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.dto.timeline.TimelineResponseDTO;
 import com.crm.sofia.mapper.timeline.TimelineMapper;
@@ -18,6 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,7 +63,7 @@ public class TimelineService {
 
     @Transactional
     @Modifying
-    public Object postData(String id, Map<String, String> parameters,int currentPage) {
+    public Object postData(String id, Map<String, String> parameters, int currentPage) {
         try {
             Object lastInsertId;
             TimelineDTO timelineDTO = this.getObject(id);
@@ -98,7 +102,19 @@ public class TimelineService {
                     .entrySet()
                     .stream()
                     .filter(entry->  queryString.contains(":"+entry.getKey()))
-                    .forEach(entry ->query.setParameter(entry.getKey(),entry.getValue()));
+                    .forEach(entry -> {
+                        Optional<ListComponentFieldDTO> filter =
+                                dto.getFilterList().stream()
+                                        .filter(x -> x.getCode().equals(entry.getKey())).findFirst();
+                        if(filter.isPresent()){
+                            if(filter.get().getType().equals("datetime")){
+                                String value = this.isoDateStringToSqlString(entry.getValue());
+                                query.setParameter(entry.getKey(),value);
+                            } else {
+                                query.setParameter(entry.getKey(),entry.getValue());
+                            }
+                        }
+                    });
 
             NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
 
@@ -110,6 +126,17 @@ public class TimelineService {
             nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
             return nativeQuery;
+    }
+
+    String isoDateStringToSqlString(String isoDateString) {
+
+        if(isoDateString.equals("")){
+            return "";
+        }
+
+        Instant instantValue = Instant.parse(isoDateString);
+        DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneOffset.UTC);
+        return formatter.format(instantValue);
     }
 
     private void checkLastPage(TimelineDTO timelineDTO,TimelineResponseDTO timelineResponseDTO){
