@@ -4,6 +4,7 @@ import com.crm.sofia.security.jwt.TokenAuthenticationFilter;
 import com.crm.sofia.security.oauth2.*;
 import com.crm.sofia.services.user.LocalUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -56,6 +57,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(localUserDetailService).passwordEncoder(passwordEncoder());
     }
+
+    @Value("${cors_url}")
+    private String corsUrl;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -159,7 +163,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList(corsUrl.replace(" ", "").split(",")));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
