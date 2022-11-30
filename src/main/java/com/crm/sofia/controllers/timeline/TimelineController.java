@@ -1,6 +1,5 @@
 package com.crm.sofia.controllers.timeline;
 
-
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.dto.timeline.TimelineResponseDTO;
 import com.crm.sofia.services.timeline.TimelineService;
@@ -24,14 +23,14 @@ public class TimelineController {
     TimelineResponseDTO getData(@RequestParam("id") String id,
                                 @RequestParam Map<String, String> parameters,
                                 @RequestParam int currentPage) {
-        return timelineService.getData(id, parameters,currentPage);
+        return timelineService.getData(id, parameters, currentPage);
     }
 
     @PostMapping(path = "/data")
     String postData(@RequestParam("id") String id,
                     @RequestParam Map<String, String> parameters,
                     @RequestParam int currentPage) {
-        Object response = timelineService.postData(id, parameters,currentPage);
+        Object response = timelineService.postData(id, parameters, currentPage);
         return "{\"response\": \"" + response.toString() + "\"}";
     }
 
