@@ -2,6 +2,7 @@ package com.crm.sofia.security.jwt;
 
 import com.crm.sofia.config.AppProperties;
 import com.crm.sofia.model.user.LocalUser;
+import com.crm.sofia.services.security.BlacklistingService;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,11 @@ public class TokenProvider {
 
     private AppProperties appProperties;
 
-    public TokenProvider(AppProperties appProperties) {
+    final BlacklistingService blacklistingService;
+
+    public TokenProvider(AppProperties appProperties,BlacklistingService blacklistingService) {
         this.appProperties = appProperties;
+        this.blacklistingService = blacklistingService;
     }
 
     public String createToken(Authentication authentication) {
@@ -40,6 +44,10 @@ public class TokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
+            String blackListedToken = blacklistingService.getJwtBlackList(authToken);
+            if (blackListedToken != null) {
+                return false;
+            }
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
