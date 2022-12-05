@@ -82,6 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/auth/**",
                         "/settings/**",
                         "/user/auth/**",
+                        "/user/logout",
                         "/user/current",
                         "/api/all",
                         "/api/auth/**",
