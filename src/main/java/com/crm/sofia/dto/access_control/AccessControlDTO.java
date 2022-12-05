@@ -19,7 +19,7 @@ public class AccessControlDTO extends BaseDTO {
 
     private String type;
 
-    private Long entityId;
+    private String entityId;
 
     private Boolean createEntity;
 

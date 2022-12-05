@@ -22,7 +22,7 @@ public class AccessControl extends MainEntity implements Serializable {
     private String type;
 
     @Column
-    private Long entityId;
+    private String entityId;
 
     @Column
     private Boolean createEntity;
