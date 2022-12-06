@@ -718,8 +718,12 @@ public class ListRetrieverNativeRepository {
             String filterPart = "";
             if (x.getType().equals("datetime")) {
                 Instant valueInstant = Instant.parse(x.getFieldValue().toString());
-                filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
-            } else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field")) {
+                filterPart = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneOffset.UTC).format(valueInstant);
+            } else if (x.getType().equals("datetime_det")) {
+                Instant valueInstant = Instant.parse(x.getFieldValue().toString());
+                filterPart = DateTimeFormatter.ofPattern("yyyyMMddhhmm00").withZone(ZoneOffset.UTC).format(valueInstant);
+            }
+            else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field")) {
                 if (x.getOperator().equals("like")) {
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
                 } else {
@@ -730,7 +734,7 @@ public class ListRetrieverNativeRepository {
             }
 
             if (x.getOperator().equals("in")) {
-                query.setParameter("filter_" + x.getCode(), Arrays.asList(filterPart.split(","))); //new Integer[]{152,163});
+                query.setParameter("filter_" + x.getCode(), Arrays.asList(filterPart.split(",")));
             } else {
                 query.setParameter("filter_" + x.getCode(), filterPart);
             }

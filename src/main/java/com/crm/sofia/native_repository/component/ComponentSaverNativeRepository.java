@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -235,7 +236,7 @@ public class ComponentSaverNativeRepository {
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
                 .filter(x ->
                         (!x.getPersistEntityField().getType().equals("password")) ||
-                                (x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null?"":x.getValue()).equals("")) )
+                                (x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null ? "" : x.getValue()).equals("")))
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
         String headersString = String.join(", ", headersList);
@@ -266,6 +267,8 @@ public class ComponentSaverNativeRepository {
 
         componentPersistEntityFieldList.stream()
                 .filter(x -> !x.getPersistEntityField().getType().equals("password"))
+                .filter(x -> !x.getPersistEntityField().getType().equals("datetime"))
+                .filter(x -> !x.getPersistEntityField().getType().equals("datetime_det"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
@@ -273,12 +276,27 @@ public class ComponentSaverNativeRepository {
                         ));
 
         componentPersistEntityFieldList.stream()
-                .filter(x -> x.getPersistEntityField().getType().equals("password")  && !(x.getValue() == null?"":x.getValue()).equals("") )
+                .filter(x -> x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null ? "" : x.getValue()).equals(""))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
                                 passwordEncoder.encode(x.getValue().toString())
                         ));
+
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getValue() != null)
+                .filter(x -> Arrays.asList("datetime", "datetime_det").contains(x.getPersistEntityField().getType()))
+                .forEach(x -> {
+                    Instant valueInstant = null;
+                    if (!(x.getValue() == null ? "" : x.getValue().toString()).equals("")) {
+                        valueInstant = OffsetDateTime.parse(x.getValue().toString()).toInstant();
+                    }
+                    query.setParameter(
+                            x.getPersistEntityField().getName(),
+                            valueInstant
+                    );
+                });
 
         return query;
     }
@@ -327,6 +345,8 @@ public class ComponentSaverNativeRepository {
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
                 .filter(x -> !x.getPersistEntityField().getType().equals("password"))
+                .filter(x -> !x.getPersistEntityField().getType().equals("datetime"))
+                .filter(x -> !x.getPersistEntityField().getType().equals("datetime_det"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
@@ -336,12 +356,28 @@ public class ComponentSaverNativeRepository {
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
                 .filter(x -> x.getValue() != null)
-                .filter(x -> x.getPersistEntityField().getType().equals("password") )
+                .filter(x -> x.getPersistEntityField().getType().equals("password"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
                                 passwordEncoder.encode(x.getValue().toString())
                         ));
+
+        componentPersistEntityFieldList.stream()
+                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getValue() != null)
+                .filter(x -> Arrays.asList("datetime", "datetime_det").contains(x.getPersistEntityField().getType()))
+                .forEach(x -> {
+                    Instant valueInstant = null;
+                    if (!(x.getValue() == null ? "" : x.getValue().toString()).equals("")) {
+                        valueInstant = Instant.parse(x.getValue().toString());
+                    }
+                    query.setParameter(
+                            x.getPersistEntityField().getName(),
+                            valueInstant
+                    );
+
+                });
 
         return query;
     }
@@ -349,7 +385,7 @@ public class ComponentSaverNativeRepository {
     private Object executeSave(Query query) {
         Object id;
         try {
-           // System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+            // System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
             query.executeUpdate();
             id = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
 
