@@ -284,10 +284,7 @@ public class ListService {
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
                     String fieldValue = parameters.get(x.getCode());
-                    Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
-                            DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
-                            .atZone(ZoneOffset.UTC)
-                            .toInstant();
+                    Instant fieldValueInstant = Instant.parse(fieldValue);
                     x.setFieldValue(fieldValueInstant);
                 });
 
@@ -310,10 +307,7 @@ public class ListService {
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
                     String fieldValue = parameters.get(x.getCode());
-                    Instant fieldValueInstant = LocalDateTime.parse(fieldValue,
-                            DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.UK))
-                            .atZone(ZoneOffset.UTC)
-                            .toInstant();
+                    Instant fieldValueInstant = Instant.parse(fieldValue);
                     x.setFieldValue(fieldValueInstant);
                 });
 
