@@ -2,6 +2,7 @@ package com.crm.sofia.controllers.user;
 
 import com.crm.sofia.config.CurrentUser;
 import com.crm.sofia.dto.auth.LoginDTO;
+import com.crm.sofia.dto.auth.LogoutDTO;
 import com.crm.sofia.dto.user.ChangePasswordRequest;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.model.user.LocalUser;
@@ -52,8 +53,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/exit")
-    public ResponseEntity<?> exit(@RequestBody String  jwt) {
-        blacklistingService.blackListJwt(jwt);
+    public ResponseEntity<?> exit(@RequestBody LogoutDTO logoutDTO) {
+        blacklistingService.blackListJwt(logoutDTO.getJwt());
         return  new ResponseEntity<>(HttpStatus.OK);
     }
 
