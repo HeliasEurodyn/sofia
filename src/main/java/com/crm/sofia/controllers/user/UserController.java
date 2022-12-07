@@ -51,8 +51,8 @@ public class UserController {
         return userService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
     }
 
-    @PostMapping(value = "/logout")
-    public ResponseEntity<?> logout(@RequestBody String  jwt) {
+    @PostMapping(value = "/exit")
+    public ResponseEntity<?> exit(@RequestBody String  jwt) {
         blacklistingService.blackListJwt(jwt);
         return  new ResponseEntity<>(HttpStatus.OK);
     }
