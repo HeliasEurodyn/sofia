@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
+
 @Getter
 @Setter
 @Data
@@ -22,5 +24,7 @@ public class SettingsDto extends BaseDTO {
     String loginImage;
 
     String icon;
+
+    String oauth_prototype_user_id;
 
 }

@@ -25,4 +25,8 @@ public class Settings extends BaseEntity {
 
     @Column(columnDefinition = "MEDIUMTEXT")
     String icon;
+
+    @Column(columnDefinition = "VARCHAR(36)")
+    String oauth_prototype_user_id;
+
 }
