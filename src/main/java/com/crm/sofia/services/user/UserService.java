@@ -184,13 +184,15 @@ public class UserService {
     public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken, OidcUserInfo userInfo) throws UserAlreadyExistAuthenticationException {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
         SignUpRequest userDetails = toUserRegistrationObject(registrationId, oAuth2UserInfo);
-        User user = findUserByProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getId());
-        if (user != null) {
-            if (!user.getProvider().equals(registrationId) && !user.getProvider().equals(SocialProvider.LOCAL.getProviderType())) {
-                throw new OAuth2AuthenticationProcessingException(
-                        "Looks like you're signed up with " + user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
-            }
-        } else {
+        //User user = findUserByProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getId());
+        User user = this.findUserByUsername(oAuth2UserInfo.getName());
+//        if (user != null) {
+//            if (!user.getProvider().equals(registrationId) && !user.getProvider().equals(SocialProvider.LOCAL.getProviderType())) {
+//                throw new OAuth2AuthenticationProcessingException(
+//                        "Looks like you're signed up with " + user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
+//            }
+//        } else {
+        if (user == null) {
             user = registerNewUser(userDetails);
         }
         return LocalUser.create(user, attributes, idToken, userInfo);
