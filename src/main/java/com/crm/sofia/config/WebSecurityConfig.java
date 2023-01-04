@@ -99,6 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/info-card/dynamic-javascript/**",
                         "/v3/api-docs/**",
                         "/v3/api-docs.yaml",
+                        "/privacy-policy.html",
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                 ).permitAll()
