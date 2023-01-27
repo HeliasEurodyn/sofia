@@ -27,6 +27,29 @@ public class ListRetrieverNativeRepository {
         this.entityManager = entityManager;
     }
 
+    public Map<String, String> executeListAndGetBaseQueryParts(ListDTO listDTO) {
+        Map<String, String> baseQueryParts = new HashMap<>();
+
+        /*
+         * Select clause
+         */
+        String queryString = this.generateSelectPart(listDTO);
+        baseQueryParts.put("select", queryString);
+
+        /*
+         * Identify Persist Entities
+         */
+        List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
+
+        /*
+         * From clause
+         */
+        queryString = this.generateFromPart(persistEntities);
+        baseQueryParts.put("from", queryString);
+        return baseQueryParts;
+    }
+
+
     public List<Map<String, Object>> executeListAndGetData(ListDTO listDTO) {
         List<Map<String, Object>> listContent = new ArrayList<>();
 
@@ -365,7 +388,6 @@ public class ListRetrieverNativeRepository {
         filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
         filtersList.addAll(listDTO.getListComponentColumnFieldList());
 
-
         /*
          * Where clause
          */
@@ -374,7 +396,7 @@ public class ListRetrieverNativeRepository {
                 filtersList
                         .stream()
                         .filter(x -> (x.getFieldValue() == null ? "" : x.getFieldValue()).equals("") &&
-                                (x.getRequired() != null && x.getRequired()))
+                                (x.getRequired()  == null ? false : x.getRequired()))
                         .findFirst();
 
         if (optionalRequiredFieldEmpty.isPresent()) {
@@ -588,27 +610,27 @@ public class ListRetrieverNativeRepository {
         if (orderByParts.size() == 0) {
             return "";
         } else {
-            return " ORDER BY " + String.join(",", orderByParts);
+            return " ORDER BY ".concat( String.join(",", orderByParts));
         }
     }
 
-    /*
-     * Iterate to Generate Order By Columns part
-     */
-    private String generateOrderByLeftGroupPart(ListDTO listDTO) {
-        List<String> fields = new ArrayList<>();
-        listDTO.getListComponentLeftGroupFieldList()
-                .stream()
-                .forEach(x -> {
-                    fields.add(x.getCode() + " ASC ");
-                });
-
-        if (fields.size() == 0) {
-            return "";
-        } else {
-            return " ORDER BY " + String.join(",", fields);
-        }
-    }
+//    /*
+//     * Iterate to Generate Order By Columns part
+//     */
+//    private String generateOrderByLeftGroupPart(ListDTO listDTO) {
+//        List<String> fields = new ArrayList<>();
+//        listDTO.getListComponentLeftGroupFieldList()
+//                .stream()
+//                .forEach(x -> {
+//                    fields.add(x.getCode() + " ASC ");
+//                });
+//
+//        if (fields.size() == 0) {
+//            return "";
+//        } else {
+//            return " ORDER BY " + String.join(",", fields);
+//        }
+//    }
 
     /*
      * Iterate to Generate Limit part
@@ -629,52 +651,52 @@ public class ListRetrieverNativeRepository {
         return "";
     }
 
-    private Query generateCountQuery(ListDTO listDTO, String queryString) {
-
-        Map<String, String> filterParts = new HashMap<>();
-        Query query = entityManager.createNativeQuery(queryString);
-
-        listDTO.getListComponentLeftGroupFieldList()
-                .forEach(x -> {
-                    x.setOperator("=");
-                    x.setRequired(false);
-                });
-
-        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
-        filtersList.addAll(listDTO.getListComponentFilterFieldList());
-        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
-
-        filtersList = filtersList
-                .stream()
-                .filter(field -> field.getComponentPersistEntity() != null)
-                .collect(Collectors.toList());
-
-        /* Iterate and create Where parts */
-        filtersList.forEach(x -> {
-
-            String filterPart = "";
-            if (x.getType().equals("datetime")) {
-                Instant valueInstant = Instant.parse(x.getFieldValue().toString());
-                filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
-            } else if (x.getType().equals("varchar") || x.getType().equals("text")) {
-                if (x.getOperator().equals("like")) {
-                    filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
-                } else {
-                    filterPart = x.getFieldValue().toString();
-                }
-            } else {
-                filterPart = x.getFieldValue().toString();
-            }
-
-            filterParts.put("filter_" + x.getCode(), filterPart);
-        });
-
-        filterParts.forEach((k, v) -> {
-            query.setParameter(k, v);
-        });
-
-        return query;
-    }
+//    private Query generateCountQuery(ListDTO listDTO, String queryString) {
+//
+//        Map<String, String> filterParts = new HashMap<>();
+//        Query query = entityManager.createNativeQuery(queryString);
+//
+//        listDTO.getListComponentLeftGroupFieldList()
+//                .forEach(x -> {
+//                    x.setOperator("=");
+//                    x.setRequired(false);
+//                });
+//
+//        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
+//        filtersList.addAll(listDTO.getListComponentFilterFieldList());
+//        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
+//
+//        filtersList = filtersList
+//                .stream()
+//                .filter(field -> field.getComponentPersistEntity() != null)
+//                .collect(Collectors.toList());
+//
+//        /* Iterate and create Where parts */
+//        filtersList.forEach(x -> {
+//
+//            String filterPart = "";
+//            if (x.getType().equals("datetime")) {
+//                Instant valueInstant = Instant.parse(x.getFieldValue().toString());
+//                filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
+//            } else if (x.getType().equals("varchar") || x.getType().equals("text")) {
+//                if (x.getOperator().equals("like")) {
+//                    filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
+//                } else {
+//                    filterPart = x.getFieldValue().toString();
+//                }
+//            } else {
+//                filterPart = x.getFieldValue().toString();
+//            }
+//
+//            filterParts.put("filter_" + x.getCode(), filterPart);
+//        });
+//
+//        filterParts.forEach((k, v) -> {
+//            query.setParameter(k, v);
+//        });
+//
+//        return query;
+//    }
 
     /*
      * Execute Sql Query
@@ -924,4 +946,35 @@ public class ListRetrieverNativeRepository {
         return Collections.emptyList();
     }
 
+    public Object test() {
+
+        Query query = entityManager.createNativeQuery(
+                " SELECT "+
+                " data_catalog_business_object.id as cf_id, "+
+                " data_catalog_category.code as cf_code_2, "+
+                " data_catalog_category.name as cf_name_2, "+
+                " data_catalog_service.code as cf_code_1, "+
+                " data_catalog_service.short_description as cf_short_description, "+
+                " data_catalog_service.name as cf_name_1, "+
+                " data_catalog_business_object.code as cf_code, "+
+                " data_catalog_business_object.name as cf_name, "+
+                " data_catalog_business_object.profile_selector as cf_profile_selector  "+
+                " FROM  data_catalog_business_object data_catalog_business_object   "+
+                " LEFT OUTER JOIN  data_catalog_service data_catalog_service ON data_catalog_service.id = data_catalog_business_object.data_catalog_service_id   "+
+                " LEFT OUTER JOIN  data_catalog_category data_catalog_category ON data_catalog_category.id = data_catalog_service.data_catalog_category_id  "+
+                " ORDER BY data_catalog_business_object.id ASC ");
+
+        List<Object[]> dataList = query.getResultList();
+        List<List<Object>> responses = new ArrayList<>();
+        for (Object queryResultLine : dataList) {
+            Object[] queryResultLineArray = (Object[]) queryResultLine;
+            List<Object> line = new ArrayList<>();
+            for (Object queryResult : queryResultLineArray) {
+                line.add(queryResult);
+            }
+            responses.add(line);
+        }
+
+        return responses;
+    }
 }

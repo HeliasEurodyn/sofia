@@ -59,7 +59,13 @@ public class ListController {
     ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
                                      @PathVariable("page") Long page,
                                      @RequestParam("id") String id) {
-        return this.listService.getObjectDataByParameters(parameters,page, id);
+        Map<String, String> baseQueryParts = this.listService.generateBaseQuery(id);
+        return this.listService.getObjectDataByParameters2(parameters,page,baseQueryParts, id);
+    }
+
+    @GetMapping(path = "/test")
+    Object test() {
+        return this.listService.test();
     }
 
     @GetMapping(path = "/left-grouping/results")

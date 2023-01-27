@@ -24,9 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,7 +84,7 @@ public class ListService {
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
-               // .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
                 .forEach(x -> {
                     ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
                     if (!exprResponse.getError()) {
@@ -100,6 +97,7 @@ public class ListService {
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
+                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
                 .forEach(x -> {
                     ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
                     if (!exprResponse.getError()) {
@@ -216,6 +214,24 @@ public class ListService {
         ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
         return listResultsDataDTO;
     }
+    @Cacheable(value = "list_base_query_cache", key="#id")
+    public Map<String, String> generateBaseQuery(String id) {
+        ListDTO listDTO = this.getObject(id);
+        Map<String, String> baseQueryParts = this.listRetrieverNativeRepository.executeListAndGetBaseQueryParts(listDTO);
+        return baseQueryParts;
+    }
+
+    public ListResultsDataDTO getObjectDataByParameters2(Map<String, String> parameters,
+                                                         Long page,
+                                                         Map<String, String> baseQueryParts,
+                                                         String id) {
+        ListDTO listDTO = this.getObjectWithDefaults(id);
+        listDTO.setCurrentPage(page);
+        listDTO = this.mapParametersToListDto(listDTO, parameters);
+        this.mapUserDefinedShordOrder(listDTO, parameters);
+        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
+        return listResultsDataDTO;
+    }
 
     public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, String id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
@@ -265,12 +281,12 @@ public class ListService {
 
     private ListDTO mapParametersToListDto(ListDTO listDTO, Map<String, String> parameters) {
 
-        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
-        filtersList.addAll(listDTO.getListComponentFilterFieldList());
-        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
-
+        /*
+        * Map Parameters to Columns
+        * */
         listDTO.getListComponentColumnFieldList()
                 .stream()
+                .filter(x -> (x.getHeaderFilter() == null ? false : x.getHeaderFilter()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> !x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -280,6 +296,7 @@ public class ListService {
 
         listDTO.getListComponentColumnFieldList()
                 .stream()
+                .filter(x -> (x.getHeaderFilter() == null ? false : x.getHeaderFilter()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -288,10 +305,16 @@ public class ListService {
                     x.setFieldValue(fieldValueInstant);
                 });
 
+        /*
+         * Map Parameters to Filters & Left Grouping
+         * */
+        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
+        filtersList.addAll(listDTO.getListComponentFilterFieldList());
+        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
+
         filtersList
                 .stream()
                 .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
-               // .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> !x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -302,7 +325,6 @@ public class ListService {
         filtersList
                 .stream()
                 .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
-              //  .filter(x -> (x.getVisible() == null ? false : x.getVisible()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -369,5 +391,9 @@ public class ListService {
         System.out.println(rel);
         System.out.println(field);
         System.out.println(fieldValue);
+    }
+
+    public Object test() {
+        return this.listRetrieverNativeRepository.test();
     }
 }
