@@ -16,8 +16,26 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
+@JsonIgnoreProperties({
+        "createdOn",
+        "createdBy",
+        "shortOrder",
+        "version",
+        "name",
+        "selector",
+        "filterFieldStructure",
+        "customFilterFieldStructure",
+        "totalPages",
+        "currentPage",
+        "totalRows",
+        "rowNavigation",
+        "jsonUrl",
+        "component",
+        "selectQuery",
+        "selectLeftGroupQuery",
+        "fromQuery"}
+)
 public class ListDTO extends BaseDTO {
 
     private String code;
@@ -40,21 +58,22 @@ public class ListDTO extends BaseDTO {
     private Boolean filterVisible;
     private Boolean hasPagination;
     private Long pageSize;
-    private Long totalPages;
+//    private Long totalPages;
     private Long currentPage;
-    private Long totalRows;
+
+//    private Long totalRows;
     private Boolean hasMaxSize;
     private Long maxSize;
-    private Boolean HeaderFilters;
-    private String rowNavigation;
-    private String jsonUrl;
+//    private Boolean HeaderFilters;
+//    private String rowNavigation;
+//    private String jsonUrl;
     private ComponentDTO component;
-    private Long instanceVersion;
-    private Boolean accessControlEnabled;
-    private String businessUnit;
-    private List<AccessControlDTO> accessControls;
-    private List<ListScriptDTO> listScripts;
-    private List<ListCssDTO> listCssList;
+//    private Long instanceVersion;
+//    private Boolean accessControlEnabled;
+//    private String businessUnit;
+//    private List<AccessControlDTO> accessControls;
+//    private List<ListScriptDTO> listScripts;
+//    private List<ListCssDTO> listCssList;
 
     private List<ListTranslationDTO> translations;
 

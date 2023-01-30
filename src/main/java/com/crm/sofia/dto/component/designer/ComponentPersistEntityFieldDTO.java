@@ -9,17 +9,30 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
+@JsonIgnoreProperties(
+        { "createdOn",
+                "createdBy",
+                "shortOrder",
+                "version",
+                "locateStatement",
+        "saveStatement",
+        "persistEntityField",
+        "assignment"})
 @Accessors(chain = true)
 public class ComponentPersistEntityFieldDTO extends BaseDTO {
 
-    private String description;
 
-    private String editor;
+//    private String description;
+
+//    private String editor;
+
+    private String code;
 
     private String defaultValue;
 
@@ -29,7 +42,7 @@ public class ComponentPersistEntityFieldDTO extends BaseDTO {
 
     private String locateStatement;
 
-    private ComponentPersistEntityDTO joinPersistEntity;
+//    private ComponentPersistEntityDTO joinPersistEntity;
 
     private PersistEntityFieldDTO persistEntityField;
 

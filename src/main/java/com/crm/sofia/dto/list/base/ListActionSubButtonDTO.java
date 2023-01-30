@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.list.user;
+package com.crm.sofia.dto.list.base;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.list.base.translation.ListActionButtonTranslationDTO;
@@ -16,14 +16,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListActionButtonUiDTO extends BaseDTO {
+public class ListActionSubButtonDTO extends BaseDTO {
     private String code;
     private String icon;
     private String description;
     private String editor;
     private String cssClass;
     private Boolean visible;
-
-    List<ListActionSubButtonUiDTO> listActionButtons;
     private List<ListActionButtonTranslationDTO> translations;
 }

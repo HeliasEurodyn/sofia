@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ComponentPersistEntityDataLineDTO extends BaseDTO {
+public class ComponentPersistEntityDataLineDTO implements Serializable {
 
     private List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList;
 

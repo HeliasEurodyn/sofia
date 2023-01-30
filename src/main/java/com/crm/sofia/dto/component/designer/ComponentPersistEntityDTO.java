@@ -3,12 +3,14 @@ package com.crm.sofia.dto.component.designer;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,9 +18,20 @@ import java.util.stream.Stream;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
 @Accessors(chain = true)
+@JsonIgnoreProperties({
+        "createdOn",
+        "createdBy",
+        "shortOrder",
+        "version",
+        "selector",
+        "allowRetrieve",
+        "allowSave",
+        "deleteType",
+        "persistEntity"
+})
+
 public class ComponentPersistEntityDTO extends BaseDTO {
 
     private String code;
@@ -43,8 +56,10 @@ public class ComponentPersistEntityDTO extends BaseDTO {
     private List<ComponentPersistEntityDataLineDTO> componentPersistEntityDataLines = new ArrayList<>();
 
     /* Children */
+    @JsonManagedReference
     private List<ComponentPersistEntityDTO> componentPersistEntityList = new ArrayList<>();
 
+    @JsonManagedReference
     private List<ComponentPersistEntityDTO> defaultComponentPersistEntityList = new ArrayList<>();
 
     public Stream<ComponentPersistEntityDTO> streamTree(){

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -16,14 +15,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder",
         "version","operator",
         "shortLocation",
         "decimals","componentPersistEntity",
         "componentPersistEntityField" })
-public class ListComponentFieldDTO extends BaseDTO {
+public class ListComponentSubFieldDTO extends BaseDTO {
     private String code;
     private String editor;
     private String description;
@@ -46,6 +45,6 @@ public class ListComponentFieldDTO extends BaseDTO {
     private String css;
     private Object fieldValue;
     private String formulaType;
-    private List<ListComponentSubFieldDTO> listComponentActionFieldList;
-    private List<ListComponentFieldTranslationDTO> translations;
+//    private List<ListComponentSubFieldDTO> listComponentActionFieldList;
+//    private List<ListComponentFieldTranslationDTO> translations;
 }

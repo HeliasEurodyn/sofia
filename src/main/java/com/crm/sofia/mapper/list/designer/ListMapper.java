@@ -21,9 +21,6 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
         return entities.stream().map(this::mapEntityForList).collect(Collectors.toList());
     }
 
-    @Mapping(ignore = true, target = "createdBy")
-    @Mapping(ignore = true, target = "version")
-    @Mapping(ignore = true, target = "shortOrder")
     @Mapping(ignore = true, target = "listActionButtons")
     @Mapping(ignore = true, target = "listComponentColumnFieldList")
     @Mapping(ignore = true, target = "listComponentFilterFieldList")
@@ -46,14 +43,8 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
     @Mapping(ignore = true, target = "filterVisible")
     @Mapping(ignore = true, target = "hasPagination")
     @Mapping(ignore = true, target = "pageSize")
-    @Mapping(ignore = true, target = "totalPages")
-    @Mapping(ignore = true, target = "currentPage")
-    @Mapping(ignore = true, target = "totalRows")
     @Mapping(ignore = true, target = "hasMaxSize")
     @Mapping(ignore = true, target = "maxSize")
-    @Mapping(ignore = true, target = "rowNavigation")
-    @Mapping(ignore = true, target = "jsonUrl")
-    @Mapping(ignore = true, target = "instanceVersion")
     @Mapping(ignore = true, target = "translations")
     @Mapping(ignore = true, target = "component.componentPersistEntityList")
     public abstract ListDTO mapEntityForList(ListEntity entity);

@@ -8,13 +8,18 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
+@JsonIgnoreProperties({   "createdOn",
+        "createdBy",
+        "shortOrder",
+        "version","required","onSaveValue"})
 @Accessors(chain = true)
-public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
+public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO  {
 
     private String entityType;
 
@@ -22,7 +27,7 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
     private String fieldId;
 
-    private String description;
+//    private String description;
 
     private String editor;
 
@@ -30,19 +35,19 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO {
 
     private String onSaveValue;
 
-    private Boolean visible;
+//    private Boolean visible;
 
-    private Boolean editable;
+//    private Boolean editable;
 
     private Boolean required;
 
-    private Integer decimals;
+//    private Integer decimals;
 
-  //  private String fieldtype;
+//    private String fieldtype;
 
-    private String css;
+//    private String css;
 
-    private Object value;
+//    private Object value;
 
     private String type;
 

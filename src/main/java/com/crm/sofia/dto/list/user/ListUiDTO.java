@@ -15,7 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version", "name",
+@JsonIgnoreProperties({
+        "createdOn",
+        "createdBy",
+        "shortOrder",
+        "version",
+        "name",
         "selector",
         "filterFieldStructure",
         "customFilterFieldStructure",

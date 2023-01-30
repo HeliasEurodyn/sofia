@@ -26,5 +26,5 @@ public class ListActionButtonDTO extends BaseDTO {
 
     private List<ListActionButtonTranslationDTO> translations;
 
-    List<ListActionButtonDTO> listActionButtons;
+    List<ListActionSubButtonDTO> listActionButtons;
 }
