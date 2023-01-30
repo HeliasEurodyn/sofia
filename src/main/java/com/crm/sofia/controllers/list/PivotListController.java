@@ -37,10 +37,10 @@ public class PivotListController {
         return this.listService.getUiListObject(id, languageId);
     }
 
-    @GetMapping
-    List<ListDTO> getObject() {
-        return this.listService.getObject();
-    }
+//    @GetMapping
+//    List<ListDTO> getObject() {
+//        return this.listService.getObject();
+//    }
 
     @GetMapping(path = "/results")
     ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {

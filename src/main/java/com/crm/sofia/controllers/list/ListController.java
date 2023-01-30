@@ -5,18 +5,11 @@ import com.crm.sofia.dto.list.base.ListDTO;
 import com.crm.sofia.dto.list.base.ListResultsDataDTO;
 import com.crm.sofia.dto.list.user.ListUiDTO;
 import com.crm.sofia.services.list.ListService;
-import com.crm.sofia.utils.ExcelGenerator;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.JRException;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,22 +38,18 @@ public class ListController {
        return this.listService.getUiListObject(id, languageId);
     }
 
-    @GetMapping
-    List<ListDTO> getObject() {
-        return this.listService.getObject();
-    }
-
     @GetMapping(path = "/results")
     ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
-        return this.listService.getObjectDataByParameters(parameters,0L, id);
+        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+        return this.listService.getObjectDataByParameters(parameters,0L, listDTO);
     }
 
     @GetMapping(path = "/results/page/{page}")
     ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
                                      @PathVariable("page") Long page,
                                      @RequestParam("id") String id) {
-        Map<String, String> baseQueryParts = this.listService.generateBaseQuery(id);
-        return this.listService.getObjectDataByParameters2(parameters,page,baseQueryParts, id);
+        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+        return this.listService.getObjectDataByParameters(parameters,page,listDTO);
     }
 
     @GetMapping(path = "/test")
@@ -70,20 +59,8 @@ public class ListController {
 
     @GetMapping(path = "/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
-        return this.listService.getObjectLeftGroupingDataByParameters(parameters, id);
-    }
-
-    @PostMapping(path = "/data-excel")
-    public ResponseEntity<InputStreamResource> getObjectExcelData(@RequestBody ListDTO dto) throws IOException, JRException {
-        ListResultsDataDTO resultsDataDTO = this.listService.getListResultsData(dto);
-        ByteArrayInputStream in = ExcelGenerator.listToExcel(dto, resultsDataDTO);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=list-data.xlsx");
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new InputStreamResource(in));
+        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+        return this.listService.getObjectLeftGroupingDataByParameters(parameters, listDTO);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")

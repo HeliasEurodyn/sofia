@@ -1,10 +1,15 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
 import com.crm.sofia.model.expression.ExprUnit;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExprSystemParameter extends ExprUnit {
 
     static private Integer exprUnitLength = 15;

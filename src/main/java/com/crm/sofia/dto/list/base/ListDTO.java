@@ -66,4 +66,7 @@ public class ListDTO extends BaseDTO {
     private List<ListComponentFieldDTO> listComponentOrderByFieldList;
     private List<ListComponentFieldDTO> listComponentActionFieldList;
 
+    private String selectQuery;
+    private String selectLeftGroupQuery;
+    private String fromQuery;
 }

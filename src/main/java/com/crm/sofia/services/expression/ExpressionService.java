@@ -5,6 +5,7 @@ import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.model.expression.ExprUnit;
 import com.crm.sofia.model.expression.expressionUnits.*;
 import com.crm.sofia.services.auth.JWTService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -26,6 +27,13 @@ public class ExpressionService {
         this.jwtService = jwtService;
         this.entityManager = entityManager;
     }
+
+    @Cacheable(value="expression", key = "#id")
+    public ExprResponse createCacheable(String expression, String id) {
+        System.out.println("Run Expression Parser");
+        return this.create(expression, null);
+    }
+
 
     public ExprResponse create(String expression) {
         return this.create(expression, null);

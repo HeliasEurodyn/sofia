@@ -4,6 +4,9 @@ import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.list.base.GroupEntryDTO;
 import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.base.ListDTO;
+import com.crm.sofia.dto.list.query.QComponentPersistEntityDTO;
+import com.crm.sofia.dto.list.query.QListComponentFieldDTO;
+import com.crm.sofia.dto.list.query.QListDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,14 +30,19 @@ public class ListRetrieverNativeRepository {
         this.entityManager = entityManager;
     }
 
-    public Map<String, String> executeListAndGetBaseQueryParts(ListDTO listDTO) {
-        Map<String, String> baseQueryParts = new HashMap<>();
+    public ListDTO executeListAndGetBaseQueryParts(ListDTO listDTO) {
 
         /*
          * Select clause
          */
         String queryString = this.generateSelectPart(listDTO);
-        baseQueryParts.put("select", queryString);
+        listDTO.setSelectQuery(queryString);
+
+        /*
+         * Select Left Group clause
+         */
+         queryString = this.generateSelectLeftGroupPart(listDTO);
+         listDTO.setSelectLeftGroupQuery(queryString);
 
         /*
          * Identify Persist Entities
@@ -45,8 +53,9 @@ public class ListRetrieverNativeRepository {
          * From clause
          */
         queryString = this.generateFromPart(persistEntities);
-        baseQueryParts.put("from", queryString);
-        return baseQueryParts;
+        listDTO.setFromQuery(queryString);
+
+        return listDTO;
     }
 
 
@@ -60,17 +69,19 @@ public class ListRetrieverNativeRepository {
         /*
          * Select clause
          */
-        String queryString = this.generateSelectPart(listDTO);
+       // String queryString = this.generateSelectPart(listDTO);
+        String queryString = listDTO.getSelectQuery();
 
         /*
          * Identify Persist Entities
          */
-        List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
+        //  List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
 
         /*
          * From clause
          */
-        queryString += this.generateFromPart(persistEntities);
+        //queryString += this.generateFromPart(persistEntities);
+        queryString = queryString.concat(listDTO.getFromQuery());
 
         /*
          * Where clause
@@ -110,18 +121,12 @@ public class ListRetrieverNativeRepository {
         /*
          * Select clause
          */
-        String queryString = this.generateSelectLeftGroupPart(listDTO);
-
-        /*
-         * Identify formPersistEntities
-         */
-        List<ComponentPersistEntityDTO> fromPersistEntities = this.identifyFromPersistEntities(listDTO);
+        String queryString = listDTO.getSelectLeftGroupQuery();
 
         /*
          * From clause
          */
-        queryString += this.generateFromPart(fromPersistEntities);
-
+         queryString += listDTO.getFromQuery();
 
         /*
          * Define Filters List For Grouping
@@ -175,12 +180,13 @@ public class ListRetrieverNativeRepository {
         /*
          * Identify Persist Entities
          */
-        List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
+     //   List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
 
         /*
          * From clause
          */
-        queryString += this.generateFromPart(persistEntities);
+        queryString.concat(listDTO.getFromQuery());
+     //   queryString += this.generateFromPart(persistEntities);
 
 
         /*
@@ -264,11 +270,9 @@ public class ListRetrieverNativeRepository {
          * */
         List<ListComponentFieldDTO> fields = new ArrayList<>();
         fields.addAll(listDTO.getListComponentColumnFieldList());
-        fields.addAll(listDTO.getListComponentActionFieldList());
         fields.addAll(listDTO.getListComponentFilterFieldList());
         fields.addAll(listDTO.getListComponentLeftGroupFieldList());
         fields.addAll(listDTO.getListComponentOrderByFieldList());
-        fields.addAll(listDTO.getListComponentTopGroupFieldList());
 
         // 1. CpeIds by Fields
         List<String> cpeIds =
@@ -489,7 +493,7 @@ public class ListRetrieverNativeRepository {
         if (whereClauseParts.size() == 0) {
             return "";
         } else {
-            return " WHERE " + String.join(" AND ", whereClauseParts);
+            return " WHERE ".concat( String.join(" AND ", whereClauseParts) ) ;
         }
     }
 

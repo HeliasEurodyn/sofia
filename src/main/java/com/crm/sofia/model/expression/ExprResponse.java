@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExprResponse {
+public class ExprResponse implements Serializable {
     String errorMessage = "";
     Boolean error = false;
     String expression = "";

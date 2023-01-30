@@ -16,8 +16,6 @@ import com.crm.sofia.native_repository.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.expression.ExpressionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,13 +31,14 @@ public class ListService {
 
     private final ListRepository listRepository;
     private final ListMapper listMapper;
+
     private final ListUiMapper listUiMapper;
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
 
-    @Autowired
-    CacheManager cacheManager;
+//    @Autowired
+//    CacheManager cacheManager;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
@@ -54,6 +53,15 @@ public class ListService {
         this.listRetrieverNativeRepository = listRetrieverNativeRepository;
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
     }
+
+//    public QListDTO getQObject(String id) {
+//        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
+//        if (!optionalListEntity.isPresent()) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
+//        }
+//        QListDTO listDTO = this.qListMapper.map(optionalListEntity.get());
+//        return listDTO;
+//    }
 
     public ListDTO getObject(String id) {
         Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
@@ -72,9 +80,40 @@ public class ListService {
         return listDTO;
     }
 
-    public List<ListDTO> getObject() {
-        List<ListEntity> views = this.listRepository.findAll();
-        return this.listMapper.map(views);
+//    public List<ListDTO> getObject() {
+//        List<ListEntity> views = this.listRepository.findAll();
+//        return this.listMapper.map(views);
+//    }
+
+    public ListDTO calcDefaultsOnListDTO(ListDTO listDTO) {
+
+        listDTO.getListComponentFilterFieldList()
+                .stream()
+                .filter(x -> x.getDefaultValue() != null)
+                .filter(x -> !x.getDefaultValue().equals(""))
+                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+                .forEach(x -> {
+                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+                    if (!exprResponse.getError()) {
+                        Object fieldValue = exprResponse.getExprUnit().getResult();
+                        x.setFieldValue(fieldValue);
+                    }
+                });
+
+        listDTO.getListComponentColumnFieldList()
+                .stream()
+                .filter(x -> x.getDefaultValue() != null)
+                .filter(x -> !x.getDefaultValue().equals(""))
+                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+                .forEach(x -> {
+                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+                    if (!exprResponse.getError()) {
+                        Object fieldValue = exprResponse.getExprUnit().getResult();
+                        x.setFieldValue(fieldValue);
+                    }
+                });
+
+        return listDTO;
     }
 
     public ListDTO getObjectWithDefaults(String id) {
@@ -191,20 +230,13 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getJsonUrlObjectDataByParameters(Map<String, String> parameters, Long page, String jsonUrl) {
-
-        List<String> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
-
-        if (ids.size() <= 0) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
-        }
-
-        ListDTO listDTO = this.getObjectWithDefaults(ids.get(0));
-        listDTO.setCurrentPage(page);
-        listDTO = this.mapParametersToListDto(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
-        return listResultsDataDTO;
-    }
+//    public ListResultsDataDTO getJsonUrlObjectDataByParameters(Map<String, String> parameters, Long page, ListDTO listDTO) {
+//
+//        listDTO.setCurrentPage(page);
+//        listDTO = this.mapParametersToListDto(listDTO, parameters);
+//        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
+//        return listResultsDataDTO;
+//    }
 
     public ListResultsDataDTO getPivotObjectDataByParameters(Map<String, String> parameters, String id) {
         ListDTO listDTO = this.getObjectWithDefaults(id);
@@ -214,18 +246,29 @@ public class ListService {
         ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
         return listResultsDataDTO;
     }
+
+
+    public ListDTO retrieveListWithBaseQueryByUrl(String jsonUrl) {
+        List<String> ids = this.listRepository.getIdByJsonUrl(jsonUrl);
+
+        if (ids.size() <= 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
+        }
+
+        return this.retrieveListWithBaseQueryById(ids.get(0));
+    }
+
     @Cacheable(value = "list_base_query_cache", key="#id")
-    public Map<String, String> generateBaseQuery(String id) {
+    public ListDTO retrieveListWithBaseQueryById(String id) {
         ListDTO listDTO = this.getObject(id);
-        Map<String, String> baseQueryParts = this.listRetrieverNativeRepository.executeListAndGetBaseQueryParts(listDTO);
-        return baseQueryParts;
+        listDTO = this.listRetrieverNativeRepository.executeListAndGetBaseQueryParts(listDTO);
+        return listDTO;
     }
 
-    public ListResultsDataDTO getObjectDataByParameters2(Map<String, String> parameters,
-                                                         Long page,
-                                                         Map<String, String> baseQueryParts,
-                                                         String id) {
-        ListDTO listDTO = this.getObjectWithDefaults(id);
+    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters,
+                                                        Long page,
+                                                        ListDTO listDTO) {
+        listDTO = this.calcDefaultsOnListDTO(listDTO);
         listDTO.setCurrentPage(page);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         this.mapUserDefinedShordOrder(listDTO, parameters);
@@ -233,14 +276,14 @@ public class ListService {
         return listResultsDataDTO;
     }
 
-    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, String id) {
-        ListDTO listDTO = this.getObjectWithDefaults(id);
-        listDTO.setCurrentPage(page);
-        listDTO = this.mapParametersToListDto(listDTO, parameters);
-        this.mapUserDefinedShordOrder(listDTO, parameters);
-        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
-        return listResultsDataDTO;
-    }
+//    public ListResultsDataDTO getObjectDataByParameters(Map<String, String> parameters, Long page, String id) {
+//        ListDTO listDTO = this.getObjectWithDefaults(id);
+//        listDTO.setCurrentPage(page);
+//        listDTO = this.mapParametersToListDto(listDTO, parameters);
+//        this.mapUserDefinedShordOrder(listDTO, parameters);
+//        ListResultsDataDTO listResultsDataDTO = this.getListResultsData(listDTO);
+//        return listResultsDataDTO;
+//    }
 
     private void mapPivotColumns(ListDTO listDTO) {
         listDTO.getListComponentColumnFieldList().addAll(listDTO.getListComponentLeftGroupFieldList());
@@ -336,8 +379,8 @@ public class ListService {
         return listDTO;
     }
 
-    public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, String id) {
-        ListDTO listDTO = this.getObjectWithDefaults(id);
+    public List<GroupEntryDTO> getObjectLeftGroupingDataByParameters(Map<String, String> parameters, ListDTO listDTO) {
+        listDTO = this.calcDefaultsOnListDTO(listDTO);
         listDTO = this.mapParametersToListDto(listDTO, parameters);
         return this.listRetrieverNativeRepository.executeListAndGetGroupingData(listDTO);
     }
