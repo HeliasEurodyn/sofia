@@ -8,8 +8,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: rita
+    volumes:
+      - mysql-database:/var/lib/mysql
     ports:
-      - "4823:3306"
+      - "3306:3306"
   mysql-phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: mysql-database-admin
@@ -21,3 +23,6 @@ services:
       UPLOAD_LIMIT: 300M
     ports:
       - "4824:80"
+      
+volumes:
+  mysql-database: ~
