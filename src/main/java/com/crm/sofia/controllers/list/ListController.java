@@ -3,7 +3,6 @@ package com.crm.sofia.controllers.list;
 import com.crm.sofia.dto.list.base.GroupEntryDTO;
 import com.crm.sofia.dto.list.base.ListDTO;
 import com.crm.sofia.dto.list.base.ListResultsDataDTO;
-import com.crm.sofia.dto.list.user.ListUiDTO;
 import com.crm.sofia.services.list.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,30 +24,33 @@ public class ListController {
         this.listService = listService;
     }
 
-    @GetMapping(path = "by-id")
-    ListDTO getObject(@RequestParam("id") String id) {
-        ListDTO listDTO = this.listService.getObjectWithDefaults(id);
-        listDTO.setComponent(null);
-        return listDTO;
-    }
+//    @GetMapping(path = "by-id")
+//    ListDTO getObject(@RequestParam("id") String id) {
+//        ListDTO listDTO = this.listService.getObjectWithDefaults(id);
+//        listDTO.setComponent(null);
+//        return listDTO;
+//    }
 
     @GetMapping(path = "ui")
-    ListUiDTO getUiObject(@RequestParam("id") String id,
+    ListDTO getUiObject(@RequestParam("id") String id,
                           @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
-       return this.listService.getUiListObject(id, languageId);
+       return this.listService.retrieveListWithBaseQuery(id, languageId);
     }
 
     @GetMapping(path = "/results")
-    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
-        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters,
+                                 @RequestParam("id") String id,
+                                 @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
+        ListDTO listDTO = this.listService.retrieveListWithBaseQuery(id, languageId);
         return this.listService.getObjectDataByParameters(parameters,0L, listDTO);
     }
 
     @GetMapping(path = "/results/page/{page}")
     ListResultsDataDTO getPageObject(@RequestParam Map<String, String> parameters,
                                      @PathVariable("page") Long page,
-                                     @RequestParam("id") String id) {
-        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+                                     @RequestParam("id") String id,
+                                     @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
+        ListDTO listDTO = this.listService.retrieveListWithBaseQuery(id,languageId);
         return this.listService.getObjectDataByParameters(parameters,page,listDTO);
     }
 
@@ -58,8 +60,10 @@ public class ListController {
     }
 
     @GetMapping(path = "/left-grouping/results")
-    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
-        ListDTO listDTO = this.listService.retrieveListWithBaseQueryById(id);
+    List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters,
+                                                  @RequestParam("id") String id,
+                                                  @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
+        ListDTO listDTO = this.listService.retrieveListWithBaseQuery(id, languageId);
         return this.listService.getObjectLeftGroupingDataByParameters(parameters, listDTO);
     }
 
@@ -94,8 +98,9 @@ public class ListController {
     void updateField(@RequestParam("id") String id,
                      @RequestParam("field") String field,
                      @RequestParam("field-value") Object fieldValue,
-                     @RequestParam("rel") Object rel ) {
-        this.listService.updateField(id, field, fieldValue, rel);
+                     @RequestParam("rel") Object rel,
+                     @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
+        this.listService.updateField(id, field, fieldValue, rel, languageId);
     }
 
 }

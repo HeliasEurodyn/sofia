@@ -2,14 +2,12 @@ package com.crm.sofia.controllers.list;
 
 import com.crm.sofia.dto.list.base.ListDTO;
 import com.crm.sofia.dto.list.base.ListResultsDataDTO;
-import com.crm.sofia.dto.list.user.ListUiDTO;
 import com.crm.sofia.services.list.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -24,27 +22,18 @@ public class PivotListController {
         this.listService = listService;
     }
 
-    @GetMapping(path = "by-id")
-    ListDTO getObject(@RequestParam("id") String id) {
-        ListDTO listDTO = this.listService.getObjectWithDefaults(id);
-        listDTO.setComponent(null);
-        return listDTO;
-    }
-
     @GetMapping(path = "ui")
-    ListUiDTO getUiObject(@RequestParam("id") String id,
-                          @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
-        return this.listService.getUiListObject(id, languageId);
+    ListDTO getUiObject(@RequestParam("id") String id,
+                        @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
+        return this.listService.retrieveListWithBaseQuery(id, languageId);
     }
-
-//    @GetMapping
-//    List<ListDTO> getObject() {
-//        return this.listService.getObject();
-//    }
 
     @GetMapping(path = "/results")
-    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters, @RequestParam("id") String id) {
-        return this.listService.getPivotObjectDataByParameters(parameters, id);
+    ListResultsDataDTO getObject(@RequestParam Map<String, String> parameters,
+                                 @RequestParam("id") String id,
+                                 @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
+        ListDTO listDTO = this.listService.retrieveListWithBaseQuery(id, languageId);
+        return this.listService.getPivotObjectDataByParameters(parameters, listDTO);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")

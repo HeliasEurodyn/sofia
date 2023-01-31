@@ -180,13 +180,13 @@ public class ListRetrieverNativeRepository {
         /*
          * Identify Persist Entities
          */
-     //   List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
+       // List<ComponentPersistEntityDTO> persistEntities = this.identifyFromPersistEntities(listDTO);
 
         /*
          * From clause
          */
         queryString = queryString.concat(listDTO.getFromQuery());
-     //   queryString += this.generateFromPart(persistEntities);
+       // queryString += this.generateFromPart(persistEntities);
 
 
         /*
@@ -210,7 +210,7 @@ public class ListRetrieverNativeRepository {
     /*
      * Iterate to Generate SELECT Columns part
      */
-    private String generateSelectPart(ListDTO listDTO) {
+    public String generateSelectPart(ListDTO listDTO) {
 
         List<String> selectionFields = new ArrayList<>();
 
@@ -272,6 +272,7 @@ public class ListRetrieverNativeRepository {
         fields.addAll(listDTO.getListComponentColumnFieldList());
         fields.addAll(listDTO.getListComponentFilterFieldList());
         fields.addAll(listDTO.getListComponentLeftGroupFieldList());
+        fields.addAll(listDTO.getListComponentTopGroupFieldList());
         fields.addAll(listDTO.getListComponentOrderByFieldList());
 
         // 1. CpeIds by Fields

@@ -17,8 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@JsonIgnoreProperties({
-        "createdOn",
+@JsonIgnoreProperties({"createdOn",
         "createdBy",
         "shortOrder",
         "version",
@@ -34,8 +33,7 @@ import java.util.List;
         "component",
         "selectQuery",
         "selectLeftGroupQuery",
-        "fromQuery"}
-)
+        "fromQuery"})
 public class ListDTO extends BaseDTO {
 
     private String code;
@@ -68,7 +66,7 @@ public class ListDTO extends BaseDTO {
 //    private String rowNavigation;
 //    private String jsonUrl;
     private ComponentDTO component;
-//    private Long instanceVersion;
+    private Long instanceVersion;
 //    private Boolean accessControlEnabled;
 //    private String businessUnit;
 //    private List<AccessControlDTO> accessControls;
