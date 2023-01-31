@@ -54,11 +54,6 @@ public class ListController {
         return this.listService.getObjectDataByParameters(parameters,page,listDTO);
     }
 
-    @GetMapping(path = "/test")
-    Object test() {
-        return this.listService.test();
-    }
-
     @GetMapping(path = "/left-grouping/results")
     List<GroupEntryDTO> getObjectLeftGroupingData(@RequestParam Map<String, String> parameters,
                                                   @RequestParam("id") String id,
@@ -101,6 +96,12 @@ public class ListController {
                      @RequestParam("rel") Object rel,
                      @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
         this.listService.updateField(id, field, fieldValue, rel, languageId);
+    }
+
+
+    @GetMapping(path = "/test")
+    Object test() {
+        return this.listService.test();
     }
 
 }
