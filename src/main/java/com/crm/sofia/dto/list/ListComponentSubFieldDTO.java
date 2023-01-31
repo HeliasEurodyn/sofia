@@ -1,14 +1,11 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.dto.list.base.translation.ListComponentFieldTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.util.List;
 
 @Getter
 @Setter

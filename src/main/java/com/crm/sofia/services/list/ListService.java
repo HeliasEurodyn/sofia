@@ -1,8 +1,10 @@
 package com.crm.sofia.services.list;
 
-import com.crm.sofia.dto.list.base.*;
-import com.crm.sofia.mapper.list.designer.ListMapper;
-import com.crm.sofia.mapper.list.user.ListUiMapper;
+import com.crm.sofia.dto.list.GroupEntryDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListDTO;
+import com.crm.sofia.dto.list.ListResultsDataDTO;
+import com.crm.sofia.mapper.list.ListMapper;
 import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.model.list.ListEntity;
 import com.crm.sofia.native_repository.list.ListRetrieverNativeRepository;
@@ -25,7 +27,6 @@ public class ListService {
     private final ListRepository listRepository;
     private final ListMapper listMapper;
 
-    private final ListUiMapper listUiMapper;
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
@@ -35,13 +36,11 @@ public class ListService {
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
-                       ListUiMapper listUiMapper,
                        ExpressionService expressionService,
                        ListRetrieverNativeRepository listRetrieverNativeRepository,
                        ListUpdaterNativeRepository listUpdaterNativeRepository) {
         this.listRepository = listRepository;
         this.listMapper = listMapper;
-        this.listUiMapper = listUiMapper;
         this.expressionService = expressionService;
         this.listRetrieverNativeRepository = listRetrieverNativeRepository;
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;

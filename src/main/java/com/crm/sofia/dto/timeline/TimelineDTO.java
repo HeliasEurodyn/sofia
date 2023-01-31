@@ -1,7 +1,7 @@
 package com.crm.sofia.dto.timeline;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;

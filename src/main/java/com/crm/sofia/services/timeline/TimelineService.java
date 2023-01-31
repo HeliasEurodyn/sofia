@@ -1,6 +1,6 @@
 package com.crm.sofia.services.timeline;
 
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.timeline.TimelineDTO;
 import com.crm.sofia.dto.timeline.TimelineResponseDTO;
 import com.crm.sofia.mapper.timeline.TimelineMapper;

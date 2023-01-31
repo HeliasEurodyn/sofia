@@ -1,7 +1,7 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.list.base.translation.ListActionButtonTranslationDTO;
+import com.crm.sofia.dto.list.translation.ListActionButtonTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -16,12 +16,15 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListActionSubButtonDTO extends BaseDTO {
+public class ListActionButtonDTO extends BaseDTO {
     private String code;
     private String icon;
     private String description;
     private String editor;
     private String cssClass;
     private Boolean visible;
+
     private List<ListActionButtonTranslationDTO> translations;
+
+    List<ListActionSubButtonDTO> listActionButtons;
 }

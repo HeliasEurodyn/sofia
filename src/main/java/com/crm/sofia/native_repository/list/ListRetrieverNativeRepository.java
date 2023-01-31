@@ -1,12 +1,9 @@
 package com.crm.sofia.native_repository.list;
 
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.list.base.GroupEntryDTO;
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
-import com.crm.sofia.dto.list.base.ListDTO;
-import com.crm.sofia.dto.list.query.QComponentPersistEntityDTO;
-import com.crm.sofia.dto.list.query.QListComponentFieldDTO;
-import com.crm.sofia.dto.list.query.QListDTO;
+import com.crm.sofia.dto.list.GroupEntryDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

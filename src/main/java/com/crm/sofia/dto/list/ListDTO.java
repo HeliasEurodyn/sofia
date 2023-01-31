@@ -1,9 +1,8 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
-import com.crm.sofia.dto.access_control.AccessControlDTO;
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.component.designer.ComponentDTO;
-import com.crm.sofia.dto.list.base.translation.ListTranslationDTO;
+import com.crm.sofia.dto.list.translation.ListTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;

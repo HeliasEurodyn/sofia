@@ -1,11 +1,11 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -15,17 +15,11 @@ import java.util.List;
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class GroupEntryDTO {
-
-    String id;
-
-    String code;
-
-    Object value;
-
-    int count;
-
-    GroupEntryDTO parrent;
-
-    List<GroupEntryDTO> children = new ArrayList<>();
+public class ListResultsDataDTO {
+    List<Map<String, Object>> listContent;
+//    List<GroupEntryDTO> groupContent;
+    Long totalPages;
+    Long currentPage;
+    Long pageSize;
+    Long totalRows;
 }

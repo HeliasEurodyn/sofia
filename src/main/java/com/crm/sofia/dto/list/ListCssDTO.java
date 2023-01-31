@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListScriptDTO extends BaseDTO {
+public class ListCssDTO extends BaseDTO {
 
     private String name;
 

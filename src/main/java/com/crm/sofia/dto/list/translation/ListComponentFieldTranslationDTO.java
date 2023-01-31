@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.list.base.translation;
+package com.crm.sofia.dto.list.translation;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.language.LanguageDTO;

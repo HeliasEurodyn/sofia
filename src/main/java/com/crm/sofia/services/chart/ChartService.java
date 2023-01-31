@@ -2,7 +2,7 @@ package com.crm.sofia.services.chart;
 
 import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.dto.chart.ChartFieldDTO;
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.mapper.chart.ChartMapper;
 import com.crm.sofia.model.chart.Chart;
 import com.crm.sofia.model.expression.ExprResponse;

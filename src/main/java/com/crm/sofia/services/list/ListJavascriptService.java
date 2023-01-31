@@ -1,16 +1,6 @@
 package com.crm.sofia.services.list;
 
-import com.crm.sofia.dto.list.base.ListDTO;
-import com.crm.sofia.utils.JSMin;
 import org.springframework.stereotype.Service;
-
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
 
 @Service
 public class ListJavascriptService {

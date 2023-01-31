@@ -1,18 +1,21 @@
-package com.crm.sofia.dto.list.base;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListComponentDTO extends BaseDTO {
- public String test;
+public class ListScriptDTO extends BaseDTO {
+
+    private String name;
+
+    private String script;
+
 }

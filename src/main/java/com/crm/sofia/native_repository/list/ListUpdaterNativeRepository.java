@@ -1,8 +1,8 @@
 package com.crm.sofia.native_repository.list;
 
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
-import com.crm.sofia.dto.list.base.ListDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;

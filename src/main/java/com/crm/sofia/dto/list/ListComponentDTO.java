@@ -1,7 +1,6 @@
-package com.crm.sofia.dto.list.base.translation;
+package com.crm.sofia.dto.list;
 
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.language.LanguageDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -14,9 +13,6 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListActionButtonTranslationDTO extends BaseDTO {
-
-    private LanguageDTO language;
-
-    private String description;
+public class ListComponentDTO extends BaseDTO {
+ public String test;
 }

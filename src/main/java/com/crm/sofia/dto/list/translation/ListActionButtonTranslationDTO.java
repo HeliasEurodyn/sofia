@@ -1,4 +1,4 @@
-package com.crm.sofia.dto.list.base.translation;
+package com.crm.sofia.dto.list.translation;
 
 import com.crm.sofia.dto.common.BaseDTO;
 import com.crm.sofia.dto.language.LanguageDTO;
@@ -14,17 +14,9 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class ListTranslationDTO extends BaseDTO {
+public class ListActionButtonTranslationDTO extends BaseDTO {
 
     private LanguageDTO language;
 
-    private String headerTitle;
-    private String HeaderDescription;
-
-    private String title;
     private String description;
-
-    private String groupingTitle;
-    private String groupingDescription;
-
 }

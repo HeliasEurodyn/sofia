@@ -1,8 +1,8 @@
 package com.crm.sofia.utils;
 
-import com.crm.sofia.dto.list.base.ListComponentFieldDTO;
-import com.crm.sofia.dto.list.base.ListDTO;
-import com.crm.sofia.dto.list.base.ListResultsDataDTO;
+import com.crm.sofia.dto.list.ListComponentFieldDTO;
+import com.crm.sofia.dto.list.ListDTO;
+import com.crm.sofia.dto.list.ListResultsDataDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.Map;
 
 public class ExcelGenerator {
-
 
     public static ByteArrayInputStream listToExcel(ListDTO dto, ListResultsDataDTO resultsDataDTO) throws IOException {
 
