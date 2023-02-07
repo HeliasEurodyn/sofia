@@ -113,7 +113,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateCurrentLanguage(Long languageId) {
+    public void updateCurrentLanguage(String languageId) {
         String userId = this.jwtService.getUserId();
 
         this.userRepository.updateCurrentLanguage(userId, languageId);

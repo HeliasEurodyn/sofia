@@ -24,13 +24,6 @@ public class ListController {
         this.listService = listService;
     }
 
-//    @GetMapping(path = "by-id")
-//    ListDTO getObject(@RequestParam("id") String id) {
-//        ListDTO listDTO = this.listService.getObjectWithDefaults(id);
-//        listDTO.setComponent(null);
-//        return listDTO;
-//    }
-
     @GetMapping(path = "ui")
     ListDTO getUiObject(@RequestParam("id") String id,
                           @RequestParam(defaultValue = "0", name = "language-id") String languageId) {

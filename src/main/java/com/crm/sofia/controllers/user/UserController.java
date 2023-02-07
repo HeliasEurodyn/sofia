@@ -32,9 +32,10 @@ public class UserController {
     }
 
     @PutMapping(value = "/current-language")
-    public void updateCurrentLanguage(@RequestParam("language-id") Long languageId) {
+    public void updateCurrentLanguage(@RequestParam("language-id") String languageId) {
         this.userService.updateCurrentLanguage(languageId);
     }
+
     @PutMapping(value = "/change-password")
     public UserDTO changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         return this.userService.changePassword(changePasswordRequest);

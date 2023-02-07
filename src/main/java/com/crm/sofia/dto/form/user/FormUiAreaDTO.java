@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.form.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.form.user.translation.FormAreaTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,4 +29,5 @@ public class FormUiAreaDTO extends BaseDTO {
 
     private List<FormUiControlDTO> formControls;
 
+//    private List<FormAreaTranslationDTO> translations;
 }

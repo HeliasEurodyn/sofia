@@ -1,14 +1,14 @@
 package com.crm.sofia.model.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.form.translation.FormControlButtonTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -36,4 +36,11 @@ public class FormControlButton extends BaseEntity {
     @Column
     private String cssClass;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_control_button_id")
+    private List<FormControlButtonTranslation> translations;
 }

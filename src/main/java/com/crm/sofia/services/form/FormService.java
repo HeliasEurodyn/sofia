@@ -173,8 +173,8 @@ public class FormService {
         return this.getObject(formEntityIdsList.get(0));
     }
 
-    @Cacheable(value = "form_ui_cache", key = "#id")
-    public FormUiDTO getUiObject(String id) {
+    @Cacheable(value = "form_uil_cache", key = "{ #id, #languageId }")
+    public FormUiDTO getUiObject(String id, String languageId) {
 
         System.out.println("Get UiForm object from Database");
 
@@ -185,7 +185,7 @@ public class FormService {
         }
 
         /* Map */
-        FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get());
+        FormUiDTO formUiDTO = this.formUiMapper.mapForm(optionalFormEntity.get(), languageId);
 
         /* Short */
         formUiDTO.getFormTabs().sort(Comparator.comparingLong(FormUiTabDTO::getShortOrder));
@@ -273,26 +273,26 @@ public class FormService {
         return componentJsonMapper.mapToJson(componentDTO);
     }
 
-    public FormDTO getObjectAndRetrieveData(String formId, String selectionId) {
-
-        /* Retrieve form from Database */
-        FormDTO formDTO = this.getObject(formId);
-
-        /* Retrieve Form Component field Assignments from Database */
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-                        formDTO.getComponent().getComponentPersistEntityList(),
-                        "form",
-                        formDTO.getId()
-                );
-        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
-
-        /* Retrieve Data */
-        ComponentDTO componentDTO = componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
-        formDTO.setComponent(componentDTO);
-
-        return formDTO;
-    }
+//    public FormDTO getObjectAndRetrieveData(String formId, String selectionId) {
+//
+//        /* Retrieve form from Database */
+//        FormDTO formDTO = this.getObject(formId);
+//
+//        /* Retrieve Form Component field Assignments from Database */
+//        List<ComponentPersistEntityDTO> componentPersistEntityList =
+//                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
+//                        formDTO.getComponent().getComponentPersistEntityList(),
+//                        "form",
+//                        formDTO.getId()
+//                );
+//        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
+//
+//        /* Retrieve Data */
+//        ComponentDTO componentDTO = componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
+//        formDTO.setComponent(componentDTO);
+//
+//        return formDTO;
+//    }
 
     public String save(String formId, Map<String, Map<String, Object>> parameters) {
 

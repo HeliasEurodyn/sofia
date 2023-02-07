@@ -1,6 +1,7 @@
 package com.crm.sofia.model.form;
 
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.form.translation.FormAreaTranslation;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -42,4 +43,12 @@ public class FormArea extends BaseEntity {
 
     @Column(name = "short_order")
     private Long shortOrder;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = { CascadeType.ALL },
+            orphanRemoval=true
+    )
+    @JoinColumn(name = "form_area_id")
+    private List<FormAreaTranslation> translations;
 }

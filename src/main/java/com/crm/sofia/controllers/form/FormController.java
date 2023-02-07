@@ -1,7 +1,6 @@
 package com.crm.sofia.controllers.form;
 
 import com.crm.sofia.dto.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +21,16 @@ public class FormController {
         this.formService = formService;
     }
 
-    @GetMapping(path = "/by-id")
-    FormDTO getObject(@RequestParam("id") String formId,
-                      @RequestParam("selection-id") String selectionId) {
-        return this.formService.getObjectAndRetrieveData(formId, selectionId);
-    }
+//    @GetMapping(path = "/by-id")
+//    FormDTO getObject(@RequestParam("id") String formId,
+//                      @RequestParam("selection-id") String selectionId) {
+//        return this.formService.getObjectAndRetrieveData(formId, selectionId);
+//    }
 
     @GetMapping(path = "ui")
-    FormUiDTO getUiObject(@RequestParam("id") String formId) {
-        return this.formService.getUiObject(formId);
+    FormUiDTO getUiObject(@RequestParam("id") String formId,
+                          @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
+        return this.formService.getUiObject(formId, languageId);
     }
 
     @GetMapping(path = "data")

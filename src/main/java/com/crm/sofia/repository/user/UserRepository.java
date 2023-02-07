@@ -56,6 +56,6 @@ public interface UserRepository extends BaseRepository<User> {
     @Query(value = "UPDATE User u SET" +
             " u.currentLanguage.id = :language_id " +
             " WHERE u.id = :id ")
-    void updateCurrentLanguage(@Param("id") String id, @Param("language_id") Long languageId);
+    void updateCurrentLanguage(@Param("id") String id, @Param("language_id") String languageId);
 
 }

@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.form.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.form.user.translation.FormActionButtonTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -24,4 +25,5 @@ public class FormActionButtonUiDTO extends BaseDTO {
     private Boolean visible;
     private Boolean editable;
     List<FormActionButtonUiDTO> formActionButtons;
+//    List<FormActionButtonTranslationDTO> translations;
 }

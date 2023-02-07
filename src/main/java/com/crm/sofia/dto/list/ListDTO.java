@@ -75,6 +75,7 @@ public class ListDTO extends BaseDTO {
     private List<ListTranslationDTO> translations;
 
     private List<ListActionButtonDTO> listActionButtons;
+
     private List<ListComponentFieldDTO> listComponentColumnFieldList;
     private List<ListComponentFieldDTO> listComponentFilterFieldList;
     private List<ListComponentFieldDTO> listComponentLeftGroupFieldList;

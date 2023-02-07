@@ -1,6 +1,7 @@
 package com.crm.sofia.dto.form.user;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.form.user.translation.FormTabTranslationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,5 +26,7 @@ public class FormPopupDto extends BaseDTO {
     private Boolean editable;
 
     private List<FormUiAreaDTO> formAreas;
+
+//    private List<FormTabTranslationDTO> translations;
 
 }
