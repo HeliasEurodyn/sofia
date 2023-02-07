@@ -417,7 +417,7 @@ public class ListService {
     }
 
     public void updateField(String id, String field, Object fieldValue, Object rel, String languageId) {
-        ListDTO listDTO = this.getObject(id, languageId);
+        ListDTO listDTO = this.retrieveListWithBaseQuery(id, languageId);
         this.listUpdaterNativeRepository.updateField(listDTO, field, fieldValue, rel);
 
         System.out.println(rel);
