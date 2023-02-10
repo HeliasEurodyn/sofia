@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,27 +66,28 @@ public class ListService {
 
         ListDTO listDTO = this.listMapper.mapList(listEntity, languageId);
 
-        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
-                        listDTO.getListComponentColumnFieldList().stream())
-                .collect(Collectors.toList());
-
-        /* Calc Default Values */
-        for (ListComponentFieldDTO filterDto : filtersList) {
-
-            if (filterDto.getDefaultValue() == null) continue;
-            if (filterDto.getDefaultValue().equals("")) continue;
-
-            ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
-            if (!exprResponse.getError()) {
-                Object fieldValue = exprResponse.getExprUnit().getResult();
-                if(filterDto.getType().equals("list")){
-                    filterDto.setDefaultValue(fieldValue.toString());
-                }else {
-                    filterDto.setFieldValue(fieldValue);
-                    filterDto.setDefaultValue(fieldValue.toString());
-                }
-            }
-        }
+//        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
+//                        listDTO.getListComponentColumnFieldList().stream())
+//                .collect(Collectors.toList());
+//
+//        /* Calc Default Values */
+//        for (ListComponentFieldDTO filterDto : filtersList) {
+//
+//            if (filterDto.getDefaultValue() == null) continue;
+//            if (filterDto.getDefaultValue().equals("")) continue;
+//
+//           // ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
+//            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
+//            if (!exprResponse.getError()) {
+//                Object fieldValue = exprResponse.getExprUnit().getResult();
+//                if(filterDto.getType().equals("list")){
+//                    filterDto.setDefaultValue(fieldValue.toString());
+//                } else {
+//                    filterDto.setFieldValue(fieldValue);
+//                    filterDto.setDefaultValue(fieldValue.toString());
+//                }
+//            }
+//        }
 
         return listDTO;
     }
@@ -94,9 +98,10 @@ public class ListService {
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
-                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> !(x.getEditable() != null && x.getEditable()))
                 .forEach(x -> {
-                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
+                    // ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
                     if (!exprResponse.getError()) {
                         Object fieldValue = exprResponse.getExprUnit().getResult();
                         x.setFieldValue(fieldValue);
@@ -107,9 +112,10 @@ public class ListService {
                 .stream()
                 .filter(x -> x.getDefaultValue() != null)
                 .filter(x -> !x.getDefaultValue().equals(""))
-                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> !(x.getEditable() != null && x.getEditable()))
                 .forEach(x -> {
-                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+//                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
                     if (!exprResponse.getError()) {
                         Object fieldValue = exprResponse.getExprUnit().getResult();
                         x.setFieldValue(fieldValue);
@@ -209,7 +215,7 @@ public class ListService {
         List<Map<String, Object>> listContent = this.listRetrieverNativeRepository.executeListAndGetData(listDTO);
         listResultsDataDTO.setListContent(listContent);
 
-        if ((listDTO.getHasPagination() == null ? false : listDTO.getHasPagination())) {
+        if ((listDTO.getHasPagination() != null && listDTO.getHasPagination())) {
 
             // Current Page
             Long currentPage = listDTO.getCurrentPage();
@@ -253,10 +259,41 @@ public class ListService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Url does not exits");
         }
 
-        return this.retrieveListWithBaseQuery(ids.get(0),"0");
+        return this.retrieveListWithBaseQuery(ids.get(0), "0");
     }
 
-    @Cacheable(value = "list_cache", key="{ #id, #languageId }")
+
+    public ListDTO retrieveListAndCalcDefaultExpression(String id, String languageId) {
+        ListDTO listDTO = this.retrieveListWithBaseQuery(id, languageId);
+
+        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
+                        listDTO.getListComponentColumnFieldList().stream())
+                .collect(Collectors.toList());
+
+        /* Calc Default Values */
+        for (ListComponentFieldDTO filterDto : filtersList) {
+
+            if (filterDto.getDefaultValue() == null) continue;
+            if (filterDto.getDefaultValue().equals("")) continue;
+
+            // ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
+            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
+            if (!exprResponse.getError()) {
+                Object fieldValue = exprResponse.getExprUnit().getResult();
+                if (filterDto.getType().equals("list")) {
+                    filterDto.setDefaultValue(fieldValue.toString());
+                } else {
+                    filterDto.setFieldValue(fieldValue);
+                    filterDto.setDefaultValue(fieldValue.toString());
+                }
+            }
+        }
+
+
+        return listDTO;
+    }
+
+    @Cacheable(value = "list_cache", key = "{ #id, #languageId }")
     public ListDTO retrieveListWithBaseQuery(String id, String languageId) {
         ListDTO listDTO = this.getObject(id, languageId);
         listDTO = this.listRetrieverNativeRepository.executeListAndGetBaseQueryParts(listDTO);
@@ -284,7 +321,7 @@ public class ListService {
 
     private void mapUserDefinedShordOrder(ListDTO listDTO, Map<String, String> parameters) {
 
-        if(!parameters.containsKey("sel-sort-code") || !parameters.containsKey("sel-sort-order") ){
+        if (!parameters.containsKey("sel-sort-code") || !parameters.containsKey("sel-sort-order")) {
             return;
         }
 
@@ -299,7 +336,7 @@ public class ListService {
                     ListComponentFieldDTO field = new ListComponentFieldDTO();
                     field.setCode(x.getCode());
                     field.setFormulaType(x.getFormulaType());
-                    if(selectedSortOrder.equals("desc")) {
+                    if (selectedSortOrder.equals("desc")) {
                         field.setEditor("DESC");
                     } else {
                         field.setEditor("ASC");
@@ -307,18 +344,18 @@ public class ListService {
                     field.setType(x.getType());
                     field.setComponentPersistEntity(x.getComponentPersistEntity());
                     field.setComponentPersistEntityField(x.getComponentPersistEntityField());
-                    listDTO.getListComponentOrderByFieldList().add(0,field);
+                    listDTO.getListComponentOrderByFieldList().add(0, field);
                 });
     }
 
     private ListDTO mapParametersToListDto(ListDTO listDTO, Map<String, String> parameters) {
 
         /*
-        * Map Parameters to Columns
-        * */
+         * Map Parameters to Columns
+         * */
         listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> (x.getHeaderFilter() == null ? false : x.getHeaderFilter()))
+                .filter(x -> (x.getHeaderFilter() != null && x.getHeaderFilter()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> !x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -328,7 +365,7 @@ public class ListService {
 
         listDTO.getListComponentColumnFieldList()
                 .stream()
-                .filter(x -> (x.getHeaderFilter() == null ? false : x.getHeaderFilter()))
+                .filter(x -> (x.getHeaderFilter() != null && x.getHeaderFilter()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -346,7 +383,7 @@ public class ListService {
 
         filtersList
                 .stream()
-                .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> (x.getEditable() != null && x.getEditable()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> !x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -356,7 +393,7 @@ public class ListService {
 
         filtersList
                 .stream()
-                .filter(x -> (x.getEditable() == null ? false : x.getEditable()))
+                .filter(x -> (x.getEditable() != null && x.getEditable()))
                 .filter(x -> parameters.containsKey(x.getCode()))
                 .filter(x -> x.getType().equals("datetime"))
                 .forEach(x -> {
@@ -407,8 +444,8 @@ public class ListService {
         ids.forEach(id -> {
             String ifClause =
                     String.join("",
-                            "if (id == '" , id,
-                            "' ) return new ListDynamicScript",id.replace("-","_") , "();" );
+                            "if (id == '", id,
+                            "' ) return new ListDynamicScript", id.replace("-", "_"), "();");
             scriptLines.add(ifClause);
         });
         scriptLines.add("}");
@@ -419,10 +456,6 @@ public class ListService {
     public void updateField(String id, String field, Object fieldValue, Object rel, String languageId) {
         ListDTO listDTO = this.retrieveListWithBaseQuery(id, languageId);
         this.listUpdaterNativeRepository.updateField(listDTO, field, fieldValue, rel);
-
-        System.out.println(rel);
-        System.out.println(field);
-        System.out.println(fieldValue);
     }
 
     public Object test() {

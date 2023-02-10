@@ -27,7 +27,7 @@ public class ListController {
     @GetMapping(path = "ui")
     ListDTO getUiObject(@RequestParam("id") String id,
                           @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
-       return this.listService.retrieveListWithBaseQuery(id, languageId);
+       return this.listService.retrieveListAndCalcDefaultExpression(id, languageId);
     }
 
     @GetMapping(path = "/results")

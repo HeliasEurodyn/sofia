@@ -25,7 +25,7 @@ public class PivotListController {
     @GetMapping(path = "ui")
     ListDTO getUiObject(@RequestParam("id") String id,
                         @RequestParam(name = "language-id", defaultValue = "0") String languageId) {
-        return this.listService.retrieveListWithBaseQuery(id, languageId);
+        return this.listService.retrieveListAndCalcDefaultExpression(id, languageId);
     }
 
     @GetMapping(path = "/results")
