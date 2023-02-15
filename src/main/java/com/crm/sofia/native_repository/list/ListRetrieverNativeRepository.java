@@ -747,7 +747,7 @@ public class ListRetrieverNativeRepository {
                 Instant valueInstant = Instant.parse(x.getFieldValue().toString());
                 filterPart = DateTimeFormatter.ofPattern("yyyyMMddhhmm00").withZone(ZoneOffset.UTC).format(valueInstant);
             }
-            else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field")) {
+            else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field") || x.getType().equals("simple-field")) {
                 if (x.getOperator().equals("like")) {
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
                 } else {
@@ -817,7 +817,7 @@ public class ListRetrieverNativeRepository {
             if (x.getType().equals("datetime")) {
                 Instant valueInstant = Instant.parse(x.getFieldValue().toString());
                 filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
-            } else if (x.getType().equals("varchar") || x.getType().equals("text")) {
+            } else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field") || x.getType().equals("simple-field")) {
                 if (x.getOperator().equals("like")) {
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
                 } else {
