@@ -56,7 +56,10 @@ public class ComponentSaverNativeRepository {
         for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine());
             if (multiDataLine == true) {
-                this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+
+                Boolean saved = this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+               if(!saved) this.updateJoinsOnMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+
             } else {
                 this.saveComponentPersistEntity(componentPersistEntity, savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
@@ -81,11 +84,13 @@ public class ComponentSaverNativeRepository {
         return id;
     }
 
-    private ComponentPersistEntityDTO saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+    private boolean saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                                           List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        if (!(componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
-            return componentPersistEntity;
+        Boolean allowSave = (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave());
+
+        if (!allowSave) {
+            return false;
         }
 
         List<String> existingPrimaryKeys = new ArrayList<>();
@@ -188,8 +193,89 @@ public class ComponentSaverNativeRepository {
             }
         });
 
+        return true;
+    }
+
+    private ComponentPersistEntityDTO updateJoinsOnMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
+                                                                          List<ComponentPersistEntityDTO> savedPersistEntities) {
+        String deleteType =  (componentPersistEntity.getDeleteType() == null ? "" : componentPersistEntity.getDeleteType());
+
+        if (!deleteType.equals("clearJoin")) {
+            return componentPersistEntity;
+        }
+
+        List<String> existingPrimaryKeys = new ArrayList<>();
+        List<ComponentPersistEntityDataLineDTO> updatableLines = new ArrayList<>();
+        //  List<ComponentPersistEntityDataLineDTO> insertableLines = new ArrayList<>();
+
+        /* Separate lines for update, delete Section */
+        componentPersistEntity.getComponentPersistEntityDataLines()
+                .forEach(componentPersistEntityDataLine -> {
+                    Optional<ComponentPersistEntityFieldDTO> optionalComponentPersistEntityField =
+                            componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
+                                    .filter(y -> y.getPersistEntityField().getPrimaryKey() == true)
+                                    .filter(y -> y.getValue() != null).findFirst();
+
+                    if (optionalComponentPersistEntityField.isPresent()) {
+                        updatableLines.add(componentPersistEntityDataLine);
+                        existingPrimaryKeys.add("'" + optionalComponentPersistEntityField.get().getValue().toString() + "'");
+                    }
+
+                });
+
+        /*  Delete Section */
+        String primaryKeyName = componentPersistEntity.getComponentPersistEntityFieldList()
+                .stream()
+                .filter(y -> y.getPersistEntityField().getPrimaryKey() == true).findFirst()
+                .get().getPersistEntityField().getName();
+
+
+           if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
+            this.unjoinNotExistingComponentPersistEntity(
+                    existingPrimaryKeys,
+                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity.getComponentPersistEntityFieldList(),
+                    savedPersistEntities,
+                    primaryKeyName
+            );
+        }
+
+        /*  Update Section */
+        updatableLines.forEach(componentPersistEntityDataLine -> {
+
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList
+                    = componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
+                            .filter(y -> (y.getPersistEntityField().getPrimaryKey() == null ? false : y.getPersistEntityField().getPrimaryKey()) ||
+                                        !(y.getLocateStatement() == null ? "" :  y.getLocateStatement()).equals(""))
+                            .collect(Collectors.toList());
+
+
+            if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
+                this.updateComponentPersistEntity(
+                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntityFieldList,
+                        savedPersistEntities);
+            }
+
+            List<ComponentPersistEntityDTO> lineSavedPersistEntities = new ArrayList<>();
+            lineSavedPersistEntities.addAll(savedPersistEntities);
+
+            ComponentPersistEntityDTO componentPersistEntityLine = new ComponentPersistEntityDTO();
+            componentPersistEntityLine.setComponentPersistEntityFieldList(componentPersistEntityDataLine.getComponentPersistEntityFieldList());
+            componentPersistEntityLine.setCode(componentPersistEntity.getCode());
+            componentPersistEntityLine.setPersistEntity(componentPersistEntity.getPersistEntity());
+            lineSavedPersistEntities.add(componentPersistEntityLine);
+
+            if (componentPersistEntity.getComponentPersistEntityList() != null) {
+                this.generateQueriesAndSave(componentPersistEntityDataLine.getComponentPersistEntityList(), lineSavedPersistEntities);
+            }
+        });
+
         return componentPersistEntity;
     }
+
+
+
 
     private List<ComponentPersistEntityFieldDTO> updateComponentPersistEntity(
             String entityName,
