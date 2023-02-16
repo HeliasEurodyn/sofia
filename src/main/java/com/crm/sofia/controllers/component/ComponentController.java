@@ -40,9 +40,8 @@ public class ComponentController {
     @GetMapping(path = "/component-persist-entity/by-id")
     ComponentPersistEntityDTO getComponentPersistEntityDataById(@RequestParam("component-persist-entity-id") String id,
                                                                 @RequestParam("selection-id") String selectionId) {
-        return this.componentPersistEntityRetrieverService.get(id, selectionId);
+        return this.componentPersistEntityRetrieverService.getComponentPersistEntityDataById(id, selectionId);
     }
-
 
     @GetMapping(path = "/by-id")
     ComponentDTO getObject(@RequestParam("id") String componentId,

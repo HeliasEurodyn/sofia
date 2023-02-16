@@ -32,8 +32,15 @@ public class ComponentPersistEntityRetrieverService {
         this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
     }
 
-    public ComponentPersistEntityDTO get(String id, String selectionId){
+    public ComponentPersistEntityDTO getComponentPersistEntityDataById(String id, String selectionId){
         ComponentPersistEntityDTO componentPersistEntityDTO = this.getComponentPersistEntityById(id);
+
+        /* Clear Other Locate Statements Since it Searches by the Id */
+        componentPersistEntityDTO.getComponentPersistEntityFieldList()
+                .forEach(x -> x.setLocateStatement(""));
+
+        /* Retrive as NOT Multiline since it searches by a specific Id */
+        componentPersistEntityDTO.setMultiDataLine(false);
 
         List<ComponentPersistEntityFieldDTO> retrievalFieldList = componentPersistEntityDTO.getComponentPersistEntityFieldList()
                 .stream()
@@ -43,10 +50,6 @@ public class ComponentPersistEntityRetrieverService {
         retrievalFieldList
                 .stream()
                 .forEach(x -> x.setLocateStatement(selectionId));
-
-//        componentPersistEntityDTO = this.componentPersistEntityRetrieverNativeRepository
-//                .retrieveComponentPersistEntity(componentPersistEntityDTO,
-//                        retrievalFieldList);
 
         this.componentRetrieverNativeRepository.retrieveComponentPersistEntityListData(
                 Collections.singletonList(componentPersistEntityDTO),
