@@ -65,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
+                .headers().frameOptions().disable().and()
                 .cors()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -101,7 +102,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v3/api-docs.yaml",
                         "/privacy-policy.html",
                         "/swagger-ui/**",
-                        "/swagger-ui.html"
+                        "/swagger-ui.html",
+                        "/html-template/preview-page.html"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET,"/form/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
                 .antMatchers(HttpMethod.GET,"/form/clone-data/**").hasAnyAuthority("unrestricted_role", "read_role")
