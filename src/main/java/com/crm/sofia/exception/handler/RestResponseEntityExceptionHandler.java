@@ -1,6 +1,7 @@
 package com.crm.sofia.exception.handler;
 
 import com.crm.sofia.exception.DoesNotExistException;
+import com.crm.sofia.exception.EmptyRequiredFieldException;
 import com.crm.sofia.exception.ExpressionException;
 import com.crm.sofia.exception.common.SofiaException;
 import com.crm.sofia.exception.login.ChangePasswordException;
@@ -18,13 +19,14 @@ import java.util.Map;
 public class RestResponseEntityExceptionHandler{
     @ExceptionHandler(
             {ExpressionException.class, DoesNotExistException.class,
-                    UserNotFoundException.class, IncorrectPasswordException.class, ChangePasswordException.class})
-    public ResponseEntity<Map<String,String>> handleException(SofiaException exception){
-        Map<String,String> response = new HashMap<>();
+                    UserNotFoundException.class, IncorrectPasswordException.class,
+                    ChangePasswordException.class, EmptyRequiredFieldException.class})
+    public ResponseEntity<Map<String,Object>> handleException(SofiaException exception){
+        Map<String,Object> response = new HashMap<>();
         response.put("code", exception.getCode());
         response.put("message", exception.getMessage());
         response.put("category",exception.getCategory());
-        response.put("isVisible",Boolean.toString(exception.isVisible()));
+        response.put("isVisible",exception.isVisible());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
