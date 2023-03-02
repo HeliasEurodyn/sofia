@@ -55,46 +55,6 @@ public class HtmlTemplateService {
         return dto;
     }
 
-
-//    public HtmlTemplateDTO generatePdf(String id) {
-//        HtmlTemplate entity = htmlTemplateRepository.findById(id).orElseThrow(() -> new DoesNotExistException("HtmlTemplate Does Not Exist"));
-//
-//        HtmlTemplateDTO dto = htmlTemplateMapper.map(entity);
-//
-//        return dto;
-//    }
-
-
-//    public void download(String id, HttpServletResponse response) throws IOException, DocumentException {
-//
-//        response.setContentType("application/octet-stream");
-//        response.setHeader("Content-disposition", "attachment;filename=" + "report.pdf");
-//        response.setStatus(HttpServletResponse.SC_OK);
-//        OutputStream outputStream = response.getOutputStream();
-//
-//        HtmlTemplateDTO htmlTemplateDTO = this.generatePdf(id);
-//        Document xhtml = HtmlToXhtml.htmlToXhtml(htmlTemplateDTO.getHtml());
-//        XhtmlToPdf.xhtmlToStream(xhtml, outputStream);
-//
-//        outputStream.flush();
-//    }
-
-//    public void print(String htmlTemplateId, String selectionId, HttpServletResponse response) throws IOException, DocumentException {
-//        String html = this.createHtmlTemplate(htmlTemplateId, selectionId);
-//
-//        /* Set Response */
-//        response.setContentType("application/octet-stream");
-//        response.setHeader("Content-disposition", "attachment;filename=" + "report.pdf");
-//        response.setStatus(HttpServletResponse.SC_OK);
-//        OutputStream outputStream = response.getOutputStream();
-//
-//        Document xhtml = HtmlToXhtml.htmlToXhtml(html);
-//        XhtmlToPdf.xhtmlToStream(xhtml, outputStream);
-//
-//        outputStream.flush();
-//    }
-
-
     private ComponentDTO retrieveComponentData(ComponentDTO componentDTO, String htmlTemplateId, String selectionId) {
 
         /* Retrieve Form Component field Assignments from Database */
@@ -133,17 +93,22 @@ public class HtmlTemplateService {
                 continue;
             }
 
-            Pattern pattern = Pattern.compile(   "(\\#\\#multiline\\."+cpe.getCode()+"\\.start\\#\\#)((\\r\\n|\\r|\\n|.)*?)(\\#\\#multiline\\."+cpe.getCode()+"\\.end\\#\\#)"  );
+            Pattern pattern = Pattern.compile(   "(##multiline\\."+cpe.getCode()+"\\.start##)((\\r\\n|\\r|\\n|.)*?)(##multiline\\."+cpe.getCode()+"\\.end##)"  );
             Matcher matcher = pattern.matcher(html);
 
-            if (matcher.find())
+            while (matcher.find())
             {
-                System.out.println(matcher.group(1));
-                for (int i=0;i<matcher.groupCount();i++){
                     List<String> subHtmls = new ArrayList<>();
+                    String matchedHtml = matcher.group();
+
+                    System.out.println("------matchedHtml------");
+                    System.out.println(matchedHtml);
+
                     for (ComponentPersistEntityDataLineDTO dl : cpe.getComponentPersistEntityDataLines()) {
-                        String subHtml = matcher.group(i);
+                        String subHtml = matcher.group();
                         Map<String, String> valuesOfDLFields = new HashMap<>();
+                        subHtml = subHtml.replace("##multiline."+cpe.getCode()+".start##","");
+                        subHtml = subHtml.replace("##multiline."+cpe.getCode()+".end##","");
 
                         for (ComponentPersistEntityFieldDTO cpef : dl.getComponentPersistEntityFieldList()) {
                             if (subHtml.contains("##" + cpe.getCode() + "." + cpef.getPersistEntityField().getName() + "##")) {
@@ -157,8 +122,8 @@ public class HtmlTemplateService {
 
                         subHtmls.add(subHtml);
                     }
+                    html = html.replace(matchedHtml, String.join("", subHtmls));
 
-                }
             }
         }
 
