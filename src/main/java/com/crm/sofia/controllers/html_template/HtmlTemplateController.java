@@ -27,31 +27,12 @@ public class HtmlTemplateController {
         return htmlTemplateService.getObject(id);
     }
 
-//    @GetMapping(path = "/download2")
-//    public void print(@RequestParam("id") String id, HttpServletResponse response) throws IOException, DocumentException {
-//        htmlTemplateService.download(id, response);
-//    }
-//
-//    @GetMapping(path = "/download")
-//    void download(@RequestParam("id") String htmlTemplateId,
-//                       @RequestParam("selection-id") String selectionId,
-//            HttpServletResponse response) throws DocumentException, IOException {
-//         this.htmlTemplateService.print(htmlTemplateId, selectionId, response);
-//    }
-
     @GetMapping(value = "/instant-access-token")
     Map getToken(@RequestParam("id") String id,
-                 @RequestParam("selection-id") String selectionId) throws DocumentException, IOException {
+                 @RequestParam("selection-id") String selectionId) {
         String token = this.htmlTemplateService.getToken(id, selectionId);
         return Collections.singletonMap("token", token);
     }
-
-//    @GetMapping(value = "/preview-page.html", produces = MediaType.TEXT_HTML_VALUE)
-//    @ResponseBody
-//    String preview(@RequestParam("id") String htmlTemplateId,
-//                     @RequestParam("selection-id") String selectionId) throws DocumentException, IOException {
-//        return this.htmlTemplateService.printPreview(htmlTemplateId, selectionId);
-//    }
 
     @GetMapping(path = "/print-preview")
     Map printPreview(@RequestParam("token") String token) {
