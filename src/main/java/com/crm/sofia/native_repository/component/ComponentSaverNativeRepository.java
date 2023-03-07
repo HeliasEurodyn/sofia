@@ -322,7 +322,8 @@ public class ComponentSaverNativeRepository {
                 .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
                 .filter(x ->
                         (!x.getPersistEntityField().getType().equals("password")) ||
-                                (x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null ? "" : x.getValue()).equals("")))
+                                (x.getPersistEntityField().getType().equals("password")
+                                        && !(x.getValue() == null ? "" : x.getValue()).equals("")))
                 .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
                 .collect(Collectors.toList());
         String headersString = String.join(", ", headersList);
@@ -371,7 +372,7 @@ public class ComponentSaverNativeRepository {
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
+               // .filter(x -> x.getValue() != null)
                 .filter(x -> Arrays.asList("datetime", "datetime_det").contains(x.getPersistEntityField().getType()))
                 .forEach(x -> {
                     Instant valueInstant = null;
