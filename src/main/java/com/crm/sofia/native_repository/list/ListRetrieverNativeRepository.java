@@ -5,6 +5,7 @@ import com.crm.sofia.dto.list.GroupEntryDTO;
 import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
+import com.crm.sofia.services.auth.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,9 +23,12 @@ import java.util.stream.Collectors;
 public class ListRetrieverNativeRepository {
 
     private final EntityManager entityManager;
+    private final JWTService jwtService;
 
-    public ListRetrieverNativeRepository(EntityManager entityManager) {
+    public ListRetrieverNativeRepository(EntityManager entityManager,
+                                         JWTService jwtService) {
         this.entityManager = entityManager;
+        this.jwtService = jwtService;
     }
 
     public ListDTO executeListAndGetBaseQueryParts(ListDTO listDTO) {
@@ -99,6 +103,8 @@ public class ListRetrieverNativeRepository {
          * Generate Query And set filter Parameters
          */
         Query query = this.createQueryAndReplaceParameters(listDTO, queryString);
+
+        System.out.println(queryString);
 
         /*
          * Execute
@@ -733,7 +739,6 @@ public class ListRetrieverNativeRepository {
                 filtersList.stream()
                         .filter(x -> x.getFieldValue() != null)
                         .filter(x -> !x.getFieldValue().equals(""))
-                        //   .filter(field -> field.getComponentPersistEntity() != null)
                         .collect(Collectors.toList());
 
         /* Iterate and create Where parts */
@@ -764,6 +769,10 @@ public class ListRetrieverNativeRepository {
             }
 
         });
+
+        if( queryString.contains(":userid")){
+            query.setParameter("userid",this.jwtService.getUserId());
+        }
 
         return query;
     }
