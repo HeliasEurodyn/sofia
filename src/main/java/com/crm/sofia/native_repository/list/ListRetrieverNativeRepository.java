@@ -144,7 +144,13 @@ public class ListRetrieverNativeRepository {
         /*
          * Where clause
          */
-        queryString += this.generateWherePart(filtersList);
+        if (!listDTO.getCustomFilterFieldStructure()) {
+            queryString += this.generateWherePart(filtersList);
+        } else {
+            queryString += this.generateCustomWhereColumnsPart(filtersList, listDTO.getFilterFieldStructure());
+        }
+
+        //queryString += this.generateWherePart(filtersList);
 
         /*
          * Group By clause
@@ -842,6 +848,10 @@ public class ListRetrieverNativeRepository {
                 query.setParameter("filter_" + x.getCode(), filterPart);
             }
         });
+
+        if( queryString.contains(":userid")){
+            query.setParameter("userid",this.jwtService.getUserId());
+        }
 
         return query;
     }
