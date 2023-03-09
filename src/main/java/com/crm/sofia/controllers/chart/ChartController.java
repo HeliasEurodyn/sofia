@@ -4,6 +4,7 @@ import com.crm.sofia.dto.chart.ChartDTO;
 import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.services.chart.ChartService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +19,9 @@ import java.util.Map;
 @Validated
 @RequestMapping("/chart")
 public class ChartController {
-
+    @Autowired
     private final ChartService chartService;
-
+    @Autowired
     public ChartController(ChartService chartService) {
         this.chartService = chartService;
     }

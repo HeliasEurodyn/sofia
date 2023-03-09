@@ -9,6 +9,7 @@ import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.native_repository.chart.ChartNativeRepository;
 import com.crm.sofia.repository.chart.ChartRepository;
 import com.crm.sofia.services.expression.ExpressionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,12 +18,15 @@ import java.util.*;
 
 @Service
 public class ChartService {
-
-    private final ChartRepository chartRepository;
-    private final ChartMapper chartMapper;
-    private final ChartNativeRepository chartNativeRepository;
-    private final ExpressionService expressionService;
-
+    @Autowired
+    private  ChartRepository chartRepository;
+    @Autowired
+    private  ChartMapper chartMapper;
+    @Autowired
+    private  ChartNativeRepository chartNativeRepository;
+    @Autowired
+    private  ExpressionService expressionService;
+    @Autowired
     public ChartService(ChartRepository chartRepository,
                         ChartMapper chartMapper,
                         ChartNativeRepository chartNativeRepository,
@@ -34,12 +38,12 @@ public class ChartService {
     }
 
     public ChartDTO getObject(String id, Map<String, String> parameters) {
-        Optional<Chart> optionalchart = this.chartRepository.findById(id);
-        if (!optionalchart.isPresent()) {
+        Optional<Chart> optionalChart = this.chartRepository.findById(id);
+        if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
         }
 
-        ChartDTO chartDTO = this.chartMapper.map(optionalchart.get());
+        ChartDTO chartDTO = this.chartMapper.map(optionalChart.get());
 
         /* Calc Default Values */
         for (ListComponentFieldDTO filterDto: chartDTO.getFilterList()) {
@@ -102,12 +106,12 @@ public class ChartService {
     }
 
     public List<ChartFieldDTO> getData(String id, Map<String, String> parameters) {
-        Optional<Chart> optionalchart = this.chartRepository.findById(id);
-        if (!optionalchart.isPresent()) {
+        Optional<Chart> optionalChart = this.chartRepository.findById(id);
+        if (!optionalChart.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Chart does not exist");
         }
 
-        ChartDTO chartDTO = this.chartMapper.map(optionalchart.get());
+        ChartDTO chartDTO = this.chartMapper.map(optionalChart.get());
 
         return this.chartNativeRepository.getData(chartDTO.getChartFieldList(), chartDTO.getQuery(), parameters);
     }
