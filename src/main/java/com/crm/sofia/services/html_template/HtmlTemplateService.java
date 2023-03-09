@@ -117,6 +117,15 @@ public class HtmlTemplateService {
                             }
                         }
 
+                        for (ComponentPersistEntityDTO childCpe :  dl.flatSingleLineCPETree().collect(Collectors.toList())) {
+                            for (ComponentPersistEntityFieldDTO childCpef :  childCpe.getComponentPersistEntityFieldList()) {
+                                if (subHtml.contains("##" + childCpe.getCode() + "." + childCpef.getPersistEntityField().getName() + "##")) {
+                                    String value = (childCpef.getValue() == null ? "" : childCpef.getValue().toString());
+                                    valuesOfDLFields.put("##" + childCpe.getCode() + "." + childCpef.getPersistEntityField().getName() + "##", value);
+                                }
+                            }
+                        }
+
                         for (Map.Entry<String, String> entry : valuesOfDLFields.entrySet())
                             subHtml = subHtml.replace(entry.getKey(), entry.getValue());
 

@@ -65,4 +65,13 @@ public class ComponentPersistEntityDTO extends BaseDTO {
     public Stream<ComponentPersistEntityDTO> streamTree(){
         return Stream.concat(Stream.of(this), this.getComponentPersistEntityList().stream().flatMap(ComponentPersistEntityDTO::streamTree));
     }
+
+    public Stream<ComponentPersistEntityDTO> flatSingleLineCPETree(){
+        return Stream.concat(Stream.of(this),
+                this.componentPersistEntityList
+                .stream()
+                        .filter(cpe -> !(cpe.getMultiDataLine() == true))
+                        .flatMap(ComponentPersistEntityDTO::flatSingleLineCPETree));
+    }
+
 }
