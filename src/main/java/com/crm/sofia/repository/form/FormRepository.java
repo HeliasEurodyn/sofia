@@ -17,9 +17,6 @@ public interface FormRepository extends BaseRepository<FormEntity> {
 
     List<FormEntity> findAllByOrderByModifiedOn();
 
-    @Query(" SELECT DISTINCT f.businessUnit FROM FormEntity f WHERE f.businessUnit IS NOT NULL ")
-    List<String> findBusinessUnitsDistinct();
-
     @Query(" SELECT DISTINCT fs.script FROM FormEntity f " +
             " INNER JOIN f.formScripts fs " +
             " WHERE f.id =:id ")
