@@ -35,8 +35,6 @@ public class FormEntity extends MainEntity {
     @Column
     private Boolean accessControlEnabled;
 
-
-
     @ManyToOne(fetch = FetchType.LAZY,
             targetEntity = Component.class)
     @JoinColumn(name = "component_id", referencedColumnName = "id")
