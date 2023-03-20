@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprStringReplace extends ExprUnit {
@@ -31,9 +32,9 @@ public class ExprStringReplace extends ExprUnit {
     }
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object firstStringObject = this.leftChildExprUnit.getResult();
+        Object firstStringObject = this.leftChildExprUnit.getResult(exprInitParameters);
         if (firstStringObject == null) {
             return null;
         }
@@ -42,7 +43,7 @@ public class ExprStringReplace extends ExprUnit {
             return null;
         }
 
-        Object secondStringObject =  this.rightChildExprUnit.getResult();
+        Object secondStringObject =  this.rightChildExprUnit.getResult(exprInitParameters);
         if (secondStringObject == null) {
             return null;
         }

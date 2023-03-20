@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import javax.persistence.EntityManager;
@@ -13,7 +14,7 @@ public class ExprGetSqlValParameter extends ExprUnit {
     static private String exprUnitString = "getSqlVal";
     EntityManager entityManager;
 
-    public static ExprGetSqlValParameter exrtactExprUnit(String expression, Integer expressionPosition, EntityManager entityManager) {
+    public static ExprGetSqlValParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -24,7 +25,6 @@ public class ExprGetSqlValParameter extends ExprUnit {
             ExprGetSqlValParameter exprUnit = new ExprGetSqlValParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
-            exprUnit.setEntityManager(entityManager);
             return exprUnit;
         }
 
@@ -42,9 +42,9 @@ public class ExprGetSqlValParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object keyObject = (String) this.childExprUnit.getResult();
+        Object keyObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (keyObject == null) {
             return null;
         }

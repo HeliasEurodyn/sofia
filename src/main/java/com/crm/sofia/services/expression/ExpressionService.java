@@ -1,6 +1,7 @@
 package com.crm.sofia.services.expression;
 
 import com.crm.sofia.dto.expression.ExprUnitDTO;
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.model.expression.ExprUnit;
 import com.crm.sofia.model.expression.expressionUnits.*;
@@ -31,21 +32,10 @@ public class ExpressionService {
     @Cacheable(value="expression", key = "#id")
     public ExprResponse createCacheable(String expression, String id) {
         System.out.println("Run Expression Parser");
-        return this.create(expression, null);
+        return this.create(expression);
     }
-
 
     public ExprResponse create(String expression) {
-        return this.create(expression, null);
-    }
-
-    public ExprResponse create(String expression, Map<String, Object> parameters) {
-
-        Map<String, Object> systemParameters = this.defineSystemParameters();
-
-        if (parameters != null) {
-            systemParameters.putAll(parameters);
-        }
 
         if (expression.length() == 0) {
             this.createEmptyExprResponce();
@@ -66,7 +56,7 @@ public class ExpressionService {
             this.createEmptyExprResponce();
         }
 
-        List<ExprUnit> exprUnits = this.createExprUnitList(expression, systemParameters);
+        List<ExprUnit> exprUnits = this.createExprUnitList(expression);
 
         if (exprUnits == null) {
             return new ExprResponse("Could not read parameter", false, expression, null);
@@ -406,7 +396,7 @@ public class ExpressionService {
         }
     }
 
-    private List<ExprUnit> createExprUnitList(String expression, Map<String, Object> parameters) {
+    private List<ExprUnit> createExprUnitList(String expression) {
         List<ExprUnit> exprUnits = new ArrayList<>();
 
         int i = 0;
@@ -433,10 +423,10 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprStringValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprDoubleValue.exrtactExprUnit(expression, i);
             if (exprUnit == null) exprUnit = ExprIntegerValue.exrtactExprUnit(expression, i);
-            if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i, parameters);
-            if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i, parameters);
-            if (exprUnit == null) exprUnit = ExprGetSqlValParameter.exrtactExprUnit(expression, i, entityManager);
-            if (exprUnit == null) exprUnit = ExprGetSqlParameter.exrtactExprUnit(expression, i, entityManager);
+            if (exprUnit == null) exprUnit = ExprSystemParameter.exrtactExprUnit(expression, i); // parameters
+            if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i); // parameters
+            if (exprUnit == null) exprUnit = ExprGetSqlValParameter.exrtactExprUnit(expression, i); // entityManager
+            if (exprUnit == null) exprUnit = ExprGetSqlParameter.exrtactExprUnit(expression, i); // entityManager
             if (exprUnit == null) exprUnit = ExprAtListPosParameter.exrtactExprUnit(expression, i);
 
             if (exprUnit == null) exprUnit = ExprGreaterThan.exrtactExprUnit(expression, i);
@@ -483,7 +473,6 @@ public class ExpressionService {
         systemParameters.put("userId", this.jwtService.getUserId().toString());
 
         return systemParameters;
-       // ExprSystemParameter.systemParameters = systemParameters;
     }
 
     private ExprResponse createEmptyExprResponce() {
@@ -493,7 +482,7 @@ public class ExpressionService {
         return exprResponse;
     }
 
-    public void map(ExprUnit exprUnit, ExprUnitDTO exprUnitDTO) {
+    private void map(ExprUnit exprUnit, ExprUnitDTO exprUnitDTO) {
         exprUnitDTO.setExpressionPart(exprUnit.getExpressionPart());
         exprUnitDTO.setType(exprUnit.getClass().getSimpleName());
 
@@ -514,6 +503,43 @@ public class ExpressionService {
             exprUnitDTO.setRightChildExprUnit(rightChildExprUnit);
             this.map(exprUnit.getRightChildExprUnit(), rightChildExprUnit);
         }
+    }
+
+    public Object getResult(ExprResponse exprResponse, Object fieldValue) {
+
+        Map<String, Object> systemParameters = this.defineSystemParameters();
+
+        ExprInitParameters exprInitParameters = new ExprInitParameters();
+        exprInitParameters.setSystemParameters(systemParameters);
+        exprInitParameters.getSystemParameters().put("fieldValue", fieldValue);
+        exprInitParameters.setJwtService(this.jwtService);
+
+        return exprResponse.getResult(exprInitParameters);
+    }
+
+    public Object getResult(ExprResponse exprResponse, Map<String, Object> parameters) {
+
+        Map<String, Object> systemParameters = this.defineSystemParameters();
+
+        ExprInitParameters exprInitParameters = new ExprInitParameters();
+        exprInitParameters.setSystemParameters(systemParameters);
+        exprInitParameters.getSystemParameters().putAll(parameters);
+        exprInitParameters.setJwtService(this.jwtService);
+
+        return exprResponse.getResult(exprInitParameters);
+    }
+
+
+
+    public Object getResult(ExprResponse exprResponse) {
+
+        Map<String, Object> systemParameters = this.defineSystemParameters();
+
+        ExprInitParameters exprInitParameters = new ExprInitParameters();
+        exprInitParameters.setSystemParameters(systemParameters);
+        exprInitParameters.setJwtService(this.jwtService);
+
+        return exprResponse.getResult(exprInitParameters);
     }
 
 }

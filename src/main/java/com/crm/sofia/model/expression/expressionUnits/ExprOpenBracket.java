@@ -1,12 +1,12 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprOpenBracket extends ExprUnit {
 
     static private Integer exprUnitLength = 1;
     static private String exprUnitString = "(";
-//    private AppConstants.Types.ExprUnitReturningType exprUnitReturningType = null ;
 
     public static ExprOpenBracket exrtactExprUnit(String expression, Integer expressionPosition) {
 
@@ -32,7 +32,7 @@ public class ExprOpenBracket extends ExprUnit {
 
 
     @Override
-    public Object getResult(){
+    public Object getResult(ExprInitParameters exprInitParameters){
         return null;
     }
 

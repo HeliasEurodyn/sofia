@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 import lombok.Data;
 
@@ -58,7 +59,7 @@ public class ExprParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult(){
+    public Object getResult(ExprInitParameters exprInitParameters){
         return parameterValue;
     }
 }

@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import java.time.Instant;
@@ -38,9 +39,9 @@ public class ExprYyyyMmDdHhMmStringToDate extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object dateStringObject = (String) this.childExprUnit.getResult();
+        Object dateStringObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (dateStringObject == null) {
             return null;
         }

@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprComma extends ExprUnit {
@@ -34,7 +35,7 @@ public class ExprComma extends ExprUnit {
     }
 
     @Override
-    public Object getResult(){
+    public Object getResult(ExprInitParameters exprInitParameters){
         return null;
     }
 //    @Override

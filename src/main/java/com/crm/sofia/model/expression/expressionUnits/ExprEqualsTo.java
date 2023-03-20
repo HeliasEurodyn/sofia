@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import java.math.BigInteger;
@@ -33,18 +34,18 @@ public class ExprEqualsTo extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
 
         Double firstNumber;
         Double secondNumber;
 
-        Object firstNumberObject = this.leftChildExprUnit.getResult();
+        Object firstNumberObject = this.leftChildExprUnit.getResult(exprInitParameters);
         if (firstNumberObject == null) {
             return null;
         }
 
-        Object secondNumberObject =  this.rightChildExprUnit.getResult();
+        Object secondNumberObject =  this.rightChildExprUnit.getResult(exprInitParameters);
         if (secondNumberObject == null) {
             return null;
         }

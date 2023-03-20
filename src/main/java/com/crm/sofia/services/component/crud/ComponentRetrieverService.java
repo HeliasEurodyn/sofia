@@ -64,9 +64,9 @@ public class ComponentRetrieverService {
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), parameters);
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue());
                                 if (!exprResponse.getError()) {
-                                    Object fieldValue = exprResponse.getExprUnit().getResult();
+                                    Object fieldValue = expressionService.getResult(exprResponse, parameters);
                                     cpef.setValue(fieldValue);
                                 }
                             });

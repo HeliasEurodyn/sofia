@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprStrEqualsTo extends ExprUnit {
@@ -30,17 +31,17 @@ public class ExprStrEqualsTo extends ExprUnit {
     }
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
         String firstString;
         String secondString;
 
-        Object firstObject = this.leftChildExprUnit.getResult();
+        Object firstObject = this.leftChildExprUnit.getResult(exprInitParameters);
         if (firstObject == null) {
             return null;
         }
 
-        Object secondObject =  this.rightChildExprUnit.getResult();
+        Object secondObject =  this.rightChildExprUnit.getResult(exprInitParameters);
         if (secondObject == null) {
             return null;
         }
