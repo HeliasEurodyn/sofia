@@ -174,9 +174,9 @@ public class XlsImportService {
             return null;
         }
 
-        ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+        ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue());
         if (!exprResponse.getError()) {
-            Object fieldValue = exprResponse.getExprUnit().getResult();
+            Object fieldValue = expressionService.getResult(exprResponse, rowMap);
             return fieldValue.toString();
         }
 
@@ -207,11 +207,11 @@ public class XlsImportService {
                             .filter(cpef -> cpef.getAssignment().getEditor() != null)
                             .filter(cpef -> cpef.getAssignment().getEditor().equals("NEWLINEONUPDATE"))
                             .forEach(cpef -> {
-                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue());
                                 if (exprResponse.getError()) {
                                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Import Error");
                                 }
-                                Object fieldValue = exprResponse.getExprUnit().getResult();
+                                Object fieldValue = expressionService.getResult(exprResponse, rowMap);
                                 Object value = cpef.getValue() == null ? "" : cpef.getValue();
                                 if (!value.equals(fieldValue)) {
                                     addNewLineForValueChange[0] = true;
@@ -259,9 +259,9 @@ public class XlsImportService {
                             .filter(cpef -> cpef.getAssignment().getDefaultValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getDefaultValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue(), rowMap);
+                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getDefaultValue());
                                 if (!exprResponse.getError()) {
-                                    Object fieldValue = exprResponse.getExprUnit().getResult();
+                                    Object fieldValue = expressionService.getResult(exprResponse, rowMap);
                                     cpef.setValue(fieldValue);
                                 }
                             });

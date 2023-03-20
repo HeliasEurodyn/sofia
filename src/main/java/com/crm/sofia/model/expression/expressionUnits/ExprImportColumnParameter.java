@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class ExprImportColumnParameter extends ExprUnit {
 
     private Map<String, Object> dataset = new HashMap<>();
 
-    public static ExprImportColumnParameter exrtactExprUnit(String expression, Integer expressionPosition, Map<String, Object> dataset) {
+    public static ExprImportColumnParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -24,7 +25,7 @@ public class ExprImportColumnParameter extends ExprUnit {
             ExprImportColumnParameter exprUnit = new ExprImportColumnParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
-            exprUnit.setDataset(dataset);
+          //  exprUnit.setDataset(dataset);
             return exprUnit;
         }
 
@@ -42,9 +43,9 @@ public class ExprImportColumnParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object keyObject = (String) this.childExprUnit.getResult();
+        Object keyObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (keyObject == null) {
             return null;
         }

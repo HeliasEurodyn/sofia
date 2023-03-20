@@ -53,7 +53,7 @@ public class ChartService {
 
             ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
             if (!exprResponse.getError()) {
-                Object defaultFieldValue = exprResponse.getExprUnit().getResult();
+                Object defaultFieldValue = expressionService.getResult(exprResponse);
                 if(filterDto.getType().equals("list")) {
                     filterDto.setDefaultValue((defaultFieldValue==null?"":defaultFieldValue.toString()));
                     Object fieldValue = this.tryRetrieveSqlListValue(defaultFieldValue);

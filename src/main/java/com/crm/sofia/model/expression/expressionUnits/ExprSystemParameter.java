@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class ExprSystemParameter extends ExprUnit {
     static private String exprUnitString = "systemParameter";
     private Map<String,Object> parameters;
 
-    public static ExprSystemParameter exrtactExprUnit(String expression, Integer expressionPosition, Map<String,Object> systemParameters) {
+    public static ExprSystemParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -27,7 +28,7 @@ public class ExprSystemParameter extends ExprUnit {
             ExprSystemParameter exprUnit = new ExprSystemParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
-            exprUnit.setParameters(systemParameters);
+         //   exprUnit.setParameters(systemParameters);
             return exprUnit;
         }
 
@@ -45,9 +46,9 @@ public class ExprSystemParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object systemParameterObject = (String) this.childExprUnit.getResult();
+        Object systemParameterObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (systemParameterObject == null) {
             return null;
         }

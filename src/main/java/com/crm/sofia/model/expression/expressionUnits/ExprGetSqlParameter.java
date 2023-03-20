@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import javax.persistence.EntityManager;
@@ -14,7 +15,7 @@ public class ExprGetSqlParameter extends ExprUnit {
     static private String exprUnitString = "getSql";
     EntityManager entityManager;
 
-    public static ExprGetSqlParameter exrtactExprUnit(String expression, Integer expressionPosition, EntityManager entityManager) {
+    public static ExprGetSqlParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -25,7 +26,7 @@ public class ExprGetSqlParameter extends ExprUnit {
             ExprGetSqlParameter exprUnit = new ExprGetSqlParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
-            exprUnit.setEntityManager(entityManager);
+          //  exprUnit.setEntityManager(entityManager);
             return exprUnit;
         }
 
@@ -43,9 +44,9 @@ public class ExprGetSqlParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object keyObject = (String) this.childExprUnit.getResult();
+        Object keyObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (keyObject == null) {
             return null;
         }
@@ -92,14 +93,6 @@ public class ExprGetSqlParameter extends ExprUnit {
             return responses;
         }
 
-//        if (queryResults.get(0) instanceof Object[]) {
-//            Object queryResultData =  queryResults.get(0);
-//            Object[] queryResult = (Object[]) queryResultData;
-//            return queryResult[0];
-//        }
-//        else {
-//            return queryResults.get(0);
-//        }
     }
 
 }

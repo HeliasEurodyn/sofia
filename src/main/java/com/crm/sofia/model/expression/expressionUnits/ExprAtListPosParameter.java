@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import java.util.ArrayList;
@@ -35,14 +36,14 @@ public class ExprAtListPosParameter extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object arrayObject = this.leftChildExprUnit.getResult();
+        Object arrayObject = this.leftChildExprUnit.getResult(exprInitParameters);
         if (arrayObject == null) {
             return null;
         }
 
-        Double pos = (Double) this.rightChildExprUnit.getResult();
+        Double pos = (Double) this.rightChildExprUnit.getResult(exprInitParameters);
         if (pos == null) {
             return null;
         }

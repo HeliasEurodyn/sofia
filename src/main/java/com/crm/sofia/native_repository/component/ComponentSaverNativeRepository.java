@@ -736,7 +736,7 @@ public class ComponentSaverNativeRepository {
                 .forEach(cpef -> {
                     ExprResponse exprResponse = expressionService.create(cpef.getPersistEntityField().getOnSaveValue());
                     if (!exprResponse.getError()) {
-                        Object fieldValue = exprResponse.getExprUnit().getResult();
+                        Object fieldValue = expressionService.getResult(exprResponse);
                         cpef.setValue(fieldValue);
                     }
                 });

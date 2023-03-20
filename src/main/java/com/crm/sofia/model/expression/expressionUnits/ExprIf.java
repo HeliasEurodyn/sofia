@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprIf extends ExprUnit {
@@ -31,9 +32,9 @@ public class ExprIf extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object decisionExpression = this.childExprUnit.getResult();
+        Object decisionExpression = this.childExprUnit.getResult(exprInitParameters);
 
         if (decisionExpression == null) {
             return null;
@@ -44,9 +45,9 @@ public class ExprIf extends ExprUnit {
         }
 
         if ((Boolean) decisionExpression) {
-            return this.leftChildExprUnit.getResult();
+            return this.leftChildExprUnit.getResult(exprInitParameters);
         } else {
-            return this.rightChildExprUnit.getResult();
+            return this.rightChildExprUnit.getResult(exprInitParameters);
         }
 
     }

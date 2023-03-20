@@ -32,5 +32,5 @@ public abstract class ExprUnit implements Serializable {
         }
     }
 
-    public abstract Object getResult();
+    public abstract Object getResult(ExprInitParameters exprInitParameters);
 }

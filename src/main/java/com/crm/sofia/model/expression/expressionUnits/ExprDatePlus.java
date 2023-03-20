@@ -1,5 +1,6 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 import java.time.Instant;
@@ -36,9 +37,9 @@ public class ExprDatePlus extends ExprUnit {
 
 
     @Override
-    public Object getResult() {
+    public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object dateObject = (Instant) this.leftChildExprUnit.getResult();
+        Object dateObject = (Instant) this.leftChildExprUnit.getResult(exprInitParameters);
         if (dateObject == null) {
             return null;
         }
@@ -47,7 +48,7 @@ public class ExprDatePlus extends ExprUnit {
             return null;
         }
 
-        Object daysObject = (Integer) this.rightChildExprUnit.getResult();
+        Object daysObject = (Integer) this.rightChildExprUnit.getResult(exprInitParameters);
         if (daysObject == null) {
             return null;
         }

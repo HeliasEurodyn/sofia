@@ -1,6 +1,7 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
 import com.crm.sofia.exception.ExpressionException;
+import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
 public class ExprException extends ExprUnit {
@@ -31,8 +32,8 @@ public class ExprException extends ExprUnit {
     }
 
     @Override
-    public Object getResult() {
-        Object keyObject = (String) this.childExprUnit.getResult();
+    public Object getResult(ExprInitParameters exprInitParameters) {
+        Object keyObject = (String) this.childExprUnit.getResult(exprInitParameters);
         if (keyObject == null) {
             throw new ExpressionException("");
         }

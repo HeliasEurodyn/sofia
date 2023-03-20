@@ -100,10 +100,10 @@ public class ListService {
                 .filter(x -> !x.getDefaultValue().equals(""))
                 .filter(x -> !(x.getEditable() != null && x.getEditable()))
                 .forEach(x -> {
-                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
-                    // ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+                 //   ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
+                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
                     if (!exprResponse.getError()) {
-                        Object fieldValue = exprResponse.getExprUnit().getResult();
+                        Object fieldValue = expressionService.getResult(exprResponse);
                         x.setFieldValue(fieldValue);
                     }
                 });
@@ -114,10 +114,10 @@ public class ListService {
                 .filter(x -> !x.getDefaultValue().equals(""))
                 .filter(x -> !(x.getEditable() != null && x.getEditable()))
                 .forEach(x -> {
-//                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
-                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
+                    ExprResponse exprResponse = expressionService.createCacheable(x.getDefaultValue(), x.getId());
+//                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
                     if (!exprResponse.getError()) {
-                        Object fieldValue = exprResponse.getExprUnit().getResult();
+                        Object fieldValue = expressionService.getResult(exprResponse);
                         x.setFieldValue(fieldValue);
                     }
                 });
@@ -276,10 +276,10 @@ public class ListService {
             if (filterDto.getDefaultValue() == null) continue;
             if (filterDto.getDefaultValue().equals("")) continue;
 
-            // ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
-            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
+            ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
+            //ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
             if (!exprResponse.getError()) {
-                Object fieldValue = exprResponse.getExprUnit().getResult();
+                Object fieldValue = expressionService.getResult(exprResponse);
                 if (filterDto.getType().equals("list")) {
                     filterDto.setDefaultValue(fieldValue.toString());
                 } else {
