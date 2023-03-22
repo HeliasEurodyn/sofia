@@ -12,7 +12,6 @@ public class ExprGetSqlValParameter extends ExprUnit {
 
     static private Integer exprUnitLength = 9;
     static private String exprUnitString = "getSqlVal";
-    EntityManager entityManager;
 
     public static ExprGetSqlValParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
@@ -29,10 +28,6 @@ public class ExprGetSqlValParameter extends ExprUnit {
         }
 
         return null;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -55,7 +50,7 @@ public class ExprGetSqlValParameter extends ExprUnit {
 
         String queryString = (String) keyObject;
         queryString = queryString.replace("#q#","'");
-        Query query = entityManager.createNativeQuery(queryString);
+        Query query = exprInitParameters.getEntityManager().createNativeQuery(queryString);
         List<Object> queryResults = query.getResultList();
 
         if (queryResults.isEmpty()) {
