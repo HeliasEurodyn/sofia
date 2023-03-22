@@ -31,7 +31,6 @@ public class ExpressionService {
 
     @Cacheable(value="expression", key = "#id")
     public ExprResponse createCacheable(String expression, String id) {
-        System.out.println("Run Expression Parser");
         return this.create(expression);
     }
 
@@ -512,7 +511,7 @@ public class ExpressionService {
         ExprInitParameters exprInitParameters = new ExprInitParameters();
         exprInitParameters.setSystemParameters(systemParameters);
         exprInitParameters.getSystemParameters().put("fieldValue", fieldValue);
-        exprInitParameters.setJwtService(this.jwtService);
+        exprInitParameters.setEntityManager(this.entityManager);
 
         return exprResponse.getResult(exprInitParameters);
     }
@@ -524,7 +523,7 @@ public class ExpressionService {
         ExprInitParameters exprInitParameters = new ExprInitParameters();
         exprInitParameters.setSystemParameters(systemParameters);
         exprInitParameters.getSystemParameters().putAll(parameters);
-        exprInitParameters.setJwtService(this.jwtService);
+        exprInitParameters.setEntityManager(this.entityManager);
 
         return exprResponse.getResult(exprInitParameters);
     }
@@ -537,7 +536,7 @@ public class ExpressionService {
 
         ExprInitParameters exprInitParameters = new ExprInitParameters();
         exprInitParameters.setSystemParameters(systemParameters);
-        exprInitParameters.setJwtService(this.jwtService);
+        exprInitParameters.setEntityManager(this.entityManager);
 
         return exprResponse.getResult(exprInitParameters);
     }

@@ -12,8 +12,6 @@ public class ExprImportColumnParameter extends ExprUnit {
     static private Integer exprUnitLength = 12;
     static private String exprUnitString = "importColumn";
 
-    private Map<String, Object> dataset = new HashMap<>();
-
     public static ExprImportColumnParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
@@ -30,10 +28,6 @@ public class ExprImportColumnParameter extends ExprUnit {
         }
 
         return null;
-    }
-
-    public void setDataset(Map<String, Object> dataset) {
-        this.dataset = dataset;
     }
 
     @Override
@@ -55,8 +49,8 @@ public class ExprImportColumnParameter extends ExprUnit {
         }
 
         String key = (String) keyObject;
-        if (this.dataset.containsKey(key.toUpperCase())) {
-            return this.dataset.get(key.toUpperCase());
+        if (exprInitParameters.getSystemParameters().containsKey(key.toUpperCase())) {
+            return exprInitParameters.getSystemParameters().get(key.toUpperCase());
         } else {
             return null;
         }

@@ -1,10 +1,10 @@
 package com.crm.sofia.model.expression;
 
-import com.crm.sofia.services.auth.JWTService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EntityManager;
 import java.util.Map;
 
 @Data
@@ -14,6 +14,6 @@ public class ExprInitParameters {
 
     Map<String, Object> systemParameters;
 
-    JWTService jwtService = null;
+    EntityManager entityManager = null;
 
 }

@@ -10,12 +10,10 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ExprSystemParameter extends ExprUnit {
 
     static private Integer exprUnitLength = 15;
     static private String exprUnitString = "systemParameter";
-    private Map<String,Object> parameters;
 
     public static ExprSystemParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
@@ -35,15 +33,10 @@ public class ExprSystemParameter extends ExprUnit {
         return null;
     }
 
-    public void setParameters(Map<String,Object> parameters){
-        this.parameters = parameters;
-    }
-
     @Override
     public Integer getExprUnitLength() {
         return exprUnitLength;
     }
-
 
     @Override
     public Object getResult(ExprInitParameters exprInitParameters) {
@@ -58,8 +51,8 @@ public class ExprSystemParameter extends ExprUnit {
         }
 
         String systemParameter = (String) systemParameterObject;
-        if(this.parameters.containsKey(systemParameter)){
-            return this.parameters.get(systemParameter);
+        if(exprInitParameters.getSystemParameters().containsKey(systemParameter)){
+            return exprInitParameters.getSystemParameters().get(systemParameter);
         } else {
             return null;
         }

@@ -6,6 +6,7 @@ import com.crm.sofia.dto.list.ListComponentFieldDTO;
 import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
 import com.crm.sofia.services.auth.JWTService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +19,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ListRetrieverNativeRepository {
 
@@ -104,7 +107,7 @@ public class ListRetrieverNativeRepository {
          */
         Query query = this.createQueryAndReplaceParameters(listDTO, queryString);
 
-        System.out.println(queryString);
+        log.debug(queryString);
 
         /*
          * Execute
