@@ -21,7 +21,6 @@ public class ExpressionService {
 
     private final JWTService jwtService;
     private final EntityManager entityManager;
-    private Map<String, Object> dataset;
 
     public ExpressionService(JWTService jwtService,
                              EntityManager entityManager) {
