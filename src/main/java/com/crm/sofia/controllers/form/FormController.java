@@ -21,12 +21,6 @@ public class FormController {
         this.formService = formService;
     }
 
-//    @GetMapping(path = "/by-id")
-//    FormDTO getObject(@RequestParam("id") String formId,
-//                      @RequestParam("selection-id") String selectionId) {
-//        return this.formService.getObjectAndRetrieveData(formId, selectionId);
-//    }
-
     @GetMapping(path = "ui")
     FormUiDTO getUiObject(@RequestParam("id") String formId,
                           @RequestParam(defaultValue = "0", name = "language-id") String languageId) {
