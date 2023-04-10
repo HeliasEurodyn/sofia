@@ -504,7 +504,6 @@ public class ExpressionService {
     }
 
     public Object getResult(ExprResponse exprResponse, Object fieldValue) {
-
         Map<String, Object> systemParameters = this.defineSystemParameters();
 
         ExprInitParameters exprInitParameters = new ExprInitParameters();
@@ -516,7 +515,6 @@ public class ExpressionService {
     }
 
     public Object getResult(ExprResponse exprResponse, Map<String, Object> parameters) {
-
         Map<String, Object> systemParameters = this.defineSystemParameters();
 
         ExprInitParameters exprInitParameters = new ExprInitParameters();
@@ -527,10 +525,7 @@ public class ExpressionService {
         return exprResponse.getResult(exprInitParameters);
     }
 
-
-
     public Object getResult(ExprResponse exprResponse) {
-
         Map<String, Object> systemParameters = this.defineSystemParameters();
 
         ExprInitParameters exprInitParameters = new ExprInitParameters();

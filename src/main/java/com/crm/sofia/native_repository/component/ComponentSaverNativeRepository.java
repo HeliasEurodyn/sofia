@@ -19,10 +19,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,17 +27,23 @@ import java.util.stream.Collectors;
 public class ComponentSaverNativeRepository {
 
     private final EntityManager entityManager;
-    private final JWTService jwtService;
+
     private final ExpressionService expressionService;
     private final PasswordEncoder passwordEncoder;
 
+    private final ComponentQueryStringGenerator componentQueryStringGenerator;
+    private final JWTService jwtService;
+
     public ComponentSaverNativeRepository(EntityManager entityManager,
-                                          JWTService jwtService,
-                                          ExpressionService expressionService, PasswordEncoder passwordEncoder) {
+                                          ExpressionService expressionService,
+                                          PasswordEncoder passwordEncoder,
+                                          ComponentQueryStringGenerator componentQueryStringGenerator,
+                                          JWTService jwtService) {
         this.entityManager = entityManager;
-        this.jwtService = jwtService;
         this.expressionService = expressionService;
         this.passwordEncoder = passwordEncoder;
+        this.componentQueryStringGenerator = componentQueryStringGenerator;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -55,11 +58,9 @@ public class ComponentSaverNativeRepository {
         /* Itterate & save */
         for (ComponentPersistEntityDTO componentPersistEntity : componentPersistEntityList) {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine());
-            if (multiDataLine == true) {
-
+            if (multiDataLine) {
                 Boolean saved = this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
                if(!saved) this.updateJoinsOnMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
-
             } else {
                 this.saveComponentPersistEntity(componentPersistEntity, savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
@@ -149,7 +150,7 @@ public class ComponentSaverNativeRepository {
             if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
                     && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
                 this.updateComponentPersistEntity(
-                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntity,
                         componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
             }
@@ -174,7 +175,7 @@ public class ComponentSaverNativeRepository {
             if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")
                     && (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave())) {
                 this.insertComponentPersistEntity(
-                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntity,
                         componentPersistEntityDataLine.getComponentPersistEntityFieldList(),
                         savedPersistEntities);
             }
@@ -252,7 +253,7 @@ public class ComponentSaverNativeRepository {
 
             if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
                 this.updateComponentPersistEntity(
-                        componentPersistEntity.getPersistEntity().getName(),
+                        componentPersistEntity,
                         componentPersistEntityFieldList,
                         savedPersistEntities);
             }
@@ -274,11 +275,8 @@ public class ComponentSaverNativeRepository {
         return componentPersistEntity;
     }
 
-
-
-
     private List<ComponentPersistEntityFieldDTO> updateComponentPersistEntity(
-            String entityName,
+            ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
 
@@ -287,9 +285,7 @@ public class ComponentSaverNativeRepository {
                 this.mapSavedValuesToComponentPersistEntity(savedPersistEntities, componentPersistEntityFieldList);
 
         /* Generate Query */
-        Query query = this.generateUpdateQuery(entityName, componentPersistEntityFieldList);
-
-        log.info(query.toString());
+        Query query = this.generateUpdateQuery(componentPersistEntity, componentPersistEntityFieldList);
 
         /* Execute Query */
         if (query != null) {
@@ -299,11 +295,8 @@ public class ComponentSaverNativeRepository {
         return componentPersistEntityFieldList;
     }
 
-    private Query generateUpdateQuery(String entityName,
+    private Query generateUpdateQuery(ComponentPersistEntityDTO componentPersistEntity,
                                       List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
-
-        /* UPDATE Section */
-        String queryString = "UPDATE " + entityName;
 
         /* Set Default updated dates-users row log */
         componentPersistEntityFieldList.stream()
@@ -317,42 +310,30 @@ public class ComponentSaverNativeRepository {
                 .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
                 .forEach(x -> x.setValue(this.jwtService.getUserId()));
 
-        /* SET columns = values Section */
-        List<String> headersList = componentPersistEntityFieldList.stream()
-                .filter(x -> x.getPersistEntityField().getPrimaryKey() == false)
-                .filter(x ->
-                        (!x.getPersistEntityField().getType().equals("password")) ||
-                                (x.getPersistEntityField().getType().equals("password")
-                                        && !(x.getValue() == null ? "" : x.getValue()).equals("")))
-                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName())
+        /* Retrieve Cachable Query Parts Map */
+        Map<String,String> queryMap = this.componentQueryStringGenerator.generateUpdateCacheable(componentPersistEntity, componentPersistEntityFieldList);
+
+        String queryUpdateString = String.join(
+                " ", "UPDATE" , componentPersistEntity.getPersistEntity().getName());
+
+        List<String> setFields = componentPersistEntityFieldList.stream()
+                .filter(x -> !x.getPersistEntityField().getAutoIncrement())
+                .filter(x -> x.getValue() != null)
+                .map(x -> queryMap.get(x.getPersistEntityField().getId()))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        String headersString = String.join(", ", headersList);
-        queryString += " SET " + headersString;
 
-        if (headersList.size() == 0) {
-            return null;
-        }
+       String querySetString = String.join(" ", "SET",  String.join(", ", setFields));
 
-        /* WHERE Section */
-        Optional<ComponentPersistEntityFieldDTO> optionalCpef =
-                componentPersistEntityFieldList.stream()
-                        .filter(x -> x.getPersistEntityField().getPrimaryKey() == true)
-                        .filter(x -> x.getValue() != null)
-                        .findFirst();
+        String queryWhereString = String.join(" ", "WHERE",  queryMap.get("WHERE"));
 
-        if (!optionalCpef.isPresent()) {
-            return null;
-        }
-
-        ComponentPersistEntityFieldDTO cpef = optionalCpef.get();
-
-        queryString += " WHERE " + cpef.getPersistEntityField().getName() + " = :"
-                + cpef.getPersistEntityField().getName();
+        String queryString = String.join(" ", queryUpdateString, querySetString, queryWhereString);
 
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
         componentPersistEntityFieldList.stream()
+                .filter(x -> x.getValue() != null)
                 .filter(x -> !x.getPersistEntityField().getType().equals("password"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime_det"))
@@ -363,7 +344,8 @@ public class ComponentSaverNativeRepository {
                         ));
 
         componentPersistEntityFieldList.stream()
-                .filter(x -> x.getPersistEntityField().getType().equals("password") && !(x.getValue() == null ? "" : x.getValue()).equals(""))
+                .filter(x -> x.getValue() != null)
+                .filter(x -> x.getPersistEntityField().getType().equals("password"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
@@ -371,8 +353,8 @@ public class ComponentSaverNativeRepository {
                         ));
 
         componentPersistEntityFieldList.stream()
+                .filter(x -> x.getValue() != null)
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-               // .filter(x -> x.getValue() != null)
                 .filter(x -> Arrays.asList("datetime", "datetime_det").contains(x.getPersistEntityField().getType()))
                 .forEach(x -> {
                     Instant valueInstant = null;
@@ -388,11 +370,8 @@ public class ComponentSaverNativeRepository {
         return query;
     }
 
-    private Query generateInsertQuery(String entityName,
+    private Query generateInsertQuery(ComponentPersistEntityDTO componentPersistEntity,
                                       List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
-
-        /* Insert into Section */
-        String queryString = "INSERT INTO " + entityName;
 
         /* Set Default created-updated date-user log fields */
         componentPersistEntityFieldList.stream()
@@ -407,52 +386,36 @@ public class ComponentSaverNativeRepository {
                 .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
                 .forEach(x -> x.setValue(this.jwtService.getUserId()));
 
-        /* Insert into Values Section */
-        List<String> headersList = componentPersistEntityFieldList.stream()
-                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
-                .map(x -> x.getPersistEntityField().getName())
-                .collect(Collectors.toList());
-        String headersString = String.join(",", headersList);
-        queryString += " (" + headersString + " ) VALUES ";
-
-        /* Parameters Section */
-        List<String> valuesParametersList = componentPersistEntityFieldList.stream()
-                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
-                .map(x -> ":" + x.getPersistEntityField().getName())
-                .collect(Collectors.toList());
-        String valuesParametersString = String.join(",", valuesParametersList);
-        queryString += " (" + valuesParametersString + " );";
+        String queryString = componentQueryStringGenerator.generateInsertCacheable(componentPersistEntity, componentPersistEntityFieldList);
 
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
+              //  .filter(x -> x.getValue() != null)
                 .filter(x -> !x.getPersistEntityField().getType().equals("password"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime_det"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
-                                (x.getValue() != null ? x.getValue() : "")
+                                (x.getValue() == null ? "" : x.getValue())
                         ));
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
+                //.filter(x -> x.getValue() != null)
                 .filter(x -> x.getPersistEntityField().getType().equals("password"))
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
-                                passwordEncoder.encode(x.getValue().toString())
+                                (x.getValue() == null ? "" : passwordEncoder.encode(x.getValue().toString()))
                         ));
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-                .filter(x -> x.getValue() != null)
+//                .filter(x -> x.getValue() != null)
                 .filter(x -> Arrays.asList("datetime", "datetime_det").contains(x.getPersistEntityField().getType()))
                 .forEach(x -> {
                     Instant valueInstant = null;
@@ -463,19 +426,57 @@ public class ComponentSaverNativeRepository {
                             x.getPersistEntityField().getName(),
                             valueInstant
                     );
-
                 });
 
         return query;
     }
 
+//    public String generateInsertQueryString(String entityName,
+//                                      List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList) {
+//
+//        /* Insert into Section */
+//        String queryString = "INSERT INTO " + entityName;
+//
+//        /* Set Default created-updated date-user log fields */
+//        componentPersistEntityFieldList.stream()
+//                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+//                .filter(x -> Arrays.asList("created_on", "modified_on").contains(x.getPersistEntityField().getName()))
+//                .forEach(x -> x.setValue(Instant.now()));
+//
+//        componentPersistEntityFieldList.stream()
+//                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+//                .filter(x -> Arrays.asList("created_by", "modified_by")
+//                        .contains(x.getPersistEntityField().getName()))
+//                .filter(y -> y.getPersistEntityField().getType().equals("varchar"))
+//                .forEach(x -> x.setValue(this.jwtService.getUserId()));
+//
+//        /* Insert into Values Section */
+//        List<String> headersList = componentPersistEntityFieldList.stream()
+//                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+//                .filter(x -> x.getValue() != null)
+//                .map(x -> x.getPersistEntityField().getName())
+//                .collect(Collectors.toList());
+//        String headersString = String.join(",", headersList);
+//        queryString += " (" + headersString + " ) VALUES ";
+//
+//        /* Parameters Section */
+//        List<String> valuesParametersList = componentPersistEntityFieldList.stream()
+//                .filter(y -> !y.getPersistEntityField().getAutoIncrement())
+//                .filter(x -> x.getValue() != null)
+//                .map(x -> ":" + x.getPersistEntityField().getName())
+//                .collect(Collectors.toList());
+//        String valuesParametersString = String.join(",", valuesParametersList);
+//        queryString += " (" + valuesParametersString + " );";
+//
+//        return queryString;
+//    }
+
     private Object executeSave(Query query) {
         Object id;
         try {
-            // System.out.println(query.unwrap(org.hibernate.Query.class).getQueryString());
+            log.debug(query.toString());
             query.executeUpdate();
             id = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
-
         } catch (HibernateException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         }
@@ -504,7 +505,7 @@ public class ComponentSaverNativeRepository {
     }
 
     private List<ComponentPersistEntityFieldDTO> insertComponentPersistEntity(
-            String entityName,
+            ComponentPersistEntityDTO componentPersistEntity,
             List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList,
             List<ComponentPersistEntityDTO> savedPersistEntities) {
 
@@ -516,9 +517,9 @@ public class ComponentSaverNativeRepository {
         this.runOnSaveExpressions(componentPersistEntityFieldList);
 
         /* Generate Query */
-        Query query = this.generateInsertQuery(entityName, componentPersistEntityFieldList);
+        Query query = this.generateInsertQuery(componentPersistEntity, componentPersistEntityFieldList);
 
-        log.info(query.unwrap(org.hibernate.Query.class).getQueryString());
+        log.debug(query.unwrap(org.hibernate.Query.class).getQueryString());
 
         /* Execute Query */
         Object id = this.executeSave(query);
@@ -549,12 +550,12 @@ public class ComponentSaverNativeRepository {
 
         if (hasPrimaryKeyValue) {
             this.updateComponentPersistEntity(
-                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity,
                     componentPersistEntity.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
         } else {
             this.insertComponentPersistEntity(
-                    componentPersistEntity.getPersistEntity().getName(),
+                    componentPersistEntity,
                     componentPersistEntity.getComponentPersistEntityFieldList(),
                     savedPersistEntities);
         }
@@ -734,7 +735,7 @@ public class ComponentSaverNativeRepository {
                 .filter(cpef -> cpef.getPersistEntityField().getOnSaveValue() != null)
                 .filter(cpef -> !cpef.getPersistEntityField().getOnSaveValue().equals(""))
                 .forEach(cpef -> {
-                    ExprResponse exprResponse = expressionService.create(cpef.getPersistEntityField().getOnSaveValue());
+                    ExprResponse exprResponse = expressionService.createCacheable(cpef.getPersistEntityField().getOnSaveValue(), cpef.getPersistEntityField().getId());
                     if (!exprResponse.getError()) {
                         Object fieldValue = expressionService.getResult(exprResponse);
                         cpef.setValue(fieldValue);

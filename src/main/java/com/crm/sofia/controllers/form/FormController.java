@@ -1,6 +1,7 @@
 package com.crm.sofia.controllers.form;
 
 import com.crm.sofia.dto.component.user.ComponentUiDTO;
+import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +31,15 @@ public class FormController {
     @GetMapping(path = "data")
     ComponentUiDTO getData(@RequestParam("id") String formId,
                            @RequestParam("selection-id") String selectionId) {
-        return this.formService.retrieveUiData(formId, selectionId);
+        FormDTO formDTO = this.formService.getObject(formId);
+        return this.formService.retrieveUiData(formDTO, selectionId);
     }
 
     @GetMapping(path = "clone-data")
     ComponentUiDTO getCloneData(@RequestParam("id") String formId,
                            @RequestParam("selection-id") String selectionId) {
-        return this.formService.retrieveClonedData(formId, selectionId);
+        FormDTO formDTO = this.formService.getObject(formId);
+        return this.formService.retrieveClonedData(formDTO, selectionId);
     }
 
     @GetMapping(path = "instance-version", produces = "text/plain")
@@ -47,18 +50,23 @@ public class FormController {
     @PostMapping
     public String postObjectData(@RequestParam("id") String formId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
-        return this.formService.save(formId, parameters);
+        FormDTO formDTO = this.formService.getObject(formId);
+        return this.formService.save(formDTO, parameters);
     }
 
     @PutMapping
     public String putObjectData(@RequestParam("id") String formId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
-        return this.formService.save(formId, parameters);
+       FormDTO formDTO = this.formService.getObject(formId);
+       return this.formService.save(formDTO, parameters);
     }
 
     @DeleteMapping
     public void deleteObjectData(@RequestParam("id") String formId, @RequestParam("selection-id") String selectionId) {
-        this.formService.delete(formId, selectionId);
+        /* Retrieve FormDTO from Database */
+        FormDTO formDTO = this.formService.getObject(formId);
+
+        this.formService.delete(formDTO, selectionId);
     }
 
     @RequestMapping(value = "/dynamic-javascript/{id}/script.js", method = RequestMethod.GET, produces = "text/javascript;")

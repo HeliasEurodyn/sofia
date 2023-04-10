@@ -27,27 +27,13 @@ public class ComponentPersistEntityFieldAssignmentDTO extends BaseDTO  {
 
     private String fieldId;
 
-//    private String description;
-
     private String editor;
 
     private String defaultValue;
 
     private String onSaveValue;
 
-//    private Boolean visible;
-
-//    private Boolean editable;
-
     private Boolean required;
-
-//    private Integer decimals;
-
-//    private String fieldtype;
-
-//    private String css;
-
-//    private Object value;
 
     private String type;
 

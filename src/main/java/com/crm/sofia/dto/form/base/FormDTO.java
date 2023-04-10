@@ -18,33 +18,31 @@ import java.util.List;
 @Accessors(chain = true)
 public class FormDTO extends BaseDTO {
 
-    private String name;
+//    private String name;
 
-    private String title;
+//    private String title;
 
-    private String icon;
+//    private String icon;
 
-    private String description;
+//    private String description;
 
-    private Boolean accessControlEnabled;
-
-
+//    private Boolean accessControlEnabled;
 
     private ComponentDTO component;
 
-    private List<FormTabDTO> formTabs;
+//    private List<FormTabDTO> formTabs;
 
-    private List<FormPopupDto> formPopups;
+//    private List<FormPopupDto> formPopups;
 
-    private List<FormScriptDTO> formScripts;
+//    private List<FormScriptDTO> formScripts;
 
-    private List<FormCssDTO> formCssList;
+//    private List<FormCssDTO> formCssList;
 
-    private String jsonUrl;
+//    private String jsonUrl;
 
-    private List<FormActionButtonDTO> formActionButtons;
+//    private List<FormActionButtonDTO> formActionButtons;
 
-    private Long instanceVersion;
+//    private Long instanceVersion;
 
-    private List<AccessControlDTO> accessControls;
+//    private List<AccessControlDTO> accessControls;
 }

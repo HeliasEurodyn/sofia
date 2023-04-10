@@ -22,12 +22,15 @@ public class ComponentRetrieverNativeRepository {
 
     private final EntityManager entityManager;
 
-    public ComponentRetrieverNativeRepository(EntityManager entityManager) {
+    private final ComponentQueryStringGenerator componentQueryStringGenerator;
+
+    public ComponentRetrieverNativeRepository(EntityManager entityManager,
+                                              ComponentQueryStringGenerator componentQueryStringGenerator) {
         this.entityManager = entityManager;
+        this.componentQueryStringGenerator = componentQueryStringGenerator;
     }
 
-    public void retrieveComponentData(ComponentDTO component,
-                                      String selectionId) {
+    public void retrieveComponentData(ComponentDTO component, String selectionId) {
 
         List<ComponentPersistEntityDTO> retrievedPersistEntities = new ArrayList<>();
 
@@ -36,20 +39,17 @@ public class ComponentRetrieverNativeRepository {
         this.mapSelectionIdToPersistEntity(mainComponentPersistEntity, selectionId);
 
         /* Retrieve Tree */
-        this.retrieveComponentPersistEntityListData(
-                component.getComponentPersistEntityList(),
-                retrievedPersistEntities);
+        this.retrieveComponentPersistEntityListData(component.getComponentPersistEntityList(), retrievedPersistEntities);
     }
 
     /* Map selection id to first componentPersistEntity */
-    private ComponentPersistEntityDTO mapSelectionIdToPersistEntity(ComponentPersistEntityDTO mainComponentPersistEntity,
-                                                                    String selectionId) {
+    private ComponentPersistEntityDTO mapSelectionIdToPersistEntity(ComponentPersistEntityDTO mainComponentPersistEntity, String selectionId) {
 
         Optional<ComponentPersistEntityFieldDTO> componentPersistEntityFieldOptional =
                 mainComponentPersistEntity.getComponentPersistEntityFieldList()
                         .stream()
-                        .filter(x ->
-                                (x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals("#SELECTIONID")).findFirst();
+                        .filter(x -> (x.getLocateStatement() == null ? "" : x.getLocateStatement())
+                                .equals("#SELECTIONID")).findFirst();
 
         if (!componentPersistEntityFieldOptional.isPresent()) {
             return mainComponentPersistEntity;
@@ -61,35 +61,26 @@ public class ComponentRetrieverNativeRepository {
         return mainComponentPersistEntity;
     }
 
-    public void retrieveComponentPersistEntityListData(
-            List<ComponentPersistEntityDTO> componentPersistEntityList,
-            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+    public void retrieveComponentPersistEntityListData(List<ComponentPersistEntityDTO> componentPersistEntityList, List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
         /* Itterate & retrieve */
-        componentPersistEntityList
-                .forEach(componentPersistEntity -> {
-                    this.retrieveComponentPersistEntityData(componentPersistEntity, retrievedPersistEntities);
-                });
+        componentPersistEntityList.forEach(componentPersistEntity -> {
+            this.retrieveComponentPersistEntityData(componentPersistEntity, retrievedPersistEntities);
+        });
     }
 
-    private void retrieveComponentPersistEntityData(
-            ComponentPersistEntityDTO componentPersistEntity,
-            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+    private void retrieveComponentPersistEntityData(ComponentPersistEntityDTO componentPersistEntity,
+                                                    List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
-        /* Find CpeFields from componentPersistEntity with locateStatement, map locateStatements from Retrieved & return */
-        List<ComponentPersistEntityFieldDTO> retrievalFieldList =
-                this.mapRetrivalFields(componentPersistEntity, retrievedPersistEntities);
+        componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievedPersistEntities);
 
-        /* Retrieve if locate statements found */
-        if (retrievalFieldList.size() > 0) {
-            componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievalFieldList);
+        if(componentPersistEntity == null){
+            return;
         }
 
         /* Retrieve Children */
-        if ((componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
-
-            this.retrieveChildrenComponentPersistEntitiesDataByLines(componentPersistEntity,
-                    retrievedPersistEntities);
+        if ((componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine())) {
+            this.retrieveChildrenComponentPersistEntitiesDataByLines(componentPersistEntity, retrievedPersistEntities);
             retrievedPersistEntities.add(componentPersistEntity);
         } else {
             retrievedPersistEntities.add(componentPersistEntity);
@@ -97,8 +88,7 @@ public class ComponentRetrieverNativeRepository {
         }
     }
 
-    private List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO cpe,
-                                                                   List<ComponentPersistEntityDTO> retrievedCpeList) {
+    public List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO cpe, List<ComponentPersistEntityDTO> retrievedCpeList) {
 
         for (ComponentPersistEntityDTO retrievedCpe : retrievedCpeList) {
             for (ComponentPersistEntityFieldDTO retrievedCpef : retrievedCpe.getComponentPersistEntityFieldList()) {
@@ -117,16 +107,22 @@ public class ComponentRetrieverNativeRepository {
 
         List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
                 cpe.getComponentPersistEntityFieldList()
-                        .stream()
-                        .filter(x ->
-                                !(x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals(""))
+                .stream()
+                        .filter(x -> !(x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals(""))
                         .collect(Collectors.toList());
 
         return componentPersistEntityFieldList;
     }
 
-    public ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                    List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
+    public ComponentPersistEntityDTO retrieveComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+
+        /* Find CpeFields from componentPersistEntity with locateStatement, map locateStatements from Retrieved & return */
+        List<ComponentPersistEntityFieldDTO> retrievalFieldList = this.mapRetrivalFields(componentPersistEntity, retrievedPersistEntities);
+
+        /* Retrieve if locate statements found */
+        if (retrievalFieldList.size() == 0) {
+            return null;
+        }
 
         Query query = this.generateSelectQuery(componentPersistEntity, retrievalFieldList);
         componentPersistEntity = this.executeSelectQuery(query, componentPersistEntity);
@@ -134,9 +130,7 @@ public class ComponentRetrieverNativeRepository {
         return componentPersistEntity;
     }
 
-    private void retrieveChildrenComponentPersistEntitiesDataByLines(
-            ComponentPersistEntityDTO componentPersistEntity,
-            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+    private void retrieveChildrenComponentPersistEntitiesDataByLines(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
         if (componentPersistEntity.getComponentPersistEntityList() == null) {
             return;
@@ -145,84 +139,43 @@ public class ComponentRetrieverNativeRepository {
         Gson gson = new Gson();
         Type listType = new TypeToken<ArrayList<ComponentPersistEntityDTO>>() {
         }.getType();
-        componentPersistEntity.getComponentPersistEntityDataLines()
-                .forEach(line -> {
-                            ComponentPersistEntityDTO lineComponentPersistEntity = new ComponentPersistEntityDTO();
-                            lineComponentPersistEntity.setCode(componentPersistEntity.getCode());
-                            lineComponentPersistEntity.setComponentPersistEntityFieldList(line.getComponentPersistEntityFieldList());
-                            lineComponentPersistEntity.setMultiDataLine(false);
-                            List<ComponentPersistEntityDTO> currentRetrievedPersistEntities = new ArrayList<>();
-                            currentRetrievedPersistEntities.addAll(retrievedPersistEntities);
-                            currentRetrievedPersistEntities.add(lineComponentPersistEntity);
+        componentPersistEntity.getComponentPersistEntityDataLines().forEach(line -> {
+            ComponentPersistEntityDTO lineComponentPersistEntity = new ComponentPersistEntityDTO();
+            lineComponentPersistEntity.setCode(componentPersistEntity.getCode());
+            lineComponentPersistEntity.setComponentPersistEntityFieldList(line.getComponentPersistEntityFieldList());
+            lineComponentPersistEntity.setMultiDataLine(false);
+            List<ComponentPersistEntityDTO> currentRetrievedPersistEntities = new ArrayList<>();
+            currentRetrievedPersistEntities.addAll(retrievedPersistEntities);
+            currentRetrievedPersistEntities.add(lineComponentPersistEntity);
 
-                            List<ComponentPersistEntityDTO> clonedChildComponentPersistEntityList =
-                                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityList()), listType);
-                            line.setComponentPersistEntityList(clonedChildComponentPersistEntityList);
+            List<ComponentPersistEntityDTO> clonedChildComponentPersistEntityList = gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityList()), listType);
+            line.setComponentPersistEntityList(clonedChildComponentPersistEntityList);
 
-                            line.getComponentPersistEntityList()
-                                    .forEach(lineChildComponentPersistEntity -> {
-                                        this.retrieveComponentPersistEntityData(lineChildComponentPersistEntity, currentRetrievedPersistEntities);
-                                    });
-                        }
-                );
+            line.getComponentPersistEntityList().forEach(lineChildComponentPersistEntity -> {
+                this.retrieveComponentPersistEntityData(lineChildComponentPersistEntity, currentRetrievedPersistEntities);
+            });
+        });
     }
 
-    private void retrieveChildrenComponentPersistEntitiesData(
-            ComponentPersistEntityDTO componentPersistEntity,
-            List<ComponentPersistEntityDTO> retrievedPersistEntities) {
+    private void retrieveChildrenComponentPersistEntitiesData(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityDTO> retrievedPersistEntities) {
 
         if (componentPersistEntity.getComponentPersistEntityList() == null) {
             return;
         }
 
-        componentPersistEntity.getComponentPersistEntityList()
-                .forEach(childComponentPersistEntity -> {
-                    this.retrieveComponentPersistEntityData(childComponentPersistEntity, retrievedPersistEntities);
-                });
+        componentPersistEntity.getComponentPersistEntityList().forEach(childComponentPersistEntity -> {
+            this.retrieveComponentPersistEntityData(childComponentPersistEntity, retrievedPersistEntities);
+        });
     }
 
-    private Query generateSelectQuery(ComponentPersistEntityDTO componentPersistEntity,
-                                      List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
+    private Query generateSelectQuery(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
 
-        /* Select Values Section */
-        String queryString = "SELECT ";
-
-        List<String> headersList = componentPersistEntity.getComponentPersistEntityFieldList().stream()
-                .map(x -> x.getPersistEntityField().getName())
-                .collect(Collectors.toList());
-
-        String headersString = String.join(",", headersList);
-        queryString += headersString;
-
-        /* From Values Section */
-        if (componentPersistEntity.getPersistEntity().getEntitytype().equals("AppView")) {
-            PersistEntityDTO appViewDTO = componentPersistEntity.getPersistEntity();
-            queryString += " FROM ( " +
-                    appViewDTO.getQuery() + " ) " + componentPersistEntity.getCode();
-        } else {
-            queryString += " FROM " + componentPersistEntity.getPersistEntity().getName();
-        }
-
-        /* Where Values Section */
-        List<String> retrievalList = retrievalFieldList.stream()
-                .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
-                .collect(Collectors.toList());
-
-        if (retrievalFieldList.size() > 0) {
-            queryString += " WHERE ";
-            String retrievalString = String.join(" AND ", retrievalList);
-            queryString += retrievalString;
-        }
+        String queryString = this.componentQueryStringGenerator.generateSelectCachable(componentPersistEntity);
 
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
 
-        retrievalFieldList.stream()
-                .forEach(x ->
-                        query.setParameter(
-                                x.getPersistEntityField().getName(),
-                                (x.getLocateStatement() != null ? x.getLocateStatement().toString() : "")
-                        ));
+        retrievalFieldList.stream().forEach(x -> query.setParameter(x.getPersistEntityField().getName(), (x.getLocateStatement() != null ? x.getLocateStatement() : "")));
 
         return query;
     }
@@ -231,11 +184,11 @@ public class ComponentRetrieverNativeRepository {
 
         List<Object[]> dataList = query.getResultList();
 
-        if(dataList.size() == 0){
+        if (dataList.size() == 0) {
             return componentPersistEntity;
         }
 
-        if (!(componentPersistEntity.getMultiDataLine() == null ? false : componentPersistEntity.getMultiDataLine())) {
+        if (!(componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine())) {
             componentPersistEntity = this.mapSingleLineQueryResponses(componentPersistEntity, dataList.get(0));
         } else {
             componentPersistEntity = this.mapMultiLineQueryResponces(componentPersistEntity, dataList);
@@ -247,7 +200,7 @@ public class ComponentRetrieverNativeRepository {
     private ComponentPersistEntityDTO mapSingleLineQueryResponses(ComponentPersistEntityDTO componentPersistEntity, Object[] dataRow) {
         int i = 0;
         for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntity.getComponentPersistEntityFieldList()) {
-            if(!componentPersistEntityField.getPersistEntityField().getType().equals("password")){
+            if (!componentPersistEntityField.getPersistEntityField().getType().equals("password")) {
                 componentPersistEntityField.setValue(dataRow[i]);
             }
             i++;
@@ -266,15 +219,14 @@ public class ComponentRetrieverNativeRepository {
             int i = 0;
 
             /* Clone ComponentPersistEntityFieldList and add to line */
-            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                    gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), listType);
+            List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList = gson.fromJson(gson.toJson(componentPersistEntity.getComponentPersistEntityFieldList()), listType);
             ComponentPersistEntityDataLineDTO componentPersistEntityDataLine = new ComponentPersistEntityDataLineDTO();
             componentPersistEntityDataLine.setComponentPersistEntityFieldList(componentPersistEntityFieldList);
             componentPersistEntity.getComponentPersistEntityDataLines().add(componentPersistEntityDataLine);
 
             /* Add data  to new line field list */
             for (ComponentPersistEntityFieldDTO componentPersistEntityField : componentPersistEntityFieldList) {
-                if(!componentPersistEntityField.getPersistEntityField().getType().equals("password")){
+                if (!componentPersistEntityField.getPersistEntityField().getType().equals("password")) {
                     componentPersistEntityField.setValue(dataRow[i]);
                 }
                 i++;
