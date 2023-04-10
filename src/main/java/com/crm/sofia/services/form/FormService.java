@@ -4,15 +4,15 @@ import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.component.user.ComponentUiDTO;
-import com.crm.sofia.dto.form.base.FormControlTableControlDTO;
-import com.crm.sofia.dto.form.base.FormPopupDto;
-import com.crm.sofia.dto.form.base.*;
+import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.*;
 import com.crm.sofia.mapper.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.component.ComponentUiMapper;
 import com.crm.sofia.mapper.form.designer.FormMapper;
 import com.crm.sofia.mapper.form.user.FormUiMapper;
 import com.crm.sofia.model.form.FormEntity;
+import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
+import com.crm.sofia.native_repository.component.ComponentSaverNativeRepository;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.crud.ComponentDeleterService;
@@ -35,6 +35,7 @@ public class FormService {
     private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
     private final ComponentRetrieverService componentRetrieverService;
     private final ComponentSaverService componentSaverService;
+    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
     private final ComponentUiMapper componentUiMapper;
     private final ComponentJsonMapper componentJsonMapper;
     private final ComponentDeleterService componentDeleterService;
@@ -45,6 +46,7 @@ public class FormService {
                        ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
                        ComponentRetrieverService componentRetrieverService,
                        ComponentSaverService componentSaverService,
+                       ComponentRetrieverNativeRepository componentRetrieverNativeRepository,
                        ComponentUiMapper componentUiMapper,
                        ComponentJsonMapper componentJsonMapper,
                        ComponentDeleterService componentDeleterService) {
@@ -54,65 +56,49 @@ public class FormService {
         this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
         this.componentRetrieverService = componentRetrieverService;
         this.componentSaverService = componentSaverService;
+        this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
         this.componentUiMapper = componentUiMapper;
         this.componentJsonMapper = componentJsonMapper;
         this.componentDeleterService = componentDeleterService;
     }
 
+    @Cacheable(value = "form_db_cache", key = "#id")
     public FormDTO getObject(String id) {
 
-        /* Retrieve */
+        System.out.println("form_db_cache " + id);
+
+        /* Retrieve FormDTO */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
         if (!optionalFormEntity.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Form does not exist");
         }
 
-        /* Map */
-        FormDTO formDTO = this.formMapper.mapForm(optionalFormEntity.get());
+        /* Map FormDTO */
+        FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
 
         /* Shorting Component Entities */
         this.sortComponentPersistEntities(formDTO.getComponent().getComponentPersistEntityList());
 
-        /* Shorting Form Entities*/
-        formDTO.getFormTabs().sort(Comparator.comparingLong(FormTabDTO::getShortOrder));
-        formDTO.getFormTabs().forEach(formTab -> {
-            formTab.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
-            formTab.getFormAreas().forEach(formArea -> {
-                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
-                formArea.getFormControls().forEach(formControl -> {
-                    if (formControl.getType().equals("table")) {
-                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
-                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
-                    }
-                });
-            });
-        });
-        formDTO.getFormPopups().sort(Comparator.comparingLong(FormPopupDto::getShortOrder));
-        formDTO.getFormPopups().forEach(formPopup -> {
-            formPopup.getFormAreas().sort(Comparator.comparingLong(FormAreaDTO::getShortOrder));
-            formPopup.getFormAreas().forEach(formArea -> {
-                formArea.getFormControls().sort(Comparator.comparingLong(FormControlDTO::getShortOrder));
-                formArea.getFormControls().forEach(formControl -> {
-                    if (formControl.getType().equals("table")) {
-                        formControl.getFormControlTable().getFormControls().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
-                        formControl.getFormControlTable().getFormControlButtons().sort(Comparator.comparingLong(FormControlTableControlDTO::getShortOrder));
-                    }
-                });
-            });
-        });
-
-        formDTO.getFormActionButtons().sort(Comparator.comparingLong(FormActionButtonDTO::getShortOrder));
-
         /* Shorting Component*/
         List<ComponentPersistEntityDTO> sorted = this.shortCPEList(formDTO.getComponent().getComponentPersistEntityList());
         formDTO.getComponent().setComponentPersistEntityList(sorted);
+
+        /* Retrieve Form Component field Assignments from Database */
+        List<ComponentPersistEntityDTO> componentPersistEntityList =
+                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
+                        formDTO.getComponent().getComponentPersistEntityList(),
+                        "form",
+                        formDTO.getId()
+                );
+
+        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
 
         /* Return */
         return formDTO;
     }
 
     public List<ComponentPersistEntityDTO> shortCPEList(List<ComponentPersistEntityDTO> componentPersistEntityList) {
-        if(componentPersistEntityList == null){
+        if (componentPersistEntityList == null) {
             return null;
         }
 
@@ -128,7 +114,7 @@ public class FormService {
 
         sorted.stream().forEach(cpe -> {
 
-             cpe.getComponentPersistEntityFieldList()
+            cpe.getComponentPersistEntityFieldList()
                     .stream()
                     .filter(cpef -> cpef.getPersistEntityField().getShortOrder() == null)
                     .forEach(cpef -> cpef.getPersistEntityField().setShortOrder(0L));
@@ -153,12 +139,12 @@ public class FormService {
     }
 
     private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {
-        if(componentPersistEntityList == null){
+        if (componentPersistEntityList == null) {
             return;
         }
 
         componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
-        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList() ));
+        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList()));
     }
 
     public FormDTO getObjectByJsonUrl(String jsonUrl) {
@@ -221,102 +207,43 @@ public class FormService {
         return formUiDTO;
     }
 
-    public ComponentUiDTO retrieveClonedData(String formId, String selectionId) {
-        ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
+    public ComponentUiDTO retrieveClonedData(FormDTO formDTO, String selectionId) {
+
+        /* Retrieve Data */
+        ComponentDTO componentDTO =
+                componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
+
+
         return componentUiMapper.clearIdsAndMapToUi(componentDTO);
     }
 
-    public ComponentUiDTO retrieveUiData(String formId, String selectionId) {
-        ComponentDTO componentDTO = this.retrieveData(formId, selectionId);
-        return componentUiMapper.mapToUi(componentDTO);
-    }
-
-    private ComponentDTO retrieveData(String formId, String selectionId) {
-
-        /* Retrieve Component */
-        FormDTO formDTO = this.getObject(formId);
-        ComponentDTO componentDTO = formDTO.getComponent();
-
-        /* Retrieve Form Component field Assignments from Database */
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-                        componentDTO.getComponentPersistEntityList(),
-                        "form",
-                        formId
-                );
-        componentDTO.setComponentPersistEntityList(componentPersistEntityList);
+    public ComponentUiDTO retrieveUiData(FormDTO formDTO, String selectionId) {
 
         /* Retrieve Data */
-        componentDTO = componentRetrieverService.retrieveComponentWithData(componentDTO, selectionId);
+        ComponentDTO componentDTO =
+                componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
 
-        return componentDTO;
+        return componentUiMapper.mapToUi(componentDTO);
     }
 
     public Map retrieveJsonData(String jsonUrl, String selectionId) {
 
         /* Retrieve Component */
         FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
-        ComponentDTO componentDTO = formDTO.getComponent();
-
-        /* Retrieve Form Component field Assignments from Database */
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-                        componentDTO.getComponentPersistEntityList(),
-                        "form",
-                        formDTO.getId()
-                );
-        componentDTO.setComponentPersistEntityList(componentPersistEntityList);
 
         /* Retrieve Data */
-        componentDTO = componentRetrieverService.retrieveComponentWithData(componentDTO, selectionId);
+        ComponentDTO componentDTO = componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
 
         return componentJsonMapper.mapToJson(componentDTO);
     }
 
-//    public FormDTO getObjectAndRetrieveData(String formId, String selectionId) {
-//
-//        /* Retrieve form from Database */
-//        FormDTO formDTO = this.getObject(formId);
-//
-//        /* Retrieve Form Component field Assignments from Database */
-//        List<ComponentPersistEntityDTO> componentPersistEntityList =
-//                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-//                        formDTO.getComponent().getComponentPersistEntityList(),
-//                        "form",
-//                        formDTO.getId()
-//                );
-//        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
-//
-//        /* Retrieve Data */
-//        ComponentDTO componentDTO = componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
-//        formDTO.setComponent(componentDTO);
-//
-//        return formDTO;
-//    }
-
-    public String save(String formId, Map<String, Map<String, Object>> parameters) {
-
-        /* Retrieve Form from Database */
-        FormDTO formDTO = this.getObject(formId);
-
-        /* Retrieve Form Component field Assignments from Database */
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-                        formDTO.getComponent().getComponentPersistEntityList(),
-                        "form",
-                        formDTO.getId()
-                );
-
-        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
+    public String save(FormDTO formDTO, Map<String, Map<String, Object>> parameters) {
 
         /* Μap parameters to component And save */
         return componentSaverService.save(formDTO.getComponent(), parameters);
     }
 
-    public void delete(String formId, String selectionId) {
-
-        /* Retrieve form from Database */
-        FormDTO formDTO = this.getObject(formId);
+    public void delete(FormDTO formDTO, String selectionId) {
 
         this.componentDeleterService.retrieveComponentAndDelete(formDTO.getComponent(), selectionId);
     }
@@ -325,16 +252,6 @@ public class FormService {
 
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
-
-        /* Retrieve Form Component field Assignments from Database */
-        List<ComponentPersistEntityDTO> componentPersistEntityList =
-                this.componentPersistEntityFieldAssignmentService.retrieveFieldAssignments(
-                        formDTO.getComponent().getComponentPersistEntityList(),
-                        "form",
-                        formDTO.getId()
-                );
-
-        formDTO.getComponent().setComponentPersistEntityList(componentPersistEntityList);
 
         /* Μap parameters to component And save */
         return componentSaverService.save(formDTO.getComponent(), parameters);
@@ -356,11 +273,11 @@ public class FormService {
         List<String> scriptLines = new ArrayList<>();
         scriptLines.add("function newFormDynamicScript(id) {");
         formIds.forEach(id -> {
-           String ifClause =
-                   String.join("",
-                           "if (id == '" , id, "'",
-                           " ) return new FormDynamicScript",id.toString().replace("-","_") , "();" );
-           scriptLines.add(ifClause);
+            String ifClause =
+                    String.join("",
+                            "if (id == '", id, "'",
+                            " ) return new FormDynamicScript", id.replace("-", "_"), "();");
+            scriptLines.add(ifClause);
         });
         scriptLines.add("}");
 

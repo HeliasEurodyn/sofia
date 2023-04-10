@@ -49,7 +49,7 @@ public class ComponentSaverService {
 
     public String save(ComponentDTO componentDTO) {
 
-
+        /* Run On Save Expressions */
         this.runOnSaveExpressions(componentDTO.getComponentPersistEntityList());
 
         /* Throw Exception if Empty Required Parameters */
@@ -108,7 +108,7 @@ public class ComponentSaverService {
                             .filter(cpef -> cpef.getAssignment().getOnSaveValue() != null)
                             .filter(cpef -> !cpef.getAssignment().getOnSaveValue().equals(""))
                             .forEach(cpef -> {
-                                ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getOnSaveValue());
+                                ExprResponse exprResponse = expressionService.createCacheable(cpef.getAssignment().getOnSaveValue(), cpef.getAssignment().getId() + "-s");
                                 if (!exprResponse.getError()) {
                                     Object fieldValue = expressionService.getResult(exprResponse, cpef.getValue());
                                     cpef.setValue(fieldValue);
@@ -127,7 +127,8 @@ public class ComponentSaverService {
                                 .filter(cpef -> cpef.getAssignment().getOnSaveValue() != null)
                                 .filter(cpef -> !cpef.getAssignment().getOnSaveValue().equals(""))
                                 .forEach(cpef -> {
-                                    ExprResponse exprResponse = expressionService.create(cpef.getAssignment().getOnSaveValue());
+                                    ExprResponse exprResponse = expressionService.createCacheable(cpef.getAssignment().getOnSaveValue(),
+                                            cpef.getAssignment().getId() + "-s");
                                     if (!exprResponse.getError()) {
                                         Object fieldValue = expressionService.getResult(exprResponse, cpef.getValue());
                                         cpef.setValue(fieldValue);

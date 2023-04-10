@@ -29,13 +29,9 @@ public class ListService {
 
     private final ListRepository listRepository;
     private final ListMapper listMapper;
-
     private final ExpressionService expressionService;
     private final ListRetrieverNativeRepository listRetrieverNativeRepository;
     private final ListUpdaterNativeRepository listUpdaterNativeRepository;
-
-//    @Autowired
-//    CacheManager cacheManager;
 
     public ListService(ListRepository listRepository,
                        ListMapper listMapper,
@@ -49,15 +45,6 @@ public class ListService {
         this.listUpdaterNativeRepository = listUpdaterNativeRepository;
     }
 
-//    public QListDTO getQObject(String id) {
-//        Optional<ListEntity> optionalListEntity = this.listRepository.findById(id);
-//        if (!optionalListEntity.isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist");
-//        }
-//        QListDTO listDTO = this.qListMapper.map(optionalListEntity.get());
-//        return listDTO;
-//    }
-
     public ListDTO getObject(String id, String languageId) {
 
         /* Retrieve */
@@ -65,29 +52,6 @@ public class ListService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist"));
 
         ListDTO listDTO = this.listMapper.mapList(listEntity, languageId);
-
-//        List<ListComponentFieldDTO> filtersList = Stream.concat(listDTO.getListComponentFilterFieldList().stream(),
-//                        listDTO.getListComponentColumnFieldList().stream())
-//                .collect(Collectors.toList());
-//
-//        /* Calc Default Values */
-//        for (ListComponentFieldDTO filterDto : filtersList) {
-//
-//            if (filterDto.getDefaultValue() == null) continue;
-//            if (filterDto.getDefaultValue().equals("")) continue;
-//
-//           // ExprResponse exprResponse = expressionService.createCacheable(filterDto.getDefaultValue(), filterDto.getId() );
-//            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
-//            if (!exprResponse.getError()) {
-//                Object fieldValue = exprResponse.getExprUnit().getResult();
-//                if(filterDto.getType().equals("list")){
-//                    filterDto.setDefaultValue(fieldValue.toString());
-//                } else {
-//                    filterDto.setFieldValue(fieldValue);
-//                    filterDto.setDefaultValue(fieldValue.toString());
-//                }
-//            }
-//        }
 
         return listDTO;
     }
