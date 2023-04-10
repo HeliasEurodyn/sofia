@@ -10,13 +10,15 @@ import com.crm.sofia.mapper.html_template.HtmlTemplateMapper;
 import com.crm.sofia.model.html_template.HtmlTemplate;
 import com.crm.sofia.repository.html_template.HtmlTemplateRepository;
 import com.crm.sofia.services.auth.JWTService;
+import com.crm.sofia.services.common.emailSender.EmailService;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
-import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import javax.mail.MessagingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.*;
@@ -40,6 +42,8 @@ public class HtmlTemplateService {
     @Autowired
     private ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
 
+    @Autowired
+    private EmailService emailService;
     public HtmlTemplateService() {
     }
 
@@ -71,6 +75,14 @@ public class HtmlTemplateService {
         Map<String, Object> values = (Map<String, Object>) this.tokens.get(token);
         this.tokens.remove(token);
         return this.createHtmlTemplate((String) values.get("id"), (String) values.get("selectionId"));
+    }
+    public ResponseEntity<Map<String,String>> sendEmail(String htmlTemplateId, String selectionId, String subject, List<String> recipients) throws MessagingException {
+        String content = this.createHtmlTemplate(htmlTemplateId,selectionId);
+        emailService.sendHtmlEmail(subject,recipients,content);
+
+        Map<String,String> response = new HashMap<>();
+        response.put("message","The email has been sent successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public String createHtmlTemplate(String htmlTemplateId, String selectionId) {

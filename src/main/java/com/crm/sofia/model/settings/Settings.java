@@ -29,4 +29,16 @@ public class Settings extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(36)")
     String oauth_prototype_user_id;
 
+    @Column
+    String mailSenderHost;
+
+    @Column
+    String mailSenderPort;
+
+    @Column
+    String mailSenderUsername;
+
+    @Column
+    String mailSenderPassword;
+
 }

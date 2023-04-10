@@ -1,5 +1,6 @@
 package com.crm.sofia.repository.settings;
 
+import com.crm.sofia.dto.settings.SettingsDto;
 import com.crm.sofia.model.settings.Settings;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,7 @@ public interface SettingsRepository extends BaseRepository<Settings> {
     @Query(" SELECT DISTINCT s.name FROM Settings s " +
             " WHERE s.id =:id ")
     public String getName(@Param("id") String id);
+
+    @Query("SELECT new com.crm.sofia.dto.settings.SettingsDto(s.mailSenderHost,s.mailSenderPort,s.mailSenderUsername,s.mailSenderPassword) FROM Settings s  WHERE s.id =:id  ")
+    SettingsDto getEmailSettings(@Param("id") String id);
 }
