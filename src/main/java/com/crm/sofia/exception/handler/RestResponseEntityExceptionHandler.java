@@ -3,6 +3,7 @@ package com.crm.sofia.exception.handler;
 import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.exception.EmptyRequiredFieldException;
 import com.crm.sofia.exception.ExpressionException;
+import com.crm.sofia.exception.SendingEmailException;
 import com.crm.sofia.exception.common.SofiaException;
 import com.crm.sofia.exception.login.ChangePasswordException;
 import com.crm.sofia.exception.login.IncorrectPasswordException;
@@ -20,7 +21,7 @@ public class RestResponseEntityExceptionHandler{
     @ExceptionHandler(
             {ExpressionException.class, DoesNotExistException.class,
                     UserNotFoundException.class, IncorrectPasswordException.class,
-                    ChangePasswordException.class, EmptyRequiredFieldException.class})
+                    ChangePasswordException.class, EmptyRequiredFieldException.class, SendingEmailException.class})
     public ResponseEntity<Map<String,Object>> handleException(SofiaException exception){
         Map<String,Object> response = new HashMap<>();
         response.put("code", exception.getCode());

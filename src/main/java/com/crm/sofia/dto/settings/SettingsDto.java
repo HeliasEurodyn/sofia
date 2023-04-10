@@ -27,4 +27,23 @@ public class SettingsDto extends BaseDTO {
 
     String oauth_prototype_user_id;
 
+
+    String mailSenderHost;
+
+
+    String mailSenderPort;
+
+
+    String mailSenderUsername;
+
+
+    String mailSenderPassword;
+
+    public SettingsDto(String mailSenderHost, String mailSenderPort, String mailSenderUsername, String mailSenderPassword) {
+
+        this.mailSenderHost = mailSenderHost;
+        this.mailSenderPort = mailSenderPort;
+        this.mailSenderUsername = mailSenderUsername;
+        this.mailSenderPassword = mailSenderPassword;
+    }
 }
