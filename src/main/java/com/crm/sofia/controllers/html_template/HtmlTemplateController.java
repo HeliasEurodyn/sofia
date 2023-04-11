@@ -25,11 +25,6 @@ public class HtmlTemplateController {
     @Autowired
     HtmlTemplateService htmlTemplateService;
 
-    @GetMapping(path = "/by-id")
-    HtmlTemplateDTO getObject(@RequestParam("id") String id) {
-        return htmlTemplateService.getObject(id);
-    }
-
     @GetMapping(value = "/instant-access-token")
     Map getToken(@RequestParam("id") String id,
                  @RequestParam("selection-id") String selectionId) {
@@ -56,7 +51,5 @@ public class HtmlTemplateController {
                                                  @RequestBody List<String> recipients) throws MessagingException {
         return htmlTemplateService.sendEmail(id, selectionId,subject,recipients);
     }
-
-
 
 }

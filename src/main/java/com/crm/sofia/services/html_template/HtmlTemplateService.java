@@ -51,12 +51,52 @@ public class HtmlTemplateService {
         HtmlTemplate entity = htmlTemplateRepository.findById(id).orElseThrow(() -> new DoesNotExistException("HtmlTemplate Does Not Exist"));
 
         HtmlTemplateDTO dto = htmlTemplateMapper.map(entity);
-        if (dto.getHtml() != null) {
-            String encodedHtml = Base64.getEncoder().encodeToString(dto.getHtml().getBytes(StandardCharsets.UTF_8));
-            dto.setHtml(encodedHtml);
-        }
+
+        List<ComponentPersistEntityDTO> sorted = this.shortCPEList(dto.getComponent().getComponentPersistEntityList());
+        dto.getComponent().setComponentPersistEntityList(sorted);
 
         return dto;
+    }
+
+    public List<ComponentPersistEntityDTO> shortCPEList(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+        if (componentPersistEntityList == null) {
+            return null;
+        }
+
+        componentPersistEntityList
+                .stream()
+                .filter(cpe -> cpe.getShortOrder() == null)
+                .forEach(cpe -> cpe.setShortOrder(0L));
+
+        List<ComponentPersistEntityDTO> sorted =
+                componentPersistEntityList
+                        .stream()
+                        .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder)).collect(Collectors.toList());
+
+        sorted.stream().forEach(cpe -> {
+
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .filter(cpef -> cpef.getPersistEntityField().getShortOrder() == null)
+                    .forEach(cpef -> cpef.getPersistEntityField().setShortOrder(0L));
+
+            cpe.getComponentPersistEntityFieldList()
+                    .stream()
+                    .forEach(cpef -> cpef.setShortOrder(cpef.getPersistEntityField().getShortOrder()));
+
+            List<ComponentPersistEntityFieldDTO> sortedCpefList =
+                    cpe.getComponentPersistEntityFieldList()
+                            .stream()
+                            .sorted(Comparator.comparingLong(ComponentPersistEntityFieldDTO::getShortOrder)).collect(Collectors.toList());
+            cpe.setComponentPersistEntityFieldList(sortedCpefList);
+        });
+
+        sorted.stream().forEach(cpe -> {
+            List<ComponentPersistEntityDTO> sortedCPE = this.shortCPEList(cpe.getComponentPersistEntityList());
+            cpe.setComponentPersistEntityList(sortedCPE);
+        });
+
+        return sorted;
     }
 
     private ComponentDTO retrieveComponentData(ComponentDTO componentDTO, String htmlTemplateId, String selectionId) {
@@ -87,8 +127,7 @@ public class HtmlTemplateService {
 
     public String createHtmlTemplate(String htmlTemplateId, String selectionId) {
         /* Retrieve Html Template & Component */
-        HtmlTemplate entity = htmlTemplateRepository.findById(htmlTemplateId).orElseThrow(() -> new DoesNotExistException("HtmlTemplate Does Not Exist"));
-        HtmlTemplateDTO htmlTemplateDTO = htmlTemplateMapper.map(entity);
+        HtmlTemplateDTO htmlTemplateDTO = this.getObject(htmlTemplateId);
         ComponentDTO componentDTO = htmlTemplateDTO.getComponent();
 
         /* Retrieve Component Data */
