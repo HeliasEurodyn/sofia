@@ -12,11 +12,11 @@ import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -46,7 +46,7 @@ public class ComponentSaverNativeRepository {
         this.jwtService = jwtService;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String save(ComponentDTO componentDTO) {
         return this.generateQueriesAndSave(componentDTO.getComponentPersistEntityList(), new ArrayList<>());
     }
@@ -60,7 +60,8 @@ public class ComponentSaverNativeRepository {
             Boolean multiDataLine = (componentPersistEntity.getMultiDataLine() != null && componentPersistEntity.getMultiDataLine());
             if (multiDataLine) {
                 Boolean saved = this.saveMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
-               if(!saved) this.updateJoinsOnMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
+                if (!saved)
+                    this.updateJoinsOnMultilineComponentPersistEntity(componentPersistEntity, savedPersistEntities);
             } else {
                 this.saveComponentPersistEntity(componentPersistEntity, savedPersistEntities);
                 savedPersistEntities.add(componentPersistEntity);
@@ -86,9 +87,9 @@ public class ComponentSaverNativeRepository {
     }
 
     private boolean saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                          List<ComponentPersistEntityDTO> savedPersistEntities) {
+                                                        List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        Boolean allowSave = (componentPersistEntity.getAllowSave() == null ? false : componentPersistEntity.getAllowSave());
+        Boolean allowSave = (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave());
 
         if (!allowSave) {
             return false;
@@ -198,8 +199,8 @@ public class ComponentSaverNativeRepository {
     }
 
     private ComponentPersistEntityDTO updateJoinsOnMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
-                                                                          List<ComponentPersistEntityDTO> savedPersistEntities) {
-        String deleteType =  (componentPersistEntity.getDeleteType() == null ? "" : componentPersistEntity.getDeleteType());
+                                                                                   List<ComponentPersistEntityDTO> savedPersistEntities) {
+        String deleteType = (componentPersistEntity.getDeleteType() == null ? "" : componentPersistEntity.getDeleteType());
 
         if (!deleteType.equals("clearJoin")) {
             return componentPersistEntity;
@@ -231,7 +232,7 @@ public class ComponentSaverNativeRepository {
                 .get().getPersistEntityField().getName();
 
 
-           if ( componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
+        if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
             this.unjoinNotExistingComponentPersistEntity(
                     existingPrimaryKeys,
                     componentPersistEntity.getPersistEntity().getName(),
@@ -246,9 +247,9 @@ public class ComponentSaverNativeRepository {
 
             List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList
                     = componentPersistEntityDataLine.getComponentPersistEntityFieldList().stream()
-                            .filter(y -> (y.getPersistEntityField().getPrimaryKey() == null ? false : y.getPersistEntityField().getPrimaryKey()) ||
-                                        !(y.getLocateStatement() == null ? "" :  y.getLocateStatement()).equals(""))
-                            .collect(Collectors.toList());
+                    .filter(y -> (y.getPersistEntityField().getPrimaryKey() != null && y.getPersistEntityField().getPrimaryKey()) ||
+                            !(y.getLocateStatement() == null ? "" : y.getLocateStatement()).equals(""))
+                    .collect(Collectors.toList());
 
 
             if (componentPersistEntity.getPersistEntity().getEntitytype().equals("Table")) {
@@ -311,10 +312,10 @@ public class ComponentSaverNativeRepository {
                 .forEach(x -> x.setValue(this.jwtService.getUserId()));
 
         /* Retrieve Cachable Query Parts Map */
-        Map<String,String> queryMap = this.componentQueryStringGenerator.generateUpdateCacheable(componentPersistEntity, componentPersistEntityFieldList);
+        Map<String, String> queryMap = this.componentQueryStringGenerator.generateUpdateCacheable(componentPersistEntity, componentPersistEntityFieldList);
 
         String queryUpdateString = String.join(
-                " ", "UPDATE" , componentPersistEntity.getPersistEntity().getName());
+                " ", "UPDATE", componentPersistEntity.getPersistEntity().getName());
 
         List<String> setFields = componentPersistEntityFieldList.stream()
                 .filter(x -> !x.getPersistEntityField().getAutoIncrement())
@@ -323,9 +324,9 @@ public class ComponentSaverNativeRepository {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-       String querySetString = String.join(" ", "SET",  String.join(", ", setFields));
+        String querySetString = String.join(" ", "SET", String.join(", ", setFields));
 
-        String queryWhereString = String.join(" ", "WHERE",  queryMap.get("WHERE"));
+        String queryWhereString = String.join(" ", "WHERE", queryMap.get("WHERE"));
 
         String queryString = String.join(" ", queryUpdateString, querySetString, queryWhereString);
 
@@ -393,7 +394,7 @@ public class ComponentSaverNativeRepository {
 
         componentPersistEntityFieldList.stream()
                 .filter(y -> !y.getPersistEntityField().getAutoIncrement())
-              //  .filter(x -> x.getValue() != null)
+                //  .filter(x -> x.getValue() != null)
                 .filter(x -> !x.getPersistEntityField().getType().equals("password"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime"))
                 .filter(x -> !x.getPersistEntityField().getType().equals("datetime_det"))

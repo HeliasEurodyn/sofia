@@ -12,12 +12,12 @@ import com.crm.sofia.mapper.form.designer.FormMapper;
 import com.crm.sofia.mapper.form.user.FormUiMapper;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
-import com.crm.sofia.native_repository.component.ComponentSaverNativeRepository;
 import com.crm.sofia.repository.form.FormRepository;
 import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentService;
 import com.crm.sofia.services.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FormService {
 
@@ -65,7 +66,7 @@ public class FormService {
     @Cacheable(value = "form_db_cache", key = "#id")
     public FormDTO getObject(String id) {
 
-        System.out.println("form_db_cache " + id);
+        log.debug("form_db_cache " + id);
 
         /* Retrieve FormDTO */
         Optional<FormEntity> optionalFormEntity = this.formRepository.findById(id);
@@ -75,9 +76,6 @@ public class FormService {
 
         /* Map FormDTO */
         FormDTO formDTO = this.formMapper.map(optionalFormEntity.get());
-
-        /* Shorting Component Entities */
-        this.sortComponentPersistEntities(formDTO.getComponent().getComponentPersistEntityList());
 
         /* Shorting Component*/
         List<ComponentPersistEntityDTO> sorted = this.shortCPEList(formDTO.getComponent().getComponentPersistEntityList());
@@ -138,14 +136,14 @@ public class FormService {
         return sorted;
     }
 
-    private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {
-        if (componentPersistEntityList == null) {
-            return;
-        }
-
-        componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
-        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList()));
-    }
+//    private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {
+//        if (componentPersistEntityList == null) {
+//            return;
+//        }
+//
+//        componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+//        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList()));
+//    }
 
     public FormDTO getObjectByJsonUrl(String jsonUrl) {
 
