@@ -89,7 +89,7 @@ public class ComponentSaverNativeRepository {
     private boolean saveMultilineComponentPersistEntity(ComponentPersistEntityDTO componentPersistEntity,
                                                         List<ComponentPersistEntityDTO> savedPersistEntities) {
 
-        Boolean allowSave = (componentPersistEntity.getAllowSave() != null && componentPersistEntity.getAllowSave());
+        Boolean allowSave = (componentPersistEntity.getAllowSave() == null? false : componentPersistEntity.getAllowSave());
 
         if (!allowSave) {
             return false;
