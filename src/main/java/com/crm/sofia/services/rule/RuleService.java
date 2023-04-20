@@ -1,10 +1,14 @@
 package com.crm.sofia.services.rule;
 
 import com.crm.sofia.dto.rule.RuleDTO;
+import com.crm.sofia.dto.rule.RuleSettingsDTO;
 import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.mapper.rule.RuleMapper;
+import com.crm.sofia.mapper.rule.RuleSettingsMapper;
 import com.crm.sofia.model.rule.Rule;
+import com.crm.sofia.model.rule.RuleSettings;
 import com.crm.sofia.repository.rule.RuleRepository;
+import com.crm.sofia.repository.rule.RuleSettingsRepository;
 import com.crm.sofia.services.auth.JWTService;
 import com.crm.sofia.services.menu.MenuFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,12 @@ public class RuleService {
     private RuleMapper ruleMapper;
 
     @Autowired
-    private MenuFieldService menuFieldService;
+    private RuleSettingsRepository ruleSettingsRepository;
+
+    @Autowired
+    private RuleSettingsMapper ruleSettingsMapper;
+
+
     @Autowired
     private JWTService jwtService;
 
@@ -70,5 +79,13 @@ public class RuleService {
 
         Rule createdEntity = this.ruleRepository.save(entity);
         return this.ruleMapper.map(createdEntity);
+    }
+
+    public RuleSettingsDTO getObjectSettings(String id) {
+        RuleSettings entity = this.ruleSettingsRepository.findById(id)
+                .orElseThrow(() -> new DoesNotExistException("Rule Setting Does Not Exist"));
+
+        return this.ruleSettingsMapper.map(entity);
+
     }
 }
