@@ -19,10 +19,16 @@ import java.util.List;
 public class RuleExpression extends BaseEntity {
 
     @Column
-    String field;
+    String fieldCode;
 
     @Column
-    String operator;
+    String fieldName;
+
+    @Column
+    String operatorCode;
+
+    @Column
+    String operatorName;
 
     @Column
     String command;

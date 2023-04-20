@@ -16,9 +16,13 @@ import java.util.List;
 @Accessors(chain = true)
 public class RuleExpressionDTO extends BaseDTO {
 
-    String field;
+    String fieldCode;
 
-    String operator;
+    String fieldName;
+
+    String operatorCode;
+
+    String operatorName;
 
     String command;
 
