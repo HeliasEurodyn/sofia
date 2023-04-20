@@ -26,6 +26,9 @@ public class Rule extends MainEntity {
     @Column
     private String description;
 
+    @Column(columnDefinition = "TEXT")
+    private String expressionPreview;
+
     String childrenColor;
 
     @OneToMany(

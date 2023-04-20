@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
 @Service
 public class OpenAPIService {
 
-
-
     @Value("${server.servlet.context-path}")
     private String basePath;
 

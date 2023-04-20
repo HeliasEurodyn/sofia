@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,21 +16,20 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class RuleDTO extends BaseDTO {
-
-    private String code;
+public class RuleSettingsDTO extends BaseDTO {
 
     private String name;
 
+    private String title;
+
     private String description;
 
-    private String expressionPreview;
+    private String ruleSectionTitle;
 
-    private List<RuleExpressionDTO> ruleExpressionList;
+    private String ruleSectionDescription;
 
-    public RuleDTO(String id, String name, Instant modifiedOn) {
-        this.setId(id);
-        this.name = name;
-    }
+    private String fieldCommand;
+
+    private String operatorCommand;
 
 }
