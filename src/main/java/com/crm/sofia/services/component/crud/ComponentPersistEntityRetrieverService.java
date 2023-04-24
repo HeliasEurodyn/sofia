@@ -2,16 +2,14 @@ package com.crm.sofia.services.component.crud;
 
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
+import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,14 +58,10 @@ public class ComponentPersistEntityRetrieverService {
 
 
     private ComponentPersistEntityDTO getComponentPersistEntityById(String id) {
-        Optional<ComponentPersistEntity> optionalComponentPersistEntity = componentPersistEntityRepository.findById(id);
+        ComponentPersistEntity componentPersistEntity = componentPersistEntityRepository.findById(id)
+                .orElseThrow(() -> new DoesNotExistException("Component Does Not Exist"));
 
-        if (!optionalComponentPersistEntity.isPresent()) {
-            return null;
-        }
-
-        ComponentPersistEntity componentPersistEntity = optionalComponentPersistEntity.get();
-        ComponentPersistEntityDTO componentPersistEntityDTO = this.componentPersistEntityMapper.map(componentPersistEntity);
+        ComponentPersistEntityDTO componentPersistEntityDTO = this.componentPersistEntityMapper.mapCpe(componentPersistEntity);
 
         return componentPersistEntityDTO;
     }
