@@ -18,7 +18,6 @@ import java.util.List;
 @JsonIgnoreProperties({"createdOn","createdBy","shortOrder","version","componentPersistEntity","componentPersistEntityField"})
 @Accessors(chain = true)
 public class FormControlFieldDTO extends BaseDTO {
-
     private String editor;
     private String description;
     private String message;
@@ -26,6 +25,7 @@ public class FormControlFieldDTO extends BaseDTO {
     private Boolean visible;
     private Boolean editable;
     private Boolean required;
+    private Boolean headerFilter;
     private String css;
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;
