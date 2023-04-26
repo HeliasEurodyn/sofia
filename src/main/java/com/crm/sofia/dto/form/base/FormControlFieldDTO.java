@@ -23,6 +23,7 @@ public class FormControlFieldDTO extends BaseDTO {
     private Boolean visible;
     private Boolean editable;
     private Boolean required;
+    private Boolean headerFilter;
     private String css;
     private ComponentPersistEntityDTO componentPersistEntity;
     private ComponentPersistEntityFieldDTO componentPersistEntityField;

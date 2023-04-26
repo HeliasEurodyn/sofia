@@ -33,6 +33,9 @@ public class ComponentPersistEntityFieldAssignment extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(10000)")
     private String editor;
 
+    @Column(columnDefinition = "VARCHAR(10000)", name = "filter_editor")
+    private String filterEditor;
+
     @Column
     private String defaultValue;
 

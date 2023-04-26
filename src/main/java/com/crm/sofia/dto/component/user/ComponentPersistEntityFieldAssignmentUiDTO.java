@@ -27,6 +27,8 @@ public class ComponentPersistEntityFieldAssignmentUiDTO implements Serializable 
 
     private String editor;
 
+    private String filterEditor;
+
     private String defaultValue;
 
     private String type;
