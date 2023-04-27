@@ -23,8 +23,12 @@ public abstract class ComponentPersistEntityMapper extends BaseMapper<ComponentP
         /* Short Component Persist Entity Fields */
         componentPersistEntityDTO.getComponentPersistEntityFieldList()
                 .stream()
-                .filter(cpef -> cpef.getShortOrder() == null)
-                .forEach(cpef -> cpef.setShortOrder(0L));
+                .filter(cpef -> cpef.getPersistEntityField().getShortOrder() == null)
+                .forEach(cpef -> cpef.getPersistEntityField().setShortOrder(0L));
+
+        componentPersistEntityDTO.getComponentPersistEntityFieldList()
+                .stream()
+                .forEach(cpef -> cpef.setShortOrder(cpef.getPersistEntityField().getShortOrder()));
 
         List<ComponentPersistEntityFieldDTO> sortedCpefList =
                 componentPersistEntityDTO.getComponentPersistEntityFieldList()
