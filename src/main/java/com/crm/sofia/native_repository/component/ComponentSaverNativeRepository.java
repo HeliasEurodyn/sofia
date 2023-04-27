@@ -401,7 +401,8 @@ public class ComponentSaverNativeRepository {
                 .forEach(x ->
                         query.setParameter(
                                 x.getPersistEntityField().getName(),
-                                (x.getValue() == null ? "" : x.getValue())
+                                x.getValue()
+                                // (x.getValue() == null ? "" : x.getValue())
                         ));
 
         componentPersistEntityFieldList.stream()
