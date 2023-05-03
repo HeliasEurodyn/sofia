@@ -21,8 +21,10 @@ import com.crm.sofia.services.menu.MenuFieldService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,6 +61,9 @@ public class UserService {
     private final EntityManager entityManager;
     private final PlatformTransactionManager transactionManager;
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
@@ -143,6 +148,9 @@ public class UserService {
     }
 
     public UserDTO getCurrentUser() {
+
+        messagingTemplate.convertAndSend("/topic/messages/10", "Hello From Backend!");
+
         User user = this.getLoggedInUser();
         UserDTO userDTO = this.userMapper.mapUserToDtoWithMenu(user);
         return userDTO;
