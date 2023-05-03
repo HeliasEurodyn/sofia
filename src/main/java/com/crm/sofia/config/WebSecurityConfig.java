@@ -103,7 +103,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/privacy-policy.html",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/html-template/preview-page.html"
+                        "/html-template/preview-page.html",
+                        "/sockjs/**"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET,"/form/instance-version/**").hasAnyAuthority("unrestricted_role", "read_role")
                 .antMatchers(HttpMethod.GET,"/form/clone-data/**").hasAnyAuthority("unrestricted_role", "read_role")

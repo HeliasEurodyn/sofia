@@ -10,9 +10,11 @@ import com.crm.sofia.services.security.BlacklistingService;
 import com.crm.sofia.services.user.UserService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +70,13 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
         return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
+    }
+
+    @MessageMapping("/hello")
+    public void handleMessage(String message) {
+        String responseMessage = "Hello, " + message + "!";
+        System.out.println(responseMessage);
+        // send the response message to the /topic/greetings destination
+        //  messagingTemplate.convertAndSend("/topic/greetings", responseMessage);
     }
 }

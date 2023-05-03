@@ -114,7 +114,11 @@ public class HtmlTemplateService {
     public String printPreview(String token) {
         Map<String, Object> values = (Map<String, Object>) this.tokens.get(token);
         this.tokens.remove(token);
-        return this.createHtmlTemplate((String) values.get("id"), (String) values.get("selectionId"));
+        String html = this.createHtmlTemplate((String) values.get("id"), (String) values.get("selectionId"));
+
+        /* Add Javascript window.print() fucntion at the end of the header */
+        html = html.replace("<body>", "<body><script>window.print();</script>");
+        return html;
     }
     public ResponseEntity<Map<String,String>> sendEmail(String htmlTemplateId, String selectionId, String subject, List<String> recipients) throws MessagingException {
         String content = this.createHtmlTemplate(htmlTemplateId,selectionId);
@@ -149,11 +153,83 @@ public class HtmlTemplateService {
 
             while (matcher.find())
             {
+                List<String> subHtmls = new ArrayList<>();
+                String matchedHtml = matcher.group();
+
+                for (ComponentPersistEntityDataLineDTO dl : cpe.getComponentPersistEntityDataLines()) {
+                    String subHtml = matcher.group();
+                    Map<String, String> valuesOfDLFields = new HashMap<>();
+                    subHtml = subHtml.replace("##multiline."+cpe.getCode()+".start##","");
+                    subHtml = subHtml.replace("##multiline."+cpe.getCode()+".end##","");
+
+                    for (ComponentPersistEntityFieldDTO cpef : dl.getComponentPersistEntityFieldList()) {
+                        if (subHtml.contains("##" + cpe.getCode() + "." + cpef.getPersistEntityField().getName() + "##")) {
+                            String value = (cpef.getValue() == null ? "" : cpef.getValue().toString());
+                            valuesOfDLFields.put("##" + cpe.getCode() + "." + cpef.getPersistEntityField().getName() + "##", value);
+                        }
+                    }
+
+                    for (ComponentPersistEntityDTO childCpe :  dl.flatSingleLineCPETree().collect(Collectors.toList())) {
+                        for (ComponentPersistEntityFieldDTO childCpef :  childCpe.getComponentPersistEntityFieldList()) {
+                            if (subHtml.contains("##" + childCpe.getCode() + "." + childCpef.getPersistEntityField().getName() + "##")) {
+                                String value = (childCpef.getValue() == null ? "" : childCpef.getValue().toString());
+                                valuesOfDLFields.put("##" + childCpe.getCode() + "." + childCpef.getPersistEntityField().getName() + "##", value);
+                            }
+                        }
+                    }
+
+                    for (Map.Entry<String, String> entry : valuesOfDLFields.entrySet())
+                        subHtml = subHtml.replace(entry.getKey(), entry.getValue());
+
+                    subHtmls.add(subHtml);
+                }
+                html = html.replace(matchedHtml, String.join("", subHtmls));
+            }
+        }
+
+        /* Replace Single List Parameters */
+        for (ComponentPersistEntityDTO cpe : componentDTO.flatComponentPersistEntityTree().collect(Collectors.toList())) {
+            for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+                if (html.contains("##" + cpe.getCode() + "." + cpef.getPersistEntityField().getName() + "##")) {
+                    String value = (cpef.getValue() == null ? "" : cpef.getValue().toString());
+                    valuesOfFields.put("##" + cpe.getCode() + "." + cpef.getPersistEntityField().getName() + "##", value);
+                }
+            }
+        }
+
+        /* Replace Retrieved Parameters */
+        for (Map.Entry<String, String> entry : valuesOfFields.entrySet())
+            html = html.replace(entry.getKey(), entry.getValue());
+
+        return html;
+    }
+
+    public String createHtmlTitle(String htmlTemplateId, String selectionId) {
+        /* Retrieve Html Template & Component */
+        HtmlTemplateDTO htmlTemplateDTO = this.getObject(htmlTemplateId);
+        ComponentDTO componentDTO = htmlTemplateDTO.getComponent();
+
+        /* Retrieve Component Data */
+        componentDTO = this.retrieveComponentData(componentDTO, htmlTemplateId, selectionId);
+
+        /* Replace Parameters to Html Template */
+        String html = htmlTemplateDTO.getTitle();
+        Map<String, String> valuesOfFields = new HashMap<>();
+
+        /* Replace Multiline List Parameters */
+        for (ComponentPersistEntityDTO cpe : componentDTO.flatComponentPersistEntityTree().collect(Collectors.toList())) {
+
+            if(!(cpe.getMultiDataLine() == null? false : cpe.getMultiDataLine())){
+                continue;
+            }
+
+            Pattern pattern = Pattern.compile(   "(##multiline\\."+cpe.getCode()+"\\.start##)((\\r\\n|\\r|\\n|.)*?)(##multiline\\."+cpe.getCode()+"\\.end##)"  );
+            Matcher matcher = pattern.matcher(html);
+
+            while (matcher.find())
+            {
                     List<String> subHtmls = new ArrayList<>();
                     String matchedHtml = matcher.group();
-
-                    System.out.println("------matchedHtml------");
-                    System.out.println(matchedHtml);
 
                     for (ComponentPersistEntityDataLineDTO dl : cpe.getComponentPersistEntityDataLines()) {
                         String subHtml = matcher.group();
@@ -183,7 +259,6 @@ public class HtmlTemplateService {
                         subHtmls.add(subHtml);
                     }
                     html = html.replace(matchedHtml, String.join("", subHtmls));
-
             }
         }
 
@@ -200,9 +275,6 @@ public class HtmlTemplateService {
         /* Replace Retrieved Parameters */
         for (Map.Entry<String, String> entry : valuesOfFields.entrySet())
             html = html.replace(entry.getKey(), entry.getValue());
-
-        /* Add Javascript window.print() fucntion at the end of the header */
-        html = html.replace("<body>", "<body><script>window.print();</script>");
 
         return html;
     }
