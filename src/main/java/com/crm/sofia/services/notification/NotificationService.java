@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -80,6 +81,29 @@ public class NotificationService {
         notificationRepository.deleteById(entity.getId());
     }
 
+    @Transactional
+    public void createPlainNotificationToManyReceivers(NotificationDTO notification, List<String> ids) {
+        ids.forEach(id -> {
+            notification.setId(id);
+            this.createPlainNotification(notification);
+        });
+    }
+
+    public void createPlainNotification(NotificationDTO notificationDTO) {
+            Notification notification = notificationMapper.map(notificationDTO);
+            notification.setCreatedOn(Instant.now());
+            notification.setCreatedBy(jwtService.getUserId());
+            notification.setModifiedOn(Instant.now());
+            notification.setModifiedBy(jwtService.getUserId());
+            notification.setSenderId(jwtService.getUserId());
+            notification.setStatus("unread");
+
+            Notification createdNotification = notificationRepository.save(notification);
+
+            messagingTemplate.convertAndSend("/topic/user-notifications/" + createdNotification.getReceiverId(),
+                    Map.of("id", createdNotification.getId(), "title", createdNotification.getTitle()));
+    }
+
     public void createHtmlTemplateNotification(HtmlTemplateNotificationParamsDTO params) {
 
         String title = htmlTemplateService.createHtmlTitle(params.getHtmlReportId(), params.getHtmlReportSelectionId());
@@ -109,4 +133,6 @@ public class NotificationService {
     public void makeRead(String id) {
         this.notificationRepository.makeRead(id);
     }
+
+
 }

@@ -48,6 +48,19 @@ public class NotificationController {
         notificationService.createHtmlTemplateNotification(params);
     }
 
+    @PostMapping(path = "/plain")
+    public void createPlainNotification(
+            @RequestBody NotificationDTO notification)  {
+        notificationService.createPlainNotification(notification);
+    }
+
+    @PostMapping(path = "/plain/to-many-receivers")
+    public void createPlainNotificationToManyReceivers(
+            @RequestParam(value = "ids", required = true) List<String> ids,
+            @RequestBody NotificationDTO notification)  {
+        notificationService.createPlainNotificationToManyReceivers(notification, ids);
+    }
+
     @PutMapping(path = "/read")
     public void makeRead(@RequestParam("id") String id)  {
         notificationService.makeRead(id);
