@@ -2,16 +2,15 @@ package com.crm.sofia.native_repository.chart;
 
 import com.crm.sofia.dto.chart.ChartFieldDTO;
 import com.crm.sofia.services.auth.JWTService;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,14 +42,14 @@ public class ChartNativeRepository {
                     query.setParameter(x.getKey(),x.getValue());
                 });
 
-        List<Object[]> queryResults = query.getResultList();
+        NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+        nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        List<HashMap<String,Object>> queryResults = nativeQuery.getResultList();
 
         chartFieldList.forEach(chartField -> chartField.setDataset(new ArrayList<>()));
-        for (Object[] queryResult : queryResults) {
-            int i = 0;
+        for (HashMap<String,Object> queryResult : queryResults) {
             for (ChartFieldDTO chartField : chartFieldList) {
-                chartField.getDataset().add(queryResult[i]);
-                i++;
+                chartField.getDataset().add(queryResult.get(chartField.getName()));
             }
         }
         return chartFieldList;
