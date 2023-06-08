@@ -4,7 +4,7 @@ import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDataLineDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.dto.persistEntity.PersistEntityDTO;
+import com.crm.sofia.services.auth.JWTService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.stereotype.Service;
@@ -24,10 +24,15 @@ public class ComponentRetrieverNativeRepository {
 
     private final ComponentQueryStringGenerator componentQueryStringGenerator;
 
+    private final JWTService jwtService;
+
+
     public ComponentRetrieverNativeRepository(EntityManager entityManager,
-                                              ComponentQueryStringGenerator componentQueryStringGenerator) {
+                                              ComponentQueryStringGenerator componentQueryStringGenerator,
+                                              JWTService jwtService) {
         this.entityManager = entityManager;
         this.componentQueryStringGenerator = componentQueryStringGenerator;
+        this.jwtService = jwtService;
     }
 
     public void retrieveComponentData(ComponentDTO component, String selectionId) {
@@ -102,6 +107,15 @@ public class ComponentRetrieverNativeRepository {
                         cpef.setLocateStatement(value);
                     }
                 }
+            }
+        }
+
+        for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+            String locateStatement = (cpef.getLocateStatement() == null ? "" : cpef.getLocateStatement());
+
+            if (locateStatement.equals("#userId")) {
+                String value = this.jwtService.getUserId();
+                cpef.setLocateStatement(value);
             }
         }
 
