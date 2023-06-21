@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.menu.MenuMapper;
 import com.crm.sofia.model.menu.Menu;
 import com.crm.sofia.repository.menu.MenuRepository;
 import com.crm.sofia.services.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,13 +18,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
+    @Autowired
+    private  MenuRepository menuRepository;
+    @Autowired
+    private  MenuMapper menuMapper;
+    @Autowired
+    private  MenuFieldService menuFieldService;
 
-    private final MenuRepository menuRepository;
-
-    private final MenuMapper menuMapper;
-    private final MenuFieldService menuFieldService;
-    private final JWTService jwtService;
-
+    @Autowired
+    private  JWTService jwtService;
+    @Autowired
     public MenuService(MenuRepository menuRepository,
                        MenuMapper menuMapper,
                        MenuFieldService menuFieldService,

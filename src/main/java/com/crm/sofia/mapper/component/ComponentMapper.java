@@ -9,9 +9,8 @@ import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {ComponentPersistEntityFieldMapper.class})
-@DecoratedWith(ComponentMapperDecorator.class)
 public abstract class ComponentMapper extends BaseMapper<ComponentDTO, Component> {
 
-    public abstract Component mapWithPersistEntities(ComponentDTO entity);
+//    public abstract Component mapWithPersistEntities(ComponentDTO entity);
 
 }

@@ -25,7 +25,9 @@ public class ListDataController {
     @GetMapping(path = "/{jsonUrl}")
     public List<Map<String, Object>> getDatalist(@PathVariable("jsonUrl") String jsonUrl, @RequestParam Map<String, String> parameters) {
         ListDTO listDTO = this.listService.retrieveListWithBaseQueryByUrl(jsonUrl);
-        return this.listService.getObjectDataByParameters(parameters,0L , listDTO).getListContent();
+        ListResultsDataDTO listResultsDataDTO = this.listService.getObjectDataByParameters(parameters,0L , listDTO);
+        this.listService.convertJsonColumns(listResultsDataDTO.getListContent(), listDTO);
+        return listResultsDataDTO.getListContent();
     }
 
     @GetMapping(path = "/{jsonUrl}/page/{page}")

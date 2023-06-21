@@ -18,6 +18,7 @@ import com.crm.sofia.services.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,38 +31,60 @@ import java.util.stream.Collectors;
 @Service
 public class FormService {
 
-    private final FormRepository formRepository;
-    private final FormMapper formMapper;
-    private final FormUiMapper formUiMapper;
-    private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-    private final ComponentRetrieverService componentRetrieverService;
-    private final ComponentSaverService componentSaverService;
-    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
-    private final ComponentUiMapper componentUiMapper;
-    private final ComponentJsonMapper componentJsonMapper;
-    private final ComponentDeleterService componentDeleterService;
+//    private final FormRepository formRepository;
+//    private final FormMapper formMapper;
+//    private final FormUiMapper formUiMapper;
+//    private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
+//    private final ComponentRetrieverService componentRetrieverService;
+//    private final ComponentSaverService componentSaverService;
+//    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
+//    private final ComponentUiMapper componentUiMapper;
+//    private final ComponentJsonMapper componentJsonMapper;
+//    private final ComponentDeleterService componentDeleterService;
 
-    public FormService(FormRepository formRepository,
-                       FormMapper formMapper,
-                       FormUiMapper formUiMapper,
-                       ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
-                       ComponentRetrieverService componentRetrieverService,
-                       ComponentSaverService componentSaverService,
-                       ComponentRetrieverNativeRepository componentRetrieverNativeRepository,
-                       ComponentUiMapper componentUiMapper,
-                       ComponentJsonMapper componentJsonMapper,
-                       ComponentDeleterService componentDeleterService) {
-        this.formRepository = formRepository;
-        this.formMapper = formMapper;
-        this.formUiMapper = formUiMapper;
-        this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-        this.componentRetrieverService = componentRetrieverService;
-        this.componentSaverService = componentSaverService;
-        this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
-        this.componentUiMapper = componentUiMapper;
-        this.componentJsonMapper = componentJsonMapper;
-        this.componentDeleterService = componentDeleterService;
-    }
+    @Autowired
+    private FormRepository formRepository;
+    @Autowired
+    private FormMapper formMapper;
+    @Autowired
+    private FormUiMapper formUiMapper;
+    @Autowired
+    private ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
+    @Autowired
+    private ComponentRetrieverService componentRetrieverService;
+    @Autowired
+    private ComponentSaverService componentSaverService;
+    @Autowired
+    private ComponentUiMapper componentUiMapper;
+    @Autowired
+    private ComponentJsonMapper componentJsonMapper;
+    @Autowired
+    private ComponentDeleterService componentDeleterService;
+    @Autowired
+    private ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
+
+//    @Autowired
+//    public FormService(FormRepository formRepository,
+//                       FormMapper formMapper,
+//                       FormUiMapper formUiMapper,
+//                       ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
+//                       ComponentRetrieverService componentRetrieverService,
+//                       ComponentSaverService componentSaverService,
+//                       ComponentRetrieverNativeRepository componentRetrieverNativeRepository,
+//                       ComponentUiMapper componentUiMapper,
+//                       ComponentJsonMapper componentJsonMapper,
+//                       ComponentDeleterService componentDeleterService) {
+//        this.formRepository = formRepository;
+//        this.formMapper = formMapper;
+//        this.formUiMapper = formUiMapper;
+//        this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
+//        this.componentRetrieverService = componentRetrieverService;
+//        this.componentSaverService = componentSaverService;
+//        this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
+//        this.componentUiMapper = componentUiMapper;
+//        this.componentJsonMapper = componentJsonMapper;
+//        this.componentDeleterService = componentDeleterService;
+//    }
 
     @Cacheable(value = "form_db_cache", key = "#id")
     public FormDTO getObject(String id) {
@@ -242,7 +265,6 @@ public class FormService {
     }
 
     public void delete(FormDTO formDTO, String selectionId) {
-
         this.componentDeleterService.retrieveComponentAndDelete(formDTO.getComponent(), selectionId);
     }
 

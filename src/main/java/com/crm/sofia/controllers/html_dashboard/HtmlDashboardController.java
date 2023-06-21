@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.html_dashboard;
 import com.crm.sofia.dto.html_dashboard.HtmlDashboardDTO;
 import com.crm.sofia.services.html_dashboard.HtmlDashboardService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/html-dashboard")
 public class HtmlDashboardController {
 
-    private final HtmlDashboardService htmlDashboardService;
-
+    @Autowired
+    private HtmlDashboardService htmlDashboardService;
+    @Autowired
     public HtmlDashboardController(HtmlDashboardService htmlDashboardService) {
         this.htmlDashboardService = htmlDashboardService;
     }

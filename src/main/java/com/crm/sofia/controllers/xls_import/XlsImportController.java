@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.xls_import;
 import com.crm.sofia.dto.xls_import.XlsImportDTO;
 import com.crm.sofia.services.xls_import.XlsImportService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,8 @@ import java.io.IOException;
 @Validated
 @RequestMapping("/xls-import")
 public class XlsImportController {
-    private final XlsImportService xlsImportService;
+    @Autowired
+    private XlsImportService xlsImportService;
 
     public XlsImportController(XlsImportService xlsImportService) {
         this.xlsImportService = xlsImportService;

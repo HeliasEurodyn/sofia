@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,23 +32,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class XlsImportService {
+    @Autowired
+    private  XlsImportRepository xlsImportRepository;
+    @Autowired
+    private  XlsImportMapper xlsImportMapper;
+    @Autowired
+    private  ComponentSaverService componentSaverService;
+    @Autowired
+    private  ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
+    @Autowired
+    private  ExpressionService expressionService;
 
-    private final XlsImportRepository xlsImportRepository;
-    private final XlsImportMapper xlsImportMapper;
-    private final ComponentSaverService componentSaverService;
-    private final ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService;
-    private final ExpressionService expressionService;
-
-    public XlsImportService(XlsImportRepository xlsImportRepository,
-                            XlsImportMapper xlsImportMapper,
-                            ComponentSaverService componentSaverService,
-                            ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService, ExpressionService expressionService) {
-        this.xlsImportRepository = xlsImportRepository;
-        this.xlsImportMapper = xlsImportMapper;
-        this.componentSaverService = componentSaverService;
-        this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-        this.expressionService = expressionService;
-    }
+//    public XlsImportService(XlsImportRepository xlsImportRepository,
+//                            XlsImportMapper xlsImportMapper,
+//                            ComponentSaverService componentSaverService,
+//                            ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService, ExpressionService expressionService) {
+//        this.xlsImportRepository = xlsImportRepository;
+//        this.xlsImportMapper = xlsImportMapper;
+//        this.componentSaverService = componentSaverService;
+//        this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
+//        this.expressionService = expressionService;
+//    }
 
     public XlsImportDTO getObject(String id) {
         Optional<XlsImport> optionalchart = this.xlsImportRepository.findById(id);

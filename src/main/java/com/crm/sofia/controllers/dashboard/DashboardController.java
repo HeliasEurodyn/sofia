@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.dashboard;
 import com.crm.sofia.dto.dashboard.DashboardDTO;
 import com.crm.sofia.services.dashboard.DashboardService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequestMapping("/dashboard")
 public class DashboardController {
-
-    private final DashboardService dashboardService;
+    @Autowired
+    private  DashboardService dashboardService;
 
     public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;

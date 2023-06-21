@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.info_card.InfoCardMapper;
 import com.crm.sofia.model.info_card.InfoCard;
 import com.crm.sofia.native_repository.info_card.InfoCardNativeRepository;
 import com.crm.sofia.repository.info_card.InfoCardRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,11 +18,13 @@ import java.util.Optional;
 
 @Service
 public class InfoCardService {
-
-    private final InfoCardRepository infoCardRepository;
-    private final InfoCardMapper infoCardMapper;
-    private final InfoCardNativeRepository infoCardNativeRepository;
-
+    @Autowired
+    private  InfoCardRepository infoCardRepository;
+    @Autowired
+    private  InfoCardMapper infoCardMapper;
+    @Autowired
+    private  InfoCardNativeRepository infoCardNativeRepository;
+    @Autowired
     public InfoCardService(InfoCardRepository infoCardRepository,
                            InfoCardMapper infoCardMapper,
                            InfoCardNativeRepository infoCardNativeRepository) {

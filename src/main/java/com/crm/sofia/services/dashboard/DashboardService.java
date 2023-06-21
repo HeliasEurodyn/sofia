@@ -6,6 +6,7 @@ import com.crm.sofia.dto.dashboard.DashboardItemDTO;
 import com.crm.sofia.mapper.dashboard.DashboardMapper;
 import com.crm.sofia.model.dashboard.Dashboard;
 import com.crm.sofia.repository.dashboard.DashboardRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,10 +19,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class DashboardService {
-
-    private final DashboardRepository dashboardRepository;
-    private final DashboardMapper dashboardMapper;
-
+    @Autowired
+    private  DashboardRepository dashboardRepository;
+    @Autowired
+    private  DashboardMapper dashboardMapper;
+    @Autowired
     public DashboardService(DashboardRepository dashboardRepository,
                             DashboardMapper dashboardMapper) {
         this.dashboardRepository = dashboardRepository;

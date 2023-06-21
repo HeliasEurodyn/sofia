@@ -23,13 +23,15 @@ import java.util.Optional;
 @Service
 public class CustomQueryService {
 
+    @Autowired
     private final JWTService jwtService;
+    @Autowired
     private final EntityManager entityManager;
     @Autowired
     private CustomQueryMapper customQueryMapper;
     @Autowired
     private CustomQueryRepository customQueryRepository;
-
+    @Autowired
     public CustomQueryService(JWTService jwtService,
                               EntityManager entityManager) {
         this.jwtService = jwtService;

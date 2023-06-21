@@ -5,6 +5,7 @@ import com.crm.sofia.mapper.menu.MenuFieldMapper;
 import com.crm.sofia.model.menu.MenuField;
 import com.crm.sofia.repository.menu.MenuFieldRepository;
 import com.crm.sofia.repository.menu.MenuRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuFieldService {
-
-    private final MenuRepository menuRepository;
-    private final MenuFieldRepository menuFieldRepository;
-    private final MenuFieldMapper menuFIeldMapper;
+    @Autowired
+    private  MenuRepository menuRepository;
+    @Autowired
+    private  MenuFieldRepository menuFieldRepository;
+    @Autowired
+    private  MenuFieldMapper menuFIeldMapper;
 
     public MenuFieldService(MenuRepository menuRepository,
                             MenuFieldRepository menuFieldRepository,

@@ -2,6 +2,7 @@ package com.crm.sofia.controllers.search;
 
 import com.crm.sofia.services.search.SearchService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequestMapping("/search")
 public class SearchController {
-
-    private final SearchService searchService;
+    @Autowired
+    private SearchService searchService;
 
     public SearchController(SearchService searchService) {
         this.searchService = searchService;

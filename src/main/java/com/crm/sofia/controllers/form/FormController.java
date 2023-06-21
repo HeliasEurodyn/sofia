@@ -5,6 +5,7 @@ import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.FormUiDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,9 @@ import java.util.Map;
 @Validated
 @RequestMapping("/form")
 public class FormController {
-
-    private final FormService formService;
-
+    @Autowired
+    private FormService formService;
+    @Autowired
     public FormController(FormService formService) {
         this.formService = formService;
     }

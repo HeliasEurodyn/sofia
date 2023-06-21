@@ -84,7 +84,6 @@ public class ListRetrieverNativeRepository {
         /*
          * From clause
          */
-        //queryString += this.generateFromPart(persistEntities);
         queryString = queryString.concat(listDTO.getFromQuery());
 
         /*

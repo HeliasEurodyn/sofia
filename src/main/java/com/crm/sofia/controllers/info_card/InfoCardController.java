@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.info_card;
 import com.crm.sofia.dto.info_card.InfoCardDTO;
 import com.crm.sofia.services.info_card.InfoCardService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,9 @@ import java.util.Map;
 @Validated
 @RequestMapping("/info-card")
 public class InfoCardController {
-
-    private final InfoCardService infoCardService;
-
+    @Autowired
+    private InfoCardService infoCardService;
+    @Autowired
     public InfoCardController(InfoCardService infoCardService) {
         this.infoCardService = infoCardService;
     }

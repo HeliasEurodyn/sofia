@@ -5,6 +5,7 @@ import com.crm.sofia.dto.list.ListDTO;
 import com.crm.sofia.dto.list.ListResultsDataDTO;
 import com.crm.sofia.services.list.ListService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,9 @@ import java.util.Map;
 @Validated
 @RequestMapping("/list")
 public class ListController {
-
-    private final ListService listService;
-
+    @Autowired
+    private  ListService listService;
+    @Autowired
     public ListController(ListService listService) {
         this.listService = listService;
     }

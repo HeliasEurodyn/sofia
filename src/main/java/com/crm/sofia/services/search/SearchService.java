@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.search.SearchMapper;
 import com.crm.sofia.model.search.Search;
 import com.crm.sofia.repository.search.SearchRepository;
 import com.crm.sofia.services.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,11 +17,15 @@ import java.util.*;
 
 @Service
 public class SearchService {
-
-    private final SearchRepository searchRepository;
-    private final SearchMapper searchMapper;
-    private final JWTService jwtService;
-    private final EntityManager entityManager;
+    @Autowired
+    private SearchRepository searchRepository;
+    @Autowired
+    private  SearchMapper searchMapper;
+    @Autowired
+    private  JWTService jwtService;
+    @Autowired
+    private  EntityManager entityManager;
+    @Autowired
 
     public SearchService(SearchRepository searchRepository,
                          SearchMapper searchMapper,

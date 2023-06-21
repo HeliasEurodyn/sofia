@@ -7,6 +7,7 @@ import com.crm.sofia.mapper.component.ComponentPersistEntityMapper;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.component.ComponentPersistEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,12 +15,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class ComponentPersistEntityRetrieverService {
-
-    private final ComponentPersistEntityRepository componentPersistEntityRepository;
-    private final ComponentPersistEntityMapper componentPersistEntityMapper;
+    @Autowired
+    private  ComponentPersistEntityRepository componentPersistEntityRepository;
+    @Autowired
+    private  ComponentPersistEntityMapper componentPersistEntityMapper;
 //    private final ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository;
-    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
-
+    @Autowired
+    private  ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
+    @Autowired
     public ComponentPersistEntityRetrieverService(ComponentPersistEntityRepository componentPersistEntityRepository,
                                                   ComponentPersistEntityMapper componentPersistEntityMapper,
 //                                                  ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository,

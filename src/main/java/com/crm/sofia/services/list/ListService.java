@@ -11,11 +11,16 @@ import com.crm.sofia.native_repository.list.ListRetrieverNativeRepository;
 import com.crm.sofia.native_repository.list.ListUpdaterNativeRepository;
 import com.crm.sofia.repository.list.ListRepository;
 import com.crm.sofia.services.expression.ExpressionService;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -27,23 +32,28 @@ import java.util.stream.Stream;
 @Service
 public class ListService {
 
-    private final ListRepository listRepository;
-    private final ListMapper listMapper;
-    private final ExpressionService expressionService;
-    private final ListRetrieverNativeRepository listRetrieverNativeRepository;
-    private final ListUpdaterNativeRepository listUpdaterNativeRepository;
+    @Autowired
+    private ListRepository listRepository;
+    @Autowired
+    private ListMapper listMapper;
+    @Autowired
+    private  ExpressionService expressionService;
+    @Autowired
+    private ListRetrieverNativeRepository listRetrieverNativeRepository;
+    @Autowired
+    private ListUpdaterNativeRepository listUpdaterNativeRepository;
 
-    public ListService(ListRepository listRepository,
-                       ListMapper listMapper,
-                       ExpressionService expressionService,
-                       ListRetrieverNativeRepository listRetrieverNativeRepository,
-                       ListUpdaterNativeRepository listUpdaterNativeRepository) {
-        this.listRepository = listRepository;
-        this.listMapper = listMapper;
-        this.expressionService = expressionService;
-        this.listRetrieverNativeRepository = listRetrieverNativeRepository;
-        this.listUpdaterNativeRepository = listUpdaterNativeRepository;
-    }
+//    public ListService(ListRepository listRepository,
+//                       ListMapper listMapper,
+//                       ExpressionService expressionService,
+//                       ListRetrieverNativeRepository listRetrieverNativeRepository,
+//                       ListUpdaterNativeRepository listUpdaterNativeRepository) {
+//        this.listRepository = listRepository;
+//        this.listMapper = listMapper;
+//        this.expressionService = expressionService;
+//        this.listRetrieverNativeRepository = listRetrieverNativeRepository;
+//        this.listUpdaterNativeRepository = listUpdaterNativeRepository;
+//    }
 
     public ListDTO getObject(String id, String languageId) {
 
@@ -420,6 +430,34 @@ public class ListService {
     public void updateField(String id, String field, Object fieldValue, Object rel, String languageId) {
         ListDTO listDTO = this.retrieveListWithBaseQuery(id, languageId);
         this.listUpdaterNativeRepository.updateField(listDTO, field, fieldValue, rel);
+    }
+
+    public void convertJsonColumns(List<Map<String, Object>> listContent, ListDTO listDTO) {
+
+
+        List<String> jsonColumnCodes = listDTO.getListComponentColumnFieldList()
+                .stream()
+                .filter(fieldList -> fieldList.getType().equals("json"))
+                .map(fieldList -> fieldList.getCode())
+                .collect(Collectors.toList());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        listContent.forEach(map -> {
+            map.forEach((key, jsonValue) -> {
+                if(jsonColumnCodes.contains(key)){
+                    try {
+                        JsonNode jsonNode = objectMapper.readTree((String)jsonValue);
+                        Object jsonParsedObject = objectMapper.convertValue(jsonNode, Object.class);
+                        //Object jsonParsedObject = objectMapper.readValue( jsonValue, Object.class);
+                      //  jsonValue = jsonParsedObject;
+                        map.put(key, jsonParsedObject);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        });
+
     }
 
     public Object test() {

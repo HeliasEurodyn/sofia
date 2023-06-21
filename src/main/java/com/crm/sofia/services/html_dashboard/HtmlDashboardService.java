@@ -6,6 +6,7 @@ import com.crm.sofia.mapper.html_dashboard.HtmlDashboardMapper;
 import com.crm.sofia.model.html_dashboard.HtmlDashboard;
 import com.crm.sofia.repository.html_dashboard.HtmlDashboardRepository;
 import com.crm.sofia.services.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,11 +15,13 @@ import java.util.Optional;
 
 @Service
 public class HtmlDashboardService {
-
-    private final HtmlDashboardMapper htmlDashboardMapper;
-    private final HtmlDashboardRepository htmlDashboardRepository;
-    private final JWTService jwtService;
-
+    @Autowired
+    private  HtmlDashboardMapper htmlDashboardMapper;
+    @Autowired
+    private  HtmlDashboardRepository htmlDashboardRepository;
+    @Autowired
+    private  JWTService jwtService;
+    @Autowired
     public HtmlDashboardService(HtmlDashboardMapper htmlDashboardMapper,
                                 HtmlDashboardRepository htmlDashboardRepository,
                                 JWTService jwtService) {

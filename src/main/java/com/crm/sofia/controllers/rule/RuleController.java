@@ -4,6 +4,7 @@ import com.crm.sofia.dto.rule.RuleDTO;
 import com.crm.sofia.dto.rule.RuleSettingsDTO;
 import com.crm.sofia.services.rule.RuleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,8 @@ import java.util.List;
 @Validated
 @RequestMapping("/rule")
 public class RuleController {
-
-    private final RuleService ruleService;
+    @Autowired
+    private RuleService ruleService;
 
     public RuleController(RuleService ruleService) {
         this.ruleService = ruleService;

@@ -4,15 +4,18 @@ import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.native_repository.component.ComponentDeleterNativeRepository;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.services.component.ComponentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ComponentDeleterService {
-
-    private final ComponentService componentService;
-    private final ComponentDeleterNativeRepository componentDeleterNativeRepository;
-    private final ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
-
+    @Autowired
+    private  ComponentService componentService;
+    @Autowired
+    private  ComponentDeleterNativeRepository componentDeleterNativeRepository;
+    @Autowired
+    private  ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
+    @Autowired
     public ComponentDeleterService(ComponentService componentService,
                                    ComponentDeleterNativeRepository componentDeleterNativeRepository,
                                    ComponentRetrieverNativeRepository componentRetrieverNativeRepository) {

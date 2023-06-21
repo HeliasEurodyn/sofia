@@ -2,6 +2,7 @@ package com.crm.sofia.native_repository.info_card;
 
 import com.crm.sofia.dto.info_card.InfoCardTextResponceDTO;
 import com.crm.sofia.services.auth.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -11,11 +12,12 @@ import java.util.Map;
 
 @Service
 public class InfoCardNativeRepository {
+    @Autowired
+    private JWTService jwtService;
+    @Autowired
+    private EntityManager entityManager;
 
-    private final JWTService jwtService;
-    private final EntityManager entityManager;
-
-
+    @Autowired
     public InfoCardNativeRepository(JWTService jwtService, EntityManager entityManager) {
         this.jwtService = jwtService;
         this.entityManager = entityManager;

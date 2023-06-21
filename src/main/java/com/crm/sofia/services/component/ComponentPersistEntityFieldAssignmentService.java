@@ -6,6 +6,7 @@ import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.mapper.component.ComponentPersistEntityFieldAssignmentMapper;
 import com.crm.sofia.model.component.ComponentPersistEntityFieldAssignment;
 import com.crm.sofia.repository.component.ComponentPersistEntityFieldAssignmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,9 +15,10 @@ import java.util.Optional;
 
 @Service
 public class ComponentPersistEntityFieldAssignmentService {
-
-    private final ComponentPersistEntityFieldAssignmentRepository componentPersistEntityFieldAssignmentRepository;
-    private final ComponentPersistEntityFieldAssignmentMapper componentPersistEntityFieldAssignmentMapper;
+    @Autowired
+    private ComponentPersistEntityFieldAssignmentRepository componentPersistEntityFieldAssignmentRepository;
+    @Autowired
+    private ComponentPersistEntityFieldAssignmentMapper componentPersistEntityFieldAssignmentMapper;
 
     public ComponentPersistEntityFieldAssignmentService(
             ComponentPersistEntityFieldAssignmentRepository componentPersistEntityFieldAssignmentRepository,

@@ -9,6 +9,7 @@ import com.crm.sofia.model.component.Component;
 import com.crm.sofia.repository.component.ComponentRepository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,10 +22,11 @@ import java.util.Optional;
 
 @Service
 public class ComponentService {
-
-    private final ComponentRepository componentRepository;
-    private final ComponentMapper componentMapper;
-
+    @Autowired
+    private  ComponentRepository componentRepository;
+    @Autowired
+    private  ComponentMapper componentMapper;
+    @Autowired
     public ComponentService(ComponentRepository componentRepository,
                             ComponentMapper componentMapper) {
         this.componentRepository = componentRepository;

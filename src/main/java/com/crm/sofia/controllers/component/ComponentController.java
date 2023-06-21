@@ -8,6 +8,7 @@ import com.crm.sofia.services.component.crud.ComponentPersistEntityRetrieverServ
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +19,17 @@ import java.util.Map;
 @Validated
 @RequestMapping("/component")
 public class ComponentController {
-
-    private final ComponentPersistEntityRetrieverService componentPersistEntityRetrieverService;
-    private final ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository;
-    private final ComponentSaverService componentSaverService;
-    private final ComponentDeleterService componentDeleterService;
-    private final ComponentRetrieverService componentRetrieverService;
-
+    @Autowired
+    private  ComponentPersistEntityRetrieverService componentPersistEntityRetrieverService;
+    @Autowired
+    private  ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository;
+    @Autowired
+    private  ComponentSaverService componentSaverService;
+    @Autowired
+    private  ComponentDeleterService componentDeleterService;
+    @Autowired
+    private  ComponentRetrieverService componentRetrieverService;
+    @Autowired
     public ComponentController(ComponentPersistEntityRetrieverService componentPersistEntityRetrieverService,
                                ComponentPersistEntityRetrieverNativeRepository componentPersistEntityRetrieverNativeRepository,
                                ComponentSaverService componentSaverService,
