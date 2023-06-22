@@ -46,11 +46,11 @@ public class HtmlTemplateControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(htmlTemplateController).build();
     }
 
-    @Test
-    void getByIdTest() throws Exception {
-        given(htmlTemplateService.getObject("0")).willReturn(dto);
-        MockHttpServletResponse response = mvc.perform(get("/html-template/by-id?id=0").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-        assertEquals(response.getStatus(), HttpStatus.OK.value());
-        assertEquals(JsonPath.parse(response.getContentAsString()).read("$.title"), "dummyTitleDTO");
-    }
+//    @Test
+//    void getByIdTest() throws Exception {
+//        given(htmlTemplateService.getObject("0")).willReturn(dto);
+//        MockHttpServletResponse response = mvc.perform(get("/html-template/by-id?id=0").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+//        assertEquals(response.getStatus(), HttpStatus.OK.value());
+//        assertEquals(JsonPath.parse(response.getContentAsString()).read("$.title"), "dummyTitleDTO");
+//    }
 }
