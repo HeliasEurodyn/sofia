@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ComponentQueryStringGenerator {
 
     @Cacheable(value = "component_select_query", key = "#componentPersistEntity.id")
-    public String generateSelectCachable(ComponentPersistEntityDTO componentPersistEntity) {
+    public String generateSelectCachable(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
 
         /* Select Values Section */
         String queryString = "SELECT ";
@@ -36,10 +36,14 @@ public class ComponentQueryStringGenerator {
             queryString += " FROM " + componentPersistEntity.getPersistEntity().getName();
         }
 
+//        List<String> retrievalList =
+//                componentPersistEntity.getComponentPersistEntityFieldList().stream()
+//                        .filter(x -> !(x.getLocateStatement() == null ? "" :x.getLocateStatement()).equals(""))
+//                        .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
+//                        .collect(Collectors.toList());
+
         List<String> retrievalList =
-                componentPersistEntity.getComponentPersistEntityFieldList().stream()
-                        .filter(x -> !(x.getLocateStatement() == null ? "" :x.getLocateStatement()).equals(""))
-                        .map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
+        retrievalFieldList.stream().map(x -> x.getPersistEntityField().getName() + " = :" + x.getPersistEntityField().getName() + " ")
                         .collect(Collectors.toList());
 
         if (retrievalList.size() > 0) {

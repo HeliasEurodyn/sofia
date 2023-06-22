@@ -1,7 +1,10 @@
 package com.crm.sofia.model.rule;
 
 import com.crm.sofia.dto.rule.RuleExpressionDTO;
+import com.crm.sofia.dto.rule.RuleFieldDTO;
+import com.crm.sofia.dto.rule.RuleOperatorDTO;
 import com.crm.sofia.model.common.BaseEntity;
+import com.crm.sofia.model.component.Component;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -50,4 +53,12 @@ public class RuleExpression extends BaseEntity {
             cascade = {CascadeType.ALL})
     @JoinColumn(name = "rule_expression_id")
     private List<RuleExpression> ruleExpressionList;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = RuleField.class)
+    @JoinColumn(name = "rule_field_id", referencedColumnName = "id")
+    RuleField ruleField;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = RuleOperator.class)
+    @JoinColumn(name = "rule_operator_id", referencedColumnName = "id")
+    RuleOperator ruleOperator;
 }

@@ -34,5 +34,9 @@ public class RuleExpressionDTO extends BaseDTO {
 
     String childrenJoinType;
 
+    RuleFieldDTO ruleField;
+
+    RuleOperatorDTO ruleOperator;
+
     private List<RuleExpressionDTO> ruleExpressionList = null;
 }

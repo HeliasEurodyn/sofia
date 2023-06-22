@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ComponentRetrieverNativeRepository {
@@ -79,7 +78,7 @@ public class ComponentRetrieverNativeRepository {
 
         componentPersistEntity = this.retrieveComponentPersistEntity(componentPersistEntity, retrievedPersistEntities);
 
-        if(componentPersistEntity == null){
+        if (componentPersistEntity == null) {
             return;
         }
 
@@ -95,11 +94,27 @@ public class ComponentRetrieverNativeRepository {
 
     public List<ComponentPersistEntityFieldDTO> mapRetrivalFields(ComponentPersistEntityDTO cpe, List<ComponentPersistEntityDTO> retrievedCpeList) {
 
+        List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList = new ArrayList<>();
+
+        for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+            String locateStatement = (cpef.getLocateStatement() == null ? "" : cpef.getLocateStatement());
+
+            if (!locateStatement.equals("")) {
+                componentPersistEntityFieldList.add(cpef);
+            }
+
+            if (locateStatement.equals("#userId")) {
+                String value = this.jwtService.getUserId();
+                cpef.setLocateStatement(value);
+                componentPersistEntityFieldList.add(cpef);
+            }
+        }
+
         for (ComponentPersistEntityDTO retrievedCpe : retrievedCpeList) {
             for (ComponentPersistEntityFieldDTO retrievedCpef : retrievedCpe.getComponentPersistEntityFieldList()) {
                 String currentFieldCode = "#" + retrievedCpe.getCode() + "." + retrievedCpef.getPersistEntityField().getName();
 
-                for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
+                for (ComponentPersistEntityFieldDTO cpef : componentPersistEntityFieldList) {
                     String locateStatement = (cpef.getLocateStatement() == null ? "" : cpef.getLocateStatement());
 
                     if (locateStatement.equals(currentFieldCode)) {
@@ -109,21 +124,6 @@ public class ComponentRetrieverNativeRepository {
                 }
             }
         }
-
-        for (ComponentPersistEntityFieldDTO cpef : cpe.getComponentPersistEntityFieldList()) {
-            String locateStatement = (cpef.getLocateStatement() == null ? "" : cpef.getLocateStatement());
-
-            if (locateStatement.equals("#userId")) {
-                String value = this.jwtService.getUserId();
-                cpef.setLocateStatement(value);
-            }
-        }
-
-        List<ComponentPersistEntityFieldDTO> componentPersistEntityFieldList =
-                cpe.getComponentPersistEntityFieldList()
-                .stream()
-                        .filter(x -> !(x.getLocateStatement() == null ? "" : x.getLocateStatement()).equals(""))
-                        .collect(Collectors.toList());
 
         return componentPersistEntityFieldList;
     }
@@ -139,6 +139,10 @@ public class ComponentRetrieverNativeRepository {
         }
 
         Query query = this.generateSelectQuery(componentPersistEntity, retrievalFieldList);
+        if (query == null) {
+            return null;
+        }
+
         componentPersistEntity = this.executeSelectQuery(query, componentPersistEntity);
 
         return componentPersistEntity;
@@ -184,7 +188,7 @@ public class ComponentRetrieverNativeRepository {
 
     private Query generateSelectQuery(ComponentPersistEntityDTO componentPersistEntity, List<ComponentPersistEntityFieldDTO> retrievalFieldList) {
 
-        String queryString = this.componentQueryStringGenerator.generateSelectCachable(componentPersistEntity);
+        String queryString = this.componentQueryStringGenerator.generateSelectCachable(componentPersistEntity, retrievalFieldList);
 
         /* Parameters Replacement Section */
         Query query = entityManager.createNativeQuery(queryString);
