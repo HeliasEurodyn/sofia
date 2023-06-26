@@ -1,9 +1,6 @@
 package com.crm.sofia.services.rule;
 
-import com.crm.sofia.dto.rule.RuleDTO;
-import com.crm.sofia.dto.rule.RuleExecutionParametersDTO;
-import com.crm.sofia.dto.rule.RuleExpressionDTO;
-import com.crm.sofia.dto.rule.RuleSettingsDTO;
+import com.crm.sofia.dto.rule.*;
 import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.mapper.rule.RuleMapper;
 import com.crm.sofia.mapper.rule.RuleSettingsMapper;
@@ -23,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Service
 public class RuleService {
@@ -62,15 +62,13 @@ public class RuleService {
 
     public RuleDTO getObject(String id) {
 
-        Rule entity = this.ruleRepository.findById(id)
-                .orElseThrow(() -> new DoesNotExistException("Rule Does Not Exist"));
+        Rule entity = this.ruleRepository.findById(id).orElseThrow(() -> new DoesNotExistException("Rule Does Not Exist"));
 
         return this.ruleMapper.map(entity);
     }
 
     public void deleteObject(String id) {
-        Rule optionalEntity = this.ruleRepository.findById(id)
-                .orElseThrow(() -> new DoesNotExistException("Rule Does Not Exist"));
+        Rule optionalEntity = this.ruleRepository.findById(id).orElseThrow(() -> new DoesNotExistException("Rule Does Not Exist"));
 
         this.ruleRepository.deleteById(optionalEntity.getId());
     }
@@ -99,26 +97,38 @@ public class RuleService {
     }
 
     public RuleSettingsDTO getObjectSettings(String id) {
-        RuleSettings entity = this.ruleSettingsRepository.findById(id)
-                .orElseThrow(() -> new DoesNotExistException("Rule Setting Does Not Exist"));
+        RuleSettings entity = this.ruleSettingsRepository.findById(id).orElseThrow(() -> new DoesNotExistException("Rule Setting Does Not Exist"));
 
         return this.ruleSettingsMapper.map(entity);
 
     }
 
-    public Object executeQuery(List<RuleExecutionParametersDTO> ruleExecParameters, String queryId) {
+    public Object getResults(QueryParametersDTO queryParameters, String queryId) {
+        Query query = this.buildSqlQuery(queryParameters, queryId);
 
-        this.retrieveRulesByParameters(ruleExecParameters);
+        NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
+        nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        return nativeQuery.getResultList();
+    }
 
-        RuleSettingsQuery ruleSettingsQuery = this.ruleSettingsQueryRepository.findById(queryId)
-                .orElseThrow(() -> new DoesNotExistException("Query Does Not Exist"));
+    public void execute(QueryParametersDTO queryParameters, String queryId) {
+        Query query = this.buildSqlQuery(queryParameters, queryId);
+        query.executeUpdate();
+    }
 
+    public Query buildSqlQuery(QueryParametersDTO queryParameters, String queryId) {
+
+        this.retrieveRulesByParameters(queryParameters.getRuleExecParameters());
+
+        RuleSettingsQuery ruleSettingsQuery = this.ruleSettingsQueryRepository.findById(queryId).orElseThrow(() -> new DoesNotExistException("Query Does Not Exist"));
+
+        // 1. Iterate rules & build Expressions
         AtomicBoolean isFirstIteration = new AtomicBoolean(true);
         StringBuilder ruleQueryBuilder = new StringBuilder();
-        ruleExecParameters.forEach(ruleExecParameter -> {
-            String subQueryStr = createQueryStr(ruleExecParameter.getRule().getRuleExpressionList());
+        queryParameters.getRuleExecParameters().forEach(ruleExecParameter -> {
+            String subQueryStr = createRuleQueryStr(ruleExecParameter.getRule().getRuleExpressionList());
 
-            if(!isFirstIteration.get()){
+            if (!isFirstIteration.get()) {
                 ruleQueryBuilder.append(" AND ");
             }
             ruleQueryBuilder.append(subQueryStr);
@@ -128,14 +138,25 @@ public class RuleService {
         String ruleQueryStr = ruleQueryBuilder.toString();
         String queryStr = ruleSettingsQuery.getQuery().replace("#rules#", ruleQueryStr);
 
-        Query query = entityManager.createNativeQuery(queryStr);
-        if( queryStr.contains(":userid")){
-            query.setParameter("userid",this.jwtService.getUserId());
+        // 2. Iterate QueryFields and replace in Query String
+        for (QueryFieldDTO getQueryField : queryParameters.getQueryFields()) {
+            if (queryStr.contains(":" + getQueryField.getCode())) {
+                queryStr = queryStr.replace(":" + getQueryField.getCode(), getQueryField.getValue());
+            }
         }
-        NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
-        nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
-        return nativeQuery.getResultList();
+        // 3. Iterate QueryFields and replace in Query String
+        if(queryStr.contains("#rule-fields#")){
+            String ruleFieldQueryStr =  createRuleFieldQueryStr(queryParameters.getRuleExecParameters());
+            queryStr = queryStr.replace("#rule-fields#", ruleFieldQueryStr);
+        }
+
+        Query query = entityManager.createNativeQuery(queryStr);
+        if (queryStr.contains(":userid")) {
+            query.setParameter("userid", this.jwtService.getUserId());
+        }
+
+        return query;
     }
 
     public void retrieveRulesByParameters(List<RuleExecutionParametersDTO> ruleExecParameters) {
@@ -145,7 +166,7 @@ public class RuleService {
         });
     }
 
-    public String createQueryStr(List<RuleExpressionDTO> ruleExpressionList) {
+    public String createRuleQueryStr(List<RuleExpressionDTO> ruleExpressionList) {
         StringBuilder queryBuilder = new StringBuilder();
 
         for (int index = 0; index < ruleExpressionList.size(); index++) {
@@ -155,25 +176,58 @@ public class RuleService {
                 queryBuilder.append(" ( ");
             }
 
-            queryBuilder.append(ruleExpression.getFieldCode())
-                    .append(" ")
-                    .append(ruleExpression.getOperatorCode())
-                    .append(" ")
-                    .append(ruleExpression.getCommand());
+            queryBuilder.append(ruleExpression.getRuleField().getCode()).append(" ").append(ruleExpression.getRuleOperator().getCode()).append(" '").append(ruleExpression.getCommand()).append("'");
 
             if (ruleExpression.getRuleExpressionList() != null && !ruleExpression.getRuleExpressionList().isEmpty()) {
                 String childrenJoinType = ruleExpression.getChildrenJoinType();
-                queryBuilder.append(childrenJoinType)
-                        .append(this.createQueryStr(ruleExpression.getRuleExpressionList()))
-                        .append(" ) ");
+                queryBuilder.append(" ").append(childrenJoinType).append(" ( ").append(this.createRuleQueryStr(ruleExpression.getRuleExpressionList())).append(" ) ").append(" ) ");
             }
 
             if (index < ruleExpressionList.size() - 1) {
-                queryBuilder.append(ruleExpression.getJoinType());
+                queryBuilder.append(" ").append(ruleExpression.getJoinType()).append(" ");
             }
         }
 
         return queryBuilder.toString();
+    }
+
+    public String createRuleFieldQueryStr(List<RuleExecutionParametersDTO> ruleExecParameters) {
+        List<RuleFieldDTO> ruleFields = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+
+        ruleExecParameters.forEach(ruleExecParameter -> {
+            findUniqueRuleFields(ruleExecParameter.getRule().getRuleExpressionList(), ruleFields);
+        });
+
+        ruleFields.forEach(ruleField -> {
+            queryBuilder
+                    .append(" ,")
+                    .append(ruleField.getCode())
+                    .append(" AS ")
+                    .append("'")
+                    .append(ruleField.getCode())
+                    .append("'");
+        });
+
+        return queryBuilder.toString();
+    }
+
+    public List<RuleFieldDTO> findUniqueRuleFields(List<RuleExpressionDTO> ruleExpressionList, List<RuleFieldDTO> ruleFields) {
+        Set<String> codes = ruleFields.stream().map(RuleFieldDTO::getCode).collect(Collectors.toSet());
+
+        for (RuleExpressionDTO ruleExpression : ruleExpressionList) {
+            if (!codes.contains(ruleExpression.getRuleField().getCode())) {
+                ruleFields.add(ruleExpression.getRuleField());
+                codes.add(ruleExpression.getRuleField().getCode());
+            }
+
+            List<RuleExpressionDTO> childExpressionList = ruleExpression.getRuleExpressionList();
+            if (childExpressionList != null && !childExpressionList.isEmpty()) {
+                findUniqueRuleFields(childExpressionList, ruleFields);
+            }
+        }
+
+        return ruleFields;
     }
 
 }

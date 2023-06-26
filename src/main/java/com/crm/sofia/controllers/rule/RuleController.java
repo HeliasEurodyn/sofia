@@ -1,5 +1,6 @@
 package com.crm.sofia.controllers.rule;
 
+import com.crm.sofia.dto.rule.QueryParametersDTO;
 import com.crm.sofia.dto.rule.RuleDTO;
 import com.crm.sofia.dto.rule.RuleExecutionParametersDTO;
 import com.crm.sofia.dto.rule.RuleSettingsDTO;
@@ -46,14 +47,15 @@ public class RuleController {
         return createdDTO;
     }
 
-//    @PostMapping(path = "/execute-query")
-//    public Object executeQuery(@RequestBody List<RuleDTO> rules, @RequestParam("query-id") String queryId ) {
-//        return this.ruleService.executeQuery(rules, queryId);
-//    }
+    @PostMapping(path = "/results")
+    public Object getResults(@RequestBody QueryParametersDTO queryParameters,
+                             @RequestParam("query-id") String queryId ) {
+        return this.ruleService.getResults(queryParameters, queryId);
+    }
 
-    @PostMapping(path = "/execute-query")
-    public Object executeQuery(@RequestBody List<RuleExecutionParametersDTO> ruleExecParameters, @RequestParam("query-id") String queryId ) {
-        return this.ruleService.executeQuery(ruleExecParameters, queryId);
+    @PostMapping(path = "/execute")
+    public void executeQuery(@RequestBody QueryParametersDTO queryParameters, @RequestParam("query-id") String queryId ) {
+        this.ruleService.execute(queryParameters, queryId);
     }
 
     @DeleteMapping
