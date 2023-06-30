@@ -146,8 +146,8 @@ public class RuleService {
         }
 
         // 3. Iterate QueryFields and replace in Query String
-        if(queryStr.contains("#rule-fields#")){
-            String ruleFieldQueryStr =  createRuleFieldQueryStr(queryParameters.getRuleExecParameters());
+        if(queryStr.contains("#rule-fields#")) {
+            String ruleFieldQueryStr = createRuleFieldQueryStr(queryParameters.getRuleExecParameters());
             queryStr = queryStr.replace("#rule-fields#", ruleFieldQueryStr);
         }
 
@@ -192,8 +192,8 @@ public class RuleService {
     }
 
     public String createRuleFieldQueryStr(List<RuleExecutionParametersDTO> ruleExecParameters) {
-        List<RuleFieldDTO> ruleFields = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
+        List<RuleFieldDTO> ruleFields = new ArrayList<>();
 
         ruleExecParameters.forEach(ruleExecParameter -> {
             findUniqueRuleFields(ruleExecParameter.getRule().getRuleExpressionList(), ruleFields);
