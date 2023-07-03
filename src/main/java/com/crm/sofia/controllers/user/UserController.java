@@ -19,6 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -79,4 +81,12 @@ public class UserController {
         // send the response message to the /topic/greetings destination
         //  messagingTemplate.convertAndSend("/topic/greetings", responseMessage);
     }
+
+    @GetMapping
+    public @ResponseBody
+    Collection<UserDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+
 }

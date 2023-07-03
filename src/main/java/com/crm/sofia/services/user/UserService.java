@@ -1,5 +1,6 @@
 package com.crm.sofia.services.user;
 
+import com.crm.sofia.config.AppConstants;
 import com.crm.sofia.dto.user.ChangePasswordRequest;
 import com.crm.sofia.dto.user.JwtAuthenticationResponse;
 import com.crm.sofia.dto.user.SignUpRequest;
@@ -302,4 +303,8 @@ public class UserService {
         }
     }
 
+    public List<UserDTO> getAllUsers() {
+        List<UserDTO> users = userRepository.getAllUsers(AppConstants.Types.UserStatus.deleted);
+        return users;
+    }
 }

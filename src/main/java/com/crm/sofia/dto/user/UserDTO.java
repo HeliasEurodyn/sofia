@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -55,5 +56,10 @@ public class UserDTO extends BaseDTO {
     private List<LanguageDTO> languages;
 
     private LanguageDTO currentLanguage;
+
+    public UserDTO(String id , String username) {
+        this.setId(id);
+        this.username = username;
+    }
 
 }

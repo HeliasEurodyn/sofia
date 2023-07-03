@@ -1,6 +1,7 @@
 package com.crm.sofia.repository.user;
 
 import com.crm.sofia.config.AppConstants;
+import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.model.user.User;
 import com.crm.sofia.repository.common.BaseRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -57,5 +58,9 @@ public interface UserRepository extends BaseRepository<User> {
             " u.currentLanguage.id = :language_id " +
             " WHERE u.id = :id ")
     void updateCurrentLanguage(@Param("id") String id, @Param("language_id") String languageId);
+
+    @Query("SELECT new com.crm.sofia.dto.user.UserDTO(u.id,u.username) FROM User u " +
+            "WHERE u.status <> :userStatus ORDER BY u.modifiedOn DESC")
+    List<UserDTO> getAllUsers(AppConstants.Types.UserStatus userStatus);
 
 }
