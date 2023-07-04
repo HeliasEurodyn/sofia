@@ -448,8 +448,6 @@ public class ListService {
                     try {
                         JsonNode jsonNode = objectMapper.readTree((String)jsonValue);
                         Object jsonParsedObject = objectMapper.convertValue(jsonNode, Object.class);
-                        //Object jsonParsedObject = objectMapper.readValue( jsonValue, Object.class);
-                      //  jsonValue = jsonParsedObject;
                         map.put(key, jsonParsedObject);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
