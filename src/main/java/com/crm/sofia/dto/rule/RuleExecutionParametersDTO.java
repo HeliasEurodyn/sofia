@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.stream.Stream;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +24,7 @@ public class RuleExecutionParametersDTO extends BaseDTO {
 
     private RuleDTO rule;
 
+    public Stream<RuleFieldDTO> getUniqueRuleFields() {
+        return rule.getUniqueRuleFields();
+    }
 }

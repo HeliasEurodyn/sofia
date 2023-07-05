@@ -19,6 +19,9 @@ import java.time.Instant;
 public class RuleFieldDTO extends BaseDTO {
 
     private String code;
+
+    private String cpefCode;
+
     private String name;
 
     private String description;

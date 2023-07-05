@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor
@@ -32,6 +34,12 @@ public class RuleDTO extends BaseDTO {
     public RuleDTO(String id, String name, Instant modifiedOn) {
         this.setId(id);
         this.name = name;
+    }
+
+    public Stream<RuleFieldDTO> getUniqueRuleFields() {
+        return ruleExpressionList.stream()
+                .flatMap(RuleExpressionDTO::getRuleFieldStream)
+                .distinct();
     }
 
 }

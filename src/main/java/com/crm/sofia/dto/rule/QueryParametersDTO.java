@@ -8,7 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +23,10 @@ public class QueryParametersDTO {
 
     List<QueryFieldDTO> queryFields;
 
+    public List<RuleFieldDTO> getUniqueRuleFields() {
+        return ruleExecParameters.stream()
+                .flatMap(RuleExecutionParametersDTO::getUniqueRuleFields)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

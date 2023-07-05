@@ -20,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -103,12 +101,17 @@ public class RuleService {
 
     }
 
-    public Object getResults(QueryParametersDTO queryParameters, String queryId) {
+    public Map <String, Object> getResults(QueryParametersDTO queryParameters, String queryId) {
         Query query = this.buildSqlQuery(queryParameters, queryId);
 
         NativeQueryImpl nativeQuery = (NativeQueryImpl) query;
         nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-        return nativeQuery.getResultList();
+
+        Map <String, Object> results = new HashMap<>();
+        results.put("datalines", nativeQuery.getResultList() );
+        results.put("fields", queryParameters.getUniqueRuleFields());
+
+        return results;
     }
 
     public void execute(QueryParametersDTO queryParameters, String queryId) {
@@ -147,7 +150,7 @@ public class RuleService {
 
         // 3. Iterate QueryFields and replace in Query String
         if(queryStr.contains("#rule-fields#")) {
-            String ruleFieldQueryStr = createRuleFieldQueryStr(queryParameters.getRuleExecParameters());
+            String ruleFieldQueryStr = createRuleFieldQueryStr(queryParameters.getUniqueRuleFields());
             queryStr = queryStr.replace("#rule-fields#", ruleFieldQueryStr);
         }
 
@@ -191,13 +194,8 @@ public class RuleService {
         return queryBuilder.toString();
     }
 
-    public String createRuleFieldQueryStr(List<RuleExecutionParametersDTO> ruleExecParameters) {
+    public String createRuleFieldQueryStr(List<RuleFieldDTO> ruleFields) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<RuleFieldDTO> ruleFields = new ArrayList<>();
-
-        ruleExecParameters.forEach(ruleExecParameter -> {
-            findUniqueRuleFields(ruleExecParameter.getRule().getRuleExpressionList(), ruleFields);
-        });
 
         ruleFields.forEach(ruleField -> {
             queryBuilder

@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor
@@ -39,4 +41,18 @@ public class RuleExpressionDTO extends BaseDTO {
     RuleOperatorDTO ruleOperator;
 
     private List<RuleExpressionDTO> ruleExpressionList = null;
+
+    public Stream<RuleFieldDTO> getRuleFieldStream() {
+        List<RuleFieldDTO> ruleFields = new ArrayList<>();
+        ruleFields.add(ruleField);
+
+        if (ruleExpressionList != null) {
+            ruleExpressionList.stream()
+                    .flatMap(RuleExpressionDTO::getRuleFieldStream)
+                    .forEach(ruleFields::add);
+        }
+
+        return ruleFields.stream();
+    }
+
 }

@@ -22,6 +22,9 @@ public class RuleField extends MainEntity {
     private String code;
 
     @Column
+    private String cpefCode;
+
+    @Column
     private String name;
 
     @Column(columnDefinition = "TEXT")

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -48,8 +49,8 @@ public class RuleController {
     }
 
     @PostMapping(path = "/results")
-    public Object getResults(@RequestBody QueryParametersDTO queryParameters,
-                             @RequestParam("query-id") String queryId ) {
+    public Map<String, Object> getResults(@RequestBody QueryParametersDTO queryParameters,
+                                          @RequestParam("query-id") String queryId ) {
         return this.ruleService.getResults(queryParameters, queryId);
     }
 
