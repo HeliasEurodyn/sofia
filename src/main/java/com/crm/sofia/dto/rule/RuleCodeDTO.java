@@ -8,28 +8,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.time.Instant;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class RuleFieldDTO extends BaseDTO {
-
-    private String code;
+public class RuleCodeDTO {
 
     private String name;
 
-    private String description;
-
-    List<RuleCodeDTO> codeList;
-
-    public RuleFieldDTO(String id, String name, Instant modifiedOn) {
-        this.setId(id);
-        this.name = name;
-    }
-
+    private String value;
 }

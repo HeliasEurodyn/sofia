@@ -39,6 +39,4 @@ public class Rule extends MainEntity {
     @JoinColumn(name = "rule_id")
     private List<RuleExpression> ruleExpressionList;
 
-
-
 }
