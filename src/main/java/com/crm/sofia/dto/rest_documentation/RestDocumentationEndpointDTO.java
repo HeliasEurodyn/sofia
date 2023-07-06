@@ -1,31 +1,32 @@
 package com.crm.sofia.dto.rest_documentation;
 
 import com.crm.sofia.dto.common.BaseDTO;
+import com.crm.sofia.dto.form.base.FormDTO;
+import com.crm.sofia.dto.list.ListDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
-@Data
 @Getter
 @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class RestDocumentationDTO extends BaseDTO {
+public class RestDocumentationEndpointDTO extends BaseDTO {
 
-    @NotNull(message = "Title Cannot Be Null")
-    @NotBlank(message = "Title Cannot Be Blank")
+    private RestDocumentationListDTO list;
+
+    private RestDocumentationFormDTO form;
+
     private String title;
 
     private String description;
 
-    private Boolean active;
+    private String type;
 
-    private List<RestDocumentationEndpointDTO> restDocumentationEndpoints;
+    private String method;
+
 }
