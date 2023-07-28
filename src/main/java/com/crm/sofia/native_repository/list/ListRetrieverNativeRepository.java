@@ -325,36 +325,26 @@ public class ListRetrieverNativeRepository {
 
 
         /* 3. Return Selected Cpes */
-        return flattedCpes
+        List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
+
+        flattedCpes
                 .stream()
                 .filter(cpe -> cpeIds.contains(cpe.getId()))
-                .collect(Collectors.toList());
+                .forEach(cpe -> {
 
+                    List<ComponentPersistEntityDTO> cpesUpToId =
+                            this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(),
+                                    cpe.getId());
 
-        /* Retrieve Cpes */
-//        List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
+                    List<ComponentPersistEntityDTO> newCpes =
+                            cpesUpToId.stream()
+                                    .filter(x -> !cpes.contains(x))
+                                    .collect(Collectors.toList());
 
-//        for (ComponentPersistEntityDTO cpe : flattedCpes.collect(Collectors.toList())) {
-//            if(cpeIds.contains(cpe.getId())){
-//                cpes.add(cpe);
-//            }
-//        }
+                    cpes.addAll(newCpes);
+                });
 
-
-//        for (String cpeId : cpeIds) {
-//            List<ComponentPersistEntityDTO> cpesUpToId =
-//                    this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(),
-//                            cpeId);
-//
-//            List<ComponentPersistEntityDTO> newCpes =
-//                    cpesUpToId.stream()
-//                            .filter(x -> !cpes.contains(x))
-//                            .collect(Collectors.toList());
-//
-//            cpes.addAll(newCpes);
-//        }
-//
-//        return cpes;
+        return cpes;
     }
 
     /*
