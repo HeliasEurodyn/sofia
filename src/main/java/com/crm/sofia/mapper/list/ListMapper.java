@@ -85,7 +85,8 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
          */
         ListDTO dto = this.map(entity);
 
-        dto.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        //dto.getComponent().getComponentPersistEntityList().sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        this.shortCpes(dto.getComponent().getComponentPersistEntityList());
         dto.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         dto.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
         dto.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
@@ -99,6 +100,13 @@ public abstract class ListMapper extends BaseMapper<ListDTO, ListEntity> {
         });
 
         return dto;
+    }
+
+    public void shortCpes(List<ComponentPersistEntityDTO> componentPersistEntityList){
+        componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
+        componentPersistEntityList.forEach(cpe -> {
+            this.shortCpes(cpe.getComponentPersistEntityList());
+        });
     }
 
 

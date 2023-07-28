@@ -19,6 +19,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -286,6 +288,11 @@ public class ListRetrieverNativeRepository {
         fields.addAll(listDTO.getListComponentTopGroupFieldList());
         fields.addAll(listDTO.getListComponentOrderByFieldList());
 
+        /*
+         * Retrieve Cpes Flatted
+         * */
+        List<ComponentPersistEntityDTO> flattedCpes = listDTO.getComponent().flatComponentPersistEntityTree().collect(Collectors.toList());
+
         // 1. CpeIds by Fields
         List<String> cpeIds =
                 fields.stream()
@@ -305,7 +312,8 @@ public class ListRetrieverNativeRepository {
                         .distinct()
                         .collect(Collectors.toList());
 
-        listDTO.getComponent().flatComponentPersistEntityTree()
+        flattedCpes
+                .stream()
                 .filter(cpe -> {
                     return sqlEditors.stream()
                             .filter(editor -> editor.contains(cpe.getCode() + "."))
@@ -315,21 +323,38 @@ public class ListRetrieverNativeRepository {
                 .distinct()
                 .forEach(cpe -> cpeIds.add(cpe.getId()));
 
-        List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
-        for (String cpeId : cpeIds) {
-            List<ComponentPersistEntityDTO> cpesUpToId =
-                    this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(),
-                            cpeId);
 
-            List<ComponentPersistEntityDTO> newCpes =
-                    cpesUpToId.stream()
-                            .filter(x -> !cpes.contains(x))
-                            .collect(Collectors.toList());
+        /* 3. Return Selected Cpes */
+        return flattedCpes
+                .stream()
+                .filter(cpe -> cpeIds.contains(cpe.getId()))
+                .collect(Collectors.toList());
 
-            cpes.addAll(newCpes);
-        }
 
-        return cpes;
+        /* Retrieve Cpes */
+//        List<ComponentPersistEntityDTO> cpes = new ArrayList<>();
+
+//        for (ComponentPersistEntityDTO cpe : flattedCpes.collect(Collectors.toList())) {
+//            if(cpeIds.contains(cpe.getId())){
+//                cpes.add(cpe);
+//            }
+//        }
+
+
+//        for (String cpeId : cpeIds) {
+//            List<ComponentPersistEntityDTO> cpesUpToId =
+//                    this.getCpeTreeToListUpToId(listDTO.getComponent().getComponentPersistEntityList(),
+//                            cpeId);
+//
+//            List<ComponentPersistEntityDTO> newCpes =
+//                    cpesUpToId.stream()
+//                            .filter(x -> !cpes.contains(x))
+//                            .collect(Collectors.toList());
+//
+//            cpes.addAll(newCpes);
+//        }
+//
+//        return cpes;
     }
 
     /*
@@ -340,7 +365,7 @@ public class ListRetrieverNativeRepository {
         List<String> joinParts = new ArrayList<>();
         fromCPersistEntities
                 .stream()
-                .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder))
+              //  .sorted(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder))
                 .forEach(cPersistEntity -> {
                     String joinPart = "";
 
@@ -630,23 +655,6 @@ public class ListRetrieverNativeRepository {
         }
     }
 
-//    /*
-//     * Iterate to Generate Order By Columns part
-//     */
-//    private String generateOrderByLeftGroupPart(ListDTO listDTO) {
-//        List<String> fields = new ArrayList<>();
-//        listDTO.getListComponentLeftGroupFieldList()
-//                .stream()
-//                .forEach(x -> {
-//                    fields.add(x.getCode() + " ASC ");
-//                });
-//
-//        if (fields.size() == 0) {
-//            return "";
-//        } else {
-//            return " ORDER BY " + String.join(",", fields);
-//        }
-//    }
 
     /*
      * Iterate to Generate Limit part
@@ -666,53 +674,6 @@ public class ListRetrieverNativeRepository {
 
         return "";
     }
-
-//    private Query generateCountQuery(ListDTO listDTO, String queryString) {
-//
-//        Map<String, String> filterParts = new HashMap<>();
-//        Query query = entityManager.createNativeQuery(queryString);
-//
-//        listDTO.getListComponentLeftGroupFieldList()
-//                .forEach(x -> {
-//                    x.setOperator("=");
-//                    x.setRequired(false);
-//                });
-//
-//        List<ListComponentFieldDTO> filtersList = new ArrayList<>();
-//        filtersList.addAll(listDTO.getListComponentFilterFieldList());
-//        filtersList.addAll(listDTO.getListComponentLeftGroupFieldList());
-//
-//        filtersList = filtersList
-//                .stream()
-//                .filter(field -> field.getComponentPersistEntity() != null)
-//                .collect(Collectors.toList());
-//
-//        /* Iterate and create Where parts */
-//        filtersList.forEach(x -> {
-//
-//            String filterPart = "";
-//            if (x.getType().equals("datetime")) {
-//                Instant valueInstant = Instant.parse(x.getFieldValue().toString());
-//                filterPart = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC).format(valueInstant);
-//            } else if (x.getType().equals("varchar") || x.getType().equals("text")) {
-//                if (x.getOperator().equals("like")) {
-//                    filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
-//                } else {
-//                    filterPart = x.getFieldValue().toString();
-//                }
-//            } else {
-//                filterPart = x.getFieldValue().toString();
-//            }
-//
-//            filterParts.put("filter_" + x.getCode(), filterPart);
-//        });
-//
-//        filterParts.forEach((k, v) -> {
-//            query.setParameter(k, v);
-//        });
-//
-//        return query;
-//    }
 
     /*
      * Execute Sql Query
