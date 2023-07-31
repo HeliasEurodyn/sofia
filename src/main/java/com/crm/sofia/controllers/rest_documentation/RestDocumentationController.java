@@ -23,7 +23,6 @@ public class RestDocumentationController {
     List<RestDocumentationDTO> getObject() {return restDocumentationService.getObject();}
 
 
-
     @GetMapping(path = "/by-id")
     RestDocumentationDTO getObject(@RequestParam("id") String id){return restDocumentationService.getObject(id);}
 

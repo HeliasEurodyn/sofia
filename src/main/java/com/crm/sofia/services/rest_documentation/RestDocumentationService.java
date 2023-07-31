@@ -3,6 +3,7 @@ package com.crm.sofia.services.rest_documentation;
 import com.crm.sofia.dto.rest_documentation.RestDocumentationDTO;
 import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.mapper.rest_documantation.RestDocumentationMapper;
+import com.crm.sofia.model.list.ListComponentField;
 import com.crm.sofia.model.rest_documentation.RestDocumentation;
 import com.crm.sofia.repository.rest_documantation.RestDocumentationRepository;
 import com.crm.sofia.services.auth.JWTService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RestDocumentationService {
@@ -34,6 +36,17 @@ public class RestDocumentationService {
     public RestDocumentationDTO getObject(String id) {
         RestDocumentation entity = restDocumentationRepository.findById(id)
                 .orElseThrow(() -> new DoesNotExistException("RestDocumentation Does Not Exist"));
+
+        entity.getRestDocumentationEndpoints()
+                .stream()
+                .filter(endpoint -> endpoint.getType().equals("list"))
+                .forEach(endpoint -> {
+                    List<ListComponentField> listComponentFilterFieldList =
+                            endpoint.getList().getListComponentFilterFieldList()
+                                    .stream()
+                                    .filter(field -> field.getEditable() == true).collect(Collectors.toList());
+                    endpoint.getList().setListComponentFilterFieldList(listComponentFilterFieldList);
+        });
 
         RestDocumentationDTO dto = restDocumentationMapper.map(entity);
 

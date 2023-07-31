@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
+@JsonIgnoreProperties({"uniqueRuleFields"})
 public class RuleDTO extends BaseDTO {
 
     private String code;

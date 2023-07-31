@@ -1,5 +1,6 @@
 package com.crm.sofia.controllers.form;
 
+import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -30,4 +31,10 @@ public class FormDataController {
         return this.formService.saveJsonData(jsonUrl, parameters);
     }
 
+    @DeleteMapping(path = "/{jsonUrl}")
+    public void deleteJsonData(@PathVariable("jsonUrl") String jsonUrl,
+                                 @RequestParam("selection-id") String selectionId) {
+        FormDTO formDTO = this.formService.getObjectByJsonUrl(jsonUrl);
+        this.formService.delete(formDTO, selectionId);
+    }
 }
