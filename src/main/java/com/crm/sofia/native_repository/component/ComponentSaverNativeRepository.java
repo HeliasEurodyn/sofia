@@ -703,6 +703,7 @@ public class ComponentSaverNativeRepository {
 
     private void executeDelete(Query query) {
         try {
+            log.debug(query.toString());
             query.executeUpdate();
 
         } catch (HibernateException ex) {
