@@ -5,14 +5,17 @@ import com.crm.sofia.dto.user.ChangePasswordRequest;
 import com.crm.sofia.dto.user.JwtAuthenticationResponse;
 import com.crm.sofia.dto.user.SignUpRequest;
 import com.crm.sofia.dto.user.UserDTO;
+import com.crm.sofia.exception.DoesNotExistException;
 import com.crm.sofia.exception.UserAlreadyExistAuthenticationException;
 import com.crm.sofia.exception.login.ChangePasswordException;
 import com.crm.sofia.exception.login.IncorrectPasswordException;
 import com.crm.sofia.exception.login.UserNotFoundException;
 import com.crm.sofia.mapper.user.UserMapper;
 import com.crm.sofia.model.user.LocalUser;
+import com.crm.sofia.model.user.Token;
 import com.crm.sofia.model.user.User;
 import com.crm.sofia.repository.user.RoleRepository;
+import com.crm.sofia.repository.user.TokenRepository;
 import com.crm.sofia.repository.user.UserRepository;
 import com.crm.sofia.security.jwt.TokenProvider;
 import com.crm.sofia.security.oauth2.user.OAuth2UserInfo;
@@ -23,6 +26,7 @@ import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,14 +39,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
-
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -61,7 +65,10 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final EntityManager entityManager;
     private final PlatformTransactionManager transactionManager;
-    private TransactionTemplate transactionTemplate;
+
+    private final TokenRepository tokenRepository;
+
+    private final TransactionTemplate transactionTemplate;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -75,7 +82,8 @@ public class UserService {
                        AuthenticationManager authenticationManager,
                        TokenProvider tokenProvider,
                        EntityManager entityManager,
-                       PlatformTransactionManager transactionManager) {
+                       PlatformTransactionManager transactionManager,
+                       TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -87,6 +95,7 @@ public class UserService {
         this.transactionManager = transactionManager;
 
         transactionTemplate = new TransactionTemplate(transactionManager);
+        this.tokenRepository = tokenRepository;
     }
 
     @Transactional
@@ -102,20 +111,47 @@ public class UserService {
                             true,
                             GeneralUtils.buildSimpleGrantedAuthorities(user.getRolesSet()), user, user.getRoles());
 
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, enteredPassword)
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.createToken(authentication);
+            String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+            revokeAllTokensOfUser(user);
+            saveUserToken(user, jwt);
+
             LocalUser localUser = (LocalUser) authentication.getPrincipal();
-
             UserDTO userDTO = this.userMapper.mapUserToDtoWithMenu(localUser.getUser());
-            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, userDTO));
+            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, refreshToken, userDTO));
         } else {
-
             throw new IncorrectPasswordException();
         }
+    }
+
+    private void revokeAllTokensOfUser(User user) {
+        var validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+        if (validTokens.isEmpty()) {
+            return;
+        }
+        validTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validTokens);
+    }
+
+    private void saveUserToken(User user, String jwtToken) {
+        var expirationDate = jwtService.extractExpiration(jwtToken);
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType("BEARER")
+                .revoked(false)
+                .expired(false)
+                .expirationDate(expirationDate)
+                .build();
+        tokenRepository.save(token);
     }
 
     @Transactional
@@ -169,7 +205,7 @@ public class UserService {
     public User registerNewUser(final SignUpRequest signUpRequest) {
         List<Object[]> fields = this.getUserFields();
         String oauth2UserId = this.getDefaultOauth2User();
-    //    User tmpUser = this.buildUser(signUpRequest);
+        //    User tmpUser = this.buildUser(signUpRequest);
         String newId = this.saveUser(fields, oauth2UserId, signUpRequest);
         User user = this.userRepository.findById(newId).orElseThrow(UserNotFoundException::new);
         return user;
@@ -238,24 +274,8 @@ public class UserService {
             return null;
         });
 
-
-
-     //   Query query = this.entityManager.createNativeQuery(queryString);
-     //   query.executeUpdate();
-
         return newId;
     }
-
-//    private User buildUser(final SignUpRequest formDTO) {
-//        User user = new User();
-//        user.setUsername(formDTO.getDisplayName());
-//        user.setEmail(formDTO.getEmail());
-//        user.setPassword(passwordEncoder.encode(formDTO.getPassword()));
-//        user.setProvider(formDTO.getSocialProvider().getProviderType());
-//        user.setEnabled(true);
-//        user.setProviderUserId(formDTO.getProviderUserId());
-//        return user;
-//    }
 
     public User findUserByEmail(final String email) {
         return userRepository.findByEmail(email);
@@ -307,4 +327,33 @@ public class UserService {
         List<UserDTO> users = userRepository.getAllUsers(AppConstants.Types.UserStatus.deleted);
         return users;
     }
+
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) throws Exception {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String userId;
+
+       // System.out.println(authHeader);
+        if (authHeader == null || !authHeader.startsWith("RefreshBearer ")) {
+            throw new Exception();
+        }
+
+        String refreshToken = authHeader.substring(14);
+        userId = jwtService.getUserIdByToken(refreshToken);
+        // if (userId != null) {
+
+        if (!jwtService.isTokenValid(refreshToken)) {
+            new IllegalArgumentException("Refresh Toke Error");
+        }
+
+        var user = this.userRepository.findById(userId).orElseThrow(() -> new DoesNotExistException("User Does Not Exist"));
+        String jwt = tokenProvider.createToken(user.getId());
+        refreshToken = tokenProvider.createRefreshToken(user.getId());
+
+        revokeAllTokensOfUser(user);
+        saveUserToken(user, jwt);
+
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, refreshToken, null));
+    }
+    //   }
+    //  }
 }

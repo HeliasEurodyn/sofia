@@ -2,10 +2,9 @@ package com.crm.sofia.security.jwt;
 
 import com.crm.sofia.config.AppProperties;
 import com.crm.sofia.model.user.LocalUser;
-import com.crm.sofia.services.security.BlacklistingService;
+import com.crm.sofia.repository.user.TokenRepository;
 import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -13,27 +12,50 @@ import java.util.Date;
 
 
 @Service
+@Slf4j
 public class TokenProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+    private final TokenRepository tokenRepository;
 
-    private AppProperties appProperties;
+    private final AppProperties appProperties;
 
-    final BlacklistingService blacklistingService;
-
-    public TokenProvider(AppProperties appProperties,BlacklistingService blacklistingService) {
+    public TokenProvider(AppProperties appProperties,
+                         TokenRepository tokenRepository) {
         this.appProperties = appProperties;
-        this.blacklistingService = blacklistingService;
+        this.tokenRepository = tokenRepository;
     }
 
     public String createToken(Authentication authentication) {
         LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
+        return this.createToken(userPrincipal.getUser().getId());
+    }
+
+    public String createToken(String userId) {
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
-        return Jwts.builder().setSubject(userPrincipal.getUser().getId()).setIssuedAt(new Date()).setExpiration(expiryDate)
+        return Jwts.builder().setSubject(userId).setIssuedAt(new Date()).setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret()).compact();
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
+        return this.createRefreshToken(userPrincipal.getUser().getId());
+    }
+
+    public String createRefreshToken(String userId) {
+
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
+
+        return Jwts
+                .builder()
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .compact();
     }
 
     public String getUserIdFromToken(String token) {
@@ -42,24 +64,31 @@ public class TokenProvider {
         return claims.getSubject();
     }
 
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String jwt) {
+
         try {
-            String blackListedToken = blacklistingService.getJwtBlackList(authToken);
-            if (blackListedToken != null) {
+
+            var isTokenValid = tokenRepository.findByToken(jwt)
+                    .map(token -> !token.isExpired() && !token.isRevoked())
+                    .orElse(false);
+
+            if (!isTokenValid) {
                 return false;
             }
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+
+            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(jwt);
             return true;
+
         } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
+            log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
+            log.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
+            log.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
+            log.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            log.error("JWT claims string is empty.");
         }
         return false;
     }

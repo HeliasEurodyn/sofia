@@ -1,9 +1,6 @@
 package com.crm.sofia.exception.handler;
 
-import com.crm.sofia.exception.DoesNotExistException;
-import com.crm.sofia.exception.EmptyRequiredFieldException;
-import com.crm.sofia.exception.ExpressionException;
-import com.crm.sofia.exception.SendingEmailException;
+import com.crm.sofia.exception.*;
 import com.crm.sofia.exception.common.SofiaException;
 import com.crm.sofia.exception.login.ChangePasswordException;
 import com.crm.sofia.exception.login.IncorrectPasswordException;
@@ -18,6 +15,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler{
+
     @ExceptionHandler(
             {ExpressionException.class, DoesNotExistException.class,
                     UserNotFoundException.class, IncorrectPasswordException.class,
@@ -30,4 +28,5 @@ public class RestResponseEntityExceptionHandler{
         response.put("isVisible",exception.isVisible());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 }

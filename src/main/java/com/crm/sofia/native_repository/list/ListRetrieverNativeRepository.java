@@ -713,7 +713,9 @@ public class ListRetrieverNativeRepository {
             }
             else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field") || x.getType().equals("simple-field")) {
                 if (x.getOperator().equals("like")) {
+
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
+                    filterPart = "%" + filterPart + "%";
                 } else {
                     filterPart = x.getFieldValue().toString();
                 }
@@ -788,6 +790,7 @@ public class ListRetrieverNativeRepository {
             } else if (x.getType().equals("varchar") || x.getType().equals("text") || x.getType().equals("field") || x.getType().equals("simple-field")) {
                 if (x.getOperator().equals("like")) {
                     filterPart = x.getFieldValue().toString().replaceAll("\\*+", "%");
+                    filterPart = "%" + filterPart + "%";
                 } else {
                     filterPart = x.getFieldValue().toString();
                 }

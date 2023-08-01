@@ -47,10 +47,12 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
         LocalUser localUser = (LocalUser) authentication.getPrincipal();
 
         UserDTO userDTO = this.userMapper.mapUserToDtoWithMenu(localUser.getUser());
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, userDTO));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, refreshToken, userDTO));
     }
 
 //    @PostMapping("/signup")

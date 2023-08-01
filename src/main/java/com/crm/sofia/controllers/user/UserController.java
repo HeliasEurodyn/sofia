@@ -6,7 +6,7 @@ import com.crm.sofia.dto.auth.LogoutDTO;
 import com.crm.sofia.dto.user.ChangePasswordRequest;
 import com.crm.sofia.dto.user.UserDTO;
 import com.crm.sofia.model.user.LocalUser;
-import com.crm.sofia.services.security.BlacklistingService;
+//import com.crm.sofia.services.security.BlacklistingService;
 import com.crm.sofia.services.user.UserService;
 import com.crm.sofia.utils.GeneralUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collection;
 
 @Slf4j
@@ -28,11 +31,11 @@ public class UserController {
 
     private final UserService userService;
 
-    final BlacklistingService blacklistingService;
+//    final BlacklistingService blacklistingService;
 
-    public UserController(UserService userService, BlacklistingService blacklistingService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.blacklistingService = blacklistingService;
+        //this.blacklistingService = blacklistingService;
     }
 
     @PutMapping(value = "/current-language")
@@ -57,9 +60,13 @@ public class UserController {
         return userService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
     }
 
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) throws Exception {
+        return userService.refreshToken(request);
+    }
+
     @PostMapping(value = "/logout")
     public ResponseEntity<?> logout(@RequestBody LogoutDTO logoutDTO) {
-        blacklistingService.blackListJwt(logoutDTO.getJwt());
         return  new ResponseEntity<>(HttpStatus.OK);
     }
 
