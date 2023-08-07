@@ -29,4 +29,5 @@ public class RestDocumentationEndpointDTO extends BaseDTO {
 
     private String method;
 
+    private String jsonString;
 }

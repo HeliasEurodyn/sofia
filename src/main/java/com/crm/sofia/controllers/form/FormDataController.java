@@ -3,6 +3,7 @@ package com.crm.sofia.controllers.form;
 import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.services.form.FormService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,8 @@ public class FormDataController {
         return this.formService.retrieveJsonData(jsonUrl, selectionId);
     }
 
-    @PostMapping(path = "/{jsonUrl}")
+
+    @PostMapping(path = "/{jsonUrl}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public String saveJsonData(@PathVariable("jsonUrl") String jsonUrl,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
         return this.formService.saveJsonData(jsonUrl, parameters);

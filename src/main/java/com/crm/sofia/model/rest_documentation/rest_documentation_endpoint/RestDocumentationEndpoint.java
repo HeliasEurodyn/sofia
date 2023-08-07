@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -38,4 +39,16 @@ public class RestDocumentationEndpoint extends BaseEntity implements Serializabl
 
     @Column
     private String method;
+
+    @Column(columnDefinition = "TEXT")
+    private String jsonString;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "rest_documentation_endpoint_id")
+    private List<ExcludeEndpointField> excludeEndpointFields;
+
 }
