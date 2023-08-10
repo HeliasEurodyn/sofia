@@ -98,6 +98,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/form/dynamic-javascript/**",
                         "/info-card/dynamic-javascripts/**",
                         "/info-card/dynamic-javascript/**",
+                        "/html-dashboard/dynamic-javascripts/**",
+                        "/html-dashboard/dynamic-javascript/**",
                         "/v3/api-docs/**",
                         "/v3/api-docs.yaml",
                         "/privacy-policy.html",
@@ -171,7 +173,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedOrigins(Arrays.asList(corsUrl.replace(" ", "").split(",")));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "content-type"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 

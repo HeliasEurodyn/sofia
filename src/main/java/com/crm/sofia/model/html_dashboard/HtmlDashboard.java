@@ -6,9 +6,8 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -27,4 +26,16 @@ public class HtmlDashboard extends MainEntity {
     @Column(columnDefinition = "TEXT")
     private String html;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @JoinColumn(name = "html_dashboard_id")
+    private List<HtmlDashboardScript> scripts;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String script;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String scriptMin;
 }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +40,32 @@ public class HtmlDashboardService {
         HtmlDashboard entity = optionalEntity.get();
         HtmlDashboardDTO dto = htmlDashboardMapper.map(entity);
         return dto;
+    }
+
+    public String getJavaScriptFactory() {
+        List<String> ids = this.htmlDashboardRepository.getListIds();
+        List<String> scriptLines = new ArrayList<>();
+        scriptLines.add("function newHtmlDashboardDynamicScript(id) {");
+        ids.forEach(id -> {
+            String ifClause =
+                    String.join("",
+                            "if (id == '" , id,
+                            "' ) return new HtmlDashboardDynamicScript",id.replace("-","_") , "();" );
+            scriptLines.add(ifClause);
+        });
+        scriptLines.add("}");
+
+        return String.join("\n", scriptLines);
+    }
+
+    public String getJavaScript(String id) {
+        String script = this.htmlDashboardRepository.getListScript(id);
+        return script;
+    }
+
+    public String getMinJavaScript(String id) {
+        String script = this.htmlDashboardRepository.getListMinScript(id);
+        return script;
     }
 
 }
