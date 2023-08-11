@@ -15,7 +15,7 @@ import java.util.Date;
 public class ExpiredTokenTask {
     private final TokenRepository tokenRepository;
 
-    @Scheduled(cron = "${purge.cron.expression}")
+    @Scheduled(cron = "0 0 * * * *")
     public void purgeExpired() {
         Date now = Date.from(Instant.now());
         tokenRepository.deleteByExpirationDateLessThan(now);
