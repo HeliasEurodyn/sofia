@@ -6,10 +6,12 @@ import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
 import com.crm.sofia.dto.component.user.ComponentUiDTO;
 import com.crm.sofia.dto.form.base.FormDTO;
 import com.crm.sofia.dto.form.user.*;
+import com.crm.sofia.exception.ExpressionException;
 import com.crm.sofia.mapper.component.ComponentJsonMapper;
 import com.crm.sofia.mapper.component.ComponentUiMapper;
 import com.crm.sofia.mapper.form.designer.FormMapper;
 import com.crm.sofia.mapper.form.user.FormUiMapper;
+import com.crm.sofia.model.expression.ExprResponse;
 import com.crm.sofia.model.form.FormEntity;
 import com.crm.sofia.native_repository.component.ComponentRetrieverNativeRepository;
 import com.crm.sofia.repository.form.FormRepository;
@@ -17,6 +19,7 @@ import com.crm.sofia.services.component.ComponentPersistEntityFieldAssignmentSer
 import com.crm.sofia.services.component.crud.ComponentDeleterService;
 import com.crm.sofia.services.component.crud.ComponentRetrieverService;
 import com.crm.sofia.services.component.crud.ComponentSaverService;
+import com.crm.sofia.services.expression.ExpressionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,28 +66,8 @@ public class FormService {
     @Autowired
     private ComponentRetrieverNativeRepository componentRetrieverNativeRepository;
 
-//    @Autowired
-//    public FormService(FormRepository formRepository,
-//                       FormMapper formMapper,
-//                       FormUiMapper formUiMapper,
-//                       ComponentPersistEntityFieldAssignmentService componentPersistEntityFieldAssignmentService,
-//                       ComponentRetrieverService componentRetrieverService,
-//                       ComponentSaverService componentSaverService,
-//                       ComponentRetrieverNativeRepository componentRetrieverNativeRepository,
-//                       ComponentUiMapper componentUiMapper,
-//                       ComponentJsonMapper componentJsonMapper,
-//                       ComponentDeleterService componentDeleterService) {
-//        this.formRepository = formRepository;
-//        this.formMapper = formMapper;
-//        this.formUiMapper = formUiMapper;
-//        this.componentPersistEntityFieldAssignmentService = componentPersistEntityFieldAssignmentService;
-//        this.componentRetrieverService = componentRetrieverService;
-//        this.componentSaverService = componentSaverService;
-//        this.componentRetrieverNativeRepository = componentRetrieverNativeRepository;
-//        this.componentUiMapper = componentUiMapper;
-//        this.componentJsonMapper = componentJsonMapper;
-//        this.componentDeleterService = componentDeleterService;
-//    }
+    @Autowired
+    private ExpressionService expressionService;
 
     @Cacheable(value = "form_db_cache", key = "#id")
     public FormDTO getObject(String id) {
@@ -159,15 +142,6 @@ public class FormService {
         return sorted;
     }
 
-//    private void sortComponentPersistEntities(List<ComponentPersistEntityDTO> componentPersistEntityList) {
-//        if (componentPersistEntityList == null) {
-//            return;
-//        }
-//
-//        componentPersistEntityList.sort(Comparator.comparingLong(ComponentPersistEntityDTO::getShortOrder));
-//        componentPersistEntityList.forEach(cpe -> this.sortComponentPersistEntities(cpe.getComponentPersistEntityList()));
-//    }
-
     public FormDTO getObjectByJsonUrl(String jsonUrl) {
 
         /* Retrieve */
@@ -240,9 +214,13 @@ public class FormService {
 
     public ComponentUiDTO retrieveUiData(FormDTO formDTO, String selectionId) {
 
+        this.executeBackendActions(formDTO,  Map.of("selection-id",selectionId), "before_retrieve");
+
         /* Retrieve Data */
         ComponentDTO componentDTO =
                 componentRetrieverService.retrieveComponentWithData(formDTO.getComponent(), selectionId);
+
+        this.executeBackendActions(formDTO,  Map.of("selection-id",selectionId), "after_retrieve");
 
         return componentUiMapper.mapToUi(componentDTO);
     }
@@ -260,8 +238,13 @@ public class FormService {
 
     public String save(FormDTO formDTO, Map<String, Map<String, Object>> parameters) {
 
+        this.executeBackendActions(formDTO, Map.of(), "before_save");
         /* Μap parameters to component And save */
-        return componentSaverService.save(formDTO.getComponent(), parameters);
+        String id = componentSaverService.save(formDTO.getComponent(), parameters);
+
+        this.executeBackendActions(formDTO,  Map.of("new-id",id), "after_save");
+
+        return  id;
     }
 
     public void delete(FormDTO formDTO, String selectionId) {
@@ -273,10 +256,15 @@ public class FormService {
         /* Retrieve form from Database */
         FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
 
-        /* Μap parameters to component And save */
-        return componentSaverService.save(formDTO.getComponent(), parameters);
-    }
+        this.executeBackendActions(formDTO, Map.of(), "before_save");
 
+        /* Μap parameters to component And save */
+        String id = componentSaverService.save(formDTO.getComponent(), parameters);
+
+        this.executeBackendActions(formDTO,  Map.of("new-id",id), "after_save");
+
+        return id;
+    }
 
     public String getJavaScript(String formId) {
         String script = this.formRepository.getFormScript(formId);
@@ -319,6 +307,21 @@ public class FormService {
 
     public String getInstanceVersion(String id) {
         return this.formRepository.getInstanceVersion(id);
+    }
+
+    public void executeBackendActions(FormDTO formDTO, Map<String, Object> parameters, String triggerType) {
+        formDTO.getFormBackendActionsList()
+                .stream()
+                .filter(action -> action.getTrigger_on().equals(triggerType))
+                .forEach(action -> {
+                    ExprResponse exprResponse = expressionService.createCacheable(action.getEditor(), action.getId());
+
+                    Object response = expressionService.getResult(exprResponse, parameters, formDTO.getComponent());
+
+                    if(response instanceof ExpressionException){
+                        throw (ExpressionException) response;
+                    }
+                });
     }
 
 }

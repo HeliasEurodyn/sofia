@@ -92,9 +92,5 @@ public class ListController {
         this.listService.updateField(id, field, fieldValue, rel, languageId);
     }
 
-    @GetMapping(path = "/test")
-    Object test() {
-        return this.listService.test();
-    }
 
 }

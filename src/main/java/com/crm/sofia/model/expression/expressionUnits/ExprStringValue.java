@@ -33,7 +33,6 @@ public class ExprStringValue extends ExprUnit {
                 expressionClosedNormally = true;
                 break;
             }
-
         }
 
         if(expressionClosedNormally){

@@ -43,18 +43,6 @@ public class ListService {
     @Autowired
     private ListUpdaterNativeRepository listUpdaterNativeRepository;
 
-//    public ListService(ListRepository listRepository,
-//                       ListMapper listMapper,
-//                       ExpressionService expressionService,
-//                       ListRetrieverNativeRepository listRetrieverNativeRepository,
-//                       ListUpdaterNativeRepository listUpdaterNativeRepository) {
-//        this.listRepository = listRepository;
-//        this.listMapper = listMapper;
-//        this.expressionService = expressionService;
-//        this.listRetrieverNativeRepository = listRetrieverNativeRepository;
-//        this.listUpdaterNativeRepository = listUpdaterNativeRepository;
-//    }
-
     public ListDTO getObject(String id, String languageId) {
 
         /* Retrieve */
@@ -98,90 +86,6 @@ public class ListService {
 
         return listDTO;
     }
-
-//    public ListDTO getObjectWithDefaults(String id) {
-//
-//        ListDTO listDTO = this.getObject(id);
-//        listDTO.getListComponentFilterFieldList()
-//                .stream()
-//                .filter(x -> x.getDefaultValue() != null)
-//                .filter(x -> !x.getDefaultValue().equals(""))
-//                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
-//                .forEach(x -> {
-//                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
-//                    if (!exprResponse.getError()) {
-//                        Object fieldValue = exprResponse.getExprUnit().getResult();
-//                        x.setFieldValue(fieldValue);
-//                    }
-//                });
-//
-//        listDTO.getListComponentColumnFieldList()
-//                .stream()
-//                .filter(x -> x.getDefaultValue() != null)
-//                .filter(x -> !x.getDefaultValue().equals(""))
-//                .filter(x -> !(x.getEditable() == null ? false : x.getEditable()))
-//                .forEach(x -> {
-//                    ExprResponse exprResponse = expressionService.create(x.getDefaultValue());
-//                    if (!exprResponse.getError()) {
-//                        Object fieldValue = exprResponse.getExprUnit().getResult();
-//                        x.setFieldValue(fieldValue);
-//                    }
-//        });
-//
-//        return listDTO;
-//    }
-
-//    @Cacheable(value = "list_ui_cache", key="{ #id, #languageId }")
-//    public ListDTO getUiListObject(String id, String languageId) {
-//
-//        System.out.println("Get UiList object from Database");
-//
-//        /* Retrieve */
-//        ListEntity listEntity = this.listRepository.findById(id)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ListEntity does not exist"));
-//
-//        /* Map */
-//        ListDTO listUiDTO = this.listMapper.mapList(listEntity, languageId);
-//
-//        /* Short */
-//        listUiDTO.getListComponentColumnFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentFilterFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentLeftGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentOrderByFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentTopGroupFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentFieldDTO::getShortOrder));
-//        listUiDTO.getListComponentActionFieldList().forEach(af -> {
-//            if( af.getListComponentActionFieldList() != null) {
-//                af.getListComponentActionFieldList().sort(Comparator.comparingLong(ListComponentSubFieldDTO::getShortOrder));
-//            }
-//        });
-//
-//        List<ListComponentFieldDTO> filtersList = Stream.concat(listUiDTO.getListComponentFilterFieldList().stream(),
-//                listUiDTO.getListComponentColumnFieldList().stream())
-//                .collect(Collectors.toList());
-//
-//        /* Calc Default Values */
-//        for (ListComponentFieldDTO filterDto : filtersList) {
-//
-//            if (filterDto.getDefaultValue() == null) continue;
-//            if (filterDto.getDefaultValue().equals("")) continue;
-//
-//            ExprResponse exprResponse = expressionService.create(filterDto.getDefaultValue());
-//            if (!exprResponse.getError()) {
-//                Object fieldValue = exprResponse.getExprUnit().getResult();
-//                if(filterDto.getType().equals("list")){
-//                    // List<List<Object>> response = (List<List<Object>>) fieldValue;
-//                    filterDto.setDefaultValue(fieldValue.toString());
-//                }else {
-//                    filterDto.setFieldValue(fieldValue);
-//                    filterDto.setDefaultValue(fieldValue.toString());
-//                }
-//            }
-//        }
-//
-//        /* Return */
-//        return listUiDTO;
-//    }
 
     public ListResultsDataDTO getListResultsData(ListDTO listDTO) {
         ListResultsDataDTO listResultsDataDTO = new ListResultsDataDTO();
@@ -458,7 +362,4 @@ public class ListService {
 
     }
 
-    public Object test() {
-        return this.listRetrieverNativeRepository.test();
-    }
 }

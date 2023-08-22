@@ -1,24 +1,20 @@
 package com.crm.sofia.dto.form.base;
 
-import com.crm.sofia.dto.access_control.AccessControlDTO;
 import com.crm.sofia.dto.common.BaseDTO;
-import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true)
-public class FormDTO extends BaseDTO {
+public class FormBackendActionsDTO extends BaseDTO {
 
-    private ComponentDTO component;
+    private String editor;
 
-    private List<FormBackendActionsDTO> formBackendActionsList;
+    private String trigger_on;
 }

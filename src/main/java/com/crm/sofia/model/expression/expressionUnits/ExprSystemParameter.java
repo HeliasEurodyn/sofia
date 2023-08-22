@@ -2,7 +2,6 @@ package com.crm.sofia.model.expression.expressionUnits;
 
 import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,14 +1,15 @@
 package com.crm.sofia.model.expression.expressionUnits;
 
+import com.crm.sofia.exception.ExpressionException;
 import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprUnit;
 
-public class ExprIf extends ExprUnit {
+public class ExprThrowExceptionParameter extends ExprUnit {
 
-    static private Integer exprUnitLength = 2;
-    static private String exprUnitString = "if";
+    static private Integer exprUnitLength = 14;
+    static private String exprUnitString = "throwException";
 
-    public static ExprIf exrtactExprUnit(String expression, Integer expressionPosition) {
+    public static ExprThrowExceptionParameter exrtactExprUnit(String expression, Integer expressionPosition) {
 
         if (expression.length() < expressionPosition + exprUnitLength) {
             return null;
@@ -16,7 +17,7 @@ public class ExprIf extends ExprUnit {
 
         String expressionPart = expression.substring(expressionPosition, expressionPosition + exprUnitLength);
         if (expressionPart.equals(exprUnitString)) {
-            ExprIf exprUnit = new ExprIf();
+            ExprThrowExceptionParameter exprUnit = new ExprThrowExceptionParameter();
             exprUnit.setExpressionPart(expressionPart);
             exprUnit.setExpressionPosition(expressionPosition);
             return exprUnit;
@@ -30,24 +31,20 @@ public class ExprIf extends ExprUnit {
         return exprUnitLength;
     }
 
+
     @Override
     public Object getResult(ExprInitParameters exprInitParameters) {
 
-        Object decisionExpression = this.childExprUnit.getResult(exprInitParameters);
-
-        if (decisionExpression == null) {
+        Object keyObject = this.childExprUnit.getResult(exprInitParameters);
+        if (keyObject == null) {
             return null;
         }
 
-        if (!(decisionExpression instanceof Boolean)) {
+        if (!(keyObject instanceof String)) {
             return null;
         }
-
-        if ((Boolean) decisionExpression) {
-            return this.leftChildExprUnit.getResult(exprInitParameters);
-        } else {
-            return this.rightChildExprUnit.getResult(exprInitParameters);
-        }
-
+        String message = (String) keyObject;
+        return new ExpressionException(message);
     }
+
 }

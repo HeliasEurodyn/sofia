@@ -867,27 +867,6 @@ public class ListRetrieverNativeRepository {
         return groupEntries;
     }
 
-//    private List<ComponentPersistEntityDTO> getComponentPersistEntitiesTreeToList(List<ComponentPersistEntityDTO> initialComponentPersistEntityList) {
-//        List<ComponentPersistEntityDTO> allComponentPersistEntityList = new ArrayList<>();
-//        allComponentPersistEntityList.addAll(initialComponentPersistEntityList);
-//
-//        initialComponentPersistEntityList
-//                .stream()
-//                .filter(x -> x.getComponentPersistEntityList() != null)
-//                .filter(x -> x.getComponentPersistEntityList().size() > 0)
-//                .forEach(x -> {
-//
-//                    List<ComponentPersistEntityDTO> componentPersistEntityList =
-//                            this.getComponentPersistEntitiesTreeToList(x.getComponentPersistEntityList());
-//                    if (componentPersistEntityList.size() > 0) {
-//                        allComponentPersistEntityList.addAll(componentPersistEntityList);
-//                    }
-//
-//                });
-//
-//        return allComponentPersistEntityList;
-//    }
-
     private List<ComponentPersistEntityDTO> getCpeTreeToListUpToId(List<ComponentPersistEntityDTO> cpeList, String id) {
 
         ComponentPersistEntityDTO selectedCpe =
@@ -923,35 +902,4 @@ public class ListRetrieverNativeRepository {
         return Collections.emptyList();
     }
 
-    public Object test() {
-
-        Query query = entityManager.createNativeQuery(
-                " SELECT "+
-                " data_catalog_business_object.id as cf_id, "+
-                " data_catalog_category.code as cf_code_2, "+
-                " data_catalog_category.name as cf_name_2, "+
-                " data_catalog_service.code as cf_code_1, "+
-                " data_catalog_service.short_description as cf_short_description, "+
-                " data_catalog_service.name as cf_name_1, "+
-                " data_catalog_business_object.code as cf_code, "+
-                " data_catalog_business_object.name as cf_name, "+
-                " data_catalog_business_object.profile_selector as cf_profile_selector  "+
-                " FROM  data_catalog_business_object data_catalog_business_object   "+
-                " LEFT OUTER JOIN  data_catalog_service data_catalog_service ON data_catalog_service.id = data_catalog_business_object.data_catalog_service_id   "+
-                " LEFT OUTER JOIN  data_catalog_category data_catalog_category ON data_catalog_category.id = data_catalog_service.data_catalog_category_id  "+
-                " ORDER BY data_catalog_business_object.id ASC ");
-
-        List<Object[]> dataList = query.getResultList();
-        List<List<Object>> responses = new ArrayList<>();
-        for (Object queryResultLine : dataList) {
-            Object[] queryResultLineArray = (Object[]) queryResultLine;
-            List<Object> line = new ArrayList<>();
-            for (Object queryResult : queryResultLineArray) {
-                line.add(queryResult);
-            }
-            responses.add(line);
-        }
-
-        return responses;
-    }
 }

@@ -1,5 +1,7 @@
 package com.crm.sofia.services.expression;
 
+import com.crm.sofia.dto.component.designer.ComponentDTO;
+import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.expression.ExprUnitDTO;
 import com.crm.sofia.model.expression.ExprInitParameters;
 import com.crm.sofia.model.expression.ExprResponse;
@@ -268,7 +270,8 @@ public class ExpressionService {
                     exprUnit instanceof ExprEqualsTo ||
                     exprUnit instanceof ExprStrEqualsTo ||
                     exprUnit instanceof ExprIfNull ||
-                    exprUnit instanceof ExprAtListPosParameter) && !exprUnit.getIsOnTree() && exprUnit.getPriority().equals(currentPriority)) {
+                    exprUnit instanceof ExprAtListPosParameter ||
+                    exprUnit instanceof ExprSetFieldValue) && !exprUnit.getIsOnTree() && exprUnit.getPriority().equals(currentPriority)) {
 
                 /*
                  * On those Types of ExprUnits at least 3 expr units must follow
@@ -312,8 +315,10 @@ public class ExpressionService {
                     exprUnit instanceof ExprSystemParameter ||
                     exprUnit instanceof ExprImportColumnParameter ||
                     exprUnit instanceof ExprGetSqlParameter ||
+                    exprUnit instanceof ExprThrowExceptionParameter ||
                     exprUnit instanceof ExprException ||
-                    exprUnit instanceof ExprGetSqlValParameter)
+                    exprUnit instanceof ExprGetSqlValParameter ||
+                    exprUnit instanceof ExprGetFieldValue)
                     && !exprUnit.getIsOnTree()
                     && exprUnit.getPriority().equals(currentPriority)) {
 
@@ -425,6 +430,10 @@ public class ExpressionService {
             if (exprUnit == null) exprUnit = ExprImportColumnParameter.exrtactExprUnit(expression, i); // parameters
             if (exprUnit == null) exprUnit = ExprGetSqlValParameter.exrtactExprUnit(expression, i); // entityManager
             if (exprUnit == null) exprUnit = ExprGetSqlParameter.exrtactExprUnit(expression, i); // entityManager
+            if (exprUnit == null) exprUnit = ExprThrowExceptionParameter.exrtactExprUnit(expression, i); // entityManager
+            if (exprUnit == null) exprUnit = ExprSetFieldValue.exrtactExprUnit(expression, i);
+            if (exprUnit == null) exprUnit = ExprGetFieldValue.exrtactExprUnit(expression, i);
+
             if (exprUnit == null) exprUnit = ExprAtListPosParameter.exrtactExprUnit(expression, i);
 
             if (exprUnit == null) exprUnit = ExprGreaterThan.exrtactExprUnit(expression, i);
@@ -521,6 +530,18 @@ public class ExpressionService {
         exprInitParameters.setSystemParameters(systemParameters);
         exprInitParameters.getSystemParameters().putAll(parameters);
         exprInitParameters.setEntityManager(this.entityManager);
+
+        return exprResponse.getResult(exprInitParameters);
+    }
+
+    public Object getResult(ExprResponse exprResponse, Map<String, Object> parameters, ComponentDTO componentDTO) {
+        Map<String, Object> systemParameters = this.defineSystemParameters();
+
+        ExprInitParameters exprInitParameters = new ExprInitParameters();
+        exprInitParameters.setSystemParameters(systemParameters);
+        exprInitParameters.getSystemParameters().putAll(parameters);
+        exprInitParameters.setEntityManager(this.entityManager);
+        exprInitParameters.setComponentDTO(componentDTO);
 
         return exprResponse.getResult(exprInitParameters);
     }

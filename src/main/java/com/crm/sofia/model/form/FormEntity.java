@@ -100,7 +100,6 @@ public class FormEntity extends MainEntity {
     @JoinColumn(name = "form_id")
     private List<AccessControl> accessControls;
 
-
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = { CascadeType.ALL },
@@ -109,4 +108,11 @@ public class FormEntity extends MainEntity {
     @JoinColumn(name = "form_id")
     private List<FormTranslation> translations;
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "form_id")
+    private List<FormBackendActions> formBackendActionsList;
 }
