@@ -9,11 +9,9 @@ import com.crm.sofia.services.component.ComponentService;
 import com.crm.sofia.services.expression.ExpressionService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ComponentSaverService {
@@ -30,15 +28,22 @@ public class ComponentSaverService {
         this.expressionService = expressionService;
     }
 
-    public String save(String componentId, Map<String, Map<String, Object>> parameters) {
+    public String mapParametersAndSave(String componentId, Map<String, Map<String, Object>> parameters) {
         /* Retrieve form from Database */
         ComponentDTO componentDTO = componentService.getObject(componentId);
 
         /* Map Parameters and Save */
-        return this.save(componentDTO, parameters);
+        return this.mapParametersAndSave(componentDTO, parameters);
     }
 
-    public String save(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
+    public void mapParameters(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
+
+        /* Μap parameters to component */
+        componentService.mapParametersToComponentDTO(componentDTO.getComponentPersistEntityList(), parameters);
+
+    }
+
+    public String mapParametersAndSave(ComponentDTO componentDTO, Map<String, Map<String, Object>> parameters) {
 
         /* Μap parameters to component */
         componentService.mapParametersToComponentDTO(componentDTO.getComponentPersistEntityList(), parameters);

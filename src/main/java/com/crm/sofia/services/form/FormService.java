@@ -236,12 +236,26 @@ public class FormService {
         return componentJsonMapper.mapToJson(componentDTO);
     }
 
+    public String saveJsonData(String jsonUrl, Map<String, Map<String, Object>> parameters) {
+
+        /* Retrieve form from Database */
+        FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
+
+        return this.save(formDTO, parameters);
+    }
+
     public String save(FormDTO formDTO, Map<String, Map<String, Object>> parameters) {
 
-        this.executeBackendActions(formDTO, Map.of(), "before_save");
-        /* Μap parameters to component And save */
-        String id = componentSaverService.save(formDTO.getComponent(), parameters);
+        /* Μap parameters to Component */
+        componentSaverService.mapParameters(formDTO.getComponent(), parameters);
 
+        /* Run Before Save actions */
+        this.executeBackendActions(formDTO, Map.of(), "before_save");
+
+        /* Save */
+        String id = componentSaverService.save(formDTO.getComponent());
+
+        /* Run After Save actions */
         this.executeBackendActions(formDTO,  Map.of("new-id",id), "after_save");
 
         return  id;
@@ -249,21 +263,6 @@ public class FormService {
 
     public void delete(FormDTO formDTO, String selectionId) {
         this.componentDeleterService.retrieveComponentAndDelete(formDTO.getComponent(), selectionId);
-    }
-
-    public String saveJsonData(String jsonUrl, Map<String, Map<String, Object>> parameters) {
-
-        /* Retrieve form from Database */
-        FormDTO formDTO = this.getObjectByJsonUrl(jsonUrl);
-
-        this.executeBackendActions(formDTO, Map.of(), "before_save");
-
-        /* Μap parameters to component And save */
-        String id = componentSaverService.save(formDTO.getComponent(), parameters);
-
-        this.executeBackendActions(formDTO,  Map.of("new-id",id), "after_save");
-
-        return id;
     }
 
     public String getJavaScript(String formId) {

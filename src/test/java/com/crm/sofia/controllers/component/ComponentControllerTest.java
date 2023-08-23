@@ -3,11 +3,8 @@ package com.crm.sofia.controllers.component;
 import com.crm.sofia.dto.component.designer.ComponentDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityDTO;
 import com.crm.sofia.dto.component.designer.ComponentPersistEntityFieldDTO;
-import com.crm.sofia.mapper.chart.ChartMapper;
-import com.crm.sofia.mapper.chart.ChartMapperImpl;
 import com.crm.sofia.mapper.component.ComponentMapper;
 import com.crm.sofia.mapper.component.ComponentMapperImpl;
-import com.crm.sofia.model.chart.Chart;
 import com.crm.sofia.model.component.ComponentPersistEntity;
 import com.crm.sofia.model.component.ComponentPersistEntityField;
 import com.crm.sofia.services.component.ComponentService;
@@ -130,7 +127,7 @@ public class ComponentControllerTest {
 
     @Test
     void postObjectTest() throws Exception {
-        given(componentSaverService.save(anyString(),any())).willReturn("ok");
+        given(componentSaverService.mapParametersAndSave(anyString(),any())).willReturn("ok");
         MockHttpServletResponse response = mvc.perform(post("/component?id=1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(Map.of("value1",Map.of("param1","value1","param2","value2"))))

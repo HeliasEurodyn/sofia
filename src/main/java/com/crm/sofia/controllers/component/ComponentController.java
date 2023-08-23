@@ -57,7 +57,7 @@ public class ComponentController {
     @PostMapping
     public String postObjectData(@RequestParam("id") String componentId,
                                  @RequestBody Map<String, Map<String, Object>> parameters) {
-        return this.componentSaverService.save(componentId, parameters);
+        return this.componentSaverService.mapParametersAndSave(componentId, parameters);
     }
 
     @DeleteMapping
