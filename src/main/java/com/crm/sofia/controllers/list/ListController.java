@@ -73,13 +73,13 @@ public class ListController {
 
     @Transactional
     @RequestMapping(value = "/dynamic-cssscript/{id}/script.css", method = RequestMethod.GET, produces = "text/css;")
-    String getFormCssScript(@PathVariable("id") String id) {
+    public String getFormCssScript(@PathVariable("id") String id) {
         return this.listService.getCssScript(id);
     }
 
     @Transactional
     @RequestMapping(value = "/dynamic-javascripts/factory.js", method = RequestMethod.GET, produces = "text/javascript;")
-    String getFormJavaScripty() {
+    public String getFormJavaScripty() {
         return this.listService.getJavaScriptFactory();
     }
 
